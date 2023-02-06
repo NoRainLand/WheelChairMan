@@ -1,0 +1,57 @@
+{
+  "platform": "web",
+  "useCompressedEngine": true,
+  "web": {},
+  "android": {
+    "standalone": false,
+    "packResources": true,
+    "appName": "myGame",
+    "bundleIdentifier": "com.layabox.game",
+    "url": "http://layabox.com/layanative3.0/demo/index.js"
+  },
+  "ios": {
+    "standalone": false,
+    "packResources": true,
+    "appName": "myGame",
+    "bundleIdentifier": "com.layabox.game",
+    "url": "http://layabox.com/layanative3.0/demo/index.js"
+  },
+  "oppogame": {
+    "minPlatformVersion": "1060",
+    "logLevel": "log",
+    "countryName": "CN",
+    "msg": "1.已经生成过签名，请将签名文件放到Laya项目根目录sign/release文件夹中。\n2.如果还没有生成过签名，可以自己生成签名文件，并放置到Laya项目根目录sign/release文件夹中。",
+    "creatRelease": false,
+    "subpackagesTip": "请确保手机中存在subPkg目录\n当指定分包目录时，目录根目录下的main.js会作为入口文件；也可以指定一个js文件作为分包。"
+  },
+  "vivogame": {
+    "minPlatformVersion": "1063",
+    "logLevel": "log",
+    "countryName": "CN",
+    "msg": "1.已经生成过签名，请将签名文件放到Laya项目根目录sign/release文件夹中。\n2.如果还没有生成过签名，可以自己生成签名文件，并放置到Laya项目根目录sign/release文件夹中。",
+    "creatRelease": false,
+    "subpackagesTip": "当指定分包目录时，目录根目录下的game.js会作为入口文件；也可以指定一个js文件作为分包。"
+  },
+  "bytedancegame": {
+    "subpackagesTip": "当指定分包目录时，目录根目录下的game.js会作为入口文件；也可以指定一个js文件作为分包。"
+  },
+  "xmgame": {
+    "minPlatformVersion": "1050",
+    "logLevel": "log",
+    "countryName": "CN",
+    "msg": "1.已经生成过签名，请将签名文件放到Laya项目根目录sign/release文件夹中。\n2.如果还没有生成过签名，可以自己生成签名文件，并放置到Laya项目根目录sign/release文件夹中。",
+    "creatRelease": false,
+    "subpackagesTip": "当指定分包目录时，目录根目录下的main.js会作为入口文件；也可以指定一个js文件作为分包。"
+  },
+  "layaverse": {
+    "compressJSON": false,
+    "compressPic": false,
+    "useActionFunc": false,
+    "useAtlasImage": true,
+    "useGameData": false,
+    "roleAniEnable": false,
+    "compressEnable": false,
+    "useComponentFunc": false
+  },
+  "name": "WheelChairMan"
+}
