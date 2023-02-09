@@ -23,6 +23,12 @@ export default class ProjectConfig {
     /**是否为测试版本 */
     static readonly isDebug: boolean = true;
 
+    /**当前语言
+     * ChineseSimplified
+     * English
+     * 
+     */
+    static readonly Localization:string = "ChineseSimplified"
 
 
 }

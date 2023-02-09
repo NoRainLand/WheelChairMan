@@ -53,5 +53,11 @@
     "compressEnable": false,
     "useComponentFunc": false
   },
-  "name": "WheelChairMan"
+  "name": "WheelChairMan",
+  "startupScene": "res://63a6c640-8384-40ee-931e-b24bc717fafa",
+  "includedScenes": [
+    "res://63a6c640-8384-40ee-931e-b24bc717fafa",
+    "res://49375936-a484-41a6-b821-185c089680c6",
+    "res://f303f9df-ba09-4536-91d6-8e909464ffae"
+  ]
 }

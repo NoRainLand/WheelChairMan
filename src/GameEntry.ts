@@ -1,50 +1,59 @@
+
+import ProjectConfig from "./Config/ProjectConfig";
+import UIBaseMgr from "./UIBase/UIBaseMgr";
+import SceneUrl from "./Url/SceneUrl";
+import PrefabImpl = Laya.PrefabImpl;
+import Text = Laya.Text;
+import Box = Laya.Box;
+import Scene = Laya.Scene;
+import Label = Laya.Label;
+import Image = Laya.Image;
+import TextInput = Laya.TextInput;
+import Sprite = Laya.Sprite;
 /*
  * @Author: NoRain 
- * @Date: 2023-02-06 16:58:40 
+ * @Date: 2023-02-06 16:41:32 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-06 18:32:39
+ * @Last Modified time: 2023-02-09 16:52:32
  */
+const { regClass, property } = Laya;
 
-import LocalMgr from "./Mgr/LocalMgr";
+/**游戏总入口 */
+@regClass()
+export class GameEntry extends Laya.Script {
+    /**是否初始化 */
+    isInit: boolean = false;
 
-/**游戏入口类 */
-export default class GameEntry {
+    /**游戏UI层级 */
+    UIBase: Box;
 
+    /**根节点 */
+    GameEntry: Scene;
+    constructor() { super(); }
 
-    private static _localMgr: LocalMgr;
-    /**持久化管理类 */
-    static get LocalMgr(): LocalMgr {
-        return this._localMgr;
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**初始化所有变量 */
-    static __init__() {
-        this._localMgr = new LocalMgr();
-
+    onAwake(): void {
+        if (!this.isInit) {
+            this.isInit = true;
+            this.init();
+        }
     }
 
 
+
+    /**初始化 */
+    init() {
+        console.log(`当前引擎版本:${Laya.LayaEnv.version}, 当前项目名称:${ProjectConfig.projectName},当前项目版本:${ProjectConfig.projectVersion}/${ProjectConfig.projectVersionIndex}`);
+        console.log(Laya.stage);
+
+
+        this.GameEntry = this.owner as Scene;
+
+
+        this.UIBase = this.GameEntry.getChildByName("UIBase") as Box;
+        UIBaseMgr.init(this.UIBase);
+
+
+
+        UIBaseMgr.open(SceneUrl.LoadView);
+    }
 }

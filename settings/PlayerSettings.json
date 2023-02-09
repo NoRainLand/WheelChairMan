@@ -1,0 +1,54 @@
+{
+  "resolution": {
+    "designWidth": 1920,
+    "designHeight": 1080,
+    "scaleMode": "fixedwidth",
+    "screenMode": "horizontal",
+    "alignV": "top",
+    "alignH": "left",
+    "backgroundColor": "rgba(128, 128, 128, 1)"
+  },
+  "2D": {
+    "FPS": 60,
+    "isAntialias": true,
+    "useRetinalCanvas": true,
+    "isAlpha": false,
+    "webGL2D_MeshAllocMaxMem": true
+  },
+  "3D": {
+    "enableStaticBatch": true,
+    "enableDynamicBatch": true,
+    "defaultPhysicsMemory": 16,
+    "enableUniformBufferObject": true,
+    "pixelRatio": 1,
+    "enableMultiLight": true,
+    "maxLightCount": 16,
+    "lightClusterCount": {
+      "x": 12,
+      "y": 12,
+      "z": 12
+    },
+    "useBVHCull": false,
+    "BVH_max_SpatialCount": 7,
+    "BVH_limit_size": 32,
+    "BVH_Min_Build_nums": 10
+  },
+  "modules": {
+    "laya.d3": true,
+    "laya.ui": true,
+    "laya.ani": true,
+    "laya.device": false,
+    "laya.html": false,
+    "laya.tiledmap": false,
+    "laya.particle": false,
+    "laya.gltf": false,
+    "laya.physics": false,
+    "laya.physics3D": true,
+    "laya.physics3D.wasm": false,
+    "laya.spine": false
+  },
+  "spineVersion": "3.8",
+  "stat": false,
+  "vConsole": false,
+  "alertGlobalError": false
+}

@@ -1,0 +1,22 @@
+{
+  "sRGB": true,
+  "wrapMode": 0,
+  "filterMode": 1,
+  "anisoLevel": 0,
+  "readWrite": false,
+  "mipmap": false,
+  "pma": false,
+  "hdrEncodeFormat": 0,
+  "files": [
+    {
+      "file": "",
+      "ext": "jpg",
+      "format": 1
+    }
+  ],
+  "platforms": {
+    "0": 0,
+    "1": 0,
+    "2": 0
+  }
+}
