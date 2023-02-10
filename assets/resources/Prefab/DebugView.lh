@@ -14,7 +14,7 @@
   "_$comp": [
     {
       "_$type": "5ca51831-1d23-46b6-a853-a10d5da54d6c",
-      "scriptPath": "../src/Scene/DebugView.ts",
+      "scriptPath": "../src/Game/Scene/DebugView.ts",
       "imgShow": {
         "_$ref": "dhcnhq1t"
       },

@@ -64,3 +64,7 @@ $by NoRainLand$
 ## 4，坑点雷点
 
     这个可是大工程，慢慢积攒。
+
+    1,UI图片导入之后需要设定为SpriteTexture.
+
+    2,

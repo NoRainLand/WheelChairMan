@@ -14,7 +14,7 @@ import Sprite = Laya.Sprite;
  * @Author: NoRain 
  * @Date: 2023-02-06 16:41:32 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-09 16:52:32
+ * @Last Modified time: 2023-02-10 10:27:52
  */
 const { regClass, property } = Laya;
 

@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-06 17:07:29 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-06 19:16:53
+ * @Last Modified time: 2023-02-10 10:15:27
  */
 /**项目数据 */
 export default class ProjectConfig {
@@ -28,7 +28,7 @@ export default class ProjectConfig {
      * English
      * 
      */
-    static readonly Localization:string = "ChineseSimplified"
+    static readonly Language:string = "ChineseSimplified"
 
 
 }

@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-07 09:32:30 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-07 16:42:24
+ * @Last Modified time: 2023-02-10 17:16:18
  */
 import Pool = Laya.Pool;
 
@@ -179,11 +179,6 @@ export default class Timer {
                 this.$isRunning = false;
             }
         }
-
     }
-
-
-
-
 
 }

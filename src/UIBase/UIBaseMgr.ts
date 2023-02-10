@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-08 10:25:16 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-09 20:18:34
+ * @Last Modified time: 2023-02-10 16:43:36
  */
 import ProjectConfig from "../Config/ProjectConfig";
 import SceneUrl from "../Url/SceneUrl";
@@ -41,7 +41,7 @@ export default class UIBaseMgr {
 
 
     /**页面脚本池子 */
-    private static sceneScriptPool: Map<string, UIBase> = new Map();
+    private static $sceneScriptPool: Map<string, UIBase | Map<string, UIBase>> = new Map();
 
 
 
@@ -64,8 +64,8 @@ export default class UIBaseMgr {
      * @param callback 回调
      */
     static open(sceneName: string, param?: any, caller?: any, callback?: Function) {
-        let script1 = this.sceneScriptPool.get(sceneName);
-        if (!script1 || !script1.isSingleton) {
+        let script = this.$sceneScriptPool.get(sceneName);
+        if (!script || script instanceof UIBase) {
             let scene = Pool.getItem(sceneName) as Scene;
             if (scene) {
                 this.initScene(scene, sceneName, param, caller, callback);
@@ -104,34 +104,60 @@ export default class UIBaseMgr {
                 break;
         }
         base.$param = param;
+        base.$sceneName = sceneName;
         base.isOpen = true;
         base.onOpened(param);
         if (caller && callback) {
             callback.call(caller);
         }
+
         if (base.isSingleton) {
-            this.sceneScriptPool.set(sceneName, base);
+            this.$sceneScriptPool.set(sceneName, base);
+        } else {
+            let map = this.$sceneScriptPool.get(sceneName);
+            if (map && map instanceof Map) {
+                map.set(base.id.toString(), base);
+                this.$sceneScriptPool.set(sceneName, map);
+            } else {
+                map = new Map();
+                map.set(base.id.toString(), base);
+                this.$sceneScriptPool.set(sceneName, map);
+            }
         }
     }
 
 
     /**关闭页面 */
-    static close(sceneName: string) {
-        let script = this.sceneScriptPool.get(sceneName);
-        if (script) {
-            script.isOpen = false;
-            script.owner.removeSelf();
-            script.onClosed();
+    static close(sceneName: string, id?: number) {
+        let scriptOrMap = this.$sceneScriptPool.get(sceneName);
+        if (scriptOrMap && scriptOrMap instanceof UIBase) {
+            scriptOrMap.isOpen = false;
+            scriptOrMap.owner.removeSelf();
+            scriptOrMap.onClosed();
 
-            this.sceneScriptPool.set(sceneName, void 0);
+            this.$sceneScriptPool.set(sceneName, void 0);
+        } else if (scriptOrMap && scriptOrMap instanceof Map) {
+            if (id) {
+                let base = scriptOrMap.get(id.toString()) as UIBase;
+                if (base) {
+                    base.isOpen = false;
+                    base.owner.removeSelf();
+                    base.onClosed();
+                    scriptOrMap.set(id.toString(), void 0);
+                    this.$sceneScriptPool.set(sceneName, scriptOrMap);
+                }
+            }
         }
     }
 
     /**是否打开某个界面 */
-    static isOpen(sceneName: string): boolean {
-        let script = this.sceneScriptPool.get(sceneName);
-        if (script) {
-            return script.isOpen;
+    static isOpen(sceneName: string, id?: number): boolean {
+        let scriptOrMap = this.$sceneScriptPool.get(sceneName);
+        if (scriptOrMap && scriptOrMap instanceof UIBase) {
+            return scriptOrMap.isOpen;
+        } else if (scriptOrMap && scriptOrMap instanceof Map) {
+            let base = scriptOrMap.get(id.toString()) as UIBase;
+            return base.isOpen;
         } else {
             return false;
         }
@@ -148,12 +174,25 @@ export default class UIBaseMgr {
     static initDebugScene() {
         this.open(SceneUrl.DebugView);
     }
+
+    /**
+     * 打开一个提示面板
+     * @param msg 信息
+     */
     static showTips(msg: string) {
-
+        this.open(SceneUrl.TipsView,msg);
     }
-
-    static showSureDialog(title: string, msg: string, caller?: any, sureCallback?: Function, cancelCallBack?: Function) {
-
+    /**
+     * 打开一个确认取消面板
+     * @param title 标题
+     * @param msg 信息
+     * @param caller 作用域
+     * @param sureCallback 确认回调
+     * @param cancelCallBack 取消回调
+     */
+    static showSureDialog(title: string, msg: string, caller: any, sureCallback: Function, cancelCallBack?: Function) {
+        let data = { title: title, msg: msg, caller: caller, sureCallback: sureCallback, cancelCallBack: cancelCallBack };
+        this.open(SceneUrl.SureDialog, data);
     }
 
 }

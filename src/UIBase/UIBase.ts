@@ -1,10 +1,11 @@
 import EventMgr from "../Mgr/EventMgr";
+import UIBaseMgr from "./UIBaseMgr";
 
 /*
  * @Author: NoRain 
  * @Date: 2023-02-08 10:03:24 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-09 20:22:51
+ * @Last Modified time: 2023-02-10 16:29:47
  */
 const { regClass, property } = Laya;
 
@@ -25,7 +26,7 @@ export default class UIBase extends Laya.Script {
 
     /**是否只能同时存在一个 */
     @property()
-    isSingleton: boolean = true;
+    readonly isSingleton: boolean = false;
 
     /**传入数据 */
     $param: any = null;
@@ -37,19 +38,34 @@ export default class UIBase extends Laya.Script {
     /**事件 */
     private $event = new Map;
 
+    /**界面名字 */
+    $sceneName: string = "";
+
     constructor() {
         super();
     }
-    onStart(): void {
+    /**界面打开 */
+    onOpened(param?: any) {
 
     }
-    onOpened(param: any) {
-
-    }
+    /**界面关闭 */
     onClosed() {
 
     }
 
+    onDisable(): void {
+        let self = this, events = self.$event;
+        for (let name in events) {
+            EventMgr.off(name, self, events.get(name));
+        }
+        self.$event = null;
+        self.$param = null;
+    }
+    /**
+     * 注册监听事件，不需要销毁
+     * @param event 事件枚举
+     * @param callback 回调
+     */
     protected regEvent(event: string, callback: Function) {
         let self = this;
         if (event != "" && callback) {
@@ -98,12 +114,7 @@ export default class UIBase extends Laya.Script {
 
     /**关闭自身 */
     close() {
-        let self = this, events = self.$event;
-        for (let name in events) {
-            EventMgr.off(name, self, events.get(name));
-        }
-        self.$event = null;
-        self.$param = null;
+        UIBaseMgr.close(this.$sceneName,this.id);
     }
 
 

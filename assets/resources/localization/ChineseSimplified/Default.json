@@ -1,0 +1,18 @@
+[
+	{
+		"language": "ChineseSimplified",
+		"dic": {
+			"GAME_START": "游戏开始",
+			"OK": "确认",
+			"CANCEL": "取消",
+			"SETTING": "设置",
+			"BGM": "音乐",
+			"SFX": "音效",
+			"SHAKE": "震动",
+			"LANGUAGE": "语言",
+			"SUPPORT": "支持",
+			"ON":"开",
+			"OFF":"关"
+		}
+	}
+]

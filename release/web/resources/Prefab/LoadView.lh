@@ -1,0 +1,145 @@
+{
+  "_$ver": 1,
+  "_$id": "79ielihe",
+  "_$type": "View",
+  "name": "LoadView",
+  "width": 1920,
+  "height": 1080,
+  "mouseEnabled": true,
+  "left": 0,
+  "right": 0,
+  "top": 0,
+  "bottom": 0,
+  "_$comp": [
+    {
+      "_$type": "04971c7c-c40c-477e-9add-5b3cb17acd7e",
+      "scriptPath": "../src/Scene/LoadScene.ts",
+      "imgLoad": {
+        "_$ref": "184"
+      },
+      "labelLoad": {
+        "_$ref": "188"
+      }
+    },
+    {
+      "_$type": "9797e892-adab-4c82-8f5e-800b37f590f9",
+      "scriptPath": "../src/Scene/LoadView.ts",
+      "imgLoad": {
+        "_$ref": "apjzjnk2"
+      },
+      "labelLoad": {
+        "_$ref": "e1c3gd8j"
+      }
+    },
+    {
+      "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
+      "scriptPath": "../src/UIBase/UIBaseData.ts",
+      "depth": 2,
+      "isSingleton": true
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "z92aax2s",
+      "_$type": "Image",
+      "name": "Image",
+      "width": 1920,
+      "height": 1080,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "bottom": 0,
+      "skin": "resources/loadSceneImg/background.png"
+    },
+    {
+      "_$id": "4hyja2ht",
+      "_$type": "Image",
+      "name": "Image(1)",
+      "x": 240,
+      "y": 802,
+      "width": 1483,
+      "height": 58,
+      "bottom": 220,
+      "centerX": 21,
+      "skin": "resources/loadSceneImg/slider_loading_bg.png",
+      "sizeGrid": "0,27,0,31,0",
+      "_$child": [
+        {
+          "_$id": "apjzjnk2",
+          "_$type": "Image",
+          "name": "imgLoad",
+          "x": 15,
+          "y": 7,
+          "width": 1453,
+          "height": 33,
+          "mask": {
+            "_$ref": "df70kroc"
+          },
+          "bottom": 18,
+          "centerX": 0,
+          "skin": "resources/loadSceneImg/slider_loading_fill.png",
+          "sizeGrid": "0,28,0,22,0",
+          "_$child": [
+            {
+              "_$id": "df70kroc",
+              "_$type": "Image",
+              "name": "imgMask",
+              "width": 724,
+              "height": 33,
+              "skin": "resources/loadSceneImg/slider_loading_fill.png",
+              "sizeGrid": "0,28,0,22,0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_$id": "rpnrgp79",
+      "_$type": "Label",
+      "name": "Text",
+      "x": 405,
+      "y": 907,
+      "width": 1111,
+      "height": 123,
+      "bottom": 50,
+      "centerX": 0,
+      "text": "抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。 \n\n适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。",
+      "fontSize": 40,
+      "color": "#FFFFFF",
+      "align": "center",
+      "valign": "middle",
+      "overflow": "visible",
+      "leading": 0,
+      "padding": "0,0,0,0"
+    },
+    {
+      "_$id": "e1c3gd8j",
+      "_$type": "Label",
+      "name": "labelLoad",
+      "x": 739,
+      "y": 707,
+      "width": 443,
+      "height": 65,
+      "bottom": 308,
+      "centerX": 0,
+      "text": "Loading…50%\n",
+      "fontSize": 50,
+      "color": "rgba(78, 217, 70, 1)",
+      "align": "center",
+      "valign": "middle",
+      "overflow": "visible",
+      "leading": 0,
+      "padding": "0,0,0,0"
+    },
+    {
+      "_$id": "74sz5vp3",
+      "_$type": "Image",
+      "name": "Image",
+      "width": 50,
+      "height": 51,
+      "left": 0,
+      "top": 0,
+      "skin": "resources/loadSceneImg/NoRainLand.png"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-09 17:02:32 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-09 19:35:46
+ * @Last Modified time: 2023-02-10 15:59:15
  */
 const { regClass, property } = Laya;
 /**页面公共数据 */
@@ -25,9 +25,12 @@ export default class UIBaseData extends Laya.Script {
     @property()
     depth: number = 2;
 
-    /**是否只能同时存在一个 */
+    /**是否只能同时存在一个 
+     * 默认 1
+     * 0 1
+     */
     @property()
-    isSingleton: boolean = true;
+    isSingleton: boolean = false;
 
 
 
