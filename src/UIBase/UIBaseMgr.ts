@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-08 10:25:16 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-10 16:43:36
+ * @Last Modified time: 2023-02-11 14:25:45
  */
 import ProjectConfig from "../Config/ProjectConfig";
 import SceneUrl from "../Url/SceneUrl";
@@ -106,6 +106,9 @@ export default class UIBaseMgr {
         base.$param = param;
         base.$sceneName = sceneName;
         base.isOpen = true;
+
+
+
         base.onOpened(param);
         if (caller && callback) {
             callback.call(caller);
@@ -180,7 +183,7 @@ export default class UIBaseMgr {
      * @param msg 信息
      */
     static showTips(msg: string) {
-        this.open(SceneUrl.TipsView,msg);
+        this.open(SceneUrl.TipsView, msg);
     }
     /**
      * 打开一个确认取消面板

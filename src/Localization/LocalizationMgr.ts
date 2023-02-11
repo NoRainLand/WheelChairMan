@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-10 09:48:50 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-10 15:01:46
+ * @Last Modified time: 2023-02-11 16:13:25
  */
 
 import ProjectConfig from "../Config/ProjectConfig";
@@ -26,14 +26,11 @@ export default class LocalizationMgr {
 
     static init(onProgress?: Handler, complete?: Handler) {
 
-        this.$language = this.getLanguage();
+        this.$language = this.Language;
 
 
-        let urls = [];
-        for (let key in LocalizationUrl) {
-            urls.push(LocalizationUrl[key]);
-        }
-        Laya.loader.load(urls, complete, onProgress).then((value) => {
+
+        Laya.loader.load(LocalizationUrl.Json, complete, onProgress).then((value) => {
             for (let i = 0; i < value.length; i++) {
                 let language = value[i].data[0].language;
                 let dic = value[i].data[0].dic;
@@ -44,7 +41,7 @@ export default class LocalizationMgr {
 
     /**通过key获取对应语言 */
     static getLocalizationByKey(key: string): string {
-        let dic = this.$TextResourceMap.get(this.$language);
+        let dic = this.$TextResourceMap.get(this.Language);
         if (dic && dic[key]) {
             return dic[key];
         } else {
@@ -53,19 +50,21 @@ export default class LocalizationMgr {
     }
 
     /**获取当前语言 */
-    static getLanguage(): string {
-        let language = LocalMgr.getItem(LocalEnum.LANGUAGE);
-        if (language) {
-            this.$language = language;
-        } else {
-            this.$language = ProjectConfig.Language;
-            LocalMgr.setItem(LocalEnum.LANGUAGE, this.$language);
+    static get Language(): string {
+        if(!this.$language){
+            let language = LocalMgr.getItem(LocalEnum.LANGUAGE);
+            if (language) {
+                this.$language = language;
+            } else {
+                this.$language = ProjectConfig.Language;
+                LocalMgr.setItem(LocalEnum.LANGUAGE, this.$language);
+            }
         }
         return this.$language;
     }
 
     /**修改当前语言 */
-    static setLanguage(language: string) {
+    static set Language(language: string) {
         this.$language = language;
         LocalMgr.setItem(LocalEnum.LANGUAGE, this.$language);
         EventMgr.event(EventEnum.LANGUAGECHANGE);

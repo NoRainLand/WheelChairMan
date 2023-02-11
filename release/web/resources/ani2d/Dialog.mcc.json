@@ -1,0 +1,43 @@
+{
+  "_$type": "Animator",
+  "enabled": true,
+  "path": "",
+  "cullingMode": 2,
+  "controllerLayers": [
+    {
+      "name": "Base Layer",
+      "states": [
+        {
+          "x": 10,
+          "y": 100,
+          "id": "-1",
+          "name": "进入",
+          "nexts": [],
+          "soloTransitions": [
+            {
+              "id": "0"
+            }
+          ]
+        },
+        {
+          "y": 100,
+          "id": "-2",
+          "name": "任何状态",
+          "x": 550
+        },
+        {
+          "x": 635.7665910751971,
+          "y": 320.4588801778438,
+          "id": "0",
+          "name": "DialogOpen",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "DialogOpen.mc"
+          }
+        }
+      ]
+    }
+  ],
+  "layerW": 150
+}

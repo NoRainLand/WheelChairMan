@@ -1,6 +1,6 @@
 {
   "platform": "web",
-  "useCompressedEngine": true,
+  "useCompressedEngine": false,
   "web": {},
   "android": {
     "standalone": false,

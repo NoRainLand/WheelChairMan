@@ -5,7 +5,7 @@ import UIBaseMgr from "./UIBaseMgr";
  * @Author: NoRain 
  * @Date: 2023-02-08 10:03:24 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-10 16:29:47
+ * @Last Modified time: 2023-02-11 14:25:49
  */
 const { regClass, property } = Laya;
 
@@ -44,6 +44,7 @@ export default class UIBase extends Laya.Script {
     constructor() {
         super();
     }
+
     /**界面打开 */
     onOpened(param?: any) {
 

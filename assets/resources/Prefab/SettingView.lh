@@ -17,14 +17,14 @@
       "imgClose": {
         "_$ref": "fdfzx0c2"
       },
-      "sfxSlider": {
+      "sliderSfx": {
         "_$ref": "fesjb1bw"
       },
-      "bgmSlider": {
+      "sliderBgm": {
         "_$ref": "7ieswmrh"
       },
-      "imgToggle": {
-        "_$ref": "zpoqyf70"
+      "toggleShake": {
+        "_$ref": "s0tb81qk"
       },
       "imgLanguage": {
         "_$ref": "iv4wae3k"
@@ -39,7 +39,7 @@
     {
       "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
       "scriptPath": "../src/UIBase/UIBaseData.ts",
-      "depth": 2,
+      "depth": 1,
       "isSingleton": true
     }
   ],
@@ -441,76 +441,40 @@
               ]
             },
             {
-              "_$id": "zpoqyf70",
-              "_$type": "Image",
-              "name": "imgToggle",
+              "_$id": "s0tb81qk",
+              "_$prefab": "2349acda-fe5f-445e-880b-f54ea7832a60",
+              "name": "Toggle",
+              "active": true,
               "x": 240,
               "y": 29,
               "width": 150,
               "height": 74,
+              "pivotX": 0,
+              "pivotY": 0,
+              "scaleX": 1,
+              "scaleY": 1,
+              "skewX": 0,
+              "skewY": 0,
+              "rotation": 0,
+              "visible": true,
+              "alpha": 1,
+              "zOrder": 0,
+              "blendMode": null,
               "mouseEnabled": true,
-              "skin": "res://8442ed75-f040-4f01-ab14-7823bfa134d0",
-              "sizeGrid": "0,30,0,30,0",
-              "_$child": [
-                {
-                  "_$id": "8t94ozqu",
-                  "_$type": "Label",
-                  "name": "Label",
-                  "x": 85,
-                  "y": 10,
-                  "width": 55,
-                  "height": 57,
-                  "text": "OFF",
-                  "fontSize": 28,
-                  "color": "rgba(110, 96, 78, 1)",
-                  "align": "center",
-                  "valign": "middle",
-                  "overflow": "visible",
-                  "leading": 0,
-                  "padding": "0,0,0,0",
-                  "_$comp": [
-                    {
-                      "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
-                      "scriptPath": "../src/Localization/LocalizationText.ts",
-                      "localizationKey": "OFF"
-                    }
-                  ]
-                },
-                {
-                  "_$id": "1vmqp7wq",
-                  "_$type": "Label",
-                  "name": "Label(1)",
-                  "x": 9,
-                  "y": 10,
-                  "width": 55,
-                  "height": 57,
-                  "text": "ON",
-                  "fontSize": 26,
-                  "color": "rgba(3, 172, 151, 1)",
-                  "align": "center",
-                  "valign": "middle",
-                  "overflow": "visible",
-                  "leading": 0,
-                  "padding": "0,0,0,0",
-                  "_$comp": [
-                    {
-                      "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
-                      "scriptPath": "../src/Localization/LocalizationText.ts",
-                      "localizationKey": "ON"
-                    }
-                  ]
-                },
-                {
-                  "_$id": "qj1sn1fg",
-                  "_$type": "Image",
-                  "name": "imgItem",
-                  "x": 8,
-                  "y": 6,
-                  "width": 60,
-                  "height": 68,
-                  "skin": "res://c88a905d-55c7-4c04-a708-292f87783ec4"
-                }
-              ]
+              "mouseThrough": false,
+              "hitTestPrior": false,
+              "drawCallOptimize": false,
+              "cacheAs": "none",
+              "anchorX": null,
+              "anchorY": null,
+              "left": null,
+              "right": null,
+              "top": null,
+              "bottom": null,
+              "centerX": null,
+              "centerY": null,
+              "disabled": null,
+              "gray": null
             }
           ]
         },

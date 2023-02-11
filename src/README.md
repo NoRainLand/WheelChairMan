@@ -2,6 +2,8 @@
 
 $by NoRainLand$
 
+2023/2/6
+
 ## 1，命名规范
 
     1，脚本文件
@@ -45,17 +47,21 @@ $by NoRainLand$
 
     Game 游戏主逻辑
 
-    Mgr 游戏各种管理器
+        Scene 游戏页面逻辑
 
-    Scene 泛指各种2d页面
+    Mgr 游戏各种管理器
 
     Scene3d 3d场景
 
     Shader 着色器
 
+    UIBase 页面基类
+
     Url 资源路径
 
     Util 工具集合
+
+    Localization 本地化工具
 
 ## 3，开发流程
 
@@ -67,4 +73,10 @@ $by NoRainLand$
 
     1,UI图片导入之后需要设定为SpriteTexture.
 
-    2,
+    2,@pro 暴露出去的属性如果是bool值,必须默认设定为false
+
+    3,无法切断(UnpackPrefab)预设.
+
+    4,不要在构造函数内调用Scene.open
+
+    5,

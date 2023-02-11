@@ -12,7 +12,7 @@ import List = Laya.List;
  * @Author: NoRain 
  * @Date: 2023-02-10 18:48:21 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-10 20:41:22
+ * @Last Modified time: 2023-02-11 13:57:08
  */
 const { regClass, property } = Laya;
 /**滑条 */
@@ -23,11 +23,11 @@ export default class Slider extends Laya.Script {
     @property()
     isH: boolean = false;
     @property()
-    imgBg: Image;
-    @property()
     imgLoad: Image;
     @property()
     imgBar: Image;
+    @property()
+    imgBg: Image;
     /**默认值 */
     @property()
     value: number = 0.7;
@@ -41,10 +41,15 @@ export default class Slider extends Laya.Script {
 
     private $imgMask: Image;
 
-    private $start: number;
-    private $end: number;
+
 
     private $slider: Box;
+
+    private $start: number;
+
+    private $offX: number
+
+    private $offY: number;
 
 
     constructor() { super() }
@@ -52,38 +57,38 @@ export default class Slider extends Laya.Script {
     onAwake(): void {
         this.$isTouch = false;
         this.$slider = this.owner as Box;
-        if (this.isH) {
-            this.imgBar.x = this.imgBg.width * this.value;
-            this.$start = this.imgBg.x + this.$slider.x;
-            this.$end = this.imgBg.x + this.imgBg.width + this.$slider.x;
-        } else {
-            this.imgBar.top = this.imgBg.height * this.value;
-            this.$start = this.imgBg.y + this.$slider.y;
-            this.$end = this.imgBg.y + this.imgBg.height + this.$slider.y;
-        }
         this.$imgMask = this.imgLoad.mask as Image;
+        this.$offX = this.imgLoad.width * this.value;
+        this.$offY = this.imgLoad.height * this.value;
         this.changeMask();
-
     }
 
     onMouseDown(evt: Laya.Event): void {
-        if (evt.target == this.imgBg) {
+        if (evt.target == this.imgBar) {
             this.$isTouch = true;
+
+            if (this.isH) {
+                this.$start = Laya.stage.mouseX;
+            } else {
+                this.$start = Laya.stage.mouseY;
+            }
         }
     }
 
     onMouseMove(evt: Laya.Event): void {
-        if (evt.target == this.imgBg && this.$isTouch) {
+        if (evt.target == this.imgBar && this.$isTouch) {
             if (this.isH) {
-                let offx = Laya.stage.mouseX - this.imgBg.x - this.$slider.x;
-                offx = offx > this.imgBg.width ? this.imgBg.width : offx;
-                offx = offx < 0 ? 0 : offx;
-                this.value = offx / this.imgBg.width;
+                this.$offX += Laya.stage.mouseX - this.$start;
+                this.$offX = this.$offX > this.imgLoad.width ? this.imgLoad.width : this.$offX;
+                this.$offX = this.$offX < 0 ? 0 : this.$offX;
+                this.value = this.$offX / this.imgLoad.width;
+                this.$start = Laya.stage.mouseX;
             } else {
-                let offy = Laya.stage.mouseY - this.imgBg.y - this.$slider.y;
-                offy = offy > this.imgBg.height ? this.imgBg.height : offy;
-                offy = offy < 0 ? 0 : offy;
-                this.value = offy / this.imgBg.height;
+                this.$offY += Laya.stage.mouseY - this.$start;
+                this.$offY = this.$offY > this.imgLoad.height ? this.imgLoad.height : this.$offY;
+                this.$offY = this.$offY < 0 ? 0 : this.$offY;
+                this.value = this.$offX / this.imgLoad.height;
+                this.$start = Laya.stage.mouseY;
             }
             this.valueChange();
         }
@@ -99,22 +104,24 @@ export default class Slider extends Laya.Script {
         this.$isTouch = false;
     }
 
+
+    /**初始化 */
     init(caller: any, callback: Function) {
         this.$caller = caller;
         this.$callback = callback;
     }
 
-    changeMask() {
+    private changeMask() {
         if (this.isH) {
-            this.$imgMask.width = this.imgBg.width * this.value;
-            this.imgBar.x = this.imgBg.width * this.value;
+            this.$imgMask.width = this.imgLoad.width * this.value;
+            this.imgBar.x = this.imgLoad.width * this.value+this.imgBg.x;
         } else {
-            this.$imgMask.height = this.imgBg.height * this.value;
-            this.imgBar.y = this.imgBg.height * this.value;
+            this.$imgMask.height = this.imgLoad.height * this.value;
+            this.imgBar.y = this.imgLoad.height * this.value +this.imgBg.y;
         }
     }
 
-    valueChange() {
+    private valueChange() {
         this.changeMask();
         if (this.$caller && this.$callback) {
             this.$callback.call(this.$caller, this.value);

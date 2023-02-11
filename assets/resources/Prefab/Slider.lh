@@ -11,14 +11,14 @@
       "_$type": "35b37bb8-b4f2-4360-8030-42b6c06ee038",
       "scriptPath": "../src/Util/Slider.ts",
       "isH": true,
-      "imgBg": {
-        "_$ref": "ahaxsrm4"
-      },
       "imgLoad": {
         "_$ref": "s1ozjtwx"
       },
       "imgBar": {
         "_$ref": "bfbtjaru"
+      },
+      "imgBg": {
+        "_$ref": "ahaxsrm4"
       },
       "value": 0.7
     }
@@ -32,7 +32,6 @@
       "y": 33,
       "width": 600,
       "height": 24,
-      "mouseEnabled": true,
       "skin": "res://92412e46-11c5-4860-b8c8-e4897f4d8ed2",
       "sizeGrid": "0,10,0,10,0",
       "_$child": [
@@ -60,22 +59,23 @@
               "sizeGrid": "0,10,0,10,0"
             }
           ]
-        },
-        {
-          "_$id": "bfbtjaru",
-          "_$type": "Image",
-          "name": "imgBar",
-          "x": 310,
-          "y": 12,
-          "width": 56,
-          "height": 76,
-          "pivotX": 28,
-          "pivotY": 38,
-          "anchorX": 0.5,
-          "anchorY": 0.5,
-          "skin": "res://01da6426-c4ab-46f6-b78d-22713b86d35a"
         }
       ]
+    },
+    {
+      "_$id": "bfbtjaru",
+      "_$type": "Image",
+      "name": "imgBar",
+      "x": 312,
+      "y": 45,
+      "width": 56,
+      "height": 76,
+      "pivotX": 28,
+      "pivotY": 38,
+      "mouseEnabled": true,
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "skin": "res://01da6426-c4ab-46f6-b78d-22713b86d35a"
     }
   ]
 }

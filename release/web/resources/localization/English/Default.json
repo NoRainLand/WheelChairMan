@@ -1,0 +1,18 @@
+[
+	{
+		"language": "English",
+		"dic": {
+			"GAME_START": "Game Start",
+			"OK": "OK",
+			"CANCEL": "CANCEL",
+			"SETTING": "Setting",
+			"BGM": "Bgm",
+			"SFX": "Sfx",
+			"SHAKE": "Shake",
+			"LANGUAGE": "Language",
+			"SUPPORT": "Support",
+			"ON":"ON",
+			"OFF":"OFF"
+		}
+	}
+]

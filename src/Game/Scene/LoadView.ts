@@ -11,7 +11,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-10 20:53:24
+ * @Last Modified time: 2023-02-11 14:30:28
  */
 const { regClass, property } = Laya;
 
@@ -54,7 +54,7 @@ export default class LoadView extends UIBase {
 
 
 
-        Timer.get(3000, this, () => {
+        Timer.get(300, this, () => {
             UIBaseMgr.open(SceneUrl.SettingView);
             // UIBaseMgr.showSureDialog("测试", "盛大范德萨分啊手动阀手动阀士大夫撒旦u尽快了解", this, this.sure, this.no);
             // UIBaseMgr.showTips("恭喜获得3000金币");

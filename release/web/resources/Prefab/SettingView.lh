@@ -1,0 +1,639 @@
+{
+  "_$ver": 1,
+  "_$id": "i34i01yy",
+  "_$type": "View",
+  "name": "SettingView",
+  "width": 1920,
+  "height": 1080,
+  "mouseEnabled": true,
+  "left": 0,
+  "right": 0,
+  "top": 0,
+  "bottom": 0,
+  "_$comp": [
+    {
+      "_$type": "9811079c-9340-49a7-8d8a-71570d70a98d",
+      "scriptPath": "../src/Game/Scene/SettingView.ts",
+      "imgClose": {
+        "_$ref": "fdfzx0c2"
+      },
+      "sfxSlider": {
+        "_$ref": "fesjb1bw"
+      },
+      "bgmSlider": {
+        "_$ref": "7ieswmrh"
+      },
+      "imgToggle": {
+        "_$ref": "zpoqyf70"
+      },
+      "imgLanguage": {
+        "_$ref": "iv4wae3k"
+      },
+      "imgLan": {
+        "_$ref": "7xbsput0"
+      },
+      "imgSupport": {
+        "_$ref": "ncrplokr"
+      }
+    },
+    {
+      "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
+      "scriptPath": "../src/UIBase/UIBaseData.ts",
+      "depth": 2,
+      "isSingleton": true
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "9xptgd3p",
+      "_$type": "Box",
+      "name": "Bg",
+      "width": 1920,
+      "height": 1080,
+      "alpha": 0.8,
+      "mouseEnabled": true,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "bottom": 0,
+      "bgColor": "rgba(0, 0, 0, 1)"
+    },
+    {
+      "_$id": "j10cq88r",
+      "_$type": "Image",
+      "name": "Main",
+      "x": 960,
+      "y": 540,
+      "width": 1200,
+      "height": 840,
+      "pivotX": 600,
+      "pivotY": 420,
+      "mouseEnabled": true,
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "skin": "resources/img/common/popup_bg.png",
+      "sizeGrid": "87,86,100,87,0",
+      "_$comp": [
+        {
+          "_$type": "Animator2D",
+          "controller": {
+            "_$uuid": "../ani2d/Dialog.mcc",
+            "_$type": "AnimationController2D"
+          },
+          "controllerLayers": [
+            {
+              "_$type": "AnimatorControllerLayer2D",
+              "name": "Base Layer",
+              "states": [
+                {
+                  "_$type": "AnimatorState2D",
+                  "name": "DialogOpen",
+                  "clipStart": 0,
+                  "clip": {
+                    "_$uuid": "../ani2d/DialogOpen.mc",
+                    "_$type": "AnimationClip2D"
+                  },
+                  "soloTransitions": []
+                }
+              ],
+              "defaultStateName": "DialogOpen"
+            }
+          ]
+        }
+      ],
+      "_$child": [
+        {
+          "_$id": "ecar9ad2",
+          "_$type": "Image",
+          "name": "Image",
+          "x": 349,
+          "y": -25.000000000000057,
+          "width": 503,
+          "height": 113,
+          "skin": "resources/img/common/popup_title_00.png",
+          "sizeGrid": "0,155,0,162,0",
+          "_$child": [
+            {
+              "_$id": "2xuaeh0e",
+              "_$type": "Label",
+              "name": "Label",
+              "x": 94,
+              "y": 14.000000000000014,
+              "width": 315,
+              "height": 85,
+              "text": "Setting",
+              "fontSize": 50,
+              "color": "rgba(221, 198, 171, 1)",
+              "align": "center",
+              "valign": "middle",
+              "overflow": "visible",
+              "leading": 0,
+              "padding": "0,0,0,0",
+              "_$comp": [
+                {
+                  "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                  "scriptPath": "../src/Localization/LocalizationText.ts",
+                  "localizationKey": "SETTING"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "6g7o14pq",
+          "_$type": "Box",
+          "name": "boxSound",
+          "x": 108.00000000000011,
+          "y": 129,
+          "width": 985,
+          "height": 131,
+          "mouseEnabled": true,
+          "_$child": [
+            {
+              "_$id": "z0myrotp",
+              "_$type": "Image",
+              "name": "Image",
+              "x": 26,
+              "y": 43,
+              "width": 40,
+              "height": 50,
+              "_filters": [
+                {
+                  "_$type": "ColorFilter",
+                  "_color": "rgba(135, 120, 98, 1)",
+                  "_brightness": null,
+                  "_contrast": null,
+                  "_saturation": null,
+                  "_hue": null
+                }
+              ],
+              "skin": "resources/img/settingview/setting_icon_music.png"
+            },
+            {
+              "_$id": "wnbqixzc",
+              "_$type": "Label",
+              "name": "Label",
+              "x": 81,
+              "y": 39,
+              "width": 134,
+              "height": 54,
+              "text": "Bgm",
+              "fontSize": 30,
+              "color": "rgba(135, 120, 98, 1)",
+              "valign": "middle",
+              "overflow": "visible",
+              "leading": 0,
+              "padding": "0,0,0,0",
+              "_$comp": [
+                {
+                  "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                  "scriptPath": "../src/Localization/LocalizationText.ts",
+                  "localizationKey": "BGM"
+                }
+              ]
+            },
+            {
+              "_$id": "7ieswmrh",
+              "_$prefab": "Slider.lh",
+              "name": "bgmSlider",
+              "active": true,
+              "x": 217,
+              "y": 21,
+              "width": 660,
+              "height": 90,
+              "pivotX": 0,
+              "pivotY": 0,
+              "scaleX": 1,
+              "scaleY": 1,
+              "skewX": 0,
+              "skewY": 0,
+              "rotation": 0,
+              "visible": true,
+              "alpha": 1,
+              "zOrder": 0,
+              "blendMode": null,
+              "mouseEnabled": true,
+              "mouseThrough": false,
+              "hitTestPrior": false,
+              "drawCallOptimize": false,
+              "cacheAs": "none",
+              "anchorX": null,
+              "anchorY": null,
+              "left": null,
+              "right": null,
+              "top": null,
+              "bottom": null,
+              "centerX": null,
+              "centerY": null,
+              "disabled": null,
+              "gray": null
+            }
+          ]
+        },
+        {
+          "_$id": "oycjhir8",
+          "_$type": "Box",
+          "name": "boxSfx",
+          "x": 108.00000000000011,
+          "y": 275.99999999999994,
+          "width": 985,
+          "height": 131,
+          "mouseEnabled": true,
+          "_$child": [
+            {
+              "_$id": "702ko03s",
+              "_$type": "Image",
+              "name": "Image",
+              "x": 26,
+              "y": 43,
+              "width": 46,
+              "height": 46,
+              "_filters": [
+                {
+                  "_$type": "ColorFilter",
+                  "_color": "rgba(135, 120, 98, 1)",
+                  "_brightness": null,
+                  "_contrast": null,
+                  "_saturation": null,
+                  "_hue": null
+                }
+              ],
+              "skin": "resources/img/settingview/setting_icon_sound.png"
+            },
+            {
+              "_$id": "5nuvvg2m",
+              "_$type": "Label",
+              "name": "Label",
+              "x": 81,
+              "y": 39,
+              "width": 134,
+              "height": 54,
+              "text": "Sfx",
+              "fontSize": 30,
+              "color": "rgba(135, 120, 98, 1)",
+              "valign": "middle",
+              "overflow": "visible",
+              "leading": 0,
+              "padding": "0,0,0,0",
+              "_$comp": [
+                {
+                  "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                  "scriptPath": "../src/Localization/LocalizationText.ts",
+                  "localizationKey": "SFX"
+                }
+              ]
+            },
+            {
+              "_$id": "dmi1jh6i",
+              "_$type": "Box",
+              "name": "Slider(1)",
+              "active": false,
+              "x": 163,
+              "y": 21.000000000000057,
+              "width": 660,
+              "height": 90,
+              "visible": false,
+              "mouseEnabled": true,
+              "bgColor": "rgba(255, 255, 255, 1)",
+              "_$child": [
+                {
+                  "_$id": "4d2n040s",
+                  "_$type": "Image",
+                  "name": "Image",
+                  "x": 30,
+                  "y": 33,
+                  "width": 600,
+                  "height": 24,
+                  "skin": "resources/img/settingview/slidebar_handle_bg.png",
+                  "sizeGrid": "0,10,0,10,0",
+                  "_$child": [
+                    {
+                      "_$id": "1u88lt6n",
+                      "_$type": "Image",
+                      "name": "imgLoad",
+                      "y": -5.684341886080802e-14,
+                      "width": 600,
+                      "height": 24,
+                      "mask": {
+                        "_$ref": "8lo1rvta"
+                      },
+                      "skin": "resources/img/settingview/slidebar_handle_fill.png",
+                      "sizeGrid": "0,10,0,10,0",
+                      "_$child": [
+                        {
+                          "_$id": "8lo1rvta",
+                          "_$type": "Image",
+                          "name": "imgMask",
+                          "y": -1.1368683772161603e-13,
+                          "width": 600,
+                          "height": 24,
+                          "skin": "resources/img/settingview/slidebar_handle_fill.png",
+                          "sizeGrid": "0,10,0,10,0"
+                        }
+                      ]
+                    },
+                    {
+                      "_$id": "xmeagl1y",
+                      "_$type": "Image",
+                      "name": "imgBar",
+                      "x": 575.0000000000003,
+                      "y": -25.999999999999886,
+                      "width": 56,
+                      "height": 76,
+                      "mouseEnabled": true,
+                      "skin": "resources/img/settingview/slidebar_handle_point.png"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "_$id": "fesjb1bw",
+              "_$prefab": "Slider.lh",
+              "_$var": true,
+              "name": "sfxSlider",
+              "active": true,
+              "x": 217,
+              "y": 21,
+              "width": 660,
+              "height": 90,
+              "pivotX": 0,
+              "pivotY": 0,
+              "scaleX": 1,
+              "scaleY": 1,
+              "skewX": 0,
+              "skewY": 0,
+              "rotation": 0,
+              "visible": true,
+              "alpha": 1,
+              "zOrder": 0,
+              "blendMode": null,
+              "mouseEnabled": true,
+              "mouseThrough": false,
+              "hitTestPrior": false,
+              "drawCallOptimize": false,
+              "cacheAs": "none",
+              "anchorX": null,
+              "anchorY": null,
+              "left": null,
+              "right": null,
+              "top": null,
+              "bottom": null,
+              "centerX": null,
+              "centerY": null,
+              "disabled": null,
+              "gray": null,
+              "bgColor": null
+            }
+          ]
+        },
+        {
+          "_$id": "x9hqict9",
+          "_$type": "Box",
+          "name": "boxShake",
+          "x": 108.00000000000011,
+          "y": 423.0000000000001,
+          "width": 985,
+          "height": 131,
+          "mouseEnabled": true,
+          "_$child": [
+            {
+              "_$id": "d35ocplk",
+              "_$type": "Image",
+              "name": "Image",
+              "x": 26,
+              "y": 43,
+              "width": 46,
+              "height": 46,
+              "_filters": [
+                {
+                  "_$type": "ColorFilter",
+                  "_color": "rgba(135, 120, 98, 1)",
+                  "_brightness": null,
+                  "_contrast": null,
+                  "_saturation": null,
+                  "_hue": null
+                }
+              ],
+              "skin": "resources/img/settingview/setting_icon_push.png"
+            },
+            {
+              "_$id": "gn4tafew",
+              "_$type": "Label",
+              "name": "Label",
+              "x": 81,
+              "y": 39,
+              "width": 134,
+              "height": 54,
+              "text": "Shake",
+              "fontSize": 30,
+              "color": "rgba(135, 120, 98, 1)",
+              "valign": "middle",
+              "overflow": "visible",
+              "leading": 0,
+              "padding": "0,0,0,0",
+              "_$comp": [
+                {
+                  "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                  "scriptPath": "../src/Localization/LocalizationText.ts",
+                  "localizationKey": "SHAKE"
+                }
+              ]
+            },
+            {
+              "_$id": "zpoqyf70",
+              "_$type": "Image",
+              "name": "imgToggle",
+              "x": 240,
+              "y": 29,
+              "width": 150,
+              "height": 74,
+              "mouseEnabled": true,
+              "skin": "resources/img/settingview/toggle_switch_bg.png",
+              "sizeGrid": "0,30,0,30,0",
+              "_$child": [
+                {
+                  "_$id": "8t94ozqu",
+                  "_$type": "Label",
+                  "name": "Label",
+                  "x": 85,
+                  "y": 10,
+                  "width": 55,
+                  "height": 57,
+                  "text": "OFF",
+                  "fontSize": 28,
+                  "color": "rgba(110, 96, 78, 1)",
+                  "align": "center",
+                  "valign": "middle",
+                  "overflow": "visible",
+                  "leading": 0,
+                  "padding": "0,0,0,0",
+                  "_$comp": [
+                    {
+                      "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                      "scriptPath": "../src/Localization/LocalizationText.ts",
+                      "localizationKey": "OFF"
+                    }
+                  ]
+                },
+                {
+                  "_$id": "1vmqp7wq",
+                  "_$type": "Label",
+                  "name": "Label(1)",
+                  "x": 9,
+                  "y": 10,
+                  "width": 55,
+                  "height": 57,
+                  "text": "ON",
+                  "fontSize": 26,
+                  "color": "rgba(3, 172, 151, 1)",
+                  "align": "center",
+                  "valign": "middle",
+                  "overflow": "visible",
+                  "leading": 0,
+                  "padding": "0,0,0,0",
+                  "_$comp": [
+                    {
+                      "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                      "scriptPath": "../src/Localization/LocalizationText.ts",
+                      "localizationKey": "ON"
+                    }
+                  ]
+                },
+                {
+                  "_$id": "qj1sn1fg",
+                  "_$type": "Image",
+                  "name": "imgItem",
+                  "x": 8,
+                  "y": 6,
+                  "width": 60,
+                  "height": 68,
+                  "skin": "resources/img/settingview/toggle_switch_on.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "wyhjnhm4",
+          "_$type": "Box",
+          "name": "boxItem",
+          "x": 108.00000000000011,
+          "y": 570.0000000000001,
+          "width": 985,
+          "height": 131,
+          "mouseEnabled": true,
+          "_$child": [
+            {
+              "_$id": "iv4wae3k",
+              "_$type": "Image",
+              "name": "imgLanguage",
+              "x": 138,
+              "width": 310,
+              "height": 140,
+              "centerX": -200,
+              "skin": "resources/img/common/btn_color_brown.png",
+              "sizeGrid": "0,36,0,28,0",
+              "_$child": [
+                {
+                  "_$id": "7xbsput0",
+                  "_$type": "Image",
+                  "name": "imgLan",
+                  "x": 35,
+                  "y": 32.99999999999977,
+                  "width": 71,
+                  "height": 65,
+                  "skin": "resources/img/settingview/language_small_chn.png"
+                },
+                {
+                  "_$id": "4o9r4191",
+                  "_$type": "Label",
+                  "name": "Label",
+                  "x": 125.99999999999989,
+                  "y": 29,
+                  "width": 162,
+                  "height": 65,
+                  "centerY": -9,
+                  "text": "Language",
+                  "fontSize": 34,
+                  "color": "rgba(243, 222, 159, 1)",
+                  "align": "center",
+                  "valign": "middle",
+                  "overflow": "visible",
+                  "leading": 0,
+                  "padding": "0,0,0,0",
+                  "_$comp": [
+                    {
+                      "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                      "scriptPath": "../src/Localization/LocalizationText.ts",
+                      "localizationKey": "LANGUAGE"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "_$id": "ncrplokr",
+              "_$type": "Image",
+              "name": "imgSupport",
+              "x": 538,
+              "width": 310,
+              "height": 140,
+              "centerX": 200,
+              "skin": "resources/img/common/btn_color_blue.png",
+              "sizeGrid": "0,39,0,31,0",
+              "_$child": [
+                {
+                  "_$id": "kg02oc89",
+                  "_$type": "Image",
+                  "name": "Image",
+                  "x": 39,
+                  "y": 35,
+                  "width": 53,
+                  "height": 52,
+                  "skin": "resources/img/settingview/setting_icon_support.png"
+                },
+                {
+                  "_$id": "tmw9jwyt",
+                  "_$type": "Label",
+                  "name": "Label(1)",
+                  "x": 119.99999999999989,
+                  "y": 29,
+                  "width": 149,
+                  "height": 65,
+                  "centerY": -9,
+                  "text": "Support",
+                  "fontSize": 34,
+                  "color": "rgba(200, 220, 255, 1)",
+                  "align": "center",
+                  "valign": "middle",
+                  "overflow": "visible",
+                  "leading": 0,
+                  "padding": "0,0,0,0",
+                  "_$comp": [
+                    {
+                      "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                      "scriptPath": "../src/Localization/LocalizationText.ts",
+                      "localizationKey": "SUPPORT"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "fdfzx0c2",
+          "_$type": "Image",
+          "name": "imgClose",
+          "x": 1091.0000000000005,
+          "y": -12,
+          "width": 104,
+          "height": 116,
+          "mouseEnabled": true,
+          "skin": "resources/img/common/popup_btn_close.png"
+        }
+      ]
+    }
+  ]
+}
