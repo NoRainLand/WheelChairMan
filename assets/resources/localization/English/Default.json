@@ -11,8 +11,15 @@
 			"SHAKE": "Shake",
 			"LANGUAGE": "Language",
 			"SUPPORT": "Support",
-			"ON":"ON",
-			"OFF":"OFF"
+			"ON": "ON",
+			"OFF": "OFF",
+			"CONGRATULATIONS": "Congratulations",
+			"OPENNOW": "OpenNow",
+			"LUCKYBOXBRONZE": "Bronze Luck Box",
+			"LUCKYBOXSILVER": "Silver Luck Box",
+			"LUCKYBOXGOLD": "Gold Luck Box",
+			"LUCKYBOXDIAMOND": "Diamond Luck Box",
+			"LUCKYBOXPLATINUM": "Platinum Luck Box"
 		}
 	}
 ]

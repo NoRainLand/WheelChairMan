@@ -1,0 +1,8 @@
+#	幸运宝箱配置	策划备注：
+#	宝箱类型	宝箱最小获取	宝箱最大获取	宝箱获取类型
+#	luckyboxType	luckyboxGetMin	luckyboxGetMax	luckyboxGetType
+	luckybox_bronze	100	200	0
+	luckybox_silver	150	300	0
+	luckybox_gold	250	500	0
+	luckybox_diamond	10	20	1
+	luckybox_platinum	20	50	1

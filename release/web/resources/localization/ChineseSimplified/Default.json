@@ -11,8 +11,15 @@
 			"SHAKE": "震动",
 			"LANGUAGE": "语言",
 			"SUPPORT": "支持",
-			"ON":"开",
-			"OFF":"关"
+			"ON": "开",
+			"OFF": "关",
+			"CONGRATULATIONS": "恭喜",
+			"OPENNOW": "立刻打开",
+			"LUCKYBOXBRONZE": "青铜幸运宝箱",
+			"LUCKYBOXSILVER": "白银幸运宝箱",
+			"LUCKYBOXGOLD": "黄金幸运宝箱",
+			"LUCKYBOXDIAMOND": "钻石幸运宝箱",
+			"LUCKYBOXPLATINUM": "白金幸运宝箱"
 		}
 	}
 ]

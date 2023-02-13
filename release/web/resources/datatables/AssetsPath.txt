@@ -1,0 +1,4 @@
+#	资源配置路径表			
+#	Id	资源名称	备注	AssetPath
+#	number	string	string	string
+	100	GameEntry	初始场景	assets/scene/GameEntry.ls

@@ -16,9 +16,9 @@ export default class MainView extends UIBase {
 
 
 
-    
-    constructor(){super()}
 
-    
+    constructor() { super() }
+
+
 
 }

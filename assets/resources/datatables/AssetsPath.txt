@@ -1,0 +1,43 @@
+#	资源配置路径表				
+#	Id	资源名称	备注	路径	是否执行预加载
+#	number	string	string	string 	number
+$	id	name	msg	path	preload
+#	场景				
+	100	GameEntry	初始场景	assets\scene\GameEntry.ls	0
+	101	GameScene	游戏场景	assets\scene\GameScene.ls	1
+#	本地化				
+	501	ChineseSimplified	简体中文	assets\resources\localization\ChineseSimplified\Default.json	1
+	502	English	英文	assets\resources\localization\English\Default.json	1
+#	界面				
+	1001	DebugView	调试界面	assets\resources\prefab\DebugView.lh	1
+	1002	Toggle	单选	assets\resources\prefab\Toggle.lh	1
+	1003	Slider	滑条	assets\resources\prefab\Slider.lh	1
+	1004	TipsView	提示界面	assets\resources\prefab\TipsView.lh	1
+	1005	SureView	确认提示框	assets\resources\prefab\SureView.lh	1
+	1006	LoadView	加载界面	assets\resources\prefab\LoadView.lh	1
+	1007	CompleteView	胜利界面	assets\resources\prefab\CompleteView.lh	1
+	1008	GameView	游戏界面	assets\resources\prefab\GameView.lh	1
+	1009	LanguageView	语言界面	assets\resources\prefab\LanguageView.lh	1
+	1010	LevelUpView	升级界面	assets\resources\prefab\LevelUpView.lh	1
+	1011	LoseView	失败界面	assets\resources\prefab\LoseView.lh	1
+	1012	LuckyBoxView	幸运宝箱界面	assets\resources\prefab\LuckyBoxView.lh	1
+	1013	MainView	主界面	assets\resources\prefab\MainView.lh	1
+	1014	MyInfoView	用户信息界面	assets\resources\prefab\MyInfoView.lh	1
+	1015	PauseView	暂停界面	assets\resources\prefab\PauseView.lh	1
+	1016	PrivacyAgreementView	隐私协议界面	assets\resources\prefab\PrivacyAgreementView.lh	1
+	1017	RankingView	排行榜	assets\resources\prefab\RankingView.lh	1
+	1018	SettingView	设置界面	assets\resources\prefab\SettingView.lh	1
+	1019	ShopView	商城界面	assets\resources\prefab\ShopView.lh	1
+	1020	SignInView	签到界面	assets\resources\prefab\SignInView.lh	1
+#	2d图片资源				
+	2001	ChineseSimplifiedFlag	中国国旗	assets\resources\img\languageview\language_chn.png	1
+	2002	EnglishFlag	美国国旗	assets\resources\img\languageview\language_eng.png	1
+	2003	luckybox_bronze	青铜宝箱	assets\resources\img\luckyboxview\luckybox_bronze.png	1
+	2004	luckybox_silver	白银宝箱	assets\resources\img\luckyboxview\luckybox_silver.png	1
+	2005	luckybox_gold	黄金宝箱	assets\resources\img\luckyboxview\luckybox_gold.png	1
+	2006	luckybox_diamond	钻石宝箱	assets\resources\img\luckyboxview\luckybox_diamond.png	1
+	2007	luckybox_platinum	白金宝箱	assets\resources\img\luckyboxview\luckybox_platinum.png	1
+	2008	icon_rank_gd	第一名	assets\resources\img\rankingview\icon_rank_gd.png	1
+	2009	icon_rank_sv	第二名	assets\resources\img\rankingview\icon_rank_sv.png	1
+	2010	icon_rank_bz	第三名	assets\resources\img\rankingview\icon_rank_bz.png	1
+	2011	icon_rank_default	其他名次	assets\resources\img\rankingview\icon_rank_default.png	1

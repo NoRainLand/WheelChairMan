@@ -1,0 +1,204 @@
+{
+  "_$ver": 1,
+  "_$id": "7ascrvvo",
+  "_$type": "View",
+  "name": "LuckBoxView",
+  "width": 1920,
+  "height": 1080,
+  "mouseEnabled": true,
+  "left": 0,
+  "right": 0,
+  "top": 0,
+  "bottom": 0,
+  "_$comp": [
+    {
+      "_$type": "d94dafff-05f0-4479-9a1a-ab9861a24025",
+      "scriptPath": "../src/Game/Scene/LuckyBoxView.ts",
+      "imgLight": {
+        "_$ref": "mwvgm1qr"
+      },
+      "imgBox": {
+        "_$ref": "845irtoe"
+      },
+      "imgClose": {
+        "_$ref": "tv5cggxx"
+      },
+      "imgOpen": {
+        "_$ref": "xglfl7nq"
+      },
+      "txtMsg": {
+        "_$ref": "5ag4vtsc"
+      }
+    },
+    {
+      "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
+      "scriptPath": "../src/UIBase/UIBaseData.ts",
+      "depth": 2,
+      "isSingleton": true
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "o9lk2gtk",
+      "_$type": "Box",
+      "name": "Bg",
+      "width": 1920,
+      "height": 1080,
+      "alpha": 0.8,
+      "mouseEnabled": true,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "bottom": 0,
+      "bgColor": "rgba(0, 0, 0, 1)"
+    },
+    {
+      "_$id": "0wor5077",
+      "_$type": "Box",
+      "name": "Main",
+      "width": 1920,
+      "height": 1080,
+      "mouseEnabled": true,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "bottom": 0,
+      "_$child": [
+        {
+          "_$id": "mwvgm1qr",
+          "_$type": "Image",
+          "name": "imgLight",
+          "x": 289,
+          "y": -131,
+          "width": 1342,
+          "height": 1342,
+          "_filters": [
+            {
+              "_$type": "ColorFilter",
+              "_color": "rgba(143, 129, 9, 1)",
+              "_brightness": null,
+              "_contrast": null,
+              "_saturation": null,
+              "_hue": null
+            }
+          ],
+          "centerX": 0,
+          "centerY": 0,
+          "skin": "res://b2d5cad3-b45b-4b00-8e00-9211a993a063"
+        },
+        {
+          "_$id": "845irtoe",
+          "_$type": "Image",
+          "name": "imgBox",
+          "x": 809,
+          "y": 373,
+          "width": 305,
+          "height": 224,
+          "centerX": 1,
+          "centerY": -55,
+          "skin": "res://2542b6f0-2695-43a4-8387-943459c6a738"
+        },
+        {
+          "_$id": "tv5cggxx",
+          "_$type": "Image",
+          "name": "imgClose",
+          "x": 1470,
+          "y": 108,
+          "width": 104,
+          "height": 116,
+          "mouseEnabled": true,
+          "skin": "res://79d501c7-75ed-41c9-93b2-cc025caeba59"
+        },
+        {
+          "_$id": "grhgdn6i",
+          "_$type": "Image",
+          "name": "Image(1)",
+          "x": 698,
+          "y": 153,
+          "width": 524,
+          "height": 143,
+          "skin": "res://f69edd39-a094-4448-845b-f15d9c0cead1",
+          "_$child": [
+            {
+              "_$id": "krrn310s",
+              "_$type": "Label",
+              "name": "Label",
+              "x": 77,
+              "y": 2,
+              "width": 356,
+              "height": 93,
+              "text": "Congratulations",
+              "fontSize": 40,
+              "color": "rgba(255, 251, 188, 1)",
+              "align": "center",
+              "valign": "middle",
+              "overflow": "visible",
+              "leading": 0,
+              "padding": "0,0,0,0",
+              "_$comp": [
+                {
+                  "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                  "scriptPath": "../src/Localization/LocalizationText.ts",
+                  "localizationKey": "CONGRATULATIONS"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "xglfl7nq",
+          "_$type": "Image",
+          "name": "imgOpen",
+          "x": 794,
+          "y": 721,
+          "width": 332,
+          "height": 133,
+          "mouseEnabled": true,
+          "skin": "res://9554605f-8645-4148-ad18-ce84e8b52ae2",
+          "sizeGrid": "0,37,0,28,0",
+          "_$child": [
+            {
+              "_$id": "xq04lasy",
+              "_$type": "Text",
+              "name": "txtOpen",
+              "x": 33,
+              "y": 13,
+              "width": 265,
+              "height": 88,
+              "text": "Open Now",
+              "fontSize": 40,
+              "color": "rgba(255, 251, 188, 1)",
+              "align": "center",
+              "valign": "middle",
+              "leading": 0,
+              "overflow": "visible",
+              "_$comp": [
+                {
+                  "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                  "scriptPath": "../src/Localization/LocalizationText.ts",
+                  "localizationKey": "OPENNOW"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "5ag4vtsc",
+          "_$type": "Text",
+          "name": "txtMsg",
+          "x": 630,
+          "y": 616,
+          "width": 671,
+          "height": 84,
+          "text": "GOLD LUCK BOX",
+          "fontSize": 50,
+          "color": "rgba(242, 169, 54, 1)",
+          "align": "center",
+          "valign": "middle",
+          "leading": 0,
+          "overflow": "visible"
+        }
+      ]
+    }
+  ]
+}

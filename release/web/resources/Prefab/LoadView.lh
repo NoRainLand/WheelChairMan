@@ -39,7 +39,7 @@
       "right": 0,
       "top": 0,
       "bottom": 0,
-      "skin": "resources/loadSceneImg/background.png"
+      "skin": "resources/loadview/background.png"
     },
     {
       "_$id": "4hyja2ht",
@@ -51,7 +51,7 @@
       "height": 58,
       "bottom": 220,
       "centerX": 21,
-      "skin": "resources/loadSceneImg/slider_loading_bg.png",
+      "skin": "resources/loadview/slider_loading_bg.png",
       "sizeGrid": "0,27,0,31,0",
       "_$child": [
         {
@@ -67,7 +67,7 @@
           },
           "bottom": 18,
           "centerX": 0,
-          "skin": "resources/loadSceneImg/slider_loading_fill.png",
+          "skin": "resources/loadview/slider_loading_fill.png",
           "sizeGrid": "0,28,0,22,0",
           "_$child": [
             {
@@ -76,7 +76,7 @@
               "name": "imgMask",
               "width": 724,
               "height": 33,
-              "skin": "resources/loadSceneImg/slider_loading_fill.png",
+              "skin": "resources/loadview/slider_loading_fill.png",
               "sizeGrid": "0,28,0,22,0"
             }
           ]
@@ -129,7 +129,7 @@
       "height": 51,
       "left": 0,
       "top": 0,
-      "skin": "resources/loadSceneImg/NoRainLand.png"
+      "skin": "resources/loadview/NoRainLand.png"
     }
   ]
 }
