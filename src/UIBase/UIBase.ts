@@ -5,7 +5,7 @@ import UIBaseMgr from "./UIBaseMgr";
  * @Author: NoRain 
  * @Date: 2023-02-08 10:03:24 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-11 14:25:49
+ * @Last Modified time: 2023-02-14 09:51:14
  */
 const { regClass, property } = Laya;
 
@@ -38,8 +38,8 @@ export default class UIBase extends Laya.Script {
     /**事件 */
     private $event = new Map;
 
-    /**界面名字 */
-    $sceneName: string = "";
+    /**资源的唯一ID */
+    $assetsId: number;
 
     constructor() {
         super();
@@ -115,7 +115,7 @@ export default class UIBase extends Laya.Script {
 
     /**关闭自身 */
     close() {
-        UIBaseMgr.close(this.$sceneName,this.id);
+        UIBaseMgr.close(this.$assetsId,this.id);
     }
 
 

@@ -52,6 +52,5 @@ export default class ProjectConfig {
 
 
 
-    /**平台 */
-    // static readonly 
+   
 }

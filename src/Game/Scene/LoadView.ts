@@ -1,4 +1,5 @@
 import UIBase from "../../UIBase/UIBase";
+import UIBaseMgr from "../../UIBase/UIBaseMgr";
 import ResLoader from "../../Util/ResLoader";
 import StringUtil from "../../Util/StringUtil";
 import Image = Laya.Image;
@@ -8,7 +9,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-13 19:45:26
+ * @Last Modified time: 2023-02-14 10:05:24
  */
 const { regClass, property } = Laya;
 
@@ -51,6 +52,7 @@ export default class LoadView extends UIBase {
     /**加载完成可以进入主界面 */
     onCompleted() {
         console.log("load_conCompleted");
+        UIBaseMgr.showDebug();
     }
 
 

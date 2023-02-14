@@ -1,7 +1,6 @@
 
 import ProjectConfig from "./Config/ProjectConfig";
 import UIBaseMgr from "./UIBase/UIBaseMgr";
-import SceneUrl from "./Url/SceneUrl";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
 import Box = Laya.Box;
@@ -14,7 +13,7 @@ import Sprite = Laya.Sprite;
  * @Author: NoRain 
  * @Date: 2023-02-06 16:41:32 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-10 10:27:52
+ * @Last Modified time: 2023-02-14 09:48:45
  */
 const { regClass, property } = Laya;
 
@@ -47,13 +46,10 @@ export class GameEntry extends Laya.Script {
 
 
         this.GameEntry = this.owner as Scene;
-
-
         this.UIBase = this.GameEntry.getChildByName("UIBase") as Box;
         UIBaseMgr.init(this.UIBase);
 
 
-
-        UIBaseMgr.open(SceneUrl.LoadView);
+        UIBaseMgr.openLoadView();
     }
 }

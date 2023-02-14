@@ -2,10 +2,11 @@
  * @Author: NoRain 
  * @Date: 2023-02-08 10:25:16 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-11 14:25:45
+ * @Last Modified time: 2023-02-14 10:13:04
  */
-import ProjectConfig from "../Config/ProjectConfig";
+import { SceneEnum } from "../Enum/SceneEnum";
 import SceneUrl from "../Url/SceneUrl";
+import ResLoader from "../Util/ResLoader";
 import UIBase from "./UIBase";
 import UIBaseData from "./UIBaseData";
 
@@ -18,12 +19,13 @@ import Image = Laya.Image;
 import TextInput = Laya.TextInput;
 import Sprite = Laya.Sprite;
 import Pool = Laya.Pool;
+import Handler = Laya.Handler;
 
 
 /**页面管理 */
 export default class UIBaseMgr {
     /**页面预制件池子 */
-    private static $scenes: Map<string, PrefabImpl> = new Map();
+    private static $scenes: Map<number, PrefabImpl> = new Map();
 
 
     /**层级根节点 */
@@ -37,14 +39,15 @@ export default class UIBaseMgr {
     /*3DUI界面 */
     static $3DUI: Box;
 
-
-
+    /**是否已经调用过openLoadView */
+    private static $isOpenLoadView: boolean = false;
 
     /**页面脚本池子 */
-    private static $sceneScriptPool: Map<string, UIBase | Map<string, UIBase>> = new Map();
+    private static $sceneScriptPool: Map<number, UIBase | Map<string, UIBase>> = new Map();
 
 
-
+    /**对象池标记 */
+    private static readonly $sign: string = "View"
 
     /**初始化 */
     static init(UIBase: Box) {
@@ -53,8 +56,18 @@ export default class UIBaseMgr {
         this.$TipsUI = this.$UIBase.getChildByName("TipsUI") as Box;
         this.$MainUI = this.$UIBase.getChildByName("MainUI") as Box;
         this.$3DUI = this.$UIBase.getChildByName("3DUI") as Box;
-        ProjectConfig.isDebug && this.initDebugScene();
     }
+
+    /**加载load界面 */
+    static openLoadView() {
+        if (!this.$isOpenLoadView) {
+            this.$isOpenLoadView = true;
+            ResLoader.load(SceneUrl.LoadView, Handler.create(this, () => {
+                this.initScene(ResLoader.getResClose(SceneUrl.LoadView), SceneEnum.LoadView);
+            }))
+        }
+    }
+
 
     /**
      * 打开一个场景
@@ -63,10 +76,10 @@ export default class UIBaseMgr {
      * @param caller 作用域
      * @param callback 回调
      */
-    static open(sceneName: string, param?: any, caller?: any, callback?: Function) {
+    static open(sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
         let script = this.$sceneScriptPool.get(sceneName);
         if (!script || script instanceof UIBase) {
-            let scene = Pool.getItem(sceneName) as Scene;
+            let scene = Pool.getItem(this.$sign + sceneName) as Scene;
             if (scene) {
                 this.initScene(scene, sceneName, param, caller, callback);
             } else {
@@ -82,7 +95,7 @@ export default class UIBaseMgr {
     }
 
     /**初始化界面 */
-    private static initScene(scene: Scene, sceneName: string, param?: any, caller?: any, callback?: Function) {
+    private static initScene(scene: Scene, sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
         let base: UIBase = scene.getComponent(UIBase);
         let data: UIBaseData = scene.getComponent(UIBaseData);
         Object.assign(base, data);
@@ -104,7 +117,7 @@ export default class UIBaseMgr {
                 break;
         }
         base.$param = param;
-        base.$sceneName = sceneName;
+        base.$assetsId = sceneName;
         base.isOpen = true;
 
 
@@ -131,14 +144,14 @@ export default class UIBaseMgr {
 
 
     /**关闭页面 */
-    static close(sceneName: string, id?: number) {
+    static close(sceneName: SceneEnum, id?: number) {
         let scriptOrMap = this.$sceneScriptPool.get(sceneName);
         if (scriptOrMap && scriptOrMap instanceof UIBase) {
             scriptOrMap.isOpen = false;
             scriptOrMap.owner.removeSelf();
             scriptOrMap.onClosed();
-
             this.$sceneScriptPool.set(sceneName, void 0);
+            Pool.recover(this.$sign + sceneName, scriptOrMap.owner);
         } else if (scriptOrMap && scriptOrMap instanceof Map) {
             if (id) {
                 let base = scriptOrMap.get(id.toString()) as UIBase;
@@ -147,6 +160,7 @@ export default class UIBaseMgr {
                     base.owner.removeSelf();
                     base.onClosed();
                     scriptOrMap.set(id.toString(), void 0);
+                    Pool.recover(this.$sign + sceneName, base.owner);
                     this.$sceneScriptPool.set(sceneName, scriptOrMap);
                 }
             }
@@ -154,7 +168,7 @@ export default class UIBaseMgr {
     }
 
     /**是否打开某个界面 */
-    static isOpen(sceneName: string, id?: number): boolean {
+    static isOpen(sceneName: SceneEnum, id?: number): boolean {
         let scriptOrMap = this.$sceneScriptPool.get(sceneName);
         if (scriptOrMap && scriptOrMap instanceof UIBase) {
             return scriptOrMap.isOpen;
@@ -167,15 +181,20 @@ export default class UIBaseMgr {
     }
 
     /**加载场景 */
-    private static loadScene(sceneName: string, param?: any, caller?: any, callback?: Function) {
-        Laya.loader.load(SceneUrl.SceneUrlBase + sceneName + SceneUrl.sceneUrlSuffix).then((prefab: PrefabImpl) => {
-            this.$scenes.set(sceneName, prefab);
+    private static loadScene(sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
+        this.$scenes.set(sceneName, ResLoader.getResById(sceneName));
+        if (this.$scenes.get(sceneName)) {
             this.open(sceneName, param, caller, callback);
-        })
+        }
     }
 
     static initDebugScene() {
-        this.open(SceneUrl.DebugView);
+        this.open(SceneEnum.DebugView);
+    }
+
+    /**打开一个调试界面 */
+    static showDebug() {
+        this.open(SceneEnum.DebugView);
     }
 
     /**
@@ -183,7 +202,7 @@ export default class UIBaseMgr {
      * @param msg 信息
      */
     static showTips(msg: string) {
-        this.open(SceneUrl.TipsView, msg);
+        this.open(SceneEnum.TipsView, msg);
     }
     /**
      * 打开一个确认取消面板
@@ -195,7 +214,7 @@ export default class UIBaseMgr {
      */
     static showSureDialog(title: string, msg: string, caller: any, sureCallback: Function, cancelCallBack?: Function) {
         let data = { title: title, msg: msg, caller: caller, sureCallback: sureCallback, cancelCallBack: cancelCallBack };
-        this.open(SceneUrl.SureDialog, data);
+        this.open(SceneEnum.SureView, data);
     }
 
 }

@@ -14,7 +14,7 @@ import TextResource = Laya.TextResource;
  * @Author: NoRain 
  * @Date: 2023-02-12 15:09:35 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-13 21:15:50
+ * @Last Modified time: 2023-02-14 10:22:34
  */
 /**资源加载器 */
 export default class ResLoader {
@@ -31,15 +31,25 @@ export default class ResLoader {
             _onProgress && (_onProgress.args = [1], _onProgress.run());
         } else {
             if (url instanceof Array) {
-                url.filter(Boolean); //清理空值
+                url.filter((item) => { item != "" }); //清理空值
             }
             return Laya.loader.load(url, onCompleted, _onProgress);
         }
     }
     /**获取缓存 */
     static getRes(url: string): any {
-        if (!url) {
+        if (url) {
             return Laya.loader.getRes(url);
+        }
+    }
+
+    /**获取克隆 */
+    static getResClose(url: string): any {
+        if (url) {
+            let obj = Laya.loader.getRes(url);
+            if (obj && obj.create) {
+                return obj.create();
+            }
         }
     }
 
@@ -57,7 +67,7 @@ export default class ResLoader {
     private static isLoad: boolean = false;
 
     /**游戏所有资源地址 */
-    private static $dicAssetsPath = [];
+    private static $dicAssetsPath: Map<number, Object> = new Map();
 
     /**加载完成一个 */
     private static $load_one_onCompleted() {
@@ -83,28 +93,42 @@ export default class ResLoader {
                 let str = arr.find((item) => {
                     return item.indexOf("$") != -1;
                 })
-                str = str.replace("\r", "");
-                str = str.replace("$", "");
-                let arr2 = str.split("\t");
+                let arr2 = str.replace("\r", "").replace("$", "").split("\t");
                 arr2 = arr2.filter((item) => { return item != "" })
                 console.log(arr2);
                 arr.forEach((item, index) => {
                     if (item[0] != "#" && item[0] != "$" && item != "") {//移除注释空行
-                        let arr3 = item.replace("\r", "").split("\\").join("/").replace("assets", "").split("\t");
+                        let arr3 = item.replace("\r", "").split("\\").join("/").replace("assets/", "").split("\t");
                         arr3 = arr3.filter((item) => { return item != "" });
                         let data = {};
                         for (let i = 0; i < arr2.length; i++) {
                             data[arr2[i]] = arr3[i];
                         }
-                        this.$dicAssetsPath.push(data);
+                        this.$dicAssetsPath.set(Number(data["id"]), data);
                     }
                 })
-
-                // console.log(this.$dicAssetsPath)
+                for (let [, value] of this.$dicAssetsPath) {
+                    if (value && value["preload"] == 1) {
+                        this.$total_num++;
+                        this.load(value["path"], Handler.create(this, this.$load_one_onCompleted));
+                    }
+                }
+            }).catch((err) => {
+                console.warn("无法加载配置文件");
             })
 
         }
     }
+
+    /**通过唯一Id获取资源 */
+    static getResById(assetsId: number): any {
+        let obj = this.$dicAssetsPath.get(assetsId);
+        if (obj && obj["path"]) {
+            return this.getRes(obj['path']);
+        }
+    }
+
+
 
 
 

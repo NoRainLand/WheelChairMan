@@ -6,28 +6,7 @@
  */
 /**页面资源地址 */
 export default class SceneUrl {
-    /**地址前缀 */
-    static readonly SceneUrlBase: string = "resources/prefab/"
-    /**地址后缀 */
-    static readonly sceneUrlSuffix: string = ".lh";
 
-
-
-    /**加载页面 */
-    static LoadView: string = 'LoadView';
-
-    /**调试页面 */
-    static DebugView: string = "DebugView";
-
-    /**确认面板 */
-    static SureDialog: string = "SureDialog";
-
-    /**提示面板 */
-    static TipsView: string = "TipsView";
-
-    /**设置面板 */
-    static SettingView: string = "SettingView";
-
-    /**语言界面 */
-    static LanguageView: string = "LanguageView";
+    /**加载页面地址 */
+    static readonly LoadView: string = "resources/prefab/LoadView.lh"
 }
