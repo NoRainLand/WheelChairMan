@@ -11,7 +11,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 16:05:09
+ * @Last Modified time: 2023-02-14 17:46:23
  */
 const { regClass, property } = Laya;
 
@@ -66,7 +66,7 @@ export default class LoadView extends UIBase {
         console.log("load_conCompleted");
         LocalizationMgr.init();
         UIBaseMgr.showDebug();
-        UIBaseMgr.open(SceneEnum.SettingView);
+        UIBaseMgr.open(SceneEnum.MainView);
         this.close();
     }
 
