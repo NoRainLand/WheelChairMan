@@ -8,5 +8,17 @@
   "left": 0,
   "right": 0,
   "top": 0,
-  "bottom": 0
+  "bottom": 0,
+  "_$comp": [
+    {
+      "_$type": "658fcc51-8109-42a6-a372-0d6e36f801cc",
+      "scriptPath": "../src/Scene/SignInView.ts"
+    },
+    {
+      "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
+      "scriptPath": "../src/UIBase/UIBaseData.ts",
+      "depth": 2,
+      "isSingleton": true
+    }
+  ]
 }

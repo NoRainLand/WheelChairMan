@@ -1,4 +1,4 @@
-import UIBase from "../../UIBase/UIBase";
+import UIBase from "../UIBase/UIBase";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
 import Box = Laya.Box;

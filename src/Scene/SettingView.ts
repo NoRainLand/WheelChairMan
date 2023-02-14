@@ -1,11 +1,14 @@
-import ProjectConfig from "../../Config/ProjectConfig";
-import SoundMgr from "../../Mgr/SoundMgr";
-import VibrateMgr from "../../Mgr/VibrateMgr";
-import UIBase from "../../UIBase/UIBase";
-import UIBaseMgr from "../../UIBase/UIBaseMgr";
-import SceneUrl from "../../Url/SceneUrl";
-import Slider from "../../Util/Slider";
-import Toggle from "../../Util/Toggle";
+import ProjectConfig from "../Config/ProjectConfig";
+import { EventEnum } from "../Enum/EventEnum";
+import { SceneEnum } from "../Enum/SceneEnum";
+import LocalizationMgr from "../Localization/LocalizationMgr";
+import SoundMgr from "../Mgr/SoundMgr";
+import VibrateMgr from "../Mgr/VibrateMgr";
+import UIBase from "../UIBase/UIBase";
+import UIBaseMgr from "../UIBase/UIBaseMgr";
+import ResLoader from "../Util/ResLoader";
+import Slider from "../Util/Slider";
+import Toggle from "../Util/Toggle";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
 import Box = Laya.Box;
@@ -19,7 +22,7 @@ import List = Laya.List;
  * @Author: NoRain 
  * @Date: 2023-02-10 18:36:22 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-11 16:16:06
+ * @Last Modified time: 2023-02-14 16:19:38
  */
 const { regClass, property } = Laya;
 /**设置界面 */
@@ -59,6 +62,9 @@ export default class SettingView extends UIBase {
         this.$sliderSfx.init(this, this.sfxChange);
         this.$toggleShake.init(this, this.shakeChange);
 
+        this.regEvent(EventEnum.LANGUAGECHANGE, this.changeLanguageIcon);
+        this.changeLanguageIcon();
+
     }
 
     bgmChange(value: number) {
@@ -70,7 +76,9 @@ export default class SettingView extends UIBase {
     shakeChange(value: boolean) {
         VibrateMgr.isVibrate = value;
     }
-
+    changeLanguageIcon() {
+        this.imgLan.skin = ResLoader.getUrlById(LocalizationMgr.getFlagSkinIdById(LocalizationMgr.Language));
+    }
 
 
 
@@ -81,7 +89,7 @@ export default class SettingView extends UIBase {
         console.log('support');
     }
     changeLanguage() {
-        UIBaseMgr.open(SceneUrl.LanguageView);
+        UIBaseMgr.open(SceneEnum.LanguageView);
     }
 
     onClosed(): void {

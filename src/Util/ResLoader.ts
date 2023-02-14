@@ -14,7 +14,7 @@ import TextResource = Laya.TextResource;
  * @Author: NoRain 
  * @Date: 2023-02-12 15:09:35 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 10:22:34
+ * @Last Modified time: 2023-02-14 16:24:38
  */
 /**资源加载器 */
 export default class ResLoader {
@@ -51,6 +51,7 @@ export default class ResLoader {
                 return obj.create();
             }
         }
+        return null;
     }
 
 
@@ -89,36 +90,65 @@ export default class ResLoader {
             this.$onCompleted = onCompleted;
             this.$onProgress = _onProgress;
             this.load(ResUrl.AssetPath).then((path: TextResource) => {
-                let arr: string[] = path.data.split("\n");
-                let str = arr.find((item) => {
-                    return item.indexOf("$") != -1;
-                })
-                let arr2 = str.replace("\r", "").replace("$", "").split("\t");
-                arr2 = arr2.filter((item) => { return item != "" })
-                console.log(arr2);
-                arr.forEach((item, index) => {
-                    if (item[0] != "#" && item[0] != "$" && item != "") {//移除注释空行
-                        let arr3 = item.replace("\r", "").split("\\").join("/").replace("assets/", "").split("\t");
-                        arr3 = arr3.filter((item) => { return item != "" });
-                        let data = {};
-                        for (let i = 0; i < arr2.length; i++) {
-                            data[arr2[i]] = arr3[i];
-                        }
-                        this.$dicAssetsPath.set(Number(data["id"]), data);
-                    }
-                })
+
+
+                this.$dicAssetsPath = this.strParser(path.data);
+                // console.log(this.$dicAssetsPath)
                 for (let [, value] of this.$dicAssetsPath) {
                     if (value && value["preload"] == 1) {
                         this.$total_num++;
                         this.load(value["path"], Handler.create(this, this.$load_one_onCompleted));
                     }
                 }
+
+
             }).catch((err) => {
                 console.warn("无法加载配置文件");
             })
 
         }
     }
+
+
+    /**
+     * 字符解析器
+     * 约定字符串格式如下
+     * #为备注行
+     * $为key行 第一个key必须为 "id"
+     * 然后通过id生成map
+     * 暂时先这样吧,需要可以用正则表达式重写
+     * @param data 数据
+     * @returns 返回一个以id作为key的map
+     */
+    static strParser(data: string): Map<number, Object> {
+        if (data) {
+            let arr: string[] = data.split("\n");
+            let str = arr.find((item) => {
+                return item.indexOf("$") != -1;
+            })
+            let arr2 = str.replace("\r", "").replace("$", "").split("\t");
+            arr2 = arr2.filter((item) => { return item != "" })
+            let map = new Map();
+
+            arr.forEach((item, index) => {
+                if (item[0] != "#" && item[0] != "$" && item != "") {//移除注释空行
+                    let arr3 = item.replace("\r", "").split("\\").join("/").replace("assets/", "").split("\t");
+                    arr3 = arr3.filter((item) => { return item != "" });
+                    let data = {};
+                    for (let i = 0; i < arr2.length; i++) {
+                        if (isNaN(Number(arr3[i]))) {
+                            data[arr2[i]] = arr3[i];
+                        } else {
+                            data[arr2[i]] = Number(arr3[i]);
+                        }
+                    }
+                    map.set(Number(data["id"]), data);
+                }
+            })
+            return map;
+        }
+    }
+
 
     /**通过唯一Id获取资源 */
     static getResById(assetsId: number): any {
@@ -128,6 +158,14 @@ export default class ResLoader {
         }
     }
 
+
+    /**通过唯一id获取url */
+    static getUrlById(assetsId: number): string {
+        let obj = this.$dicAssetsPath.get(assetsId);
+        if (obj && obj["path"]) {
+            return obj["path"];
+        }
+    }
 
 
 

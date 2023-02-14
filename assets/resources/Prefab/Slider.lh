@@ -32,7 +32,7 @@
       "y": 33,
       "width": 600,
       "height": 24,
-      "skin": "res://92412e46-11c5-4860-b8c8-e4897f4d8ed2",
+      "skin": "res://05dfc0f5-938c-4079-93cd-75caf797dc2a",
       "sizeGrid": "0,10,0,10,0",
       "_$child": [
         {
@@ -45,7 +45,7 @@
           "mask": {
             "_$ref": "pjtv4cmu"
           },
-          "skin": "res://e7f29609-fbb9-45e2-9e15-910d70bf18f9",
+          "skin": "res://023b8e1d-7597-400f-899a-4ef4bcb01713",
           "sizeGrid": "0,10,0,10,0",
           "_$child": [
             {
@@ -55,7 +55,7 @@
               "y": -1.1368683772161603e-13,
               "width": 600,
               "height": 24,
-              "skin": "res://e7f29609-fbb9-45e2-9e15-910d70bf18f9",
+              "skin": "res://023b8e1d-7597-400f-899a-4ef4bcb01713",
               "sizeGrid": "0,10,0,10,0"
             }
           ]
@@ -75,7 +75,7 @@
       "mouseEnabled": true,
       "anchorX": 0.5,
       "anchorY": 0.5,
-      "skin": "res://01da6426-c4ab-46f6-b78d-22713b86d35a"
+      "skin": "res://e79730c5-f29c-4379-bb1d-6b4f099a139f"
     }
   ]
 }

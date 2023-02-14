@@ -1,7 +1,7 @@
-import ProjectConfig from "../../Config/ProjectConfig";
-import LocalizationMgr from "../../Localization/LocalizationMgr";
-import LocalizationUrl from "../../Localization/LocalizationUrl";
-import UIBase from "../../UIBase/UIBase";
+import { LocalizationEnum } from "../Enum/LocalizationEnum";
+import LocalizationMgr from "../Localization/LocalizationMgr";
+import UIBase from "../UIBase/UIBase";
+import ResLoader from "../Util/ResLoader";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
 import Box = Laya.Box;
@@ -16,7 +16,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-11 15:50:45 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-11 16:22:08
+ * @Last Modified time: 2023-02-14 16:24:04
  */
 const { regClass, property } = Laya;
 /**语言面板 */
@@ -35,9 +35,15 @@ export default class LanguageView extends UIBase {
         this.regClick(this.$imgClose, this.close);
         this.$listLanguage.renderHandler = new Handler(this, this.changeItem);
         this.$listLanguage.selectHandler = new Handler(this, this.selectItem);
-        this.$selectIndex = ProjectConfig.LanguageList.indexOf(LocalizationMgr.Language);
-        console.log(this.$selectIndex);
-        this.$listLanguage.array = ProjectConfig.LocalizationLanguageList;
+
+        let arr = []
+        for (let i in LocalizationEnum) {
+            if (!isNaN(Number(i))) {
+                arr.push(Number(i));
+            }
+        }
+        this.$selectIndex = arr.indexOf(LocalizationMgr.Language);
+        this.$listLanguage.array = arr;
         this.$listLanguage.selectedIndex = this.$selectIndex;
     }
 
@@ -45,8 +51,8 @@ export default class LanguageView extends UIBase {
         let labelLanguage = box.getChildByName('labelLanguage') as Label;
         let imgFlag = box.getChildByName("imgFlag") as Image;
         let imgSelect = box.getChildByName("imgSelect") as Image;
-        labelLanguage.text = box.dataSource;
-        imgFlag.skin = LocalizationUrl.Image[index];
+        labelLanguage.text = LocalizationMgr.getLanguageMsgById(box.dataSource);
+        imgFlag.skin = ResLoader.getUrlById(LocalizationMgr.getFlagSkinIdById(box.dataSource));
         if (index == this.$selectIndex) {
             imgSelect.visible = true;
         } else {
@@ -59,7 +65,7 @@ export default class LanguageView extends UIBase {
             let oldSelect = oldBox.getChildByName("imgSelect") as Image;
             oldSelect.visible = false;
             this.$selectIndex = index;
-            LocalizationMgr.Language = ProjectConfig.LanguageList[index];
+            LocalizationMgr.Language = this.$listLanguage.array[index];
             let newBox = this.$listLanguage.getCell(this.$selectIndex) as Box;
             let newSelect = newBox.getChildByName("imgSelect") as Image;
             newSelect.visible = true;

@@ -13,7 +13,7 @@
   "_$comp": [
     {
       "_$type": "9811079c-9340-49a7-8d8a-71570d70a98d",
-      "scriptPath": "../src/Game/Scene/SettingView.ts",
+      "scriptPath": "../src/Scene/SettingView.ts",
       "imgClose": {
         "_$ref": "fdfzx0c2"
       },
@@ -280,70 +280,6 @@
                   "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
                   "scriptPath": "../src/Localization/LocalizationText.ts",
                   "localizationKey": "SFX"
-                }
-              ]
-            },
-            {
-              "_$id": "dmi1jh6i",
-              "_$type": "Box",
-              "name": "Slider(1)",
-              "active": false,
-              "x": 163,
-              "y": 21.000000000000057,
-              "width": 660,
-              "height": 90,
-              "visible": false,
-              "mouseEnabled": true,
-              "bgColor": "rgba(255, 255, 255, 1)",
-              "_$child": [
-                {
-                  "_$id": "4d2n040s",
-                  "_$type": "Image",
-                  "name": "Image",
-                  "x": 30,
-                  "y": 33,
-                  "width": 600,
-                  "height": 24,
-                  "skin": "res://92412e46-11c5-4860-b8c8-e4897f4d8ed2",
-                  "sizeGrid": "0,10,0,10,0",
-                  "_$child": [
-                    {
-                      "_$id": "1u88lt6n",
-                      "_$type": "Image",
-                      "name": "imgLoad",
-                      "y": -5.684341886080802e-14,
-                      "width": 600,
-                      "height": 24,
-                      "mask": {
-                        "_$ref": "8lo1rvta"
-                      },
-                      "skin": "res://e7f29609-fbb9-45e2-9e15-910d70bf18f9",
-                      "sizeGrid": "0,10,0,10,0",
-                      "_$child": [
-                        {
-                          "_$id": "8lo1rvta",
-                          "_$type": "Image",
-                          "name": "imgMask",
-                          "y": -1.1368683772161603e-13,
-                          "width": 600,
-                          "height": 24,
-                          "skin": "res://e7f29609-fbb9-45e2-9e15-910d70bf18f9",
-                          "sizeGrid": "0,10,0,10,0"
-                        }
-                      ]
-                    },
-                    {
-                      "_$id": "xmeagl1y",
-                      "_$type": "Image",
-                      "name": "imgBar",
-                      "x": 575.0000000000003,
-                      "y": -25.999999999999886,
-                      "width": 56,
-                      "height": 76,
-                      "mouseEnabled": true,
-                      "skin": "res://01da6426-c4ab-46f6-b78d-22713b86d35a"
-                    }
-                  ]
                 }
               ]
             },

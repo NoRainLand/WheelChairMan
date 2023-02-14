@@ -37,9 +37,6 @@ function __$decorate(assetId, codePath) {
 
   // E:/WheelChairMan/src/Config/ProjectConfig.ts
   var ProjectConfig = class {
-    static get Language() {
-      return this.LanguageList[0];
-    }
   };
   __name(ProjectConfig, "ProjectConfig");
   ProjectConfig.projectName = "WheelChairMan";
@@ -47,15 +44,8 @@ function __$decorate(assetId, codePath) {
   ProjectConfig.projectVersion = "1.0.0";
   ProjectConfig.projectVersionIndex = 1;
   ProjectConfig.isDebug = true;
-  ProjectConfig.LanguageList = [
-    "ChineseSimplified",
-    "English"
-  ];
-  ProjectConfig.LocalizationLanguageList = [
-    "\u7B80\u4F53\u4E2D\u6587",
-    "English"
-  ];
   ProjectConfig.support = "https://github.com/NoRainLand/WheelChairMan";
+  ProjectConfig.defaultLanguage = 1001;
 
   // E:/WheelChairMan/src/Url/SceneUrl.ts
   var SceneUrl = class {
@@ -67,14 +57,6 @@ function __$decorate(assetId, codePath) {
   var ResUrl = class {
   };
   __name(ResUrl, "ResUrl");
-  ResUrl.LuckyBox = [
-    "assets/resources/img/luckboxview/luckybox_bronze.png",
-    "assets/resources/img/luckboxview/luckybox_silver.png",
-    "assets/resources/img/luckboxview/luckybox_gold.png",
-    "assets/resources/img/luckboxview/luckybox_diamond.png",
-    "assets/resources/img/luckboxview/luckybox_platinum.png"
-  ];
-  ResUrl.LuckyBoxData = "assets/resources/data/LuckyBox.txt";
   ResUrl.AssetPath = "resources/datatables/AssetsPath.txt";
 
   // E:/WheelChairMan/src/Util/ResLoader.ts
@@ -106,6 +88,7 @@ function __$decorate(assetId, codePath) {
           return obj.create();
         }
       }
+      return null;
     }
     static $load_one_onCompleted() {
       this.$now_num++;
@@ -120,28 +103,7 @@ function __$decorate(assetId, codePath) {
         this.$onCompleted = onCompleted;
         this.$onProgress = _onProgress;
         this.load(ResUrl.AssetPath).then((path) => {
-          let arr = path.data.split("\n");
-          let str = arr.find((item) => {
-            return item.indexOf("$") != -1;
-          });
-          let arr2 = str.replace("\r", "").replace("$", "").split("	");
-          arr2 = arr2.filter((item) => {
-            return item != "";
-          });
-          console.log(arr2);
-          arr.forEach((item, index) => {
-            if (item[0] != "#" && item[0] != "$" && item != "") {
-              let arr3 = item.replace("\r", "").split("\\").join("/").replace("assets/", "").split("	");
-              arr3 = arr3.filter((item2) => {
-                return item2 != "";
-              });
-              let data = {};
-              for (let i = 0; i < arr2.length; i++) {
-                data[arr2[i]] = arr3[i];
-              }
-              this.$dicAssetsPath.set(Number(data["id"]), data);
-            }
-          });
+          this.$dicAssetsPath = this.strParser(path.data);
           for (let [, value] of this.$dicAssetsPath) {
             if (value && value["preload"] == 1) {
               this.$total_num++;
@@ -153,10 +115,47 @@ function __$decorate(assetId, codePath) {
         });
       }
     }
+    static strParser(data) {
+      if (data) {
+        let arr = data.split("\n");
+        let str = arr.find((item) => {
+          return item.indexOf("$") != -1;
+        });
+        let arr2 = str.replace("\r", "").replace("$", "").split("	");
+        arr2 = arr2.filter((item) => {
+          return item != "";
+        });
+        let map = /* @__PURE__ */ new Map();
+        arr.forEach((item, index) => {
+          if (item[0] != "#" && item[0] != "$" && item != "") {
+            let arr3 = item.replace("\r", "").split("\\").join("/").replace("assets/", "").split("	");
+            arr3 = arr3.filter((item2) => {
+              return item2 != "";
+            });
+            let data2 = {};
+            for (let i = 0; i < arr2.length; i++) {
+              if (isNaN(Number(arr3[i]))) {
+                data2[arr2[i]] = arr3[i];
+              } else {
+                data2[arr2[i]] = Number(arr3[i]);
+              }
+            }
+            map.set(Number(data2["id"]), data2);
+          }
+        });
+        return map;
+      }
+    }
     static getResById(assetsId) {
       let obj = this.$dicAssetsPath.get(assetsId);
       if (obj && obj["path"]) {
         return this.getRes(obj["path"]);
+      }
+    }
+    static getUrlById(assetsId) {
+      let obj = this.$dicAssetsPath.get(assetsId);
+      if (obj && obj["path"]) {
+        return obj["path"];
       }
     }
   };
@@ -327,19 +326,19 @@ function __$decorate(assetId, codePath) {
         }));
       }
     }
-    static open(sceneName, param, caller, callback) {
-      let script = this.$sceneScriptPool.get(sceneName);
+    static open(sceneId, param, caller, callback) {
+      let script = this.$sceneScriptPool.get(sceneId);
       if (!script || script instanceof UIBase_default) {
-        let scene = Pool.getItem(this.$sign + sceneName);
+        let scene = Pool.getItem(this.$sign + sceneId);
         if (scene) {
-          this.initScene(scene, sceneName, param, caller, callback);
+          this.initScene(scene, sceneId, param, caller, callback);
         } else {
-          let scenePrefab = this.$scenes.get(sceneName);
+          let scenePrefab = this.$scenes.get(sceneId);
           if (scenePrefab) {
             let scene2 = scenePrefab.create();
-            this.initScene(scene2, sceneName, param, caller, callback);
+            this.initScene(scene2, sceneId, param, caller, callback);
           } else {
-            this.loadScene(sceneName, param, caller, callback);
+            this.loadScene(sceneId, param, caller, callback);
           }
         }
       }
@@ -347,43 +346,47 @@ function __$decorate(assetId, codePath) {
     static initScene(scene, sceneName, param, caller, callback) {
       let base = scene.getComponent(UIBase_default);
       let data = scene.getComponent(UIBaseData_default);
-      Object.assign(base, data);
-      switch (base.depth) {
-        default:
-          this.$MainUI.addChild(scene);
-          break;
-        case 0:
-          this.$DebugUI.addChild(scene);
-          break;
-        case 1:
-          this.$TipsUI.addChild(scene);
-          break;
-        case 2:
-          this.$MainUI.addChild(scene);
-          break;
-        case 3:
-          this.$3DUI.addChild(scene);
-          break;
-      }
-      base.$param = param;
-      base.$assetsId = sceneName;
-      base.isOpen = true;
-      base.onOpened(param);
-      if (caller && callback) {
-        callback.call(caller);
-      }
-      if (base.isSingleton) {
-        this.$sceneScriptPool.set(sceneName, base);
-      } else {
-        let map = this.$sceneScriptPool.get(sceneName);
-        if (map && map instanceof Map) {
-          map.set(base.id.toString(), base);
-          this.$sceneScriptPool.set(sceneName, map);
-        } else {
-          map = /* @__PURE__ */ new Map();
-          map.set(base.id.toString(), base);
-          this.$sceneScriptPool.set(sceneName, map);
+      if (base && data) {
+        Object.assign(base, data);
+        switch (base.depth) {
+          default:
+            this.$MainUI.addChild(scene);
+            break;
+          case 0:
+            this.$DebugUI.addChild(scene);
+            break;
+          case 1:
+            this.$TipsUI.addChild(scene);
+            break;
+          case 2:
+            this.$MainUI.addChild(scene);
+            break;
+          case 3:
+            this.$3DUI.addChild(scene);
+            break;
         }
+        base.$param = param;
+        base.$assetsId = sceneName;
+        base.isOpen = true;
+        base.onOpened(param);
+        if (caller && callback) {
+          callback.call(caller);
+        }
+        if (base.isSingleton) {
+          this.$sceneScriptPool.set(sceneName, base);
+        } else {
+          let map = this.$sceneScriptPool.get(sceneName);
+          if (map && map instanceof Map) {
+            map.set(base.id.toString(), base);
+            this.$sceneScriptPool.set(sceneName, map);
+          } else {
+            map = /* @__PURE__ */ new Map();
+            map.set(base.id.toString(), base);
+            this.$sceneScriptPool.set(sceneName, map);
+          }
+        }
+      } else {
+        console.log("UIData\u6216\u8005UIBase\u7F3A\u5931");
       }
     }
     static close(sceneName, id) {
@@ -485,30 +488,29 @@ function __$decorate(assetId, codePath) {
   };
   __name(LocalMgr, "LocalMgr");
 
-  // E:/WheelChairMan/src/Localization/LocalizationUrl.ts
-  var LocalizationUrl = class {
-  };
-  __name(LocalizationUrl, "LocalizationUrl");
-  LocalizationUrl.Json = [
-    "resources/localization/ChineseSimplified/Default.json",
-    "resources/localization/English/Default.json"
-  ];
-  LocalizationUrl.Image = [
-    "resources/img/languageview/language_chn.png",
-    "resources/img/languageview/language_eng.png"
-  ];
-
   // E:/WheelChairMan/src/Localization/LocalizationMgr.ts
   var LocalizationMgr = class {
     static init(onProgress, complete) {
-      this.$language = this.Language;
-      Laya.loader.load(LocalizationUrl.Json, complete, onProgress).then((value) => {
-        for (let i = 0; i < value.length; i++) {
-          let language = value[i].data[0].language;
-          let dic = value[i].data[0].dic;
-          this.$TextResourceMap.set(language, dic);
-        }
-      });
+      let txtRes = ResLoader.getResById(3002 /* Localization */);
+      this.$dataTableMap = ResLoader.strParser(txtRes.data);
+      console.log(this.$dataTableMap);
+      for (let [key, value] of this.$dataTableMap) {
+        let data = ResLoader.getResById(value["pathId"]);
+        let dic = data.data[0].dic;
+        this.$TextResourceMap.set(key, dic);
+      }
+    }
+    static getFlagSkinIdById(id) {
+      let data = this.$dataTableMap.get(id);
+      return data && data["flagId"];
+    }
+    static getLanguageMsgById(id) {
+      let data = this.$dataTableMap.get(id);
+      return data && data["msg"];
+    }
+    static getLanguageKeyById(id) {
+      let data = this.$dataTableMap.get(id);
+      return data && data["key"];
     }
     static getLocalizationByKey(key) {
       let dic = this.$TextResourceMap.get(this.Language);
@@ -522,22 +524,23 @@ function __$decorate(assetId, codePath) {
       if (!this.$language) {
         let language = LocalMgr.getItem("LANGUAGE" /* LANGUAGE */);
         if (language) {
-          this.$language = language;
+          this.$language = Number(language.substring(language.indexOf("_") + 1));
         } else {
-          this.$language = ProjectConfig.Language;
-          LocalMgr.setItem("LANGUAGE" /* LANGUAGE */, this.$language);
+          this.$language = ProjectConfig.defaultLanguage;
+          LocalMgr.setItem("LANGUAGE" /* LANGUAGE */, this.$sign + this.$language);
         }
       }
       return this.$language;
     }
     static set Language(language) {
       this.$language = language;
-      LocalMgr.setItem("LANGUAGE" /* LANGUAGE */, this.$language);
+      LocalMgr.setItem("LANGUAGE" /* LANGUAGE */, this.$sign + this.$language);
       EventMgr.event("LANGUAGECHANGE" /* LANGUAGECHANGE */);
     }
   };
   __name(LocalizationMgr, "LocalizationMgr");
   LocalizationMgr.$TextResourceMap = /* @__PURE__ */ new Map();
+  LocalizationMgr.$sign = "language_";
 
   // E:/WheelChairMan/src/Localization/LocalizationText.ts
   var __decorate5 = __$decorate("5a62e727-31ad-49bf-b53f-96fbff2b0a39", "../src/Localization/LocalizationText.ts");
@@ -576,107 +579,395 @@ function __$decorate(assetId, codePath) {
     __metadata("design:paramtypes", [])
   ], LocalizationText);
 
-  // E:/WheelChairMan/src/Util/Base64.ts
-  var __decorate6 = __$decorate("fe62c9ad-c7c3-4baa-8f7c-216a9f051006", "../src/Util/Base64.ts");
-  var Base64 = class {
-    static encode(input) {
-      let output = "";
-      let chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-      let i = 0;
-      input = this._utf8_encode(input);
-      while (i < input.length) {
-        chr1 = input.charCodeAt(i++);
-        chr2 = input.charCodeAt(i++);
-        chr3 = input.charCodeAt(i++);
-        enc1 = chr1 >> 2;
-        enc2 = (chr1 & 3) << 4 | chr2 >> 4;
-        enc3 = (chr2 & 15) << 2 | chr3 >> 6;
-        enc4 = chr3 & 63;
-        if (isNaN(chr2)) {
-          enc3 = enc4 = 64;
-        } else if (isNaN(chr3)) {
-          enc4 = 64;
-        }
-        output = output + this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) + this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
-      }
-      return output;
-    }
-    static decode(input) {
-      let output = "";
-      let chr1, chr2, chr3;
-      let enc1, enc2, enc3, enc4;
-      let i = 0;
-      input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-      while (i < input.length) {
-        enc1 = this._keyStr.indexOf(input.charAt(i++));
-        enc2 = this._keyStr.indexOf(input.charAt(i++));
-        enc3 = this._keyStr.indexOf(input.charAt(i++));
-        enc4 = this._keyStr.indexOf(input.charAt(i++));
-        chr1 = enc1 << 2 | enc2 >> 4;
-        chr2 = (enc2 & 15) << 4 | enc3 >> 2;
-        chr3 = (enc3 & 3) << 6 | enc4;
-        output = output + String.fromCharCode(chr1);
-        if (enc3 !== 64) {
-          output = output + String.fromCharCode(chr2);
-        }
-        if (enc4 !== 64) {
-          output = output + String.fromCharCode(chr3);
-        }
-      }
-      output = this._utf8_decode(output);
-      return output;
-    }
-    static _utf8_encode(string) {
-      string = string.replace(/\r\n/g, "\n");
-      let utftext = "";
-      for (let n = 0; n < string.length; n++) {
-        const c = string.charCodeAt(n);
-        if (c < 128) {
-          utftext += String.fromCharCode(c);
-        } else if (c > 127 && c < 2048) {
-          utftext += String.fromCharCode(c >> 6 | 192);
-          utftext += String.fromCharCode(c & 63 | 128);
-        } else {
-          utftext += String.fromCharCode(c >> 12 | 224);
-          utftext += String.fromCharCode(c >> 6 & 63 | 128);
-          utftext += String.fromCharCode(c & 63 | 128);
-        }
-      }
-      return utftext;
-    }
-    static _utf8_decode(utftext) {
-      let string = "";
-      let i = 0;
-      let c = 0, c2 = 0, c3 = 0;
-      while (i < utftext.length) {
-        c = utftext.charCodeAt(i);
-        if (c < 128) {
-          string += String.fromCharCode(c);
-          i++;
-        } else if (c > 191 && c < 224) {
-          c2 = utftext.charCodeAt(i + 1);
-          string += String.fromCharCode((c & 31) << 6 | c2 & 63);
-          i += 2;
-        } else {
-          c2 = utftext.charCodeAt(i + 1);
-          c3 = utftext.charCodeAt(i + 2);
-          string += String.fromCharCode((c & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
-          i += 3;
-        }
-      }
-      return string;
-    }
-  };
-  __name(Base64, "Base64");
-  Base64._keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  // E:/WheelChairMan/src/Scene/CompleteView.ts
+  var __decorate6 = __$decorate("f5f376ef-5874-4c8a-9a28-8088976bd468", "../src/Scene/CompleteView.ts");
+  var { regClass: regClass5, property: property5 } = Laya;
+  var CompleteView = /* @__PURE__ */ __name(class CompleteView2 extends UIBase_default {
+  }, "CompleteView");
+  CompleteView = __decorate6([
+    regClass5()
+  ], CompleteView);
 
-  // E:/WheelChairMan/src/Util/Slider.ts
-  var __decorate7 = __$decorate("35b37bb8-b4f2-4360-8030-42b6c06ee038", "../src/Util/Slider.ts");
+  // E:/WheelChairMan/src/Scene/DebugView.ts
+  var __decorate7 = __$decorate("5ca51831-1d23-46b6-a853-a10d5da54d6c", "../src/Scene/DebugView.ts");
   var _a;
   var _b;
   var _c;
+  var Box = Laya.Box;
   var Image = Laya.Image;
-  var { regClass: regClass5, property: property5 } = Laya;
+  var List = Laya.List;
+  var Handler3 = Laya.Handler;
+  var { regClass: regClass6, property: property6 } = Laya;
+  var DebugView = /* @__PURE__ */ __name(class DebugView2 extends UIBase_default {
+    constructor() {
+      super();
+      this.commandList = [
+        "\u6DFB\u52A05000\u91D1\u5E01",
+        "\u91CD\u7F6E\u7B7E\u5230",
+        "\u6E38\u620F\u7ACB\u523B\u80DC\u5229(\u5FC5\u987B\u5148\u5F00\u59CB\u6E38\u620F)",
+        "\u6E38\u620F\u7ACB\u523B\u5931\u8D25(\u5FC5\u987B\u5148\u5F00\u59CB\u6E38\u620F)",
+        "\u9501\u5B9A\u989D\u5916\u76AE\u80A4"
+      ];
+    }
+    onOpened(param) {
+      this.regClick(this.imgShow, this.showHidePanel);
+      this.listCommand.renderHandler = new Handler3(this, this.changeItem);
+      this.listCommand.selectHandler = new Handler3(this, this.selectItem);
+      this.listCommand.array = this.commandList;
+    }
+    showHidePanel() {
+      this.MainPanel.visible = !this.MainPanel.visible;
+    }
+    changeItem(box, index) {
+      let Label4 = box.getChildByName("Label");
+      Label4.text = box.dataSource;
+    }
+    selectItem(index) {
+      switch (index) {
+        case 0:
+          EventMgr.event("GOLDCHANGE" /* GOLDCHANGE */);
+          break;
+        case 1:
+          break;
+        case 2:
+          break;
+        case 3:
+          break;
+        case 4:
+          break;
+      }
+      this.listCommand.selectedIndex = -1;
+    }
+  }, "DebugView");
+  __decorate7([
+    property6(),
+    __metadata("design:type", typeof (_a = typeof Image !== "undefined" && Image) === "function" ? _a : Object)
+  ], DebugView.prototype, "imgShow", void 0);
+  __decorate7([
+    property6(),
+    __metadata("design:type", typeof (_b = typeof Box !== "undefined" && Box) === "function" ? _b : Object)
+  ], DebugView.prototype, "MainPanel", void 0);
+  __decorate7([
+    property6(),
+    __metadata("design:type", typeof (_c = typeof List !== "undefined" && List) === "function" ? _c : Object)
+  ], DebugView.prototype, "listCommand", void 0);
+  DebugView = __decorate7([
+    regClass6(),
+    __metadata("design:paramtypes", [])
+  ], DebugView);
+
+  // E:/WheelChairMan/src/Scene/GameView.ts
+  var __decorate8 = __$decorate("ddf0e22e-43aa-4145-b2f5-8a127efb5611", "../src/Scene/GameView.ts");
+  var { regClass: regClass7, property: property7 } = Laya;
+  var GameView = /* @__PURE__ */ __name(class GameView2 extends UIBase_default {
+  }, "GameView");
+  GameView = __decorate8([
+    regClass7()
+  ], GameView);
+
+  // E:/WheelChairMan/src/Enum/LocalizationEnum.ts
+  var LocalizationEnum = /* @__PURE__ */ ((LocalizationEnum2) => {
+    LocalizationEnum2[LocalizationEnum2["ChineseSimplified"] = 1001] = "ChineseSimplified";
+    LocalizationEnum2[LocalizationEnum2["English"] = 1002] = "English";
+    return LocalizationEnum2;
+  })(LocalizationEnum || {});
+
+  // E:/WheelChairMan/src/Scene/LanguageView.ts
+  var __decorate9 = __$decorate("6bc1bf6a-a993-4ac9-b9f4-4785e0d68c2b", "../src/Scene/LanguageView.ts");
+  var _a2;
+  var _b2;
+  var Image2 = Laya.Image;
+  var List2 = Laya.List;
+  var Handler4 = Laya.Handler;
+  var { regClass: regClass8, property: property8 } = Laya;
+  var LanguageView = /* @__PURE__ */ __name(class LanguageView2 extends UIBase_default {
+    constructor() {
+      super();
+      this.$selectIndex = 0;
+    }
+    onOpened(param) {
+      this.regClick(this.$imgClose, this.close);
+      this.$listLanguage.renderHandler = new Handler4(this, this.changeItem);
+      this.$listLanguage.selectHandler = new Handler4(this, this.selectItem);
+      let arr = [];
+      for (let i in LocalizationEnum) {
+        if (!isNaN(Number(i))) {
+          arr.push(Number(i));
+        }
+      }
+      this.$selectIndex = arr.indexOf(LocalizationMgr.Language);
+      this.$listLanguage.array = arr;
+      this.$listLanguage.selectedIndex = this.$selectIndex;
+    }
+    changeItem(box, index) {
+      let labelLanguage = box.getChildByName("labelLanguage");
+      let imgFlag = box.getChildByName("imgFlag");
+      let imgSelect = box.getChildByName("imgSelect");
+      labelLanguage.text = LocalizationMgr.getLanguageMsgById(box.dataSource);
+      imgFlag.skin = ResLoader.getUrlById(LocalizationMgr.getFlagSkinIdById(box.dataSource));
+      if (index == this.$selectIndex) {
+        imgSelect.visible = true;
+      } else {
+        imgSelect.visible = false;
+      }
+    }
+    selectItem(index) {
+      if (index != this.$selectIndex) {
+        let oldBox = this.$listLanguage.getCell(this.$selectIndex);
+        let oldSelect = oldBox.getChildByName("imgSelect");
+        oldSelect.visible = false;
+        this.$selectIndex = index;
+        LocalizationMgr.Language = this.$listLanguage.array[index];
+        let newBox = this.$listLanguage.getCell(this.$selectIndex);
+        let newSelect = newBox.getChildByName("imgSelect");
+        newSelect.visible = true;
+      }
+    }
+  }, "LanguageView");
+  __decorate9([
+    property8(),
+    __metadata("design:type", typeof (_a2 = typeof List2 !== "undefined" && List2) === "function" ? _a2 : Object)
+  ], LanguageView.prototype, "$listLanguage", void 0);
+  __decorate9([
+    property8(),
+    __metadata("design:type", typeof (_b2 = typeof Image2 !== "undefined" && Image2) === "function" ? _b2 : Object)
+  ], LanguageView.prototype, "$imgClose", void 0);
+  LanguageView = __decorate9([
+    regClass8(),
+    __metadata("design:paramtypes", [])
+  ], LanguageView);
+
+  // E:/WheelChairMan/src/Scene/LevelUpView.ts
+  var __decorate10 = __$decorate("f7577321-9089-4d76-ba3b-af9c8a8c0afe", "../src/Scene/LevelUpView.ts");
+  var { regClass: regClass9, property: property9 } = Laya;
+  var LevelUpView = /* @__PURE__ */ __name(class LevelUpView2 extends UIBase_default {
+  }, "LevelUpView");
+  LevelUpView = __decorate10([
+    regClass9()
+  ], LevelUpView);
+
+  // E:/WheelChairMan/src/Util/StringUtil.ts
+  var StringUtil = class {
+    static num2percentage(num, d = 2) {
+      num = num * 100;
+      return num.toFixed(d) + "%";
+    }
+  };
+  __name(StringUtil, "StringUtil");
+
+  // E:/WheelChairMan/src/Scene/LoadView.ts
+  var __decorate11 = __$decorate("9797e892-adab-4c82-8f5e-800b37f590f9", "../src/Scene/LoadView.ts");
+  var _a3;
+  var _b3;
+  var Image3 = Laya.Image;
+  var Label2 = Laya.Label;
+  var Handler5 = Laya.Handler;
+  var { regClass: regClass10, property: property10 } = Laya;
+  var LoadView = /* @__PURE__ */ __name(class LoadView2 extends UIBase_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+      this.imgMask = this.imgLoad.mask;
+      this.checkVersion();
+    }
+    checkVersion() {
+      this.startPreLoad();
+    }
+    startPreLoad() {
+      ResLoader.preloadRes(Handler5.create(this, this.onCompleted), Handler5.create(this, this._onProgress));
+    }
+    _onProgress(value) {
+      this.imgMask.width = this.imgLoad.width * value;
+      this.labelLoad.text = "Loading\u2026" + StringUtil.num2percentage(value);
+    }
+    onCompleted() {
+      console.log("load_conCompleted");
+      LocalizationMgr.init();
+      UIBaseMgr.showDebug();
+      UIBaseMgr.open(1018 /* SettingView */);
+      this.close();
+    }
+  }, "LoadView");
+  __decorate11([
+    property10(),
+    __metadata("design:type", typeof (_a3 = typeof Image3 !== "undefined" && Image3) === "function" ? _a3 : Object)
+  ], LoadView.prototype, "imgLoad", void 0);
+  __decorate11([
+    property10(),
+    __metadata("design:type", typeof (_b3 = typeof Label2 !== "undefined" && Label2) === "function" ? _b3 : Object)
+  ], LoadView.prototype, "labelLoad", void 0);
+  LoadView = __decorate11([
+    regClass10(),
+    __metadata("design:paramtypes", [])
+  ], LoadView);
+
+  // E:/WheelChairMan/src/Scene/LoseView.ts
+  var __decorate12 = __$decorate("9b8220cb-adbc-4d84-9618-c7c9f2bd85f3", "../src/Scene/LoseView.ts");
+  var { regClass: regClass11, property: property11 } = Laya;
+  var LoseView = /* @__PURE__ */ __name(class LoseView2 extends UIBase_default {
+  }, "LoseView");
+  LoseView = __decorate12([
+    regClass11()
+  ], LoseView);
+
+  // E:/WheelChairMan/src/Scene/LuckyBoxView.ts
+  var __decorate13 = __$decorate("d94dafff-05f0-4479-9a1a-ab9861a24025", "../src/Scene/LuckyBoxView.ts");
+  var _a4;
+  var _b4;
+  var _c2;
+  var _d;
+  var _e;
+  var Text2 = Laya.Text;
+  var Image4 = Laya.Image;
+  var { regClass: regClass12, property: property12 } = Laya;
+  var LuckyBoxView = /* @__PURE__ */ __name(class LuckyBoxView2 extends UIBase_default {
+    constructor() {
+      super();
+      this.luckyboxList = [
+        "LUCKYBOXBRONZE",
+        "LUCKYBOXSILVER",
+        "LUCKYBOXGOLD",
+        "LUCKYBOXDIAMOND",
+        "LUCKYBOXPLATINUM"
+      ];
+    }
+    onOpened(param) {
+      this.regClick(this.imgClose, this.close);
+      this.regClick(this.imgOpen, this.openLuckBox);
+      this.initLuckBox();
+      let data = ResLoader.getResById(3001 /* LuckyBox */);
+      console.log(data);
+    }
+    initLuckBox() {
+      if (this.$param == void 0) {
+        this.$param = 0;
+      }
+      this.txtMsg.text = LocalizationMgr.getLocalizationByKey(this.luckyboxList[this.$param]);
+    }
+    openLuckBox() {
+      switch (this.$param) {
+        case 0:
+          break;
+      }
+    }
+  }, "LuckyBoxView");
+  __decorate13([
+    property12(),
+    __metadata("design:type", typeof (_a4 = typeof Image4 !== "undefined" && Image4) === "function" ? _a4 : Object)
+  ], LuckyBoxView.prototype, "imgLight", void 0);
+  __decorate13([
+    property12(),
+    __metadata("design:type", typeof (_b4 = typeof Image4 !== "undefined" && Image4) === "function" ? _b4 : Object)
+  ], LuckyBoxView.prototype, "imgBox", void 0);
+  __decorate13([
+    property12(),
+    __metadata("design:type", typeof (_c2 = typeof Image4 !== "undefined" && Image4) === "function" ? _c2 : Object)
+  ], LuckyBoxView.prototype, "imgClose", void 0);
+  __decorate13([
+    property12(),
+    __metadata("design:type", typeof (_d = typeof Image4 !== "undefined" && Image4) === "function" ? _d : Object)
+  ], LuckyBoxView.prototype, "imgOpen", void 0);
+  __decorate13([
+    property12(),
+    __metadata("design:type", typeof (_e = typeof Text2 !== "undefined" && Text2) === "function" ? _e : Object)
+  ], LuckyBoxView.prototype, "txtMsg", void 0);
+  LuckyBoxView = __decorate13([
+    regClass12(),
+    __metadata("design:paramtypes", [])
+  ], LuckyBoxView);
+
+  // E:/WheelChairMan/src/Scene/MainView.ts
+  var __decorate14 = __$decorate("127f9431-d96d-491c-b782-2549a9c38d7b", "../src/Scene/MainView.ts");
+  var { regClass: regClass13, property: property13 } = Laya;
+  var MainView = /* @__PURE__ */ __name(class MainView2 extends UIBase_default {
+    constructor() {
+      super();
+    }
+  }, "MainView");
+  MainView = __decorate14([
+    regClass13(),
+    __metadata("design:paramtypes", [])
+  ], MainView);
+
+  // E:/WheelChairMan/src/Scene/MyInfoView.ts
+  var __decorate15 = __$decorate("dd16d8bf-53b3-41cc-81c1-44f39afec08e", "../src/Scene/MyInfoView.ts");
+  var { regClass: regClass14, property: property14 } = Laya;
+  var MyInfoView = /* @__PURE__ */ __name(class MyInfoView2 extends UIBase_default {
+  }, "MyInfoView");
+  MyInfoView = __decorate15([
+    regClass14()
+  ], MyInfoView);
+
+  // E:/WheelChairMan/src/Scene/PauseView.ts
+  var __decorate16 = __$decorate("352c01f5-c61a-4387-bd3b-63f412ac12c7", "../src/Scene/PauseView.ts");
+  var { regClass: regClass15, property: property15 } = Laya;
+  var PauseView = /* @__PURE__ */ __name(class PauseView2 extends UIBase_default {
+  }, "PauseView");
+  PauseView = __decorate16([
+    regClass15()
+  ], PauseView);
+
+  // E:/WheelChairMan/src/Scene/PrivacyAgreementView.ts
+  var __decorate17 = __$decorate("df9b38f8-2d16-4280-849d-786074a729fe", "../src/Scene/PrivacyAgreementView.ts");
+  var { regClass: regClass16, property: property16 } = Laya;
+  var PrivacyAgreementView = /* @__PURE__ */ __name(class PrivacyAgreementView2 extends UIBase_default {
+  }, "PrivacyAgreementView");
+  PrivacyAgreementView = __decorate17([
+    regClass16()
+  ], PrivacyAgreementView);
+
+  // E:/WheelChairMan/src/Scene/RankingView.ts
+  var __decorate18 = __$decorate("731a1c9f-76c7-4237-ad93-f469eb850bb9", "../src/Scene/RankingView.ts");
+  var { regClass: regClass17, property: property17 } = Laya;
+  var RankingView = /* @__PURE__ */ __name(class RankingView2 extends UIBase_default {
+  }, "RankingView");
+  RankingView = __decorate18([
+    regClass17()
+  ], RankingView);
+
+  // E:/WheelChairMan/src/Mgr/SoundMgr.ts
+  var SoundManager = Laya.SoundManager;
+  var SoundMgr = class {
+    static changeMusicVolume(value) {
+      SoundManager.musicVolume = value;
+    }
+    static changeSoundVolume(value) {
+      SoundManager.soundVolume = value;
+    }
+    static playSound(soundEnum, loopTimes) {
+      SoundManager.playSound(this.$soundBaseUrl + soundEnum + this.$soundUrlStuff, loopTimes);
+    }
+  };
+  __name(SoundMgr, "SoundMgr");
+  SoundMgr.$musicBaseUrl = "";
+  SoundMgr.$musicUrlStuff = ".mp3";
+  SoundMgr.$soundBaseUrl = "";
+  SoundMgr.$soundUrlStuff = ".mp3";
+
+  // E:/WheelChairMan/src/Mgr/VibrateMgr.ts
+  var VibrateMgr = class {
+    static get isVibrate() {
+      return !!this.$isVibrate;
+    }
+    static set isVibrate(value) {
+      if (value) {
+        this.$isVibrate = 1;
+      } else {
+        this.$isVibrate = 0;
+      }
+    }
+  };
+  __name(VibrateMgr, "VibrateMgr");
+  VibrateMgr.$isVibrate = -1;
+
+  // E:/WheelChairMan/src/Util/Slider.ts
+  var __decorate19 = __$decorate("35b37bb8-b4f2-4360-8030-42b6c06ee038", "../src/Util/Slider.ts");
+  var _a5;
+  var _b5;
+  var _c3;
+  var Image5 = Laya.Image;
+  var { regClass: regClass18, property: property18 } = Laya;
   var Slider = /* @__PURE__ */ __name(class Slider2 extends Laya.Script {
     constructor() {
       super();
@@ -751,37 +1042,37 @@ function __$decorate(assetId, codePath) {
     onDisable() {
     }
   }, "Slider");
-  __decorate7([
-    property5(),
+  __decorate19([
+    property18(),
     __metadata("design:type", Boolean)
   ], Slider.prototype, "isH", void 0);
-  __decorate7([
-    property5(),
-    __metadata("design:type", typeof (_a = typeof Image !== "undefined" && Image) === "function" ? _a : Object)
+  __decorate19([
+    property18(),
+    __metadata("design:type", typeof (_a5 = typeof Image5 !== "undefined" && Image5) === "function" ? _a5 : Object)
   ], Slider.prototype, "imgLoad", void 0);
-  __decorate7([
-    property5(),
-    __metadata("design:type", typeof (_b = typeof Image !== "undefined" && Image) === "function" ? _b : Object)
+  __decorate19([
+    property18(),
+    __metadata("design:type", typeof (_b5 = typeof Image5 !== "undefined" && Image5) === "function" ? _b5 : Object)
   ], Slider.prototype, "imgBar", void 0);
-  __decorate7([
-    property5(),
-    __metadata("design:type", typeof (_c = typeof Image !== "undefined" && Image) === "function" ? _c : Object)
+  __decorate19([
+    property18(),
+    __metadata("design:type", typeof (_c3 = typeof Image5 !== "undefined" && Image5) === "function" ? _c3 : Object)
   ], Slider.prototype, "imgBg", void 0);
-  __decorate7([
-    property5(),
+  __decorate19([
+    property18(),
     __metadata("design:type", Number)
   ], Slider.prototype, "value", void 0);
-  Slider = __decorate7([
-    regClass5(),
+  Slider = __decorate19([
+    regClass18(),
     __metadata("design:paramtypes", [])
   ], Slider);
   var Slider_default = Slider;
 
   // E:/WheelChairMan/src/Util/Toggle.ts
-  var __decorate8 = __$decorate("0f5a24a0-2f83-4219-9165-99195082aa4a", "../src/Util/Toggle.ts");
-  var _a2;
-  var Image2 = Laya.Image;
-  var { regClass: regClass6, property: property6 } = Laya;
+  var __decorate20 = __$decorate("0f5a24a0-2f83-4219-9165-99195082aa4a", "../src/Util/Toggle.ts");
+  var _a6;
+  var Image6 = Laya.Image;
+  var { regClass: regClass19, property: property19 } = Laya;
   var Toggle = /* @__PURE__ */ __name(class Toggle2 extends Laya.Script {
     constructor() {
       super();
@@ -819,316 +1110,22 @@ function __$decorate(assetId, codePath) {
       this.$imgBg.off(Laya.Event.CLICK, this, this.changeValue);
     }
   }, "Toggle");
-  __decorate8([
-    property6(),
+  __decorate20([
+    property19(),
     __metadata("design:type", Boolean)
   ], Toggle.prototype, "isON", void 0);
-  __decorate8([
-    property6(),
-    __metadata("design:type", typeof (_a2 = typeof Image2 !== "undefined" && Image2) === "function" ? _a2 : Object)
+  __decorate20([
+    property19(),
+    __metadata("design:type", typeof (_a6 = typeof Image6 !== "undefined" && Image6) === "function" ? _a6 : Object)
   ], Toggle.prototype, "imgItem", void 0);
-  Toggle = __decorate8([
-    regClass6(),
+  Toggle = __decorate20([
+    regClass19(),
     __metadata("design:paramtypes", [])
   ], Toggle);
   var Toggle_default = Toggle;
 
-  // E:/WheelChairMan/src/Game/Scene/DebugView.ts
-  var __decorate9 = __$decorate("5ca51831-1d23-46b6-a853-a10d5da54d6c", "../src/Game/Scene/DebugView.ts");
-  var _a3;
-  var _b2;
-  var _c2;
-  var Box = Laya.Box;
-  var Image3 = Laya.Image;
-  var List = Laya.List;
-  var Handler3 = Laya.Handler;
-  var { regClass: regClass7, property: property7 } = Laya;
-  var DebugView = /* @__PURE__ */ __name(class DebugView2 extends UIBase_default {
-    constructor() {
-      super();
-      this.commandList = [
-        "\u6DFB\u52A05000\u91D1\u5E01",
-        "\u91CD\u7F6E\u7B7E\u5230",
-        "\u6E38\u620F\u7ACB\u523B\u80DC\u5229(\u5FC5\u987B\u5148\u5F00\u59CB\u6E38\u620F)",
-        "\u6E38\u620F\u7ACB\u523B\u5931\u8D25(\u5FC5\u987B\u5148\u5F00\u59CB\u6E38\u620F)",
-        "\u9501\u5B9A\u989D\u5916\u76AE\u80A4"
-      ];
-    }
-    onOpened(param) {
-      this.regClick(this.imgShow, this.showHidePanel);
-      this.listCommand.renderHandler = new Handler3(this, this.changeItem);
-      this.listCommand.selectHandler = new Handler3(this, this.selectItem);
-      this.listCommand.array = this.commandList;
-    }
-    showHidePanel() {
-      this.MainPanel.visible = !this.MainPanel.visible;
-    }
-    changeItem(box, index) {
-      let Label4 = box.getChildByName("Label");
-      Label4.text = box.dataSource;
-    }
-    selectItem(index) {
-      switch (index) {
-        case 0:
-          EventMgr.event("GOLDCHANGE" /* GOLDCHANGE */);
-          break;
-        case 1:
-          break;
-        case 2:
-          break;
-        case 3:
-          break;
-        case 4:
-          break;
-      }
-      this.listCommand.selectedIndex = -1;
-    }
-  }, "DebugView");
-  __decorate9([
-    property7(),
-    __metadata("design:type", typeof (_a3 = typeof Image3 !== "undefined" && Image3) === "function" ? _a3 : Object)
-  ], DebugView.prototype, "imgShow", void 0);
-  __decorate9([
-    property7(),
-    __metadata("design:type", typeof (_b2 = typeof Box !== "undefined" && Box) === "function" ? _b2 : Object)
-  ], DebugView.prototype, "MainPanel", void 0);
-  __decorate9([
-    property7(),
-    __metadata("design:type", typeof (_c2 = typeof List !== "undefined" && List) === "function" ? _c2 : Object)
-  ], DebugView.prototype, "listCommand", void 0);
-  DebugView = __decorate9([
-    regClass7(),
-    __metadata("design:paramtypes", [])
-  ], DebugView);
-
-  // E:/WheelChairMan/src/Game/Scene/LanguageView.ts
-  var __decorate10 = __$decorate("6bc1bf6a-a993-4ac9-b9f4-4785e0d68c2b", "../src/Game/Scene/LanguageView.ts");
-  var _a4;
-  var _b3;
-  var Image4 = Laya.Image;
-  var List2 = Laya.List;
-  var Handler4 = Laya.Handler;
-  var { regClass: regClass8, property: property8 } = Laya;
-  var LanguageView = /* @__PURE__ */ __name(class LanguageView2 extends UIBase_default {
-    constructor() {
-      super();
-      this.$selectIndex = 0;
-    }
-    onOpened(param) {
-      this.regClick(this.$imgClose, this.close);
-      this.$listLanguage.renderHandler = new Handler4(this, this.changeItem);
-      this.$listLanguage.selectHandler = new Handler4(this, this.selectItem);
-      this.$selectIndex = ProjectConfig.LanguageList.indexOf(LocalizationMgr.Language);
-      console.log(this.$selectIndex);
-      this.$listLanguage.array = ProjectConfig.LocalizationLanguageList;
-      this.$listLanguage.selectedIndex = this.$selectIndex;
-    }
-    changeItem(box, index) {
-      let labelLanguage = box.getChildByName("labelLanguage");
-      let imgFlag = box.getChildByName("imgFlag");
-      let imgSelect = box.getChildByName("imgSelect");
-      labelLanguage.text = box.dataSource;
-      imgFlag.skin = LocalizationUrl.Image[index];
-      if (index == this.$selectIndex) {
-        imgSelect.visible = true;
-      } else {
-        imgSelect.visible = false;
-      }
-    }
-    selectItem(index) {
-      if (index != this.$selectIndex) {
-        let oldBox = this.$listLanguage.getCell(this.$selectIndex);
-        let oldSelect = oldBox.getChildByName("imgSelect");
-        oldSelect.visible = false;
-        this.$selectIndex = index;
-        LocalizationMgr.Language = ProjectConfig.LanguageList[index];
-        let newBox = this.$listLanguage.getCell(this.$selectIndex);
-        let newSelect = newBox.getChildByName("imgSelect");
-        newSelect.visible = true;
-      }
-    }
-  }, "LanguageView");
-  __decorate10([
-    property8(),
-    __metadata("design:type", typeof (_a4 = typeof List2 !== "undefined" && List2) === "function" ? _a4 : Object)
-  ], LanguageView.prototype, "$listLanguage", void 0);
-  __decorate10([
-    property8(),
-    __metadata("design:type", typeof (_b3 = typeof Image4 !== "undefined" && Image4) === "function" ? _b3 : Object)
-  ], LanguageView.prototype, "$imgClose", void 0);
-  LanguageView = __decorate10([
-    regClass8(),
-    __metadata("design:paramtypes", [])
-  ], LanguageView);
-
-  // E:/WheelChairMan/src/Util/StringUtil.ts
-  var StringUtil = class {
-    static num2percentage(num, d = 2) {
-      num = num * 100;
-      return num.toFixed(d) + "%";
-    }
-  };
-  __name(StringUtil, "StringUtil");
-
-  // E:/WheelChairMan/src/Game/Scene/LoadView.ts
-  var __decorate11 = __$decorate("9797e892-adab-4c82-8f5e-800b37f590f9", "../src/Game/Scene/LoadView.ts");
-  var _a5;
-  var _b4;
-  var Image5 = Laya.Image;
-  var Label2 = Laya.Label;
-  var Handler5 = Laya.Handler;
-  var { regClass: regClass9, property: property9 } = Laya;
-  var LoadView = /* @__PURE__ */ __name(class LoadView2 extends UIBase_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-      this.imgMask = this.imgLoad.mask;
-      this.checkVersion();
-    }
-    checkVersion() {
-      this.startPreLoad();
-    }
-    startPreLoad() {
-      ResLoader.preloadRes(Handler5.create(this, this.onCompleted), Handler5.create(this, this._onProgress));
-    }
-    onCompleted() {
-      console.log("load_conCompleted");
-      UIBaseMgr.showDebug();
-    }
-    _onProgress(value) {
-      this.imgMask.width = this.imgLoad.width * value;
-      this.labelLoad.text = "Loading\u2026" + StringUtil.num2percentage(value);
-    }
-  }, "LoadView");
-  __decorate11([
-    property9(),
-    __metadata("design:type", typeof (_a5 = typeof Image5 !== "undefined" && Image5) === "function" ? _a5 : Object)
-  ], LoadView.prototype, "imgLoad", void 0);
-  __decorate11([
-    property9(),
-    __metadata("design:type", typeof (_b4 = typeof Label2 !== "undefined" && Label2) === "function" ? _b4 : Object)
-  ], LoadView.prototype, "labelLoad", void 0);
-  LoadView = __decorate11([
-    regClass9(),
-    __metadata("design:paramtypes", [])
-  ], LoadView);
-
-  // E:/WheelChairMan/src/Game/Scene/LuckyBoxView.ts
-  var __decorate12 = __$decorate("d94dafff-05f0-4479-9a1a-ab9861a24025", "../src/Game/Scene/LuckyBoxView.ts");
-  var _a6;
-  var _b5;
-  var _c3;
-  var _d;
-  var _e;
-  var Text2 = Laya.Text;
-  var Image6 = Laya.Image;
-  var { regClass: regClass10, property: property10 } = Laya;
-  var LuckyBoxView = /* @__PURE__ */ __name(class LuckyBoxView2 extends UIBase_default {
-    constructor() {
-      super();
-      this.luckyboxList = [
-        "LUCKYBOXBRONZE",
-        "LUCKYBOXSILVER",
-        "LUCKYBOXGOLD",
-        "LUCKYBOXDIAMOND",
-        "LUCKYBOXPLATINUM"
-      ];
-    }
-    onOpened(param) {
-      this.regClick(this.imgClose, this.close);
-      this.regClick(this.imgOpen, this.openLuckBox);
-      this.initLuckBox();
-    }
-    initLuckBox() {
-      if (this.$param == void 0) {
-        this.$param = 0;
-      }
-      this.txtMsg.text = LocalizationMgr.getLocalizationByKey(this.luckyboxList[this.$param]);
-      this.imgBox.skin = ResUrl.LuckyBox[this.$param];
-    }
-    openLuckBox() {
-      switch (this.$param) {
-        case 0:
-          break;
-      }
-    }
-  }, "LuckyBoxView");
-  __decorate12([
-    property10(),
-    __metadata("design:type", typeof (_a6 = typeof Image6 !== "undefined" && Image6) === "function" ? _a6 : Object)
-  ], LuckyBoxView.prototype, "imgLight", void 0);
-  __decorate12([
-    property10(),
-    __metadata("design:type", typeof (_b5 = typeof Image6 !== "undefined" && Image6) === "function" ? _b5 : Object)
-  ], LuckyBoxView.prototype, "imgBox", void 0);
-  __decorate12([
-    property10(),
-    __metadata("design:type", typeof (_c3 = typeof Image6 !== "undefined" && Image6) === "function" ? _c3 : Object)
-  ], LuckyBoxView.prototype, "imgClose", void 0);
-  __decorate12([
-    property10(),
-    __metadata("design:type", typeof (_d = typeof Image6 !== "undefined" && Image6) === "function" ? _d : Object)
-  ], LuckyBoxView.prototype, "imgOpen", void 0);
-  __decorate12([
-    property10(),
-    __metadata("design:type", typeof (_e = typeof Text2 !== "undefined" && Text2) === "function" ? _e : Object)
-  ], LuckyBoxView.prototype, "txtMsg", void 0);
-  LuckyBoxView = __decorate12([
-    regClass10(),
-    __metadata("design:paramtypes", [])
-  ], LuckyBoxView);
-
-  // E:/WheelChairMan/src/Game/Scene/MainView.ts
-  var __decorate13 = __$decorate("127f9431-d96d-491c-b782-2549a9c38d7b", "../src/Game/Scene/MainView.ts");
-  var { regClass: regClass11, property: property11 } = Laya;
-  var MainView = /* @__PURE__ */ __name(class MainView2 extends UIBase_default {
-    constructor() {
-      super();
-    }
-  }, "MainView");
-  MainView = __decorate13([
-    regClass11(),
-    __metadata("design:paramtypes", [])
-  ], MainView);
-
-  // E:/WheelChairMan/src/Mgr/SoundMgr.ts
-  var SoundManager = Laya.SoundManager;
-  var SoundMgr = class {
-    static changeMusicVolume(value) {
-      SoundManager.musicVolume = value;
-    }
-    static changeSoundVolume(value) {
-      SoundManager.soundVolume = value;
-    }
-    static playSound(soundEnum, loopTimes) {
-      SoundManager.playSound(this.$soundBaseUrl + soundEnum + this.$soundUrlStuff, loopTimes);
-    }
-  };
-  __name(SoundMgr, "SoundMgr");
-  SoundMgr.$musicBaseUrl = "";
-  SoundMgr.$musicUrlStuff = ".mp3";
-  SoundMgr.$soundBaseUrl = "";
-  SoundMgr.$soundUrlStuff = ".mp3";
-
-  // E:/WheelChairMan/src/Mgr/VibrateMgr.ts
-  var VibrateMgr = class {
-    static get isVibrate() {
-      return !!this.$isVibrate;
-    }
-    static set isVibrate(value) {
-      if (value) {
-        this.$isVibrate = 1;
-      } else {
-        this.$isVibrate = 0;
-      }
-    }
-  };
-  __name(VibrateMgr, "VibrateMgr");
-  VibrateMgr.$isVibrate = -1;
-
-  // E:/WheelChairMan/src/Game/Scene/SettingView.ts
-  var __decorate14 = __$decorate("9811079c-9340-49a7-8d8a-71570d70a98d", "../src/Game/Scene/SettingView.ts");
+  // E:/WheelChairMan/src/Scene/SettingView.ts
+  var __decorate21 = __$decorate("9811079c-9340-49a7-8d8a-71570d70a98d", "../src/Scene/SettingView.ts");
   var _a7;
   var _b6;
   var _c4;
@@ -1138,7 +1135,7 @@ function __$decorate(assetId, codePath) {
   var _g;
   var Box2 = Laya.Box;
   var Image7 = Laya.Image;
-  var { regClass: regClass12, property: property12 } = Laya;
+  var { regClass: regClass20, property: property20 } = Laya;
   var SettingView = /* @__PURE__ */ __name(class SettingView2 extends UIBase_default {
     constructor() {
       super();
@@ -1153,6 +1150,8 @@ function __$decorate(assetId, codePath) {
       this.$sliderBgm.init(this, this.bgmChange);
       this.$sliderSfx.init(this, this.sfxChange);
       this.$toggleShake.init(this, this.shakeChange);
+      this.regEvent("LANGUAGECHANGE" /* LANGUAGECHANGE */, this.changeLanguageIcon);
+      this.changeLanguageIcon();
     }
     bgmChange(value) {
       SoundMgr.changeMusicVolume(value);
@@ -1163,58 +1162,79 @@ function __$decorate(assetId, codePath) {
     shakeChange(value) {
       VibrateMgr.isVibrate = value;
     }
+    changeLanguageIcon() {
+      this.imgLan.skin = ResLoader.getUrlById(LocalizationMgr.getFlagSkinIdById(LocalizationMgr.Language));
+    }
     getSupport() {
       Laya.Browser.window.open(ProjectConfig.support);
       console.log("support");
     }
     changeLanguage() {
-      UIBaseMgr.open(SceneUrl.LanguageView);
+      UIBaseMgr.open(1009 /* LanguageView */);
     }
     onClosed() {
     }
   }, "SettingView");
-  __decorate14([
-    property12(),
+  __decorate21([
+    property20(),
     __metadata("design:type", typeof (_a7 = typeof Image7 !== "undefined" && Image7) === "function" ? _a7 : Object)
   ], SettingView.prototype, "imgClose", void 0);
-  __decorate14([
-    property12(),
+  __decorate21([
+    property20(),
     __metadata("design:type", typeof (_b6 = typeof Box2 !== "undefined" && Box2) === "function" ? _b6 : Object)
   ], SettingView.prototype, "sliderSfx", void 0);
-  __decorate14([
-    property12(),
+  __decorate21([
+    property20(),
     __metadata("design:type", typeof (_c4 = typeof Box2 !== "undefined" && Box2) === "function" ? _c4 : Object)
   ], SettingView.prototype, "sliderBgm", void 0);
-  __decorate14([
-    property12(),
+  __decorate21([
+    property20(),
     __metadata("design:type", typeof (_d2 = typeof Image7 !== "undefined" && Image7) === "function" ? _d2 : Object)
   ], SettingView.prototype, "toggleShake", void 0);
-  __decorate14([
-    property12(),
+  __decorate21([
+    property20(),
     __metadata("design:type", typeof (_e2 = typeof Image7 !== "undefined" && Image7) === "function" ? _e2 : Object)
   ], SettingView.prototype, "imgLanguage", void 0);
-  __decorate14([
-    property12(),
+  __decorate21([
+    property20(),
     __metadata("design:type", typeof (_f = typeof Image7 !== "undefined" && Image7) === "function" ? _f : Object)
   ], SettingView.prototype, "imgLan", void 0);
-  __decorate14([
-    property12(),
+  __decorate21([
+    property20(),
     __metadata("design:type", typeof (_g = typeof Image7 !== "undefined" && Image7) === "function" ? _g : Object)
   ], SettingView.prototype, "imgSupport", void 0);
-  SettingView = __decorate14([
-    regClass12(),
+  SettingView = __decorate21([
+    regClass20(),
     __metadata("design:paramtypes", [])
   ], SettingView);
 
-  // E:/WheelChairMan/src/Game/Scene/SureView.ts
-  var __decorate15 = __$decorate("2eee226a-dcc2-4965-9ad2-4c490d20fbdf", "../src/Game/Scene/SureView.ts");
+  // E:/WheelChairMan/src/Scene/ShopView.ts
+  var __decorate22 = __$decorate("6101acc2-fac8-487c-9045-7d083746b9cd", "../src/Scene/ShopView.ts");
+  var { regClass: regClass21, property: property21 } = Laya;
+  var ShopView = /* @__PURE__ */ __name(class ShopView2 extends UIBase_default {
+  }, "ShopView");
+  ShopView = __decorate22([
+    regClass21()
+  ], ShopView);
+
+  // E:/WheelChairMan/src/Scene/SignInView.ts
+  var __decorate23 = __$decorate("658fcc51-8109-42a6-a372-0d6e36f801cc", "../src/Scene/SignInView.ts");
+  var { regClass: regClass22, property: property22 } = Laya;
+  var SignInView = /* @__PURE__ */ __name(class SignInView2 extends UIBase_default {
+  }, "SignInView");
+  SignInView = __decorate23([
+    regClass22()
+  ], SignInView);
+
+  // E:/WheelChairMan/src/Scene/SureView.ts
+  var __decorate24 = __$decorate("2eee226a-dcc2-4965-9ad2-4c490d20fbdf", "../src/Scene/SureView.ts");
   var _a8;
   var _b7;
   var _c5;
   var _d3;
   var Label3 = Laya.Label;
   var Image8 = Laya.Image;
-  var { regClass: regClass13, property: property13 } = Laya;
+  var { regClass: regClass23, property: property23 } = Laya;
   var SureView = /* @__PURE__ */ __name(class SureView2 extends UIBase_default {
     constructor() {
       super();
@@ -1257,24 +1277,24 @@ function __$decorate(assetId, codePath) {
       this.imgSure.centerX = 180;
     }
   }, "SureView");
-  __decorate15([
-    property13(),
+  __decorate24([
+    property23(),
     __metadata("design:type", typeof (_a8 = typeof Image8 !== "undefined" && Image8) === "function" ? _a8 : Object)
   ], SureView.prototype, "imgSure", void 0);
-  __decorate15([
-    property13(),
+  __decorate24([
+    property23(),
     __metadata("design:type", typeof (_b7 = typeof Image8 !== "undefined" && Image8) === "function" ? _b7 : Object)
   ], SureView.prototype, "imgCancel", void 0);
-  __decorate15([
-    property13(),
+  __decorate24([
+    property23(),
     __metadata("design:type", typeof (_c5 = typeof Label3 !== "undefined" && Label3) === "function" ? _c5 : Object)
   ], SureView.prototype, "txtTitle", void 0);
-  __decorate15([
-    property13(),
+  __decorate24([
+    property23(),
     __metadata("design:type", typeof (_d3 = typeof Label3 !== "undefined" && Label3) === "function" ? _d3 : Object)
   ], SureView.prototype, "txtMsg", void 0);
-  SureView = __decorate15([
-    regClass13(),
+  SureView = __decorate24([
+    regClass23(),
     __metadata("design:paramtypes", [])
   ], SureView);
 
@@ -1405,11 +1425,11 @@ function __$decorate(assetId, codePath) {
   __name(Timer, "Timer");
   Timer.$sign = "$myTimer";
 
-  // E:/WheelChairMan/src/Game/Scene/TipsView.ts
-  var __decorate16 = __$decorate("a1b11e33-3318-4f7e-af1d-2bbf5fa13333", "../src/Game/Scene/TipsView.ts");
+  // E:/WheelChairMan/src/Scene/TipsView.ts
+  var __decorate25 = __$decorate("a1b11e33-3318-4f7e-af1d-2bbf5fa13333", "../src/Scene/TipsView.ts");
   var _a9;
   var Text3 = Laya.Text;
-  var { regClass: regClass14, property: property14 } = Laya;
+  var { regClass: regClass24, property: property24 } = Laya;
   var TipsView = /* @__PURE__ */ __name(class TipsView2 extends UIBase_default {
     constructor() {
       super();
@@ -1426,13 +1446,107 @@ function __$decorate(assetId, codePath) {
       }).once().start();
     }
   }, "TipsView");
-  __decorate16([
-    property14(),
+  __decorate25([
+    property24(),
     __metadata("design:type", typeof (_a9 = typeof Text3 !== "undefined" && Text3) === "function" ? _a9 : Object)
   ], TipsView.prototype, "txtMsg", void 0);
-  TipsView = __decorate16([
-    regClass14(),
+  TipsView = __decorate25([
+    regClass24(),
     __metadata("design:paramtypes", [])
   ], TipsView);
+
+  // E:/WheelChairMan/src/Util/Base64.ts
+  var __decorate26 = __$decorate("fe62c9ad-c7c3-4baa-8f7c-216a9f051006", "../src/Util/Base64.ts");
+  var Base64 = class {
+    static encode(input) {
+      let output = "";
+      let chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+      let i = 0;
+      input = this._utf8_encode(input);
+      while (i < input.length) {
+        chr1 = input.charCodeAt(i++);
+        chr2 = input.charCodeAt(i++);
+        chr3 = input.charCodeAt(i++);
+        enc1 = chr1 >> 2;
+        enc2 = (chr1 & 3) << 4 | chr2 >> 4;
+        enc3 = (chr2 & 15) << 2 | chr3 >> 6;
+        enc4 = chr3 & 63;
+        if (isNaN(chr2)) {
+          enc3 = enc4 = 64;
+        } else if (isNaN(chr3)) {
+          enc4 = 64;
+        }
+        output = output + this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) + this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+      }
+      return output;
+    }
+    static decode(input) {
+      let output = "";
+      let chr1, chr2, chr3;
+      let enc1, enc2, enc3, enc4;
+      let i = 0;
+      input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+      while (i < input.length) {
+        enc1 = this._keyStr.indexOf(input.charAt(i++));
+        enc2 = this._keyStr.indexOf(input.charAt(i++));
+        enc3 = this._keyStr.indexOf(input.charAt(i++));
+        enc4 = this._keyStr.indexOf(input.charAt(i++));
+        chr1 = enc1 << 2 | enc2 >> 4;
+        chr2 = (enc2 & 15) << 4 | enc3 >> 2;
+        chr3 = (enc3 & 3) << 6 | enc4;
+        output = output + String.fromCharCode(chr1);
+        if (enc3 !== 64) {
+          output = output + String.fromCharCode(chr2);
+        }
+        if (enc4 !== 64) {
+          output = output + String.fromCharCode(chr3);
+        }
+      }
+      output = this._utf8_decode(output);
+      return output;
+    }
+    static _utf8_encode(string) {
+      string = string.replace(/\r\n/g, "\n");
+      let utftext = "";
+      for (let n = 0; n < string.length; n++) {
+        const c = string.charCodeAt(n);
+        if (c < 128) {
+          utftext += String.fromCharCode(c);
+        } else if (c > 127 && c < 2048) {
+          utftext += String.fromCharCode(c >> 6 | 192);
+          utftext += String.fromCharCode(c & 63 | 128);
+        } else {
+          utftext += String.fromCharCode(c >> 12 | 224);
+          utftext += String.fromCharCode(c >> 6 & 63 | 128);
+          utftext += String.fromCharCode(c & 63 | 128);
+        }
+      }
+      return utftext;
+    }
+    static _utf8_decode(utftext) {
+      let string = "";
+      let i = 0;
+      let c = 0, c2 = 0, c3 = 0;
+      while (i < utftext.length) {
+        c = utftext.charCodeAt(i);
+        if (c < 128) {
+          string += String.fromCharCode(c);
+          i++;
+        } else if (c > 191 && c < 224) {
+          c2 = utftext.charCodeAt(i + 1);
+          string += String.fromCharCode((c & 31) << 6 | c2 & 63);
+          i += 2;
+        } else {
+          c2 = utftext.charCodeAt(i + 1);
+          c3 = utftext.charCodeAt(i + 2);
+          string += String.fromCharCode((c & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
+          i += 3;
+        }
+      }
+      return string;
+    }
+  };
+  __name(Base64, "Base64");
+  Base64._keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 })();
 //# sourceMappingURL=bundle.js.map

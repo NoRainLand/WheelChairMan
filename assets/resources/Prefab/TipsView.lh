@@ -5,16 +5,18 @@
   "name": "TipsView",
   "width": 675,
   "height": 128,
+  "pivotX": 338,
+  "pivotY": 64,
   "anchorX": 0.5,
   "anchorY": 0.5,
-  "centerX": -622,
-  "centerY": -476,
+  "centerX": -960,
+  "centerY": -540,
   "skin": "res://5b750c89-5691-413e-8df6-ea9981fced1e",
   "sizeGrid": "35,24,25,26,0",
   "_$comp": [
     {
       "_$type": "a1b11e33-3318-4f7e-af1d-2bbf5fa13333",
-      "scriptPath": "../src/Game/Scene/TipsView.ts",
+      "scriptPath": "../src/Scene/TipsView.ts",
       "txtMsg": {
         "_$ref": "toew0rua"
       }

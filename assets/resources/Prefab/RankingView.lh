@@ -9,5 +9,17 @@
   "left": 0,
   "right": 0,
   "top": 0,
-  "bottom": 0
+  "bottom": 0,
+  "_$comp": [
+    {
+      "_$type": "731a1c9f-76c7-4237-ad93-f469eb850bb9",
+      "scriptPath": "../src/Scene/RankingView.ts"
+    },
+    {
+      "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
+      "scriptPath": "../src/UIBase/UIBaseData.ts",
+      "depth": 2,
+      "isSingleton": true
+    }
+  ]
 }

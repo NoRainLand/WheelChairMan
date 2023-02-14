@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-08 10:25:16 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 10:13:04
+ * @Last Modified time: 2023-02-14 10:53:22
  */
 import { SceneEnum } from "../Enum/SceneEnum";
 import SceneUrl from "../Url/SceneUrl";
@@ -71,24 +71,24 @@ export default class UIBaseMgr {
 
     /**
      * 打开一个场景
-     * @param sceneName 场景名称
+     * @param sceneId 场景名称
      * @param param 传递参数
      * @param caller 作用域
      * @param callback 回调
      */
-    static open(sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
-        let script = this.$sceneScriptPool.get(sceneName);
+    static open(sceneId: SceneEnum, param?: any, caller?: any, callback?: Function) {
+        let script = this.$sceneScriptPool.get(sceneId);
         if (!script || script instanceof UIBase) {
-            let scene = Pool.getItem(this.$sign + sceneName) as Scene;
+            let scene = Pool.getItem(this.$sign + sceneId) as Scene;
             if (scene) {
-                this.initScene(scene, sceneName, param, caller, callback);
+                this.initScene(scene, sceneId, param, caller, callback);
             } else {
-                let scenePrefab = this.$scenes.get(sceneName);
+                let scenePrefab = this.$scenes.get(sceneId);
                 if (scenePrefab) {
                     let scene = scenePrefab.create() as Scene;
-                    this.initScene(scene, sceneName, param, caller, callback);
+                    this.initScene(scene, sceneId, param, caller, callback);
                 } else {
-                    this.loadScene(sceneName, param, caller, callback);
+                    this.loadScene(sceneId, param, caller, callback);
                 }
             }
         }
@@ -98,47 +98,51 @@ export default class UIBaseMgr {
     private static initScene(scene: Scene, sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
         let base: UIBase = scene.getComponent(UIBase);
         let data: UIBaseData = scene.getComponent(UIBaseData);
-        Object.assign(base, data);
-        switch (base.depth) {
-            default:
-                this.$MainUI.addChild(scene);
-                break;
-            case 0:
-                this.$DebugUI.addChild(scene);
-                break;
-            case 1:
-                this.$TipsUI.addChild(scene);
-                break;
-            case 2:
-                this.$MainUI.addChild(scene);
-                break;
-            case 3:
-                this.$3DUI.addChild(scene);
-                break;
-        }
-        base.$param = param;
-        base.$assetsId = sceneName;
-        base.isOpen = true;
-
-
-
-        base.onOpened(param);
-        if (caller && callback) {
-            callback.call(caller);
-        }
-
-        if (base.isSingleton) {
-            this.$sceneScriptPool.set(sceneName, base);
-        } else {
-            let map = this.$sceneScriptPool.get(sceneName);
-            if (map && map instanceof Map) {
-                map.set(base.id.toString(), base);
-                this.$sceneScriptPool.set(sceneName, map);
-            } else {
-                map = new Map();
-                map.set(base.id.toString(), base);
-                this.$sceneScriptPool.set(sceneName, map);
+        if (base && data) {
+            Object.assign(base, data);
+            switch (base.depth) {
+                default:
+                    this.$MainUI.addChild(scene);
+                    break;
+                case 0:
+                    this.$DebugUI.addChild(scene);
+                    break;
+                case 1:
+                    this.$TipsUI.addChild(scene);
+                    break;
+                case 2:
+                    this.$MainUI.addChild(scene);
+                    break;
+                case 3:
+                    this.$3DUI.addChild(scene);
+                    break;
             }
+            base.$param = param;
+            base.$assetsId = sceneName;
+            base.isOpen = true;
+
+
+
+            base.onOpened(param);
+            if (caller && callback) {
+                callback.call(caller);
+            }
+
+            if (base.isSingleton) {
+                this.$sceneScriptPool.set(sceneName, base);
+            } else {
+                let map = this.$sceneScriptPool.get(sceneName);
+                if (map && map instanceof Map) {
+                    map.set(base.id.toString(), base);
+                    this.$sceneScriptPool.set(sceneName, map);
+                } else {
+                    map = new Map();
+                    map.set(base.id.toString(), base);
+                    this.$sceneScriptPool.set(sceneName, map);
+                }
+            }
+        }else{
+            console.log("UIData或者UIBase缺失")
         }
     }
 

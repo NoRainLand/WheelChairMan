@@ -1,5 +1,5 @@
-import UIBase from "../../UIBase/UIBase";
-import Timer from "../../Util/Timer";
+import UIBase from "../UIBase/UIBase";
+import Timer from "../Util/Timer";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
 import Box = Laya.Box;

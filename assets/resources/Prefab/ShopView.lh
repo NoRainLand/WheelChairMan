@@ -8,5 +8,17 @@
   "left": 0,
   "right": 0,
   "top": 0,
-  "bottom": 0
+  "bottom": 0,
+  "_$comp": [
+    {
+      "_$type": "6101acc2-fac8-487c-9045-7d083746b9cd",
+      "scriptPath": "../src/Scene/ShopView.ts"
+    },
+    {
+      "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
+      "scriptPath": "../src/UIBase/UIBaseData.ts",
+      "depth": 2,
+      "isSingleton": true
+    }
+  ]
 }

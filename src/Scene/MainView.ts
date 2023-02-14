@@ -1,4 +1,4 @@
-import UIBase from "../../UIBase/UIBase";
+import UIBase from "../UIBase/UIBase";
 import Image = Laya.Image;
 import Label = Laya.Label;
 import Handler = Laya.Handler;

@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-06 17:07:29 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-11 15:56:47
+ * @Last Modified time: 2023-02-14 15:36:06
  */
 /**项目数据 */
 export default class ProjectConfig {
@@ -23,34 +23,10 @@ export default class ProjectConfig {
     /**是否为测试版本 */
     static readonly isDebug: boolean = true;
 
-
-    /**语言列表 */
-    static readonly LanguageList = [
-        "ChineseSimplified",
-        "English"
-    ]
-
-
-    /**本地化语言列表 */
-    static readonly LocalizationLanguageList = [
-        "简体中文",
-        "English"
-    ]
-
-    /**当前语言
-     * ChineseSimplified
-     * English
-     * 
-     */
-    static get Language(): string {
-        return this.LanguageList[0];
-    }
-
-
     /**支持 */
     static readonly support: string = "https://github.com/NoRainLand/WheelChairMan";
 
+    /**默认语言 */
+    static readonly defaultLanguage: number = 1001;
 
-
-   
 }

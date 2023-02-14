@@ -8,7 +8,7 @@
   "width": 150,
   "height": 74,
   "mouseEnabled": true,
-  "skin": "res://8442ed75-f040-4f01-ab14-7823bfa134d0",
+  "skin": "res://4f767ce4-70df-4cf6-96e3-b10cfba3f6a5",
   "sizeGrid": "0,30,0,30,0",
   "_$comp": [
     {
@@ -78,7 +78,7 @@
       "width": 60,
       "height": 68,
       "centerY": 0,
-      "skin": "res://c88a905d-55c7-4c04-a708-292f87783ec4"
+      "skin": "res://ad7d498a-de51-44af-988b-485d4b855035"
     }
   ]
 }

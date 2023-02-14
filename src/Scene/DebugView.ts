@@ -1,6 +1,6 @@
-import { EventEnum } from "../../Enum/EventEnum";
-import EventMgr from "../../Mgr/EventMgr";
-import UIBase from "../../UIBase/UIBase";
+import { EventEnum } from "../Enum/EventEnum";
+import EventMgr from "../Mgr/EventMgr";
+import UIBase from "../UIBase/UIBase";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
 import Box = Laya.Box;

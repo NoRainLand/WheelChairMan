@@ -8,5 +8,17 @@
   "left": 0,
   "right": 0,
   "top": 0,
-  "bottom": 0
+  "bottom": 0,
+  "_$comp": [
+    {
+      "_$type": "dd16d8bf-53b3-41cc-81c1-44f39afec08e",
+      "scriptPath": "../src/Scene/MyInfoView.ts"
+    },
+    {
+      "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
+      "scriptPath": "../src/UIBase/UIBaseData.ts",
+      "depth": 2,
+      "isSingleton": true
+    }
+  ]
 }

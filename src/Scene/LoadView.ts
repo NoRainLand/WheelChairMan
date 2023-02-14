@@ -1,7 +1,9 @@
-import UIBase from "../../UIBase/UIBase";
-import UIBaseMgr from "../../UIBase/UIBaseMgr";
-import ResLoader from "../../Util/ResLoader";
-import StringUtil from "../../Util/StringUtil";
+import { SceneEnum } from "../Enum/SceneEnum";
+import LocalizationMgr from "../Localization/LocalizationMgr";
+import UIBase from "../UIBase/UIBase";
+import UIBaseMgr from "../UIBase/UIBaseMgr";
+import ResLoader from "../Util/ResLoader";
+import StringUtil from "../Util/StringUtil";
 import Image = Laya.Image;
 import Label = Laya.Label;
 import Handler = Laya.Handler;
@@ -9,7 +11,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 10:05:24
+ * @Last Modified time: 2023-02-14 16:05:09
  */
 const { regClass, property } = Laya;
 
@@ -49,11 +51,6 @@ export default class LoadView extends UIBase {
 
 
 
-    /**加载完成可以进入主界面 */
-    onCompleted() {
-        console.log("load_conCompleted");
-        UIBaseMgr.showDebug();
-    }
 
 
 
@@ -64,5 +61,13 @@ export default class LoadView extends UIBase {
         this.labelLoad.text = "Loading…" + StringUtil.num2percentage(value);
     }
 
+    /**加载完成可以进入主界面 */
+    onCompleted() {
+        console.log("load_conCompleted");
+        LocalizationMgr.init();
+        UIBaseMgr.showDebug();
+        UIBaseMgr.open(SceneEnum.SettingView);
+        this.close();
+    }
 
 }
