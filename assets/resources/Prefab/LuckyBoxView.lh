@@ -13,7 +13,7 @@
   "_$comp": [
     {
       "_$type": "d94dafff-05f0-4479-9a1a-ab9861a24025",
-      "scriptPath": "../src/Game/Scene/LuckyBoxView.ts",
+      "scriptPath": "../src/Scene/LuckyBoxView.ts",
       "imgLight": {
         "_$ref": "mwvgm1qr"
       },
@@ -91,11 +91,11 @@
           "_$type": "Image",
           "name": "imgBox",
           "x": 809,
-          "y": 373,
+          "y": 354,
           "width": 305,
           "height": 224,
-          "centerX": 1,
-          "centerY": -55,
+          "centerX": 2,
+          "centerY": -74,
           "skin": "res://2542b6f0-2695-43a4-8387-943459c6a738"
         },
         {
@@ -187,7 +187,7 @@
           "_$type": "Text",
           "name": "txtMsg",
           "x": 630,
-          "y": 616,
+          "y": 623,
           "width": 671,
           "height": 84,
           "text": "GOLD LUCK BOX",

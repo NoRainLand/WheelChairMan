@@ -1,3 +1,4 @@
+import { LuckyBoxEnum } from "../Enum/LuckyBoxEnum";
 import { SceneEnum } from "../Enum/SceneEnum";
 import LocalizationMgr from "../Localization/LocalizationMgr";
 import UIBase from "../UIBase/UIBase";
@@ -11,7 +12,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 17:46:23
+ * @Last Modified time: 2023-02-14 18:54:04
  */
 const { regClass, property } = Laya;
 
@@ -66,7 +67,7 @@ export default class LoadView extends UIBase {
         console.log("load_conCompleted");
         LocalizationMgr.init();
         UIBaseMgr.showDebug();
-        UIBaseMgr.open(SceneEnum.MainView);
+        UIBaseMgr.open(SceneEnum.LuckyBoxView,LuckyBoxEnum.luckybox_gold);
         this.close();
     }
 

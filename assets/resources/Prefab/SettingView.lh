@@ -34,6 +34,9 @@
       },
       "imgSupport": {
         "_$ref": "ncrplokr"
+      },
+      "txtAgreement": {
+        "_$ref": "l2ivck1h"
       }
     },
     {
@@ -411,6 +414,32 @@
               "centerY": null,
               "disabled": null,
               "gray": null
+            },
+            {
+              "_$id": "l2ivck1h",
+              "_$type": "Label",
+              "name": "txtAgreement",
+              "x": 545,
+              "y": 19,
+              "width": 307,
+              "height": 93,
+              "mouseEnabled": true,
+              "text": "PrivacyAgreement",
+              "fontSize": 30,
+              "color": "rgba(135, 120, 98, 1)",
+              "underline": true,
+              "align": "center",
+              "valign": "middle",
+              "overflow": "visible",
+              "leading": 0,
+              "padding": "0,0,0,0",
+              "_$comp": [
+                {
+                  "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                  "scriptPath": "../src/Localization/LocalizationText.ts",
+                  "localizationKey": "PRIVACYAGREEMENT"
+                }
+              ]
             }
           ]
         },

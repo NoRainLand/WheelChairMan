@@ -22,7 +22,7 @@ import List = Laya.List;
  * @Author: NoRain 
  * @Date: 2023-02-10 18:36:22 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 16:19:38
+ * @Last Modified time: 2023-02-14 17:51:58
  */
 const { regClass, property } = Laya;
 /**设置界面 */
@@ -42,6 +42,10 @@ export default class SettingView extends UIBase {
     imgLan: Image;
     @property()
     imgSupport: Image;
+
+    @property()
+    txtAgreement: Label;
+
     constructor() { super() }
 
     private $sliderBgm: Slider;
@@ -53,6 +57,8 @@ export default class SettingView extends UIBase {
         this.regClick(this.imgClose, this.close);
         this.regClick(this.imgSupport, this.getSupport);
         this.regClick(this.imgLanguage, this.changeLanguage);
+
+        this.regClick(this.txtAgreement, this.openPrivacyAgreement);
 
         this.$sliderBgm = this.sliderBgm.getComponent(Slider);
         this.$sliderSfx = this.sliderSfx.getComponent(Slider);
@@ -79,7 +85,9 @@ export default class SettingView extends UIBase {
     changeLanguageIcon() {
         this.imgLan.skin = ResLoader.getUrlById(LocalizationMgr.getFlagSkinIdById(LocalizationMgr.Language));
     }
-
+    openPrivacyAgreement() {
+        UIBaseMgr.open(SceneEnum.PrivacyAgreementView);
+    }
 
 
     getSupport() {
