@@ -2,13 +2,12 @@
  * @Author: NoRain 
  * @Date: 2023-02-08 10:25:16 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 17:55:08
+ * @Last Modified time: 2023-02-16 16:45:30
  */
 import { SceneEnum } from "../Enum/SceneEnum";
 import SceneUrl from "../Url/SceneUrl";
 import ResLoader from "../Util/ResLoader";
 import UIBase from "./UIBase";
-import UIBaseData from "./UIBaseData";
 
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
@@ -97,9 +96,9 @@ export default class UIBaseMgr {
     /**初始化界面 */
     private static initScene(scene: Scene, sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
         let base: UIBase = scene.getComponent(UIBase);
-        let data: UIBaseData = scene.getComponent(UIBaseData);
-        if (base && data) {
-            Object.assign(base, data);
+        // let data: UIBaseData = scene.getComponent(UIBaseData);
+        if (base ) {
+            // Object.assign(base, data);
             switch (base.depth) {
                 default:
                     this.$MainUI.addChild(scene);
@@ -121,9 +120,10 @@ export default class UIBaseMgr {
             base.$assetsId = sceneName;
             base.isOpen = true;
 
-
-
+            base.aniFinish = false;
+            base.openAni();
             base.onOpened(param);
+            base.addEvent();
             if (caller && callback) {
                 callback.call(caller);
             }

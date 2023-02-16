@@ -12,11 +12,7 @@
   "_$comp": [
     {
       "_$type": "f7577321-9089-4d76-ba3b-af9c8a8c0afe",
-      "scriptPath": "../src/Scene/LevelUpView.ts"
-    },
-    {
-      "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
-      "scriptPath": "../src/UIBase/UIBaseData.ts",
+      "scriptPath": "../src/Scene/LevelUpView.ts",
       "depth": 2,
       "isSingleton": true
     }

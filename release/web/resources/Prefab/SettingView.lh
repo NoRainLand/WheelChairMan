@@ -34,11 +34,7 @@
       },
       "imgSupport": {
         "_$ref": "ncrplokr"
-      }
-    },
-    {
-      "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
-      "scriptPath": "../src/UIBase/UIBaseData.ts",
+      },
       "depth": 1,
       "isSingleton": true
     }

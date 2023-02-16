@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-10 09:48:50 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 16:25:35
+ * @Last Modified time: 2023-02-16 16:53:10
  */
 
 import ProjectConfig from "../Config/ProjectConfig";
@@ -38,8 +38,7 @@ export default class LocalizationMgr {
 
         let txtRes: TextResource = ResLoader.getResById(DataTableEnum.Localization);
         this.$dataTableMap = ResLoader.strParser(txtRes.data);
-        console.log(this.$dataTableMap);
-
+        
         for (let [key, value] of this.$dataTableMap) {
             let data = ResLoader.getResById(value["pathId"]);
             let dic = data.data[0].dic;

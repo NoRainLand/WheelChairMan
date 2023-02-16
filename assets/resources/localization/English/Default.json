@@ -20,7 +20,13 @@
 			"LUCKYBOXGOLD": "Gold Luck Box",
 			"LUCKYBOXDIAMOND": "Diamond Luck Box",
 			"LUCKYBOXPLATINUM": "Platinum Luck Box",
-			"PRIVACYAGREEMENT": "PrivacyAgreement"
+			"PRIVACYAGREEMENT": "PrivacyAgreement",
+			"SHOP":"Shop",
+			"RANKING":"Ranking",
+			"GOLD": "Gold",
+			"DIAMOND": "Diamond",
+			"HOT": "HOT",
+			"BEST": "BEST"
 		}
 	}
 ]

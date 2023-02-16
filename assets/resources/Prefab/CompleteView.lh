@@ -12,11 +12,7 @@
   "_$comp": [
     {
       "_$type": "f5f376ef-5874-4c8a-9a28-8088976bd468",
-      "scriptPath": "../src/Scene/CompleteView.ts"
-    },
-    {
-      "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
-      "scriptPath": "../src/UIBase/UIBaseData.ts",
+      "scriptPath": "../src/Scene/CompleteView.ts",
       "depth": 2,
       "isSingleton": true
     }

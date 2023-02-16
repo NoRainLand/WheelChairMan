@@ -20,7 +20,13 @@
 			"LUCKYBOXGOLD": "黄金幸运宝箱",
 			"LUCKYBOXDIAMOND": "钻石幸运宝箱",
 			"LUCKYBOXPLATINUM": "白金幸运宝箱",
-			"PRIVACYAGREEMENT": "隐私协议"
+			"PRIVACYAGREEMENT": "隐私协议",
+			"SHOP": "商店",
+			"RANKING": "排行榜",
+			"GOLD": "金币",
+			"DIAMOND": "钻石",
+			"HOT": "热门",
+			"BEST": "推荐"
 		}
 	}
 ]

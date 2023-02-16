@@ -13,7 +13,7 @@ import Sprite = Laya.Sprite;
  * @Author: NoRain 
  * @Date: 2023-02-06 16:41:32 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 09:48:45
+ * @Last Modified time: 2023-02-16 16:52:50
  */
 const { regClass, property } = Laya;
 
@@ -48,7 +48,6 @@ export class GameEntry extends Laya.Script {
         this.GameEntry = this.owner as Scene;
         this.UIBase = this.GameEntry.getChildByName("UIBase") as Box;
         UIBaseMgr.init(this.UIBase);
-
 
         UIBaseMgr.openLoadView();
     }

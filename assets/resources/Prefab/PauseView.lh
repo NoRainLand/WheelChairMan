@@ -12,11 +12,7 @@
   "_$comp": [
     {
       "_$type": "352c01f5-c61a-4387-bd3b-63f412ac12c7",
-      "scriptPath": "../src/Scene/PauseView.ts"
-    },
-    {
-      "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
-      "scriptPath": "../src/UIBase/UIBaseData.ts",
+      "scriptPath": "../src/Scene/PauseView.ts",
       "depth": 2,
       "isSingleton": true
     }

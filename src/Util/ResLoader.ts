@@ -1,3 +1,4 @@
+import { DataTableEnum } from "../Enum/DataTableEnum";
 import ResUrl from "../Url/ResUrl";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
@@ -14,7 +15,7 @@ import TextResource = Laya.TextResource;
  * @Author: NoRain 
  * @Date: 2023-02-12 15:09:35 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 16:24:38
+ * @Last Modified time: 2023-02-16 20:09:46
  */
 /**资源加载器 */
 export default class ResLoader {
@@ -147,6 +148,16 @@ export default class ResLoader {
             })
             return map;
         }
+    }
+
+    /**通过唯一id获取数据表 */
+    static getDataTableById(assetsId: DataTableEnum): Map<number, Object> {
+        let data = this.getResById(assetsId);
+        if (data && data.data) {
+            let obj = this.strParser(data.data);
+            return obj;
+        }
+        return null;
     }
 
 

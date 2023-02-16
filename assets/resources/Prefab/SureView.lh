@@ -12,27 +12,6 @@
   "bottom": 0,
   "_$comp": [
     {
-      "_$type": "5f74b527-d6db-4ea9-9895-86badcafdb6d",
-      "scriptPath": "../src/Game/Scene/SureDialog.ts",
-      "imgSure": {
-        "_$ref": "736"
-      },
-      "imgCancel": {
-        "_$ref": "739"
-      },
-      "txtTitle": {
-        "_$ref": "744"
-      },
-      "txtMsg": {
-        "_$ref": "742"
-      }
-    },
-    {
-      "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
-      "scriptPath": "../src/UIBase/UIBaseData.ts",
-      "depth": 1
-    },
-    {
       "_$type": "2eee226a-dcc2-4965-9ad2-4c490d20fbdf",
       "scriptPath": "../src/Game/Scene/SureView.ts",
       "imgSure": {
@@ -46,7 +25,9 @@
       },
       "txtMsg": {
         "_$ref": "vgdjxmix"
-      }
+      },
+      "depth": 1,
+      "isSingleton": false
     }
   ],
   "_$child": [

@@ -22,7 +22,7 @@ import List = Laya.List;
  * @Author: NoRain 
  * @Date: 2023-02-10 18:36:22 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 17:51:58
+ * @Last Modified time: 2023-02-16 16:48:29
  */
 const { regClass, property } = Laya;
 /**设置界面 */
@@ -54,12 +54,6 @@ export default class SettingView extends UIBase {
 
 
     onOpened(param?: any): void {
-        this.regClick(this.imgClose, this.close);
-        this.regClick(this.imgSupport, this.getSupport);
-        this.regClick(this.imgLanguage, this.changeLanguage);
-
-        this.regClick(this.txtAgreement, this.openPrivacyAgreement);
-
         this.$sliderBgm = this.sliderBgm.getComponent(Slider);
         this.$sliderSfx = this.sliderSfx.getComponent(Slider);
         this.$toggleShake = this.toggleShake.getComponent(Toggle);
@@ -68,9 +62,18 @@ export default class SettingView extends UIBase {
         this.$sliderSfx.init(this, this.sfxChange);
         this.$toggleShake.init(this, this.shakeChange);
 
-        this.regEvent(EventEnum.LANGUAGECHANGE, this.changeLanguageIcon);
-        this.changeLanguageIcon();
 
+    }
+
+    addEvent(): void {
+
+        this.regClick(this.imgClose, this.close);
+        this.regClick(this.imgSupport, this.getSupport);
+        this.regClick(this.imgLanguage, this.changeLanguage);
+
+        this.regClick(this.txtAgreement, this.openPrivacyAgreement);
+
+        this.regEvent(EventEnum.LANGUAGECHANGE, this.changeLanguageIcon, true);
     }
 
     bgmChange(value: number) {

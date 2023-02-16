@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-10 11:04:51 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 18:16:17
+ * @Last Modified time: 2023-02-16 15:57:22
  */
 /**文字工具类 */
 export default class StringUtil {
@@ -107,5 +107,37 @@ export default class StringUtil {
         }
 
     }
+
+    /**
+     * 格式化单位
+     * @param num 
+     * @returns 
+     */
+    public static formatToUnitEN(num) {
+        num = Math.round(num);
+        let result = '';
+        if (("" + num).length > 15) {
+            result = (num / 1000000000000000).toFixed(2) + 'MB';
+        }
+        else if (("" + num).length > 12) {
+            result = (num / 1000000000000).toFixed(2) + 'KB';
+        }
+        else if (("" + num).length > 9) {
+            result = (num / 1000000000).toFixed(2) + 'B';
+        }
+        else if (("" + num).length > 6) {
+            result = (num / 1000000).toFixed(2) + 'M';
+        }
+        else if (("" + num).length > 3) {
+            result = (num / 1000).toFixed(2) + 'K';
+        }
+        else {
+            result = "" + num.toFixed(0);
+        }
+        return result;
+    };
+
+
+
 
 }

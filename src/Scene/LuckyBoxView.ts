@@ -45,7 +45,6 @@ export default class LuckyBoxView extends UIBase {
         this.regClick(this.imgClose, this.close);
         this.regClick(this.imgOpen, this.openLuckBox);
         this.$luckyboxDataTable = ResLoader.strParser(ResLoader.getResById(DataTableEnum.LuckyBox).data);
-        console.log(this.$param);
         this.initLuckBox();
     }
 

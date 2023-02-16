@@ -14,7 +14,7 @@
   "_$comp": [
     {
       "_$type": "5ca51831-1d23-46b6-a853-a10d5da54d6c",
-      "scriptPath": "../src/Game/Scene/DebugView.ts",
+      "scriptPath": "../src/Scene/DebugView.ts",
       "imgShow": {
         "_$ref": "dhcnhq1t"
       },
@@ -24,12 +24,6 @@
       "listCommand": {
         "_$ref": "711uyiv1"
       }
-    },
-    {
-      "_$type": "54ce626d-1dfc-47f6-a89f-5bd020584009",
-      "scriptPath": "../src/UIBase/UIBaseData.ts",
-      "depth": 0,
-      "isSingleton": true
     }
   ],
   "_$child": [
@@ -70,7 +64,7 @@
               "_$ver": 1,
               "_$id": "f0y79fy3",
               "_$type": "Box",
-              "name": "item",
+              "name": "render",
               "width": 724,
               "height": 104,
               "left": 0,
