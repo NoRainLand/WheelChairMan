@@ -1,4 +1,3 @@
-import { SceneEnum } from "../Enum/SceneEnum";
 import LocalizationMgr from "../Localization/LocalizationMgr";
 import CurrencyMgr from "../Mgr/CurrencyMgr";
 import LevelMgr from "../Mgr/LevelMgr";
@@ -13,7 +12,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-16 21:28:28
+ * @Last Modified time: 2023-02-18 16:02:57
  */
 const { regClass, property } = Laya;
 
@@ -66,14 +65,25 @@ export default class LoadView extends UIBase {
     /**加载完成可以进入主界面 */
     onCompleted() {
         console.log("load_conCompleted");
-        LocalizationMgr.init();
-        LevelMgr.init();
-        CurrencyMgr.init();
+        this.initData();
+
+
 
 
         UIBaseMgr.showDebug();
-        UIBaseMgr.open(SceneEnum.ShopView);
+        // UIBaseMgr.open(SceneEnum.MainView);
+        UIBaseMgr.showTips("123");
+        UIBaseMgr.showTips("11111");
         this.close();
+    }
+
+
+
+    /**初始化数据 */
+    initData() {
+        LocalizationMgr.init();
+        LevelMgr.init();
+        CurrencyMgr.init();
     }
 
 }

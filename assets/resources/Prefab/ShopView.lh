@@ -155,7 +155,7 @@
           "_$id": "axc2wd7m",
           "_$type": "Panel",
           "name": "Panel",
-          "x": 65,
+          "x": 62,
           "y": 148.00000000000006,
           "width": 1573,
           "height": 681,
@@ -185,6 +185,7 @@
                   "name": "render",
                   "width": 436,
                   "height": 681,
+                  "mouseEnabled": true,
                   "_$child": [
                     {
                       "_$id": "26htobzp",
@@ -201,11 +202,13 @@
                       "_$id": "4tzm7eae",
                       "_$type": "Image",
                       "name": "imgItem",
-                      "x": 59,
-                      "y": 49.00000000000006,
+                      "x": 57,
+                      "y": 65,
                       "width": 343,
                       "height": 330,
-                      "skin": "res://a1ebf572-8411-4f46-983f-4b2844759d6c"
+                      "centerX": 10,
+                      "centerY": -111,
+                      "skin": "res://b67e7a9d-5424-40f0-afeb-fc66a597fede"
                     },
                     {
                       "_$id": "sqpwfplw",
@@ -215,7 +218,8 @@
                       "y": 539,
                       "width": 301,
                       "height": 133,
-                      "skin": "res://9554605f-8645-4148-ad18-ce84e8b52ae2",
+                      "mouseEnabled": true,
+                      "skin": "res://c4e91d24-9b3d-4b94-936c-e38368425d0e",
                       "sizeGrid": "0,53,0,40,0",
                       "_$child": [
                         {
@@ -224,7 +228,7 @@
                           "name": "imgCurrency",
                           "x": 28,
                           "y": 30,
-                          "width": 76,
+                          "width": 77,
                           "height": 64,
                           "skin": "res://4445cadf-3ba6-4ff1-8cf2-2d1519dba26a"
                         },
@@ -237,7 +241,7 @@
                           "width": 164,
                           "height": 63,
                           "text": "10000",
-                          "fontSize": 40,
+                          "fontSize": 50,
                           "color": "#FFFFFF",
                           "align": "center",
                           "valign": "middle",

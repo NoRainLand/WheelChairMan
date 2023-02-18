@@ -5,7 +5,7 @@
   "name": "TipsView",
   "width": 675,
   "height": 128,
-  "pivotX": 338,
+  "pivotX": 337.5,
   "pivotY": 64,
   "anchorX": 0.5,
   "anchorY": 0.5,
@@ -17,10 +17,12 @@
     {
       "_$type": "a1b11e33-3318-4f7e-af1d-2bbf5fa13333",
       "scriptPath": "../src/Scene/TipsView.ts",
+      "depth": 1,
+      "isSingleton": false,
+      "AniType": 0,
       "txtMsg": {
         "_$ref": "toew0rua"
-      },
-      "depth": 1
+      }
     }
   ],
   "_$child": [
@@ -39,7 +41,6 @@
       "color": "#FFFFFF",
       "align": "center",
       "valign": "middle",
-      "overflow": "visible",
       "wordWrap": true,
       "leading": 0,
       "padding": "0,0,0,0"

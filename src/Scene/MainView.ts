@@ -20,7 +20,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-16 16:52:32
+ * @Last Modified time: 2023-02-18 10:23:04
  */
 const { regClass, property } = Laya;
 /**主界面 */
@@ -76,7 +76,7 @@ export default class MainView extends UIBase {
         this.regClick(this.imgRing, this.openUserInfo);
         this.regClick(this.imgShop, this.openShop, CurrencyEnum.diamond);
         this.regClick(this.imgRanking, this.openRanking);
-        this.regClick(this.imgSettings,this.openSetting);
+        this.regClick(this.imgSettings, this.openSetting);
     }
 
 
@@ -92,7 +92,7 @@ export default class MainView extends UIBase {
 
     }
     openShop(currency: CurrencyEnum) {
-        console.log(currency);
+        UIBaseMgr.open(SceneEnum.ShopView, currency);
     }
     openUserInfo() {
 
@@ -101,7 +101,7 @@ export default class MainView extends UIBase {
         UIBaseMgr.open(SceneEnum.SettingView);
     }
     openRanking() {
-
+        UIBaseMgr.open(SceneEnum.RankingView);
     }
 
 

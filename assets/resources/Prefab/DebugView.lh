@@ -15,6 +15,9 @@
     {
       "_$type": "5ca51831-1d23-46b6-a853-a10d5da54d6c",
       "scriptPath": "../src/Scene/DebugView.ts",
+      "depth": 0,
+      "isSingleton": true,
+      "AniType": 0,
       "imgShow": {
         "_$ref": "dhcnhq1t"
       },
@@ -58,6 +61,7 @@
           "spaceX": 10,
           "spaceY": 10,
           "scrollType": 2,
+          "selectEnable": true,
           "itemRender": {
             "_$type": "any",
             "value": {
@@ -85,7 +89,6 @@
                   "fontSize": 40,
                   "color": "#FFFFFF",
                   "valign": "middle",
-                  "overflow": "visible",
                   "leading": 0,
                   "padding": "0,0,0,0"
                 }
@@ -119,7 +122,6 @@
           "color": "#FFFFFF",
           "align": "center",
           "valign": "middle",
-          "overflow": "visible",
           "leading": 0,
           "padding": "0,0,0,0"
         }
@@ -141,7 +143,6 @@
       "italic": true,
       "align": "center",
       "valign": "middle",
-      "overflow": "visible",
       "leading": 0,
       "padding": "0,0,0,0"
     }

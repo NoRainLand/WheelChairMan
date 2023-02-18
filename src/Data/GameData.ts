@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-06 17:30:20 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-16 16:54:31
+ * @Last Modified time: 2023-02-18 10:26:33
  */
 
 import { LocalEnum } from "../Enum/LocalEnum";
@@ -46,6 +46,10 @@ export default class GameData {
     static get userName(): string {
         if (!this.$userName) {
             this.$userName = LocalMgr.getItem(LocalEnum.USERNAME)
+            if (!this.$userName) {
+                this.$userName = "userName";
+                LocalMgr.setItem(LocalEnum.USERNAME, this.$userName);
+            }
         }
         return this.$userName;
     }
@@ -61,7 +65,6 @@ export default class GameData {
     static get gold(): number {
         if (this.$gold == -1) {
             let gold = Number(LocalMgr.getItem(LocalEnum.GOLD));
-            console.log(gold);
             if (isNaN(gold)) {
                 this.$gold = 0;
                 LocalMgr.setItem(LocalEnum.GOLD, this.$gold);
@@ -118,6 +121,29 @@ export default class GameData {
         if (!isNaN(value) && value >= 0) {
             this.$experience = value;
             LocalMgr.setItem(LocalEnum.EXPERIENCE, this.$experience);
+        }
+    }
+
+
+    private static $key: number = -1;
+    /**金币 */
+    static get key(): number {
+        if (this.$key == -1) {
+            let key = Number(LocalMgr.getItem(LocalEnum.KEY));
+            console.log(key);
+            if (isNaN(key)) {
+                this.$key = 0;
+                LocalMgr.setItem(LocalEnum.KEY, this.$key);
+            } else {
+                this.$key = key;
+            }
+        }
+        return this.$key;
+    }
+    static set key(value: number) {
+        if (!isNaN(value) && value >= 0) {
+            this.$key = value;
+            LocalMgr.setItem(LocalEnum.KEY, this.$key);
         }
     }
 

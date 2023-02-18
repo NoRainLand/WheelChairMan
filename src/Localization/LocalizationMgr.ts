@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-10 09:48:50 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-16 16:53:10
+ * @Last Modified time: 2023-02-18 10:09:57
  */
 
 import ProjectConfig from "../Config/ProjectConfig";
@@ -38,7 +38,7 @@ export default class LocalizationMgr {
 
         let txtRes: TextResource = ResLoader.getResById(DataTableEnum.Localization);
         this.$dataTableMap = ResLoader.strParser(txtRes.data);
-        
+
         for (let [key, value] of this.$dataTableMap) {
             let data = ResLoader.getResById(value["pathId"]);
             let dic = data.data[0].dic;
@@ -65,10 +65,18 @@ export default class LocalizationMgr {
 
 
     /**通过key获取对应语言 */
-    static getLocalizationByKey(key: string): string {
+    static getLocalizationByKey(key: string, ...keys: string[]): string {
         let dic = this.$TextResourceMap.get(this.Language);
         if (dic && dic[key]) {
-            return dic[key];
+            let str: string = dic[key];
+            if (keys) {
+                for (let i = 0; i < keys.length; i++) {
+                    let item = dic[keys[i]];
+                    item = item ? item : keys[i];
+                    str = str.replace("$", item);
+                }
+            }
+            return str;
         } else {
             return null;
         }

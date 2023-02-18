@@ -26,7 +26,10 @@
 			"GOLD": "金币",
 			"DIAMOND": "钻石",
 			"HOT": "热门",
-			"BEST": "推荐"
+			"BEST": "推荐",
+			"YOUDONTHAVEENOUGHDIAMONDS": "您的$不足",
+			"NOTYETIMPLEMENTED":"暂未实现",
+			"CONGRATULATIONSONGETTING":"恭喜你获得$$"
 		}
 	}
 ]

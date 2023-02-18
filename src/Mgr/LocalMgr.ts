@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-06 17:39:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-16 16:50:42
+ * @Last Modified time: 2023-02-18 10:16:17
  */
 import ProjectConfig from "../Config/ProjectConfig";
 import { LocalEnum } from "../Enum/LocalEnum";
@@ -26,6 +26,6 @@ export default class LocalMgr {
         LocalStorage.setItem(`${ProjectConfig.projectName}_${key}`, typeof value === "string" ? value : value.toString());
     }
 
-    
+
 
 }

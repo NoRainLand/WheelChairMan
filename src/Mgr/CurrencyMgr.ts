@@ -16,7 +16,6 @@ export default class CurrencyMgr {
     /**初始化 */
     static init() {
         this.$currencyMap = ResLoader.getDataTableById(DataTableEnum.Currency);
-        console.log(this.$currencyMap);
     }
 
 

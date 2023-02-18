@@ -1,8 +1,12 @@
+import GameData from "../Data/GameData";
+import { CurrencyEnum } from "../Enum/CurrencyEnum";
 import { DataTableEnum } from "../Enum/DataTableEnum";
 import { EventEnum } from "../Enum/EventEnum";
+import { LocalizationKeyEnum } from "../Enum/LocalizationKeyEnum";
 import LocalizationMgr from "../Localization/LocalizationMgr";
 import CurrencyMgr from "../Mgr/CurrencyMgr";
 import UIBase from "../UIBase/UIBase";
+import UIBaseMgr from "../UIBase/UIBaseMgr";
 import ObjUtil from "../Util/ObjUtil";
 import ResLoader from "../Util/ResLoader";
 import StringUtil from "../Util/StringUtil";
@@ -20,7 +24,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-14 10:37:38 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-16 21:44:23
+ * @Last Modified time: 2023-02-18 11:20:47
  */
 const { regClass, property } = Laya;
 /**商城界面 */
@@ -59,15 +63,11 @@ export default class ShopView extends UIBase {
                 if (value["page"] && this.$shopList[value["page"] - 1]) {
                     this.$shopList[value["page"] - 1].push(value);
                 } else {
-                    console.log([value]);
                     this.$shopList[value["page"] - 1] = [value];
                 }
 
             }
         }
-
-
-
 
     }
 
@@ -106,13 +106,22 @@ export default class ShopView extends UIBase {
     }
 
     changeLanguage() {
+        let index = 0;
+        switch (this.$param) {
+            case CurrencyEnum.gold:
+                index = 0;
+                break;
+            case CurrencyEnum.diamond:
+                index = 1;
+                break;
+        }
         this.listTitle.array = ObjUtil.set2List(this.$titleSet);
         this.listTitle.width = this.listTitle.array.length * 328;
         this.listTitle.centerX = 0;
-        this.listTitle.selectedIndex = 0;
+        this.listTitle.selectedIndex = index;
 
         this.listShop.array = this.$shopList[this.$titleSelectedIndex];
-        this.listShop.selectedIndex = 0;
+        this.listShop.selectedIndex = index;
     }
 
 
@@ -122,6 +131,8 @@ export default class ShopView extends UIBase {
 
         let imgItem = box.getChildByName("imgItem") as Image;
         imgItem.skin = ResLoader.getUrlById(data["imgId"]);
+        imgItem.height = imgItem.source.sourceHeight;
+        imgItem.width = imgItem.source.sourceWidth;
         let imgBest = box.getChildByName("imgBest") as Image;
         imgBest.visible = !!data["isBest"];
         let imgHot = box.getChildByName("imgHot") as Image;
@@ -141,8 +152,10 @@ export default class ShopView extends UIBase {
         })
         let imgCurrency = imgBuy.getChildByName("imgCurrency") as Image;
         imgCurrency.skin = CurrencyMgr.getImgUrlById(data['priceId']);
+        imgCurrency.height = imgCurrency.source.sourceHeight;
+        imgCurrency.width = imgCurrency.source.sourceWidth;
         let txtPrice = imgBuy.getChildByName("txtPrice") as Label;
-        txtPrice.text = data["price"];
+        txtPrice.text = data["price"].toFixed(2);
         txtPrice.color = CurrencyMgr.getColorById(data["priceId"])
 
     }
@@ -151,7 +164,44 @@ export default class ShopView extends UIBase {
     buySomething(obj: Object) {
         console.log(obj);
 
+        switch (obj["priceId"]) {
+            case CurrencyEnum.gold:
 
+                break;
+            case CurrencyEnum.diamond:
+                if (GameData.diamond >= obj["price"]) {
+                    GameData.diamond -= obj["price"];
+                    this.getSomething(obj);
+                } else {
+                    UIBaseMgr.showTips(LocalizationMgr.getLocalizationByKey(LocalizationKeyEnum.YOUDONTHAVEENOUGHDIAMONDS, LocalizationKeyEnum.DIAMOND));
+                }
+                break;
+            case CurrencyEnum.key:
+
+                break;
+            case CurrencyEnum.dollar:
+                UIBaseMgr.showTips(LocalizationMgr.getLocalizationByKey(LocalizationKeyEnum.NOTYETIMPLEMENTED));
+
+                break;
+        }
+    }
+
+
+    getSomething(obj: Object) {
+        switch (obj["shopId"]) {
+            case CurrencyEnum.gold:
+                GameData.gold += obj["number"];
+                UIBaseMgr.showTips(LocalizationMgr.getLocalizationByKey(LocalizationKeyEnum.CONGRATULATIONSONGETTING, obj["number"], LocalizationKeyEnum.GOLD));
+                break;
+            case CurrencyEnum.diamond:
+                GameData.diamond += obj["number"];
+                UIBaseMgr.showTips(LocalizationMgr.getLocalizationByKey(LocalizationKeyEnum.CONGRATULATIONSONGETTING, obj["number"], LocalizationKeyEnum.DIAMOND));
+                break;
+            case CurrencyEnum.key:
+                GameData.key += obj["number"];
+                // UIBaseMgr.showTips(LocalizationMgr.getLocalizationByKey(LocalizationKeyEnum.CONGRATULATIONSONGETTING,obj["number"],LocalizationKeyEnum.DIAMOND));
+                break;
+        }
     }
 
 

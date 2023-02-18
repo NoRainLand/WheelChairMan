@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-08 10:25:16 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-16 16:45:30
+ * @Last Modified time: 2023-02-18 16:38:35
  */
 import { SceneEnum } from "../Enum/SceneEnum";
 import SceneUrl from "../Url/SceneUrl";
@@ -23,8 +23,7 @@ import Handler = Laya.Handler;
 
 /**页面管理 */
 export default class UIBaseMgr {
-    /**页面预制件池子 */
-    private static $scenes: Map<number, PrefabImpl> = new Map();
+
 
 
     /**层级根节点 */
@@ -41,12 +40,17 @@ export default class UIBaseMgr {
     /**是否已经调用过openLoadView */
     private static $isOpenLoadView: boolean = false;
 
+
+
+
+    /**页面预制件池子 */
+    private static $scenePool: Map<number, PrefabImpl>;
     /**页面脚本池子 */
-    private static $sceneScriptPool: Map<number, UIBase | Map<string, UIBase>> = new Map();
+    private static $sceneScriptPool: Map<number, UIBase[]>;
 
 
     /**对象池标记 */
-    private static readonly $sign: string = "View"
+    private static readonly $sign: string = "View_"
 
     /**初始化 */
     static init(UIBase: Box) {
@@ -55,6 +59,9 @@ export default class UIBaseMgr {
         this.$TipsUI = this.$UIBase.getChildByName("TipsUI") as Box;
         this.$MainUI = this.$UIBase.getChildByName("MainUI") as Box;
         this.$3DUI = this.$UIBase.getChildByName("3DUI") as Box;
+
+        this.$sceneScriptPool = new Map();
+        this.$scenePool = new Map();
     }
 
     /**加载load界面 */
@@ -76,15 +83,17 @@ export default class UIBaseMgr {
      * @param callback 回调
      */
     static open(sceneId: SceneEnum, param?: any, caller?: any, callback?: Function) {
-        let script = this.$sceneScriptPool.get(sceneId);
-        if (!script || script instanceof UIBase) {
+        let scripts = this.$sceneScriptPool.get(sceneId);
+        if (scripts && scripts[0] && scripts[0].isSingleton) {
+            console.log("这个页面已经存在并且不允许重复打开");
+        } else {
             let scene = Pool.getItem(this.$sign + sceneId) as Scene;
             if (scene) {
                 this.initScene(scene, sceneId, param, caller, callback);
             } else {
-                let scenePrefab = this.$scenes.get(sceneId);
+                let scenePrefab = this.$scenePool.get(sceneId);
                 if (scenePrefab) {
-                    let scene = scenePrefab.create() as Scene;
+                    scene = scenePrefab.create() as Scene;
                     this.initScene(scene, sceneId, param, caller, callback);
                 } else {
                     this.loadScene(sceneId, param, caller, callback);
@@ -96,9 +105,7 @@ export default class UIBaseMgr {
     /**初始化界面 */
     private static initScene(scene: Scene, sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
         let base: UIBase = scene.getComponent(UIBase);
-        // let data: UIBaseData = scene.getComponent(UIBaseData);
-        if (base ) {
-            // Object.assign(base, data);
+        if (base) {
             switch (base.depth) {
                 default:
                     this.$MainUI.addChild(scene);
@@ -128,66 +135,55 @@ export default class UIBaseMgr {
                 callback.call(caller);
             }
 
-            if (base.isSingleton) {
-                this.$sceneScriptPool.set(sceneName, base);
+
+            let arr = this.$sceneScriptPool.get(sceneName);
+            if (arr) {
+                arr.push(base);
+                this.$sceneScriptPool.set(sceneName, arr);
             } else {
-                let map = this.$sceneScriptPool.get(sceneName);
-                if (map && map instanceof Map) {
-                    map.set(base.id.toString(), base);
-                    this.$sceneScriptPool.set(sceneName, map);
-                } else {
-                    map = new Map();
-                    map.set(base.id.toString(), base);
-                    this.$sceneScriptPool.set(sceneName, map);
-                }
+                this.$sceneScriptPool.set(sceneName, [base]);
             }
-        }else{
+
+
+        } else {
             console.log("UIData或者UIBase缺失")
         }
     }
 
 
     /**关闭页面 */
-    static close(sceneName: SceneEnum, id?: number) {
-        let scriptOrMap = this.$sceneScriptPool.get(sceneName);
-        if (scriptOrMap && scriptOrMap instanceof UIBase) {
-            scriptOrMap.isOpen = false;
-            scriptOrMap.owner.removeSelf();
-            scriptOrMap.onClosed();
-            this.$sceneScriptPool.set(sceneName, void 0);
-            Pool.recover(this.$sign + sceneName, scriptOrMap.owner);
-        } else if (scriptOrMap && scriptOrMap instanceof Map) {
-            if (id) {
-                let base = scriptOrMap.get(id.toString()) as UIBase;
-                if (base) {
-                    base.isOpen = false;
-                    base.owner.removeSelf();
-                    base.onClosed();
-                    scriptOrMap.set(id.toString(), void 0);
-                    Pool.recover(this.$sign + sceneName, base.owner);
-                    this.$sceneScriptPool.set(sceneName, scriptOrMap);
+    static close(sceneName: SceneEnum, id: number) {
+        let scripts = this.$sceneScriptPool.get(sceneName);
+        if (scripts && scripts.length > 0) {
+            let arr = [];
+            for (let i = 0; i < scripts.length; i++) {
+                let script = scripts[i];
+                if (script.id == id) {
+                    script.isOpen = false;
+                    script.owner.removeSelf();
+                    script.onClosed();
+                    Pool.recover(this.$sign + sceneName, script.owner);
+                } else {
+                    arr.push(script);
                 }
             }
+            this.$sceneScriptPool.set(sceneName,arr);
         }
     }
 
     /**是否打开某个界面 */
-    static isOpen(sceneName: SceneEnum, id?: number): boolean {
-        let scriptOrMap = this.$sceneScriptPool.get(sceneName);
-        if (scriptOrMap && scriptOrMap instanceof UIBase) {
-            return scriptOrMap.isOpen;
-        } else if (scriptOrMap && scriptOrMap instanceof Map) {
-            let base = scriptOrMap.get(id.toString()) as UIBase;
-            return base.isOpen;
-        } else {
-            return false;
+    static isOpen(sceneName: SceneEnum): boolean {
+        let arr = this.$sceneScriptPool.get(sceneName);
+        if (arr && arr.length > 0) {
+            return true;
         }
+        return false;
     }
 
     /**加载场景 */
     private static loadScene(sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
-        this.$scenes.set(sceneName, ResLoader.getResById(sceneName));
-        if (this.$scenes.get(sceneName)) {
+        this.$scenePool.set(sceneName, ResLoader.getResById(sceneName));
+        if (this.$scenePool.get(sceneName)) {
             this.open(sceneName, param, caller, callback);
         }
     }

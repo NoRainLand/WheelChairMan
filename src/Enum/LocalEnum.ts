@@ -28,6 +28,7 @@ export enum LocalEnum {
     /**经验值 */
     EXPERIENCE = "EXPERIENCE",
 
-
+    /**钥匙 */
+    KEY = "KEY",
 
 }

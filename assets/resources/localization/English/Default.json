@@ -26,7 +26,10 @@
 			"GOLD": "Gold",
 			"DIAMOND": "Diamond",
 			"HOT": "HOT",
-			"BEST": "BEST"
+			"BEST": "BEST",
+			"YOUDONTHAVEENOUGHDIAMONDS": "You don't have enough $",
+			"NOTYETIMPLEMENTED":"Not yet implemented",
+			"CONGRATULATIONSONGETTING":"Congratulations on getting $ $"
 		}
 	}
 ]

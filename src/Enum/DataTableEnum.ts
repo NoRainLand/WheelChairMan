@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-14 14:23:36 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-16 19:46:27
+ * @Last Modified time: 2023-02-18 15:43:35
  */
 /**配置表 */
 export enum DataTableEnum {
@@ -16,4 +16,6 @@ export enum DataTableEnum {
     Level = 3004,
     /**商店配置表 */
     Shop = 3005,
+    /**排行榜配置表 */
+    Ranking = 3006,
 }
