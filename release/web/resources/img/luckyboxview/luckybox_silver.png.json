@@ -4,8 +4,8 @@
   "filterMode": 1,
   "anisoLevel": 0,
   "readWrite": false,
-  "mipmap": true,
-  "pma": false,
+  "mipmap": false,
+  "pma": true,
   "hdrEncodeFormat": 0,
   "files": [
     {

@@ -1,5 +1,5 @@
 (function () {
-    let config = JSON.parse(`{"resolution":{"designWidth":1920,"designHeight":1080,"scaleMode":"fixedwidth","screenMode":"horizontal","alignV":"top","alignH":"left","backgroundColor":"rgba(128, 128, 128, 1)"},"2D":{"FPS":60,"isAntialias":true,"useRetinalCanvas":true,"isAlpha":false,"webGL2D_MeshAllocMaxMem":true},"3D":{"enableStaticBatch":true,"enableDynamicBatch":true,"defaultPhysicsMemory":16,"enableUniformBufferObject":true,"pixelRatio":1,"enableMultiLight":true,"maxLightCount":16,"lightClusterCount":{"x":12,"y":12,"z":12},"useBVHCull":false,"BVH_max_SpatialCount":7,"BVH_limit_size":32,"BVH_Min_Build_nums":10},"spineVersion":"3.8","stat":false,"vConsole":false,"alertGlobalError":false,"startupScene":"scene/GameEntry.ls"}`);
+    let config = JSON.parse(`{"resolution":{"designWidth":1920,"designHeight":1080,"scaleMode":"fixedwidth","screenMode":"horizontal","alignV":"top","alignH":"left","backgroundColor":"rgba(128, 128, 128, 1)"},"2D":{"FPS":60,"isAntialias":true,"useRetinalCanvas":true,"isAlpha":false,"webGL2D_MeshAllocMaxMem":true},"3D":{"enableStaticBatch":true,"enableDynamicBatch":true,"defaultPhysicsMemory":16,"enableUniformBufferObject":true,"pixelRatio":1,"enableMultiLight":true,"maxLightCount":16,"lightClusterCount":{"x":12,"y":12,"z":12},"useBVHCull":false,"BVH_max_SpatialCount":7,"BVH_limit_size":32,"BVH_Min_Build_nums":10},"spineVersion":"3.8","stat":false,"vConsole":false,"alertGlobalError":false,"startupScene":"resources/scene/GameEntry.ls"}`);
     window.screenOrientation = "sensor_landscape";
 
     Object.assign(Laya.Config, config["2D"]);
@@ -32,6 +32,8 @@
         Laya["Physics"] && Laya["Physics"].enable();
 
         Laya.AssetDb.inst.enableImageMetaFile = true;
+        if (config.useSafeFileExtensions)
+            Laya.URL.initMiniGameExtensionOverrides();
 
         if (Laya.ClassUtils.getClass("SpineSkeleton"))
             Laya.SpineTemplet.RuntimeVersion = config.spineVersion || "3.8";

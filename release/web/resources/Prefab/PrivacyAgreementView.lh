@@ -1,0 +1,254 @@
+{
+  "_$ver": 1,
+  "_$id": "ajc5k6sm",
+  "_$type": "View",
+  "name": "PrivacyAgreementView",
+  "width": 1920,
+  "height": 1080,
+  "mouseEnabled": true,
+  "left": 0,
+  "right": 0,
+  "top": 0,
+  "bottom": 0,
+  "_$comp": [
+    {
+      "_$type": "df9b38f8-2d16-4280-849d-786074a729fe",
+      "scriptPath": "../src/Scene/PrivacyAgreementView.ts",
+      "imgSure": {
+        "_$ref": "z95cgxqv"
+      },
+      "imgCancel": {
+        "_$ref": "jf51r7rd"
+      },
+      "panel": {
+        "_$ref": "hibeey4f"
+      },
+      "txtAgreement": {
+        "_$ref": "ekg50n0w"
+      },
+      "depth": 1,
+      "isSingleton": true
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "1fa5yl3s",
+      "_$type": "Box",
+      "name": "Bg",
+      "width": 1920,
+      "height": 1080,
+      "alpha": 0.8,
+      "mouseEnabled": true,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "bottom": 0,
+      "bgColor": "rgba(0, 0, 0, 1)"
+    },
+    {
+      "_$id": "38n6f13g",
+      "_$type": "Image",
+      "name": "Main",
+      "x": 960,
+      "y": 540,
+      "width": 1200,
+      "height": 840,
+      "pivotX": 600,
+      "pivotY": 420,
+      "mouseEnabled": true,
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "skin": "resources/img/common/popup_bg.png",
+      "sizeGrid": "87,86,100,87,0",
+      "_$comp": [
+        {
+          "_$type": "Animator2D",
+          "controller": {
+            "_$uuid": "../ani2d/Dialog.mcc",
+            "_$type": "AnimationController2D"
+          },
+          "controllerLayers": [
+            {
+              "_$type": "AnimatorControllerLayer2D",
+              "name": "Base Layer",
+              "states": [
+                {
+                  "_$type": "AnimatorState2D",
+                  "name": "DialogOpen",
+                  "clipStart": 0,
+                  "clip": {
+                    "_$uuid": "../ani2d/DialogOpen.mc",
+                    "_$type": "AnimationClip2D"
+                  },
+                  "soloTransitions": []
+                }
+              ],
+              "defaultStateName": "DialogOpen"
+            }
+          ]
+        }
+      ],
+      "_$child": [
+        {
+          "_$id": "7ca6rat3",
+          "_$type": "Image",
+          "name": "Image",
+          "x": 261,
+          "y": -25.000000000000057,
+          "width": 678,
+          "height": 113,
+          "skin": "resources/img/common/popup_title_00.png",
+          "sizeGrid": "0,155,0,162,0",
+          "_$child": [
+            {
+              "_$id": "smaqh5q0",
+              "_$type": "Label",
+              "name": "Label",
+              "x": 121,
+              "y": 11.000000000000014,
+              "width": 436,
+              "height": 85,
+              "text": "PrivacyAgreement",
+              "fontSize": 50,
+              "color": "rgba(221, 198, 171, 1)",
+              "align": "center",
+              "valign": "middle",
+              "overflow": "visible",
+              "leading": 0,
+              "padding": "0,0,0,0",
+              "_$comp": [
+                {
+                  "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                  "scriptPath": "../src/Localization/LocalizationText.ts",
+                  "localizationKey": "PRIVACYAGREEMENT"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "3n8yo8vd",
+          "_$type": "Box",
+          "name": "boxItem",
+          "x": 116.00000000000011,
+          "y": 650.0000000000001,
+          "width": 985,
+          "height": 131,
+          "mouseEnabled": true,
+          "_$child": [
+            {
+              "_$id": "z95cgxqv",
+              "_$type": "Image",
+              "name": "imgSure",
+              "x": 527,
+              "y": -1,
+              "width": 316,
+              "height": 133,
+              "mouseEnabled": true,
+              "centerX": 192,
+              "skin": "resources/img/common/btn_color_blue.png",
+              "sizeGrid": "0,37,0,31,0",
+              "_$child": [
+                {
+                  "_$id": "33nd0he2",
+                  "_$type": "Label",
+                  "name": "Text",
+                  "x": 36,
+                  "y": 24,
+                  "width": 244,
+                  "height": 86,
+                  "centerX": 0,
+                  "centerY": 0,
+                  "text": "OK",
+                  "fontSize": 40,
+                  "color": "rgba(223, 255, 255, 1)",
+                  "align": "center",
+                  "valign": "middle",
+                  "overflow": "visible",
+                  "leading": 0,
+                  "padding": "0,0,0,0",
+                  "_$comp": [
+                    {
+                      "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                      "scriptPath": "../src/Localization/LocalizationText.ts",
+                      "localizationKey": "OK"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "_$id": "jf51r7rd",
+              "_$type": "Image",
+              "name": "imgCancel",
+              "x": 167,
+              "y": -1,
+              "width": 316,
+              "height": 133,
+              "mouseEnabled": true,
+              "centerX": -168,
+              "skin": "resources/img/common/btn_color_brown.png",
+              "sizeGrid": "0,34,0,31,0",
+              "_$child": [
+                {
+                  "_$id": "feecscgl",
+                  "_$type": "Label",
+                  "name": "Text(1)",
+                  "x": 36,
+                  "y": 24,
+                  "width": 244,
+                  "height": 86,
+                  "centerX": 0,
+                  "centerY": 0,
+                  "text": "CANCEL",
+                  "fontSize": 40,
+                  "color": "rgba(243, 222, 159, 1)",
+                  "align": "center",
+                  "valign": "middle",
+                  "overflow": "visible",
+                  "leading": 0,
+                  "padding": "0,0,0,0",
+                  "_$comp": [
+                    {
+                      "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                      "scriptPath": "../src/Localization/LocalizationText.ts",
+                      "localizationKey": "CANCEL"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "hibeey4f",
+          "_$type": "Panel",
+          "name": "Panel",
+          "x": 63,
+          "y": 90,
+          "width": 1072,
+          "height": 546,
+          "mouseEnabled": true,
+          "scrollType": 2,
+          "_$child": [
+            {
+              "_$id": "ekg50n0w",
+              "_$type": "Label",
+              "name": "txtAgreement",
+              "width": 1072,
+              "height": 1e-7,
+              "mouseEnabled": true,
+              "text": "\n",
+              "fontSize": 30,
+              "color": "#FFFFFF",
+              "overflow": "scroll",
+              "wordWrap": true,
+              "leading": 0,
+              "padding": "0,0,0,0"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

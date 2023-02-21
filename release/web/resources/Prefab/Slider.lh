@@ -32,7 +32,7 @@
       "y": 33,
       "width": 600,
       "height": 24,
-      "skin": "resources/img/settingview/slidebar_handle_bg.png",
+      "skin": "resources/img/slider/slidebar_handle_bg.png",
       "sizeGrid": "0,10,0,10,0",
       "_$child": [
         {
@@ -45,7 +45,7 @@
           "mask": {
             "_$ref": "pjtv4cmu"
           },
-          "skin": "resources/img/settingview/slidebar_handle_fill.png",
+          "skin": "resources/img/slider/slidebar_handle_fill.png",
           "sizeGrid": "0,10,0,10,0",
           "_$child": [
             {
@@ -55,7 +55,7 @@
               "y": -1.1368683772161603e-13,
               "width": 600,
               "height": 24,
-              "skin": "resources/img/settingview/slidebar_handle_fill.png",
+              "skin": "resources/img/slider/slidebar_handle_fill.png",
               "sizeGrid": "0,10,0,10,0"
             }
           ]
@@ -75,7 +75,7 @@
       "mouseEnabled": true,
       "anchorX": 0.5,
       "anchorY": 0.5,
-      "skin": "resources/img/settingview/slidebar_handle_point.png"
+      "skin": "resources/img/slider/slidebar_handle_point.png"
     }
   ]
 }

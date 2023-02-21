@@ -8,7 +8,7 @@
   "width": 150,
   "height": 74,
   "mouseEnabled": true,
-  "skin": "resources/img/settingview/toggle_switch_bg.png",
+  "skin": "resources/img/toggle/toggle_switch_bg.png",
   "sizeGrid": "0,30,0,30,0",
   "_$comp": [
     {
@@ -78,7 +78,7 @@
       "width": 60,
       "height": 68,
       "centerY": 0,
-      "skin": "resources/img/settingview/toggle_switch_on.png"
+      "skin": "resources/img/toggle/toggle_switch_on.png"
     }
   ]
 }

@@ -1,0 +1,26 @@
+{
+  "max lightmap size": 1024,
+  "mode": "bake",
+  "max sample": 1024,
+  "denoise": {
+    "enable": true,
+    "prefillter": "accurate",
+    "denoiseType": "openimagedenoise"
+  },
+  "ao": {
+    "ao_bounces": 8,
+    "ao_factor": 1,
+    "ao_distance": 6
+  },
+  "bounce": {
+    "diffuse bounce": 4,
+    "transmission bounce": 12,
+    "glossy bounce": 4,
+    "total bounce": 3
+  },
+  "sample_clamp_direct": 0,
+  "sample_clamp_indirect": 10,
+  "margin": 4,
+  "margin high filter": false,
+  "scene Module Scale": 1
+}

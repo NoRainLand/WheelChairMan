@@ -1,0 +1,452 @@
+{
+  "_$ver": 1,
+  "_$id": "jnoc987m",
+  "_$type": "Sprite3D",
+  "name": "MainBg",
+  "_$child": [
+    {
+      "_$id": "5jn3b663",
+      "_$type": "Camera",
+      "name": "Camera",
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 1.424529573854942,
+          "y": 0.7210788871447966,
+          "z": 4.391789157407845
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "z": 1.2833136862046034e-9
+        }
+      },
+      "orthographicVerticalSize": 10,
+      "fieldOfView": 60,
+      "nearPlane": 0.3,
+      "farPlane": 1000,
+      "clearFlag": 1,
+      "clearColor": {
+        "_$type": "Color",
+        "r": 0.39215686274509803,
+        "g": 0.5843137254901961,
+        "b": 0.9294117647058824
+      },
+      "fxaa": true,
+      "cullingMask": 2147483647,
+      "normalizedViewport": {
+        "_$type": "Viewport",
+        "width": 1,
+        "height": 1
+      },
+      "depthTextureFormat": 35
+    },
+    {
+      "_$id": "af4gfj2l",
+      "_$type": "Sprite3D",
+      "name": "Plane",
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 6.292169274502157e-8,
+          "y": 4.2175631875807085e-8,
+          "z": -2.833024037585119e-9
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": -0.7071067811865475,
+          "w": 0.7071067811865476
+        },
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 100,
+          "y": 100,
+          "z": 1
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "MeshFilter",
+          "sharedMesh": {
+            "_$uuid": "4a4afb22-ef83-40a2-a6a8-212a2d20c52f",
+            "_$type": "Mesh"
+          }
+        },
+        {
+          "_$type": "MeshRenderer",
+          "sharedMaterials": [
+            {
+              "_$uuid": "ddcb0be2-cb6c-4b22-a34e-6cef3621cfe5",
+              "_$type": "Material"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_$id": "sv0fs6m2",
+      "_$prefab": "abae8f65-944b-48db-b7ad-f6bdaa7fa0f5",
+      "name": "Wheelchair",
+      "active": true,
+      "layer": 0,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 0,
+          "y": 6.058576218492817e-8,
+          "z": 0
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 0,
+          "y": 1,
+          "z": 0,
+          "w": 6.123233995736766e-17
+        }
+      },
+      "_$child": [
+        {
+          "_$override": "#42",
+          "_$comp": [
+            {
+              "_$override": "MeshRenderer",
+              "sharedMaterials": [
+                {
+                  "_$uuid": "14b65c0e-aed6-4513-b46f-b595d30be26c",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$override": "#43",
+          "_$comp": [
+            {
+              "_$override": "MeshRenderer",
+              "sharedMaterials": [
+                {
+                  "_$uuid": "14b65c0e-aed6-4513-b46f-b595d30be26c",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$override": "#44",
+          "_$comp": [
+            {
+              "_$override": "MeshRenderer",
+              "sharedMaterials": [
+                {
+                  "_$uuid": "14b65c0e-aed6-4513-b46f-b595d30be26c",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_$id": "4or5v5c8",
+      "_$prefab": "c069a249-a187-4e27-8024-b1eb48302538",
+      "name": "SM_Env_Skyline_01",
+      "active": true,
+      "layer": 0,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 1.1964621648985485e-7,
+          "y": -10.565414558104216,
+          "z": 1.1943111419677734
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "w": 1
+        },
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 100,
+          "y": 200,
+          "z": 100
+        }
+      },
+      "_$comp": [
+        {
+          "_$override": "Animator",
+          "enabled": false
+        }
+      ],
+      "_$child": [
+        {
+          "_$override": "#44",
+          "_$comp": [
+            {
+              "_$override": "MeshRenderer",
+              "sharedMaterials": [
+                {
+                  "_$uuid": "02f85e6d-524b-4ead-9748-b28d9c6f2723",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$override": "#45",
+          "_$comp": [
+            {
+              "_$override": "MeshRenderer",
+              "sharedMaterials": [
+                {
+                  "_$uuid": "02f85e6d-524b-4ead-9748-b28d9c6f2723",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$override": "#46",
+          "_$comp": [
+            {
+              "_$override": "MeshRenderer",
+              "sharedMaterials": [
+                {
+                  "_$uuid": "02f85e6d-524b-4ead-9748-b28d9c6f2723",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$override": "#47",
+          "_$comp": [
+            {
+              "_$override": "MeshRenderer",
+              "sharedMaterials": [
+                {
+                  "_$uuid": "02f85e6d-524b-4ead-9748-b28d9c6f2723",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_$id": "nwxf49j2",
+      "_$prefab": "2fd941ba-4a89-418a-8374-4a8657476b58",
+      "name": "SM_Env_WaterEdge_Rock_01",
+      "active": true,
+      "layer": 0,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 5.703006744384766,
+          "y": -0.4464682038797978,
+          "z": -0.17774266004562378
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "w": 1
+        },
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 100,
+          "y": 100,
+          "z": 100
+        }
+      },
+      "_$comp": [
+        {
+          "_$override": "Animator",
+          "enabled": false
+        }
+      ],
+      "_$child": [
+        {
+          "_$override": "#44",
+          "_$comp": [
+            {
+              "_$override": "MeshRenderer",
+              "sharedMaterials": [
+                {
+                  "_$uuid": "ecf03fe8-78b4-4e06-8164-a032535fba1d",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_$id": "kyhb37w8",
+      "_$prefab": "28a940bc-8d4c-4748-95b1-ab776dcfe95c",
+      "name": "SM_Env_Tree_01",
+      "active": true,
+      "layer": 0,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 3.5641792930952,
+          "y": -0.7148350948130329,
+          "z": -0.17774266004562378
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "w": 1
+        },
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 100,
+          "y": 100,
+          "z": 100
+        }
+      },
+      "_$comp": [
+        {
+          "_$override": "Animator",
+          "enabled": false
+        }
+      ],
+      "_$child": [
+        {
+          "_$override": "#44",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 0.02816630892876519,
+              "y": 1.4115164592709561e-10,
+              "z": 1.1788903186982225e-11
+            }
+          },
+          "_$comp": [
+            {
+              "_$override": "MeshRenderer",
+              "sharedMaterials": [
+                {
+                  "_$uuid": "ecf03fe8-78b4-4e06-8164-a032535fba1d",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_$id": "7b0nu4b2",
+      "_$prefab": "ba53afe6-defb-4cb5-962f-a51d76035d7d",
+      "name": "SM_Env_Tree_02",
+      "active": true,
+      "layer": 0,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": -2.816417270179519,
+          "y": 0.16742290552767525,
+          "z": -0.174821138381958
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "w": 1
+        },
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 100,
+          "y": 100,
+          "z": 100
+        }
+      },
+      "_$comp": [
+        {
+          "_$override": "Animator",
+          "enabled": false
+        }
+      ],
+      "_$child": [
+        {
+          "_$override": "#44",
+          "_$comp": [
+            {
+              "_$override": "MeshRenderer",
+              "sharedMaterials": [
+                {
+                  "_$uuid": "ecf03fe8-78b4-4e06-8164-a032535fba1d",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_$id": "fnjf8950",
+      "_$prefab": "b73593e2-c0d7-486d-99f3-a58ae62a608d",
+      "name": "SM_Env_Tree_03",
+      "active": true,
+      "layer": 0,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 3.9593763066873384,
+          "y": -0.22869479549710325,
+          "z": 1.7211716923409472
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "w": 1
+        },
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 100,
+          "y": 100,
+          "z": 100
+        }
+      },
+      "_$comp": [
+        {
+          "_$override": "Animator",
+          "enabled": false
+        }
+      ],
+      "_$child": [
+        {
+          "_$override": "#44",
+          "_$comp": [
+            {
+              "_$override": "MeshRenderer",
+              "sharedMaterials": [
+                {
+                  "_$uuid": "ecf03fe8-78b4-4e06-8164-a032535fba1d",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

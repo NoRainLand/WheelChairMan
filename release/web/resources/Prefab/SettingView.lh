@@ -13,7 +13,7 @@
   "_$comp": [
     {
       "_$type": "9811079c-9340-49a7-8d8a-71570d70a98d",
-      "scriptPath": "../src/Game/Scene/SettingView.ts",
+      "scriptPath": "../src/Scene/SettingView.ts",
       "imgClose": {
         "_$ref": "fdfzx0c2"
       },
@@ -34,6 +34,9 @@
       },
       "imgSupport": {
         "_$ref": "ncrplokr"
+      },
+      "txtAgreement": {
+        "_$ref": "l2ivck1h"
       },
       "depth": 1,
       "isSingleton": true
@@ -280,70 +283,6 @@
               ]
             },
             {
-              "_$id": "dmi1jh6i",
-              "_$type": "Box",
-              "name": "Slider(1)",
-              "active": false,
-              "x": 163,
-              "y": 21.000000000000057,
-              "width": 660,
-              "height": 90,
-              "visible": false,
-              "mouseEnabled": true,
-              "bgColor": "rgba(255, 255, 255, 1)",
-              "_$child": [
-                {
-                  "_$id": "4d2n040s",
-                  "_$type": "Image",
-                  "name": "Image",
-                  "x": 30,
-                  "y": 33,
-                  "width": 600,
-                  "height": 24,
-                  "skin": "resources/img/settingview/slidebar_handle_bg.png",
-                  "sizeGrid": "0,10,0,10,0",
-                  "_$child": [
-                    {
-                      "_$id": "1u88lt6n",
-                      "_$type": "Image",
-                      "name": "imgLoad",
-                      "y": -5.684341886080802e-14,
-                      "width": 600,
-                      "height": 24,
-                      "mask": {
-                        "_$ref": "8lo1rvta"
-                      },
-                      "skin": "resources/img/settingview/slidebar_handle_fill.png",
-                      "sizeGrid": "0,10,0,10,0",
-                      "_$child": [
-                        {
-                          "_$id": "8lo1rvta",
-                          "_$type": "Image",
-                          "name": "imgMask",
-                          "y": -1.1368683772161603e-13,
-                          "width": 600,
-                          "height": 24,
-                          "skin": "resources/img/settingview/slidebar_handle_fill.png",
-                          "sizeGrid": "0,10,0,10,0"
-                        }
-                      ]
-                    },
-                    {
-                      "_$id": "xmeagl1y",
-                      "_$type": "Image",
-                      "name": "imgBar",
-                      "x": 575.0000000000003,
-                      "y": -25.999999999999886,
-                      "width": 56,
-                      "height": 76,
-                      "mouseEnabled": true,
-                      "skin": "resources/img/settingview/slidebar_handle_point.png"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
               "_$id": "fesjb1bw",
               "_$prefab": "Slider.lh",
               "_$var": true,
@@ -471,6 +410,32 @@
               "centerY": null,
               "disabled": null,
               "gray": null
+            },
+            {
+              "_$id": "l2ivck1h",
+              "_$type": "Label",
+              "name": "txtAgreement",
+              "x": 545,
+              "y": 19,
+              "width": 307,
+              "height": 93,
+              "mouseEnabled": true,
+              "text": "PrivacyAgreement",
+              "fontSize": 30,
+              "color": "rgba(135, 120, 98, 1)",
+              "underline": true,
+              "align": "center",
+              "valign": "middle",
+              "overflow": "visible",
+              "leading": 0,
+              "padding": "0,0,0,0",
+              "_$comp": [
+                {
+                  "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                  "scriptPath": "../src/Localization/LocalizationText.ts",
+                  "localizationKey": "PRIVACYAGREEMENT"
+                }
+              ]
             }
           ]
         },
@@ -503,7 +468,7 @@
                   "y": 32.99999999999977,
                   "width": 71,
                   "height": 65,
-                  "skin": "resources/img/settingview/language_small_chn.png"
+                  "skin": "resources/img/languageview/language_chn.png"
                 },
                 {
                   "_$id": "4o9r4191",

@@ -1,0 +1,20 @@
+{
+  "_$ver": 1,
+  "_$id": "zimff5us",
+  "_$type": "View",
+  "name": "CompleteView",
+  "width": 1920,
+  "height": 1080,
+  "left": 0,
+  "right": 0,
+  "top": 0,
+  "bottom": 0,
+  "_$comp": [
+    {
+      "_$type": "f5f376ef-5874-4c8a-9a28-8088976bd468",
+      "scriptPath": "../src/Scene/CompleteView.ts",
+      "depth": 2,
+      "isSingleton": true
+    }
+  ]
+}

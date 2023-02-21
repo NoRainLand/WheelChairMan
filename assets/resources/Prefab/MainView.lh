@@ -14,6 +14,9 @@
     {
       "_$type": "127f9431-d96d-491c-b782-2549a9c38d7b",
       "scriptPath": "../src/Scene/MainView.ts",
+      "depth": 2,
+      "isSingleton": true,
+      "AniType": 0,
       "txtGold": {
         "_$ref": "iibb3hfk"
       },
@@ -62,6 +65,7 @@
       "name": "Bg",
       "width": 1920,
       "height": 1080,
+      "visible": false,
       "left": 0,
       "right": 0,
       "top": 0,
@@ -102,8 +106,7 @@
           "color": "rgba(221, 198, 171, 1)",
           "align": "right",
           "valign": "middle",
-          "leading": 0,
-          "overflow": "visible"
+          "leading": 0
         },
         {
           "_$id": "69hshsly",
@@ -151,8 +154,7 @@
           "color": "rgba(221, 198, 171, 1)",
           "align": "right",
           "valign": "middle",
-          "leading": 0,
-          "overflow": "visible"
+          "leading": 0
         },
         {
           "_$id": "07o9cep4",
@@ -279,8 +281,7 @@
               "color": "#FFFFFF",
               "align": "center",
               "valign": "middle",
-              "leading": 0,
-              "overflow": "visible"
+              "leading": 0
             }
           ]
         },
@@ -295,7 +296,6 @@
           "text": "username",
           "fontSize": 32,
           "color": "rgba(221, 198, 171, 1)",
-          "overflow": "visible",
           "leading": 0,
           "padding": "0,0,0,0"
         }
@@ -339,7 +339,6 @@
           "color": "rgba(178, 155, 123, 1)",
           "align": "center",
           "valign": "middle",
-          "overflow": "visible",
           "leading": 0,
           "padding": "0,0,0,0",
           "_$comp": [
@@ -390,7 +389,6 @@
           "color": "rgba(178, 155, 123, 1)",
           "align": "center",
           "valign": "middle",
-          "overflow": "visible",
           "leading": 0,
           "padding": "0,0,0,0",
           "_$comp": [
@@ -441,7 +439,6 @@
           "color": "rgba(178, 155, 123, 1)",
           "align": "center",
           "valign": "middle",
-          "overflow": "visible",
           "leading": 0,
           "padding": "0,0,0,0",
           "_$comp": [

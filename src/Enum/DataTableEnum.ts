@@ -18,4 +18,6 @@ export enum DataTableEnum {
     Shop = 3005,
     /**排行榜配置表 */
     Ranking = 3006,
+    /**3D场景配置表 */
+    Scene3d = 3007,
 }

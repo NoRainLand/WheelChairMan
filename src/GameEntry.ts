@@ -13,7 +13,7 @@ import Sprite = Laya.Sprite;
  * @Author: NoRain 
  * @Date: 2023-02-06 16:41:32 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-16 16:52:50
+ * @Last Modified time: 2023-02-20 19:35:32
  */
 const { regClass, property } = Laya;
 
@@ -42,13 +42,10 @@ export class GameEntry extends Laya.Script {
     /**初始化 */
     init() {
         console.log(`当前引擎版本:${Laya.LayaEnv.version}, 当前项目名称:${ProjectConfig.projectName},当前项目版本:${ProjectConfig.projectVersion}/${ProjectConfig.projectVersionIndex}`);
-        console.log(Laya.stage);
-
 
         this.GameEntry = this.owner as Scene;
         this.UIBase = this.GameEntry.getChildByName("UIBase") as Box;
         UIBaseMgr.init(this.UIBase);
-
         UIBaseMgr.openLoadView();
     }
 }

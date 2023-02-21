@@ -22,14 +22,6 @@
         DepthTextureMode[DepthTextureMode["MotionVectors"] = 4] = "MotionVectors";
     })(exports.DepthTextureMode || (exports.DepthTextureMode = {}));
     class DepthPass {
-        static __init__() {
-            DepthPass.DEPTHPASS = Laya.Shader3D.getDefineByName("DEPTHPASS");
-            DepthPass.DEFINE_SHADOW_BIAS = Laya.Shader3D.propertyNameToID("u_ShadowBias");
-            DepthPass.DEPTHTEXTURE = Laya.Shader3D.propertyNameToID("u_CameraDepthTexture");
-            DepthPass.DEPTHNORMALSTEXTURE = Laya.Shader3D.propertyNameToID("u_CameraDepthNormalsTexture");
-            DepthPass.DEPTHZBUFFERPARAMS = Laya.Shader3D.propertyNameToID("u_ZBufferParams");
-            DepthPass.SHADOWUNIFORMBLOCK = Laya.Shader3D.propertyNameToID(Laya.UniformBufferObject.UBONAME_SHADOW);
-        }
         constructor() {
             this._defaultNormalDepthColor = new Laya.Color(0.5, 0.5, 1.0, 0.0);
             this._zBufferParams = new Laya.Vector4();
@@ -40,6 +32,14 @@
                     this._castDepthUBO = Laya.UniformBufferObject.create(Laya.UniformBufferObject.UBONAME_SHADOW, Laya.BufferUsage.Dynamic, this._castDepthData.getbyteLength(), true);
                 }
             }
+        }
+        static __init__() {
+            DepthPass.DEPTHPASS = Laya.Shader3D.getDefineByName("DEPTHPASS");
+            DepthPass.DEFINE_SHADOW_BIAS = Laya.Shader3D.propertyNameToID("u_ShadowBias");
+            DepthPass.DEPTHTEXTURE = Laya.Shader3D.propertyNameToID("u_CameraDepthTexture");
+            DepthPass.DEPTHNORMALSTEXTURE = Laya.Shader3D.propertyNameToID("u_CameraDepthNormalsTexture");
+            DepthPass.DEPTHZBUFFERPARAMS = Laya.Shader3D.propertyNameToID("u_ZBufferParams");
+            DepthPass.SHADOWUNIFORMBLOCK = Laya.Shader3D.propertyNameToID(Laya.UniformBufferObject.UBONAME_SHADOW);
         }
         update(camera, depthType, depthTextureFormat) {
             this._viewPort = camera.viewport;
@@ -724,6 +724,27 @@
     const TEMPVector30 = new Laya.Vector3();
 
     class Transform3D extends Laya.EventDispatcher {
+        constructor(owner) {
+            super();
+            this._localPosition = new Laya.Vector3(0, 0, 0);
+            this._localRotation = new Laya.Quaternion(0, 0, 0, 1);
+            this._localScale = new Laya.Vector3(1, 1, 1);
+            this._localRotationEuler = new Laya.Vector3(0, 0, 0);
+            this._localMatrix = new Laya.Matrix4x4();
+            this._position = new Laya.Vector3(0, 0, 0);
+            this._rotation = new Laya.Quaternion(0, 0, 0, 1);
+            this._scale = new Laya.Vector3(1, 1, 1);
+            this._rotationEuler = new Laya.Vector3(0, 0, 0);
+            this._worldMatrix = new Laya.Matrix4x4();
+            this._children = null;
+            this._isDefaultMatrix = false;
+            this._parent = null;
+            this._transformFlag = 0;
+            this._owner = owner;
+            this._children = [];
+            this._setTransformFlag(Transform3D.TRANSFORM_LOCALQUATERNION | Transform3D.TRANSFORM_LOCALEULER | Transform3D.TRANSFORM_LOCALMATRIX, false);
+            this._setTransformFlag(Transform3D.TRANSFORM_WORLDPOSITION | Transform3D.TRANSFORM_WORLDQUATERNION | Transform3D.TRANSFORM_WORLDEULER | Transform3D.TRANSFORM_WORLDSCALE | Transform3D.TRANSFORM_WORLDMATRIX, true);
+        }
         get isDefaultMatrix() {
             if (this._getTransformFlag(Transform3D.TRANSFORM_LOCALMATRIX)) {
                 this.localMatrix;
@@ -1010,27 +1031,6 @@
                 value.cloneTo(this._worldMatrix);
             this._setTransformFlag(Transform3D.TRANSFORM_WORLDMATRIX, false);
         }
-        constructor(owner) {
-            super();
-            this._localPosition = new Laya.Vector3(0, 0, 0);
-            this._localRotation = new Laya.Quaternion(0, 0, 0, 1);
-            this._localScale = new Laya.Vector3(1, 1, 1);
-            this._localRotationEuler = new Laya.Vector3(0, 0, 0);
-            this._localMatrix = new Laya.Matrix4x4();
-            this._position = new Laya.Vector3(0, 0, 0);
-            this._rotation = new Laya.Quaternion(0, 0, 0, 1);
-            this._scale = new Laya.Vector3(1, 1, 1);
-            this._rotationEuler = new Laya.Vector3(0, 0, 0);
-            this._worldMatrix = new Laya.Matrix4x4();
-            this._children = null;
-            this._isDefaultMatrix = false;
-            this._parent = null;
-            this._transformFlag = 0;
-            this._owner = owner;
-            this._children = [];
-            this._setTransformFlag(Transform3D.TRANSFORM_LOCALQUATERNION | Transform3D.TRANSFORM_LOCALEULER | Transform3D.TRANSFORM_LOCALMATRIX, false);
-            this._setTransformFlag(Transform3D.TRANSFORM_WORLDPOSITION | Transform3D.TRANSFORM_WORLDQUATERNION | Transform3D.TRANSFORM_WORLDEULER | Transform3D.TRANSFORM_WORLDSCALE | Transform3D.TRANSFORM_WORLDMATRIX, true);
-        }
         _getScaleMatrix() {
             var invRotation = Transform3D._tempQuaternion0;
             var invRotationMat = Transform3D._tempMatrix3x30;
@@ -1306,6 +1306,18 @@
     Transform3D.tmpVec3 = new Laya.Vector3();
 
     class ColliderShape {
+        constructor() {
+            this._scale = new Laya.Vector3(1, 1, 1);
+            this._centerMatrix = new Laya.Matrix4x4();
+            this._attatched = false;
+            this._indexInCompound = -1;
+            this._compoundParent = null;
+            this._attatchedCollisionObject = null;
+            this._referenceCount = 0;
+            this._localOffset = new Laya.Vector3(0, 0, 0);
+            this._localRotation = new Laya.Quaternion(0, 0, 0, 1);
+            this.needsCustomCollisionCallback = false;
+        }
         static __init__() {
             var bt = ILaya3D.Physics3D._bullet;
             ColliderShape._btScale = bt.btVector3_create(1, 1, 1);
@@ -1352,18 +1364,6 @@
             this._localRotation = value;
             if (this._compoundParent)
                 this._compoundParent._updateChildTransform(this);
-        }
-        constructor() {
-            this._scale = new Laya.Vector3(1, 1, 1);
-            this._centerMatrix = new Laya.Matrix4x4();
-            this._attatched = false;
-            this._indexInCompound = -1;
-            this._compoundParent = null;
-            this._attatchedCollisionObject = null;
-            this._referenceCount = 0;
-            this._localOffset = new Laya.Vector3(0, 0, 0);
-            this._localRotation = new Laya.Quaternion(0, 0, 0, 1);
-            this.needsCustomCollisionCallback = false;
         }
         _setScale(value) {
             if (this._compoundParent) {
@@ -1417,6 +1417,16 @@
     ColliderShape._tempVector30 = new Laya.Vector3();
 
     class BoxColliderShape extends ColliderShape {
+        constructor(sizeX = 1.0, sizeY = 1.0, sizeZ = 1.0) {
+            super();
+            this._sizeX = sizeX;
+            this._sizeY = sizeY;
+            this._sizeZ = sizeZ;
+            this._type = ColliderShape.SHAPETYPES_BOX;
+            var bt = ILaya3D.Physics3D._bullet;
+            bt.btVector3_setValue(BoxColliderShape._btSize, sizeX / 2, sizeY / 2, sizeZ / 2);
+            this._btShape = bt.btBoxShape_create(BoxColliderShape._btSize);
+        }
         static __init__() {
             BoxColliderShape._btSize = ILaya3D.Physics3D._bullet.btVector3_create(0, 0, 0);
         }
@@ -1447,16 +1457,6 @@
                 this.changeBoxShape();
             }
         }
-        constructor(sizeX = 1.0, sizeY = 1.0, sizeZ = 1.0) {
-            super();
-            this._sizeX = sizeX;
-            this._sizeY = sizeY;
-            this._sizeZ = sizeZ;
-            this._type = ColliderShape.SHAPETYPES_BOX;
-            var bt = ILaya3D.Physics3D._bullet;
-            bt.btVector3_setValue(BoxColliderShape._btSize, sizeX / 2, sizeY / 2, sizeZ / 2);
-            this._btShape = bt.btBoxShape_create(BoxColliderShape._btSize);
-        }
         changeBoxShape() {
             var bt = ILaya3D.Physics3D._bullet;
             if (this._btShape) {
@@ -1473,6 +1473,27 @@
     }
 
     class CapsuleColliderShape extends ColliderShape {
+        constructor(radius = 0.5, length = 2, orientation = ColliderShape.SHAPEORIENTATION_UPY) {
+            super();
+            this._radius = radius;
+            this._length = length;
+            this._orientation = orientation;
+            this._type = ColliderShape.SHAPETYPES_CAPSULE;
+            var bt = ILaya3D.Physics3D._bullet;
+            switch (orientation) {
+                case ColliderShape.SHAPEORIENTATION_UPX:
+                    this._btShape = bt.btCapsuleShapeX_create(radius, length - radius * 2);
+                    break;
+                case ColliderShape.SHAPEORIENTATION_UPY:
+                    this._btShape = bt.btCapsuleShape_create(radius, length - radius * 2);
+                    break;
+                case ColliderShape.SHAPEORIENTATION_UPZ:
+                    this._btShape = bt.btCapsuleShapeZ_create(radius, length - radius * 2);
+                    break;
+                default:
+                    throw "CapsuleColliderShape:unknown orientation.";
+            }
+        }
         get radius() {
             return this._radius;
         }
@@ -1498,27 +1519,6 @@
             this._orientation = value;
             if (Laya.LayaEnv.isPlaying) {
                 this.changeCapsuleShape();
-            }
-        }
-        constructor(radius = 0.5, length = 2, orientation = ColliderShape.SHAPEORIENTATION_UPY) {
-            super();
-            this._radius = radius;
-            this._length = length;
-            this._orientation = orientation;
-            this._type = ColliderShape.SHAPETYPES_CAPSULE;
-            var bt = ILaya3D.Physics3D._bullet;
-            switch (orientation) {
-                case ColliderShape.SHAPEORIENTATION_UPX:
-                    this._btShape = bt.btCapsuleShapeX_create(radius, length - radius * 2);
-                    break;
-                case ColliderShape.SHAPEORIENTATION_UPY:
-                    this._btShape = bt.btCapsuleShape_create(radius, length - radius * 2);
-                    break;
-                case ColliderShape.SHAPEORIENTATION_UPZ:
-                    this._btShape = bt.btCapsuleShapeZ_create(radius, length - radius * 2);
-                    break;
-                default:
-                    throw "CapsuleColliderShape:unknown orientation.";
             }
         }
         changeCapsuleShape() {
@@ -1569,18 +1569,18 @@
     CapsuleColliderShape._tempVector30 = new Laya.Vector3();
 
     class CompoundColliderShape extends ColliderShape {
+        constructor() {
+            super();
+            this._childColliderShapes = [];
+            this._type = ColliderShape.SHAPETYPES_COMPOUND;
+            this._btShape = ILaya3D.Physics3D._bullet.btCompoundShape_create();
+        }
         static __init__() {
             var bt = ILaya3D.Physics3D._bullet;
             CompoundColliderShape._btVector3One = bt.btVector3_create(1, 1, 1);
             CompoundColliderShape._btTransform = bt.btTransform_create();
             CompoundColliderShape._btOffset = bt.btVector3_create(0, 0, 0);
             CompoundColliderShape._btRotation = bt.btQuaternion_create(0, 0, 0, 1);
-        }
-        constructor() {
-            super();
-            this._childColliderShapes = [];
-            this._type = ColliderShape.SHAPETYPES_COMPOUND;
-            this._btShape = ILaya3D.Physics3D._bullet.btCompoundShape_create();
         }
         _clearChildShape(shape) {
             shape._attatched = false;
@@ -1674,6 +1674,29 @@
     }
 
     class ConeColliderShape extends ColliderShape {
+        constructor(radius = 0.5, height = 1.0, orientation = ColliderShape.SHAPEORIENTATION_UPY) {
+            super();
+            this._radius = 1;
+            this._height = 0.5;
+            this._radius = radius;
+            this._height = height;
+            this._orientation = orientation;
+            this._type = ColliderShape.SHAPETYPES_CYLINDER;
+            var bt = ILaya3D.Physics3D._bullet;
+            switch (orientation) {
+                case ColliderShape.SHAPEORIENTATION_UPX:
+                    this._btShape = bt.btConeShapeX_create(radius, height);
+                    break;
+                case ColliderShape.SHAPEORIENTATION_UPY:
+                    this._btShape = bt.btConeShape_create(radius, height);
+                    break;
+                case ColliderShape.SHAPEORIENTATION_UPZ:
+                    this._btShape = bt.btConeShapeZ_create(radius, height);
+                    break;
+                default:
+                    throw "ConeColliderShape:unknown orientation.";
+            }
+        }
         get radius() {
             return this._radius;
         }
@@ -1697,29 +1720,6 @@
             this._orientation = value;
             if (Laya.LayaEnv.isPlaying)
                 this.changeConeShape();
-        }
-        constructor(radius = 0.5, height = 1.0, orientation = ColliderShape.SHAPEORIENTATION_UPY) {
-            super();
-            this._radius = 1;
-            this._height = 0.5;
-            this._radius = radius;
-            this._height = height;
-            this._orientation = orientation;
-            this._type = ColliderShape.SHAPETYPES_CYLINDER;
-            var bt = ILaya3D.Physics3D._bullet;
-            switch (orientation) {
-                case ColliderShape.SHAPEORIENTATION_UPX:
-                    this._btShape = bt.btConeShapeX_create(radius, height);
-                    break;
-                case ColliderShape.SHAPEORIENTATION_UPY:
-                    this._btShape = bt.btConeShape_create(radius, height);
-                    break;
-                case ColliderShape.SHAPEORIENTATION_UPZ:
-                    this._btShape = bt.btConeShapeZ_create(radius, height);
-                    break;
-                default:
-                    throw "ConeColliderShape:unknown orientation.";
-            }
         }
         changeConeShape() {
             var bt = ILaya3D.Physics3D._bullet;
@@ -1748,6 +1748,32 @@
     }
 
     class CylinderColliderShape extends ColliderShape {
+        constructor(radius = 0.5, height = 1.0, orientation = ColliderShape.SHAPEORIENTATION_UPY) {
+            super();
+            this._radius = 1;
+            this._height = 0.5;
+            this._radius = radius;
+            this._height = height;
+            this._orientation = orientation;
+            this._type = ColliderShape.SHAPETYPES_CYLINDER;
+            var bt = ILaya3D.Physics3D._bullet;
+            switch (orientation) {
+                case ColliderShape.SHAPEORIENTATION_UPX:
+                    bt.btVector3_setValue(CylinderColliderShape._btSize, height / 2, radius, radius);
+                    this._btShape = bt.btCylinderShapeX_create(CylinderColliderShape._btSize);
+                    break;
+                case ColliderShape.SHAPEORIENTATION_UPY:
+                    bt.btVector3_setValue(CylinderColliderShape._btSize, radius, height / 2, radius);
+                    this._btShape = bt.btCylinderShape_create(CylinderColliderShape._btSize);
+                    break;
+                case ColliderShape.SHAPEORIENTATION_UPZ:
+                    bt.btVector3_setValue(CylinderColliderShape._btSize, radius, radius, height / 2);
+                    this._btShape = bt.btCylinderShapeZ_create(CylinderColliderShape._btSize);
+                    break;
+                default:
+                    throw "CapsuleColliderShape:unknown orientation.";
+            }
+        }
         static __init__() {
             CylinderColliderShape._btSize = ILaya3D.Physics3D._bullet.btVector3_create(0, 0, 0);
         }
@@ -1774,32 +1800,6 @@
             this._orientation = value;
             if (Laya.LayaEnv.isPlaying)
                 this.changeCylinder();
-        }
-        constructor(radius = 0.5, height = 1.0, orientation = ColliderShape.SHAPEORIENTATION_UPY) {
-            super();
-            this._radius = 1;
-            this._height = 0.5;
-            this._radius = radius;
-            this._height = height;
-            this._orientation = orientation;
-            this._type = ColliderShape.SHAPETYPES_CYLINDER;
-            var bt = ILaya3D.Physics3D._bullet;
-            switch (orientation) {
-                case ColliderShape.SHAPEORIENTATION_UPX:
-                    bt.btVector3_setValue(CylinderColliderShape._btSize, height / 2, radius, radius);
-                    this._btShape = bt.btCylinderShapeX_create(CylinderColliderShape._btSize);
-                    break;
-                case ColliderShape.SHAPEORIENTATION_UPY:
-                    bt.btVector3_setValue(CylinderColliderShape._btSize, radius, height / 2, radius);
-                    this._btShape = bt.btCylinderShape_create(CylinderColliderShape._btSize);
-                    break;
-                case ColliderShape.SHAPEORIENTATION_UPZ:
-                    bt.btVector3_setValue(CylinderColliderShape._btSize, radius, radius, height / 2);
-                    this._btShape = bt.btCylinderShapeZ_create(CylinderColliderShape._btSize);
-                    break;
-                default:
-                    throw "CapsuleColliderShape:unknown orientation.";
-            }
         }
         changeCylinder() {
             var bt = ILaya3D.Physics3D._bullet;
@@ -1831,6 +1831,11 @@
     }
 
     class MeshColliderShape extends ColliderShape {
+        constructor() {
+            super();
+            this._mesh = null;
+            this._convex = false;
+        }
         get mesh() {
             return this._mesh;
         }
@@ -1852,11 +1857,6 @@
         }
         set convex(value) {
             this._convex = value;
-        }
-        constructor() {
-            super();
-            this._mesh = null;
-            this._convex = false;
         }
         _setPhysicsMesh() {
             {
@@ -1908,6 +1908,12 @@
     }
 
     class SphereColliderShape extends ColliderShape {
+        constructor(radius = 0.5) {
+            super();
+            this._radius = radius;
+            this._type = ColliderShape.SHAPETYPES_SPHERE;
+            this._btShape = ILaya3D.Physics3D._bullet.btSphereShape_create(radius);
+        }
         get radius() {
             return this._radius;
         }
@@ -1915,12 +1921,6 @@
             this._radius = value;
             if (Laya.LayaEnv.isPlaying)
                 this.changeSphere();
-        }
-        constructor(radius = 0.5) {
-            super();
-            this._radius = radius;
-            this._type = ColliderShape.SHAPETYPES_SPHERE;
-            this._btShape = ILaya3D.Physics3D._bullet.btSphereShape_create(radius);
         }
         changeSphere() {
             var bt = ILaya3D.Physics3D._bullet;
@@ -1937,6 +1937,25 @@
     }
 
     class PhysicsComponent extends Laya.Component {
+        constructor(collisionGroup, canCollideWith) {
+            super();
+            this._restitution = 0.0;
+            this._friction = 0.5;
+            this._rollingFriction = 0.0;
+            this._ccdMotionThreshold = 0.0;
+            this._ccdSweptSphereRadius = 0.0;
+            this._collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_DEFAULTFILTER;
+            this._canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER;
+            this._colliderShape = null;
+            this._transformFlag = 2147483647;
+            this._controlBySimulation = false;
+            this._enableProcessCollisions = true;
+            this._inPhysicUpdateListIndex = -1;
+            this.canScaleShape = true;
+            this._collisionGroup = collisionGroup;
+            this._canCollideWith = canCollideWith;
+            PhysicsComponent._physicObjectsMap[this.id] = this;
+        }
         static __init__() {
             var bt = ILaya3D.Physics3D._bullet;
             PhysicsComponent._btVector30 = bt.btVector3_create(0, 0, 0);
@@ -2115,25 +2134,6 @@
                     this._addToSimulation();
                 }
             }
-        }
-        constructor(collisionGroup, canCollideWith) {
-            super();
-            this._restitution = 0.0;
-            this._friction = 0.5;
-            this._rollingFriction = 0.0;
-            this._ccdMotionThreshold = 0.0;
-            this._ccdSweptSphereRadius = 0.0;
-            this._collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_DEFAULTFILTER;
-            this._canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER;
-            this._colliderShape = null;
-            this._transformFlag = 2147483647;
-            this._controlBySimulation = false;
-            this._enableProcessCollisions = true;
-            this._inPhysicUpdateListIndex = -1;
-            this.canScaleShape = true;
-            this._collisionGroup = collisionGroup;
-            this._canCollideWith = canCollideWith;
-            PhysicsComponent._physicObjectsMap[this.id] = this;
         }
         _parseShape(shapesData) {
             var shapeCount = shapesData.length;
@@ -2383,6 +2383,19 @@
     PhysicsComponent._addUpdateList = true;
 
     class CharacterController extends PhysicsComponent {
+        constructor(stepheight = 0.1, upAxis = null, collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_DEFAULTFILTER, canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER) {
+            super(collisionGroup, canCollideWith);
+            this._upAxis = new Laya.Vector3(0, 1, 0);
+            this._maxSlope = 90.0;
+            this._jumpSpeed = 10.0;
+            this._fallSpeed = 55.0;
+            this._gravity = new Laya.Vector3(0, -9.8 * 3, 0);
+            this._btKinematicCharacter = null;
+            this._pushForce = 1;
+            this._stepHeight = stepheight;
+            (upAxis) && (this._upAxis = upAxis);
+            this._controlBySimulation = true;
+        }
         static __init__() {
             CharacterController._btTempVector30 = ILaya3D.Physics3D._bullet.btVector3_create(0, 0, 0);
         }
@@ -2475,19 +2488,6 @@
         set orientation(v) {
             ILaya3D.Physics3D._bullet;
             this._btColliderObject;
-        }
-        constructor(stepheight = 0.1, upAxis = null, collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_DEFAULTFILTER, canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER) {
-            super(collisionGroup, canCollideWith);
-            this._upAxis = new Laya.Vector3(0, 1, 0);
-            this._maxSlope = 90.0;
-            this._jumpSpeed = 10.0;
-            this._fallSpeed = 55.0;
-            this._gravity = new Laya.Vector3(0, -9.8 * 3, 0);
-            this._btKinematicCharacter = null;
-            this._pushForce = 1;
-            this._stepHeight = stepheight;
-            (upAxis) && (this._upAxis = upAxis);
-            this._controlBySimulation = true;
         }
         setJumpAxis(x, y, z) {
             ILaya3D.Physics3D._bullet.btKinematicCharacterController_setJumpAxis(this._btKinematicCharacter, x, y, z);
@@ -2863,47 +2863,6 @@
     }
 
     class PhysicsSimulation {
-        static __init__() {
-            var bt = ILaya3D.Physics3D._bullet;
-            PhysicsSimulation._btTempVector30 = bt.btVector3_create(0, 0, 0);
-            PhysicsSimulation._btTempVector31 = bt.btVector3_create(0, 0, 0);
-            PhysicsSimulation._btTempQuaternion0 = bt.btQuaternion_create(0, 0, 0, 1);
-            PhysicsSimulation._btTempQuaternion1 = bt.btQuaternion_create(0, 0, 0, 1);
-            PhysicsSimulation._btTempTransform0 = bt.btTransform_create();
-            PhysicsSimulation._btTempTransform1 = bt.btTransform_create();
-        }
-        static createConstraint() {
-        }
-        get continuousCollisionDetection() {
-            return ILaya3D.Physics3D._bullet.btCollisionWorld_get_m_useContinuous(this._btDispatchInfo);
-        }
-        set continuousCollisionDetection(value) {
-            ILaya3D.Physics3D._bullet.btCollisionWorld_set_m_useContinuous(this._btDispatchInfo, value);
-        }
-        get gravity() {
-            if (!this._btDiscreteDynamicsWorld)
-                throw "Simulation:Cannot perform this action when the physics engine is set to CollisionsOnly";
-            return this._gravity;
-        }
-        set gravity(value) {
-            if (!this._btDiscreteDynamicsWorld)
-                throw "Simulation:Cannot perform this action when the physics engine is set to CollisionsOnly";
-            this._gravity = value;
-            var bt = ILaya3D.Physics3D._bullet;
-            var btGravity = PhysicsSimulation._btTempVector30;
-            bt.btVector3_setValue(btGravity, value.x, value.y, value.z);
-            bt.btDiscreteDynamicsWorld_setGravity(this._btDiscreteDynamicsWorld, btGravity);
-        }
-        get speculativeContactRestitution() {
-            if (!this._btDiscreteDynamicsWorld)
-                throw "Simulation:Cannot Cannot perform this action when the physics engine is set to CollisionsOnly";
-            return ILaya3D.Physics3D._bullet.btDiscreteDynamicsWorld_getApplySpeculativeContactRestitution(this._btDiscreteDynamicsWorld);
-        }
-        set speculativeContactRestitution(value) {
-            if (!this._btDiscreteDynamicsWorld)
-                throw "Simulation:Cannot Cannot perform this action when the physics engine is set to CollisionsOnly";
-            ILaya3D.Physics3D._bullet.btDiscreteDynamicsWorld_setApplySpeculativeContactRestitution(this._btDiscreteDynamicsWorld, value);
-        }
         constructor(configuration) {
             this._updateCount = 0;
             this._gravity = new Laya.Vector3(0, -10, 0);
@@ -2947,6 +2906,47 @@
             this._btClosestConvexResultCallback = bt.ClosestConvexResultCallback_create(this._btVector3Zero, this._btVector3Zero);
             this._btAllConvexResultCallback = bt.AllConvexResultCallback_create(this._btVector3Zero, this._btVector3Zero);
             bt.btGImpactCollisionAlgorithm_RegisterAlgorithm(this._btDispatcher);
+        }
+        static __init__() {
+            var bt = ILaya3D.Physics3D._bullet;
+            PhysicsSimulation._btTempVector30 = bt.btVector3_create(0, 0, 0);
+            PhysicsSimulation._btTempVector31 = bt.btVector3_create(0, 0, 0);
+            PhysicsSimulation._btTempQuaternion0 = bt.btQuaternion_create(0, 0, 0, 1);
+            PhysicsSimulation._btTempQuaternion1 = bt.btQuaternion_create(0, 0, 0, 1);
+            PhysicsSimulation._btTempTransform0 = bt.btTransform_create();
+            PhysicsSimulation._btTempTransform1 = bt.btTransform_create();
+        }
+        static createConstraint() {
+        }
+        get continuousCollisionDetection() {
+            return ILaya3D.Physics3D._bullet.btCollisionWorld_get_m_useContinuous(this._btDispatchInfo);
+        }
+        set continuousCollisionDetection(value) {
+            ILaya3D.Physics3D._bullet.btCollisionWorld_set_m_useContinuous(this._btDispatchInfo, value);
+        }
+        get gravity() {
+            if (!this._btDiscreteDynamicsWorld)
+                throw "Simulation:Cannot perform this action when the physics engine is set to CollisionsOnly";
+            return this._gravity;
+        }
+        set gravity(value) {
+            if (!this._btDiscreteDynamicsWorld)
+                throw "Simulation:Cannot perform this action when the physics engine is set to CollisionsOnly";
+            this._gravity = value;
+            var bt = ILaya3D.Physics3D._bullet;
+            var btGravity = PhysicsSimulation._btTempVector30;
+            bt.btVector3_setValue(btGravity, value.x, value.y, value.z);
+            bt.btDiscreteDynamicsWorld_setGravity(this._btDiscreteDynamicsWorld, btGravity);
+        }
+        get speculativeContactRestitution() {
+            if (!this._btDiscreteDynamicsWorld)
+                throw "Simulation:Cannot Cannot perform this action when the physics engine is set to CollisionsOnly";
+            return ILaya3D.Physics3D._bullet.btDiscreteDynamicsWorld_getApplySpeculativeContactRestitution(this._btDiscreteDynamicsWorld);
+        }
+        set speculativeContactRestitution(value) {
+            if (!this._btDiscreteDynamicsWorld)
+                throw "Simulation:Cannot Cannot perform this action when the physics engine is set to CollisionsOnly";
+            ILaya3D.Physics3D._bullet.btDiscreteDynamicsWorld_setApplySpeculativeContactRestitution(this._btDiscreteDynamicsWorld, value);
         }
         enableDebugDrawer(b) {
             var bt = ILaya3D.Physics3D._bullet;
@@ -3520,6 +3520,10 @@
     PhysicsSimulation.disableSimulation = false;
 
     class PhysicsTriggerComponent extends PhysicsComponent {
+        constructor(collisionGroup, canCollideWith) {
+            super(collisionGroup, canCollideWith);
+            this._isTrigger = false;
+        }
         get isTrigger() {
             return this._isTrigger;
         }
@@ -3538,10 +3542,6 @@
                 }
             }
         }
-        constructor(collisionGroup, canCollideWith) {
-            super(collisionGroup, canCollideWith);
-            this._isTrigger = false;
-        }
         _onAdded() {
             super._onAdded();
             this.isTrigger = this._isTrigger;
@@ -3553,6 +3553,23 @@
     }
 
     class Rigidbody3D extends PhysicsTriggerComponent {
+        constructor(collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_DEFAULTFILTER, canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER) {
+            super(collisionGroup, canCollideWith);
+            this._isKinematic = false;
+            this._mass = 1.0;
+            this._gravity = new Laya.Vector3(0, -10, 0);
+            this._angularDamping = 0.0;
+            this._linearDamping = 0.0;
+            this._overrideGravity = false;
+            this._totalTorque = new Laya.Vector3(0, 0, 0);
+            this._totalForce = new Laya.Vector3(0, 0, 0);
+            this._linearVelocity = new Laya.Vector3();
+            this._angularVelocity = new Laya.Vector3();
+            this._linearFactor = new Laya.Vector3(1, 1, 1);
+            this._angularFactor = new Laya.Vector3(1, 1, 1);
+            this._detectCollisions = true;
+            this._controlBySimulation = true;
+        }
         static __init__() {
             var bt = ILaya3D.Physics3D._bullet;
             Rigidbody3D._btTempVector30 = bt.btVector3_create(0, 0, 0);
@@ -3769,23 +3786,6 @@
         get orientation() {
             return this.getPhysicsOrientation();
         }
-        constructor(collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_DEFAULTFILTER, canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER) {
-            super(collisionGroup, canCollideWith);
-            this._isKinematic = false;
-            this._mass = 1.0;
-            this._gravity = new Laya.Vector3(0, -10, 0);
-            this._angularDamping = 0.0;
-            this._linearDamping = 0.0;
-            this._overrideGravity = false;
-            this._totalTorque = new Laya.Vector3(0, 0, 0);
-            this._totalForce = new Laya.Vector3(0, 0, 0);
-            this._linearVelocity = new Laya.Vector3();
-            this._angularVelocity = new Laya.Vector3();
-            this._linearFactor = new Laya.Vector3(1, 1, 1);
-            this._angularFactor = new Laya.Vector3(1, 1, 1);
-            this._detectCollisions = true;
-            this._controlBySimulation = true;
-        }
         _updateMass(mass) {
             if (this._btColliderObject && this._colliderShape && this._colliderShape._btShape) {
                 var bt = ILaya3D.Physics3D._bullet;
@@ -4000,9 +4000,6 @@
     Rigidbody3D._BT_ENABLE_GYROPSCOPIC_FORCE = 2;
 
     class StaticPlaneColliderShape extends ColliderShape {
-        static __init__() {
-            StaticPlaneColliderShape._btNormal = ILaya3D.Physics3D._bullet.btVector3_create(0, 0, 0);
-        }
         constructor(normal, offset) {
             super();
             this._normal = normal;
@@ -4011,6 +4008,9 @@
             var bt = ILaya3D.Physics3D._bullet;
             bt.btVector3_setValue(StaticPlaneColliderShape._btNormal, -normal.x, normal.y, normal.z);
             this._btShape = bt.btStaticPlaneShape_create(StaticPlaneColliderShape._btNormal, offset);
+        }
+        static __init__() {
+            StaticPlaneColliderShape._btNormal = ILaya3D.Physics3D._bullet.btVector3_create(0, 0, 0);
         }
         clone() {
             var dest = new StaticPlaneColliderShape(this._normal, this._offset);
@@ -4902,14 +4902,14 @@
     AnimationClipParser04._DATA = { offset: 0, size: 0 };
 
     class KeyframeNodeList {
+        constructor() {
+            this._nodes = [];
+        }
         get count() {
             return this._nodes.length;
         }
         set count(value) {
             this._nodes.length = value;
-        }
-        constructor() {
-            this._nodes = [];
         }
         getNodeByIndex(index) {
             return this._nodes[index];
@@ -4920,6 +4920,14 @@
     }
 
     class AnimationClip extends Laya.Resource {
+        constructor() {
+            super();
+            this._duration = 0;
+            this._frameRate = 0;
+            this._nodes = new KeyframeNodeList();
+            this.islooping = false;
+            this._animationEvents = [];
+        }
         static _parse(data) {
             var clip = new AnimationClip();
             var reader = new Laya.Byte(data);
@@ -4943,14 +4951,6 @@
         }
         duration() {
             return this._duration;
-        }
-        constructor() {
-            super();
-            this._duration = 0;
-            this._frameRate = 0;
-            this._nodes = new KeyframeNodeList();
-            this.islooping = false;
-            this._animationEvents = [];
         }
         _weightModeHermite(weightMode, nextweightMode) {
             return (((weightMode & exports.WeightedMode.Out) == 0) && ((nextweightMode & exports.WeightedMode.In) == 0));
@@ -5464,6 +5464,16 @@
         StaticFlag[StaticFlag["StaticBatch"] = 2] = "StaticBatch";
     })(exports.StaticFlag || (exports.StaticFlag = {}));
     class Sprite3D extends Laya.Node {
+        constructor(name = null, isStatic = false) {
+            super();
+            this._isRenderNode = 0;
+            this._id = ++Sprite3D._uniqueIDCounter;
+            this._is3D = true;
+            this._transform = Laya.LayaGL.renderOBJCreate.createTransform(this);
+            this._isStatic = isStatic ? exports.StaticFlag.StaticBatch : exports.StaticFlag.Normal;
+            this.layer = 0;
+            this.name = name ? name : "New Sprite3D";
+        }
         static __init__() {
             Sprite3D.WORLDMATRIX = Laya.Shader3D.propertyNameToID("u_WorldMat");
             Sprite3D.sprite3DCommandUniformMap = Laya.LayaGL.renderOBJCreate.createGlobalUniformMap("Sprite3D");
@@ -5518,16 +5528,6 @@
         }
         get scene() {
             return this._scene;
-        }
-        constructor(name = null, isStatic = false) {
-            super();
-            this._isRenderNode = 0;
-            this._id = ++Sprite3D._uniqueIDCounter;
-            this._is3D = true;
-            this._transform = Laya.LayaGL.renderOBJCreate.createTransform(this);
-            this._isStatic = isStatic ? exports.StaticFlag.StaticBatch : exports.StaticFlag.Normal;
-            this.layer = 0;
-            this.name = name ? name : "New Sprite3D";
         }
         _onActive() {
             super._onActive();
@@ -6842,6 +6842,10 @@
         FrustumCorner[FrustumCorner["unknown"] = 8] = "unknown";
     })(exports.FrustumCorner || (exports.FrustumCorner = {}));
     class BoundFrustum {
+        constructor(matrix) {
+            this._matrix = matrix;
+            this.initBoundingPlane();
+        }
         static getPlanesFromMatrix(m, np, fp, lp, rp, tp, bp) {
             var matrixE = m.elements;
             var m11 = matrixE[0];
@@ -6902,10 +6906,6 @@
             bp.distance = m44 + m42;
             bp.normal = bottomNorE;
             bp.normalize();
-        }
-        constructor(matrix) {
-            this._matrix = matrix;
-            this.initBoundingPlane();
         }
         initBoundingPlane() {
             this._near = new Plane();
@@ -7305,6 +7305,9 @@
     Picker._tempVector34 = new Laya.Vector3();
 
     class RenderableSprite3D extends Sprite3D {
+        constructor(name) {
+            super(name);
+        }
         static __init__() {
             RenderableSprite3D.SHADERDEFINE_RECEIVE_SHADOW = Laya.Shader3D.getDefineByName("RECEIVESHADOW");
             RenderableSprite3D.SAHDERDEFINE_LIGHTMAP = Laya.Shader3D.getDefineByName("LIGHTMAP");
@@ -7353,9 +7356,6 @@
             RenderableSprite3D.AMBIENTSHC = Laya.Shader3D.propertyNameToID("u_AmbientSHC");
             commandUniform.addShaderUniform(RenderableSprite3D.AMBIENTSHC, "u_AmbientSHC");
         }
-        constructor(name) {
-            super(name);
-        }
         _onInActive() {
             super._onInActive();
         }
@@ -7392,6 +7392,12 @@
     })(exports.TextureCubeFace || (exports.TextureCubeFace = {}));
     const DEFAULT_PIXELS = new Uint8Array(3);
     class TextureCube extends Laya.BaseTexture {
+        constructor(size, format, mipmap = true, sRGB = false) {
+            super(size, size, format);
+            this._dimension = Laya.TextureDimension.Cube;
+            this._texture = Laya.LayaGL.textureContext.createTextureInternal(this._dimension, size, size, format, mipmap, sRGB);
+            return;
+        }
         static get blackTexture() {
             return TextureCube._blackTexture;
         }
@@ -7418,12 +7424,6 @@
             TextureCube._grayTexture = grayTexture;
             TextureCube._blackTexture = blackTexture;
             TextureCube._whiteTexture = writeTexture;
-        }
-        constructor(size, format, mipmap = true, sRGB = false) {
-            super(size, size, format);
-            this._dimension = Laya.TextureDimension.Cube;
-            this._texture = Laya.LayaGL.textureContext.createTextureInternal(this._dimension, size, size, format, mipmap, sRGB);
-            return;
         }
         setImageData(source, premultiplyAlpha, invertY) {
             let error = false;
@@ -7465,6 +7465,9 @@
     }
 
     class Bounds {
+        constructor(min, max) {
+            this._imp = Laya.LayaGL.renderOBJCreate.createBounds(min, max);
+        }
         static merge(box1, box2, out) {
             Laya.Vector3.min(box1.min, box2.min, out.min);
             Laya.Vector3.max(box1.max, box2.max, out.max);
@@ -7517,9 +7520,6 @@
         }
         getExtent() {
             return this._imp.getExtent();
-        }
-        constructor(min, max) {
-            this._imp = Laya.LayaGL.renderOBJCreate.createBounds(min, max);
         }
         _getUpdateFlag(type) {
             return this._imp._getUpdateFlag(type);
@@ -8305,6 +8305,36 @@
         RenderBitFlag[RenderBitFlag["RenderBitFlag_VertexMergeBatch"] = 4] = "RenderBitFlag_VertexMergeBatch";
     })(exports.RenderBitFlag || (exports.RenderBitFlag = {}));
     class BaseRender extends Laya.Component {
+        constructor() {
+            super();
+            this._lightmapScaleOffset = new Laya.Vector4(1, 1, 0, 0);
+            this._sharedMaterials = [];
+            this._supportOctree = true;
+            this._sceneUpdateMark = -1;
+            this._updateMark = -1;
+            this._surportReflectionProbe = false;
+            this._reflectionMode = exports.ReflectionProbeMode.simple;
+            this._updateRenderType = -1;
+            this._motionIndexList = -1;
+            this._ratioIgnor = 0.005;
+            this._LOD = -1;
+            this._rendernode = this._createBaseRenderNode();
+            this._rendernode.owner = this;
+            this._rendernode.renderId = ++BaseRender._uniqueIDCounter;
+            this._bounds = this._rendernode.bounds = new Bounds(Laya.Vector3.ZERO, Laya.Vector3.ZERO);
+            this._renderElements = [];
+            this._enabled = true;
+            this._materialsInstance = [];
+            this._shaderValues = Laya.LayaGL.renderOBJCreate.createShaderData(null);
+            this.lightmapIndex = -1;
+            this.receiveShadow = false;
+            this.sortingFudge = 0.0;
+            this._customCull = this._needRender !== BaseRender.prototype._needRender;
+            this.runInEditor = true;
+            this.boundsChange = true;
+            this._rendernode.renderbitFlag = 0;
+            this._rendernode.staticMask = 1;
+        }
         static __init__() {
             BaseRender.shaderValueInit();
         }
@@ -8540,36 +8570,6 @@
                 this._probReflection.applyReflectionShaderData(this._shaderValues);
             }
         }
-        constructor() {
-            super();
-            this._lightmapScaleOffset = new Laya.Vector4(1, 1, 0, 0);
-            this._sharedMaterials = [];
-            this._supportOctree = true;
-            this._sceneUpdateMark = -1;
-            this._updateMark = -1;
-            this._surportReflectionProbe = false;
-            this._reflectionMode = exports.ReflectionProbeMode.simple;
-            this._updateRenderType = -1;
-            this._motionIndexList = -1;
-            this._ratioIgnor = 0.005;
-            this._LOD = -1;
-            this._rendernode = this._createBaseRenderNode();
-            this._rendernode.owner = this;
-            this._rendernode.renderId = ++BaseRender._uniqueIDCounter;
-            this._bounds = this._rendernode.bounds = new Bounds(Laya.Vector3.ZERO, Laya.Vector3.ZERO);
-            this._renderElements = [];
-            this._enabled = true;
-            this._materialsInstance = [];
-            this._shaderValues = Laya.LayaGL.renderOBJCreate.createShaderData(null);
-            this.lightmapIndex = -1;
-            this.receiveShadow = false;
-            this.sortingFudge = 0.0;
-            this._customCull = this._needRender !== BaseRender.prototype._needRender;
-            this.runInEditor = true;
-            this.boundsChange = true;
-            this._rendernode.renderbitFlag = 0;
-            this._rendernode.staticMask = 1;
-        }
         _createBaseRenderNode() {
             return Laya.LayaGL.renderOBJCreate.createBaseRenderNode();
         }
@@ -8753,6 +8753,12 @@
     BaseRender._defaultLightmapScaleOffset = new Laya.Vector4(1.0, 1.0, 0.0, 0.0);
 
     class RenderElement {
+        constructor() {
+            this._canBatch = false;
+            this._subShaderIndex = 0;
+            this.renderType = RenderElement.RENDERTYPE_NORMAL;
+            this._createRenderElementOBJ();
+        }
         set transform(value) {
             this._renderElementOBJ._transform = value;
         }
@@ -8780,12 +8786,6 @@
         }
         get render() {
             return this._baseRender;
-        }
-        constructor() {
-            this._canBatch = false;
-            this._subShaderIndex = 0;
-            this.renderType = RenderElement.RENDERTYPE_NORMAL;
-            this._createRenderElementOBJ();
         }
         _createRenderElementOBJ() {
             this._renderElementOBJ = Laya.LayaGL.renderOBJCreate.createRenderElement();
@@ -8908,6 +8908,11 @@
     RenderElement._compileDefine = new Laya.DefineDatas();
 
     class GeometryElement {
+        constructor(mode, drawType) {
+            this._destroyed = false;
+            this._geometryElementOBj = Laya.LayaGL.renderOBJCreate.createRenderGeometry(mode, drawType);
+            this._id = ++GeometryElement._uniqueIDCounter;
+        }
         set bufferState(value) {
             this._geometryElementOBj.bufferState = value;
         }
@@ -8947,11 +8952,6 @@
         get destroyed() {
             return this._destroyed;
         }
-        constructor(mode, drawType) {
-            this._destroyed = false;
-            this._geometryElementOBj = Laya.LayaGL.renderOBJCreate.createRenderGeometry(mode, drawType);
-            this._id = ++GeometryElement._uniqueIDCounter;
-        }
         _getType() {
             throw "GeometryElement:must override it.";
         }
@@ -8978,9 +8978,6 @@
     GeometryElement._typeCounter = 0;
 
     class SkyBox extends GeometryElement {
-        static __init__() {
-            SkyBox.instance = new SkyBox();
-        }
         constructor() {
             super(Laya.MeshTopology.Triangles, Laya.DrawType.DrawElement);
             var halfHeight = 1.0;
@@ -9007,11 +9004,18 @@
             this._geometryElementOBj.setDrawElemenParams(36, 0);
             this.indexFormat = Laya.IndexFormat.UInt8;
         }
+        static __init__() {
+            SkyBox.instance = new SkyBox();
+        }
         _updateRenderParams(state) {
         }
     }
 
     class VertexPositionTexture0 {
+        constructor(position, textureCoordinate0) {
+            this._position = position;
+            this._textureCoordinate0 = textureCoordinate0;
+        }
         static get vertexDeclaration() {
             return VertexPositionTexture0._vertexDeclaration;
         }
@@ -9028,22 +9032,9 @@
         get vertexDeclaration() {
             return VertexPositionTexture0._vertexDeclaration;
         }
-        constructor(position, textureCoordinate0) {
-            this._position = position;
-            this._textureCoordinate0 = textureCoordinate0;
-        }
     }
 
     class SkyDome extends GeometryElement {
-        static __init__() {
-            SkyDome.instance = new SkyDome();
-        }
-        get stacks() {
-            return this._stacks;
-        }
-        get slices() {
-            return this._slices;
-        }
         constructor(stacks = 48, slices = 48) {
             super(Laya.MeshTopology.Triangles, Laya.DrawType.DrawElement);
             this._stacks = stacks;
@@ -9093,12 +9084,27 @@
             this.indexFormat = Laya.IndexFormat.UInt16;
             this._geometryElementOBj.setDrawElemenParams(indexBuffer.indexCount, 0);
         }
+        static __init__() {
+            SkyDome.instance = new SkyDome();
+        }
+        get stacks() {
+            return this._stacks;
+        }
+        get slices() {
+            return this._slices;
+        }
         _updateRenderParams(state) {
         }
     }
     SkyDome._radius = 1;
 
     class SkyRenderer {
+        constructor() {
+            this._renderElement = new RenderElement();
+            this.mesh = SkyDome.instance;
+            this._renderData = new BaseRender();
+            this._renderElement.render = this._renderData;
+        }
         static __init__() {
             SkyRenderer.SUNLIGHTDIRECTION = Laya.Shader3D.propertyNameToID("u_SunLight_direction");
             SkyRenderer.SUNLIGHTDIRCOLOR = Laya.Shader3D.propertyNameToID("u_SunLight_color");
@@ -9143,12 +9149,6 @@
                 this.mesh = SkyDome.instance;
             else
                 this.mesh = SkyBox.instance;
-        }
-        constructor() {
-            this._renderElement = new RenderElement();
-            this.mesh = SkyDome.instance;
-            this._renderData = new BaseRender();
-            this._renderElement.render = this._renderData;
         }
         _isAvailable() {
             return this._material && this._mesh ? true : false;
@@ -9198,6 +9198,35 @@
     SkyRenderer._tempMatrix1 = new Laya.Matrix4x4();
 
     class BaseCamera extends Sprite3D {
+        constructor(nearPlane = 0.3, farPlane = 1000) {
+            super();
+            this._skyRenderer = new SkyRenderer();
+            this._forward = new Laya.Vector3();
+            this._up = new Laya.Vector3();
+            this._shaderValues = Laya.LayaGL.renderOBJCreate.createShaderData(null);
+            this._linearClearColor = new Laya.Color();
+            this.clearColor = new Laya.Color(100 / 255, 149 / 255, 237 / 255, 255 / 255);
+            this._fieldOfView = 60;
+            this._useUserProjectionMatrix = false;
+            this._orthographicVerticalSize = 10;
+            this.renderingOrder = 0;
+            this._nearPlane = nearPlane;
+            this._farPlane = farPlane;
+            this.cullingMask = 2147483647;
+            this.staticMask = 0xffffffff;
+            this.useOcclusionCulling = true;
+            this._renderEngine = Laya.LayaGL.renderEngine;
+            this._orthographic = false;
+            if (Laya.Config3D._uniformBlock) {
+                this._cameraUniformUBO = Laya.UniformBufferObject.getBuffer(Laya.UniformBufferObject.UBONAME_CAMERA, 0);
+                this._cameraUniformData = BaseCamera.createCameraUniformBlock();
+                if (!this._cameraUniformUBO) {
+                    this._cameraUniformUBO = Laya.UniformBufferObject.create(Laya.UniformBufferObject.UBONAME_CAMERA, Laya.BufferUsage.Dynamic, this._cameraUniformData.getbyteLength(), false);
+                }
+                this._shaderValues._addCheckUBO(Laya.UniformBufferObject.UBONAME_CAMERA, this._cameraUniformUBO, this._cameraUniformData);
+                this._shaderValues.setUniformBuffer(BaseCamera.CAMERAUNIFORMBLOCK, this._cameraUniformUBO);
+            }
+        }
         static shaderValueInit() {
             BaseCamera.SHADERDEFINE_DEPTH = Laya.Shader3D.getDefineByName("DEPTHMAP");
             BaseCamera.SHADERDEFINE_DEPTHNORMALS = Laya.Shader3D.getDefineByName("DEPTHNORMALSMAP");
@@ -9321,35 +9350,6 @@
             this._renderingOrder = value;
             this._sortCamerasByRenderingOrder();
         }
-        constructor(nearPlane = 0.3, farPlane = 1000) {
-            super();
-            this._skyRenderer = new SkyRenderer();
-            this._forward = new Laya.Vector3();
-            this._up = new Laya.Vector3();
-            this._shaderValues = Laya.LayaGL.renderOBJCreate.createShaderData(null);
-            this._linearClearColor = new Laya.Color();
-            this.clearColor = new Laya.Color(100 / 255, 149 / 255, 237 / 255, 255 / 255);
-            this._fieldOfView = 60;
-            this._useUserProjectionMatrix = false;
-            this._orthographicVerticalSize = 10;
-            this.renderingOrder = 0;
-            this._nearPlane = nearPlane;
-            this._farPlane = farPlane;
-            this.cullingMask = 2147483647;
-            this.staticMask = 0xffffffff;
-            this.useOcclusionCulling = true;
-            this._renderEngine = Laya.LayaGL.renderEngine;
-            this._orthographic = false;
-            if (Laya.Config3D._uniformBlock) {
-                this._cameraUniformUBO = Laya.UniformBufferObject.getBuffer(Laya.UniformBufferObject.UBONAME_CAMERA, 0);
-                this._cameraUniformData = BaseCamera.createCameraUniformBlock();
-                if (!this._cameraUniformUBO) {
-                    this._cameraUniformUBO = Laya.UniformBufferObject.create(Laya.UniformBufferObject.UBONAME_CAMERA, Laya.BufferUsage.Dynamic, this._cameraUniformData.getbyteLength(), false);
-                }
-                this._shaderValues._addCheckUBO(Laya.UniformBufferObject.UBONAME_CAMERA, this._cameraUniformUBO, this._cameraUniformData);
-                this._shaderValues.setUniformBuffer(BaseCamera.CAMERAUNIFORMBLOCK, this._cameraUniformUBO);
-            }
-        }
         _caculateMaxLocalYRange() {
             let halffield = 3.1416 * this.fieldOfView / 180.0 / 2;
             let dist = this.farPlane;
@@ -9467,6 +9467,23 @@
         LightMode[LightMode["bakeOnly"] = 2] = "bakeOnly";
     })(exports.LightMode || (exports.LightMode = {}));
     class Light extends Laya.Component {
+        constructor() {
+            super();
+            this._shadowMode = exports.ShadowMode.None;
+            this._isAlternate = false;
+            this._shadowResolution = 2048;
+            this._shadowDistance = 50.0;
+            this._shadowDepthBias = 1.0;
+            this._shadowNormalBias = 1.0;
+            this._shadowNearPlane = 0.1;
+            this._shadowStrength = 1.0;
+            this._lightWoldMatrix = new Laya.Matrix4x4();
+            this.runInEditor = true;
+            this._intensity = 1.0;
+            this._intensityColor = new Laya.Vector3();
+            this.color = new Laya.Color(1.0, 1.0, 1.0, 1.0);
+            this._lightmapBakedType = exports.LightMode.realTime;
+        }
         get intensity() {
             return this._intensity;
         }
@@ -9535,23 +9552,6 @@
             var quaterian = this.owner.transform.rotation;
             Laya.Matrix4x4.createAffineTransformation(position, quaterian, Laya.Vector3.ONE, this._lightWoldMatrix);
             return this._lightWoldMatrix;
-        }
-        constructor() {
-            super();
-            this._shadowMode = exports.ShadowMode.None;
-            this._isAlternate = false;
-            this._shadowResolution = 2048;
-            this._shadowDistance = 50.0;
-            this._shadowDepthBias = 1.0;
-            this._shadowNormalBias = 1.0;
-            this._shadowNearPlane = 0.1;
-            this._shadowStrength = 1.0;
-            this._lightWoldMatrix = new Laya.Matrix4x4();
-            this.runInEditor = true;
-            this._intensity = 1.0;
-            this._intensityColor = new Laya.Vector3();
-            this.color = new Laya.Color(1.0, 1.0, 1.0, 1.0);
-            this._lightmapBakedType = exports.LightMode.realTime;
         }
         _parse(data, spriteMap) {
             super._parse(data, spriteMap);
@@ -9918,6 +9918,10 @@
     ShadowUtils.atlasBorderSize = 4.0;
 
     class RenderContext3D {
+        constructor() {
+            this.configPipeLineMode = "Forward";
+            this._contextOBJ = Laya.LayaGL.renderOBJCreate.createRenderContext3D();
+        }
         static __init__() {
             RenderContext3D._instance = new RenderContext3D();
         }
@@ -9987,17 +9991,9 @@
             renderelemt._renderUpdatePre(this);
             this._contextOBJ.drawRenderElement(renderelemt._renderElementOBJ);
         }
-        constructor() {
-            this.configPipeLineMode = "Forward";
-            this._contextOBJ = Laya.LayaGL.renderOBJCreate.createRenderContext3D();
-        }
     }
 
     class ScreenQuad extends GeometryElement {
-        static __init__() {
-            ScreenQuad._vertexDeclaration = new Laya.VertexDeclaration(16, [new Laya.VertexElement(0, Laya.VertexElementFormat.Vector4, ScreenQuad.SCREENQUAD_POSITION_UV)]);
-            ScreenQuad.instance = new ScreenQuad();
-        }
         constructor() {
             super(Laya.MeshTopology.TriangleStrip, Laya.DrawType.DrawArray);
             this._bufferState = new Laya.BufferState();
@@ -10011,6 +10007,10 @@
             this._vertexBufferInvertUV.vertexDeclaration = ScreenQuad._vertexDeclaration;
             this._vertexBufferInvertUV.setData(ScreenQuad._verticesInvertUV.buffer);
             this._bufferStateInvertUV.applyState([this._vertexBufferInvertUV], null);
+        }
+        static __init__() {
+            ScreenQuad._vertexDeclaration = new Laya.VertexDeclaration(16, [new Laya.VertexElement(0, Laya.VertexElementFormat.Vector4, ScreenQuad.SCREENQUAD_POSITION_UV)]);
+            ScreenQuad.instance = new ScreenQuad();
         }
         set invertY(value) {
             this.bufferState = value ? this._bufferStateInvertUV : this._bufferState;
@@ -10030,15 +10030,15 @@
     ScreenQuad._verticesInvertUV = new Float32Array([1, 1, 1, 0, 1, -1, 1, 1, -1, 1, 0, 0, -1, -1, 0, 1]);
 
     class Command {
+        constructor() {
+            this._commandBuffer = null;
+        }
         static __init__() {
             Command._screenShaderData = Laya.LayaGL.renderOBJCreate.createShaderData(null);
             Command._screenShader = Laya.Shader3D.find("BlitScreen");
             Command.SCREENTEXTURE_ID = Laya.Shader3D.propertyNameToID(Command.SCREENTEXTURE_NAME);
             Command.SCREENTEXTUREOFFSETSCALE_ID = Laya.Shader3D.propertyNameToID(Command.SCREENTEXTUREOFFSETSCALE_NAME);
             Command.MAINTEXTURE_TEXELSIZE_ID = Laya.Shader3D.propertyNameToID(Command.MAINTEXTURE_TEXELSIZE_NAME);
-        }
-        constructor() {
-            this._commandBuffer = null;
         }
         run() {
         }
@@ -10058,16 +10058,6 @@
     Command.MAINTEXTURE_TEXELSIZE_NAME = "u_MainTex_TexelSize";
 
     class BlitScreenQuadCMD extends Command {
-        static create(source, dest, offsetScale = null, shader = null, shaderData = null, subShader = 0, screenType = BlitScreenQuadCMD._SCREENTYPE_QUAD, commandbuffer = null) {
-            var cmd;
-            cmd = BlitScreenQuadCMD._pool.length > 0 ? BlitScreenQuadCMD._pool.pop() : new BlitScreenQuadCMD();
-            cmd._source = source;
-            cmd._dest = dest;
-            cmd._offsetScale = offsetScale;
-            cmd.setshader(shader, subShader, shaderData);
-            cmd._commandBuffer = commandbuffer;
-            return cmd;
-        }
         constructor() {
             super();
             this._source = null;
@@ -10081,6 +10071,16 @@
             this._renderElement = new RenderElement();
             this._renderElement.setTransform(this._transform3D);
             this._renderElement.setGeometry(ScreenQuad.instance);
+        }
+        static create(source, dest, offsetScale = null, shader = null, shaderData = null, subShader = 0, screenType = BlitScreenQuadCMD._SCREENTYPE_QUAD, commandbuffer = null) {
+            var cmd;
+            cmd = BlitScreenQuadCMD._pool.length > 0 ? BlitScreenQuadCMD._pool.pop() : new BlitScreenQuadCMD();
+            cmd._source = source;
+            cmd._dest = dest;
+            cmd._offsetScale = offsetScale;
+            cmd.setshader(shader, subShader, shaderData);
+            cmd._commandBuffer = commandbuffer;
+            return cmd;
         }
         set shaderData(value) {
             this._shaderData = value || Command._screenShaderData;
@@ -10260,6 +10260,30 @@
         MaterialRenderMode[MaterialRenderMode["RENDERMODE_CUSTOME"] = 5] = "RENDERMODE_CUSTOME";
     })(exports.MaterialRenderMode || (exports.MaterialRenderMode = {}));
     class Material extends Laya.Resource {
+        constructor() {
+            super();
+            this._shaderValues = Laya.LayaGL.renderOBJCreate.createShaderData(this);
+            this.renderQueue = Material.RENDERQUEUE_OPAQUE;
+            this.alphaTest = false;
+            this.cull = Laya.RenderState.CULL_BACK;
+            this.blend = Laya.RenderState.BLEND_DISABLE;
+            this.blendSrc = Laya.RenderState.BLENDPARAM_ONE;
+            this.blendDst = Laya.RenderState.BLENDPARAM_ZERO;
+            this.blendSrcRGB = Laya.RenderState.BLENDPARAM_ONE;
+            this.blendDstRGB = Laya.RenderState.BLENDPARAM_ZERO;
+            this.blendSrcAlpha = Laya.RenderState.BLENDPARAM_ONE;
+            this.blendDstAlpha = Laya.RenderState.BLENDPARAM_ZERO;
+            this.blendEquation = Laya.RenderState.BLENDEQUATION_ADD;
+            this.blendEquationRGB = Laya.RenderState.BLENDEQUATION_ADD;
+            this.blendEquationAlpha = Laya.RenderState.BLENDEQUATION_ADD;
+            this.depthTest = Laya.RenderState.DEPTHTEST_LEQUAL;
+            this.depthWrite = true;
+            this.stencilRef = 1;
+            this.stencilTest = Laya.RenderState.STENCILTEST_OFF;
+            this.stencilWrite = false;
+            this.stencilOp = new Laya.Vector3(Laya.RenderState.STENCILOP_KEEP, Laya.RenderState.STENCILOP_KEEP, Laya.RenderState.STENCILOP_REPLACE);
+            this.destoryedImmediately = false;
+        }
         static load(url, complete) {
             Laya.ILaya.loader.load(url, complete, null, Laya.Loader.MATERIAL);
         }
@@ -10484,30 +10508,6 @@
         get materialRenderMode() {
             return this._matRenderNode;
         }
-        constructor() {
-            super();
-            this._shaderValues = Laya.LayaGL.renderOBJCreate.createShaderData(this);
-            this.renderQueue = Material.RENDERQUEUE_OPAQUE;
-            this.alphaTest = false;
-            this.cull = Laya.RenderState.CULL_BACK;
-            this.blend = Laya.RenderState.BLEND_DISABLE;
-            this.blendSrc = Laya.RenderState.BLENDPARAM_ONE;
-            this.blendDst = Laya.RenderState.BLENDPARAM_ZERO;
-            this.blendSrcRGB = Laya.RenderState.BLENDPARAM_ONE;
-            this.blendDstRGB = Laya.RenderState.BLENDPARAM_ZERO;
-            this.blendSrcAlpha = Laya.RenderState.BLENDPARAM_ONE;
-            this.blendDstAlpha = Laya.RenderState.BLENDPARAM_ZERO;
-            this.blendEquation = Laya.RenderState.BLENDEQUATION_ADD;
-            this.blendEquationRGB = Laya.RenderState.BLENDEQUATION_ADD;
-            this.blendEquationAlpha = Laya.RenderState.BLENDEQUATION_ADD;
-            this.depthTest = Laya.RenderState.DEPTHTEST_LEQUAL;
-            this.depthWrite = true;
-            this.stencilRef = 1;
-            this.stencilTest = Laya.RenderState.STENCILTEST_OFF;
-            this.stencilWrite = false;
-            this.stencilOp = new Laya.Vector3(Laya.RenderState.STENCILOP_KEEP, Laya.RenderState.STENCILOP_KEEP, Laya.RenderState.STENCILOP_REPLACE);
-            this.destoryedImmediately = false;
-        }
         _bindShaderInfo(shader) {
             let subShader = shader.getSubShaderAt(0);
             let shaderUBODatas = subShader._uniformBufferDataMap;
@@ -10680,6 +10680,14 @@
         }
         setTextureByIndex(uniformIndex, texture) {
             this.shaderData.setTexture(uniformIndex, texture);
+            if (texture && !texture._texture)
+                texture.once(Laya.Event.READY, this, this.reSetTexture);
+        }
+        reSetTexture(texture) {
+            let index = this.shaderData.getSourceIndex(texture);
+            if (index != -1) {
+                this.setTextureByIndex(index, texture);
+            }
         }
         getTextureByIndex(uniformIndex) {
             return this.shaderData.getTexture(uniformIndex);
@@ -10750,6 +10758,11 @@
     Material.RENDERQUEUE_TRANSPARENT = 3000;
 
     class BlinnPhongMaterial extends Material {
+        constructor() {
+            super();
+            this.setShaderName("BLINNPHONG");
+            this.renderMode = BlinnPhongMaterial.RENDERMODE_OPAQUE;
+        }
         static __initDefine__() {
             BlinnPhongMaterial.SHADERDEFINE_DIFFUSEMAP = Laya.Shader3D.getDefineByName("DIFFUSEMAP");
             BlinnPhongMaterial.SHADERDEFINE_NORMALMAP = Laya.Shader3D.getDefineByName("NORMALMAP");
@@ -10928,11 +10941,6 @@
         get transmissionRate() {
             return this.getFloatByIndex(BlinnPhongMaterial.TRANSMISSIONRATE);
         }
-        constructor() {
-            super();
-            this.setShaderName("BLINNPHONG");
-            this.renderMode = BlinnPhongMaterial.RENDERMODE_OPAQUE;
-        }
         clone() {
             var dest = new BlinnPhongMaterial();
             this.cloneTo(dest);
@@ -11032,17 +11040,17 @@
     MeshFilter._meshVerticeDefine = [];
 
     class MeshRenderer extends BaseRender {
+        constructor() {
+            super();
+            this._revertStaticBatchDefineUV1 = false;
+            this._projectionViewWorldMatrix = new Laya.Matrix4x4();
+        }
         static __init__() {
             MeshSprite3DShaderDeclaration.SHADERDEFINE_UV0 = Laya.Shader3D.getDefineByName("UV");
             MeshSprite3DShaderDeclaration.SHADERDEFINE_COLOR = Laya.Shader3D.getDefineByName("COLOR");
             MeshSprite3DShaderDeclaration.SHADERDEFINE_UV1 = Laya.Shader3D.getDefineByName("UV1");
             MeshSprite3DShaderDeclaration.SHADERDEFINE_TANGENT = Laya.Shader3D.getDefineByName("TANGENT");
             MeshSprite3DShaderDeclaration.SHADERDEFINE_GPU_INSTANCE = Laya.Shader3D.getDefineByName("GPU_INSTANCE");
-        }
-        constructor() {
-            super();
-            this._revertStaticBatchDefineUV1 = false;
-            this._projectionViewWorldMatrix = new Laya.Matrix4x4();
         }
         _createRenderElement() {
             return new SubMeshRenderElement();
@@ -11204,6 +11212,11 @@
     }
 
     class DrawMeshCMD extends Command {
+        constructor() {
+            super();
+            this._transform = Laya.LayaGL.renderOBJCreate.createTransform(null);
+            this._meshRender = new MeshRenderer();
+        }
         static create(mesh, matrix, material, subMeshIndex, subShaderIndex, commandBuffer) {
             var cmd;
             cmd = DrawMeshCMD._pool.length > 0 ? DrawMeshCMD._pool.pop() : new DrawMeshCMD();
@@ -11215,11 +11228,6 @@
             cmd.mesh = mesh;
             cmd._commandBuffer = commandBuffer;
             return cmd;
-        }
-        constructor() {
-            super();
-            this._transform = Laya.LayaGL.renderOBJCreate.createTransform(null);
-            this._meshRender = new MeshRenderer();
         }
         set material(value) {
             this._material && this._material._removeReference(1);
@@ -11313,6 +11321,9 @@
     ClearRenderTextureCMD._pool = [];
 
     class DrawRenderCMD extends Command {
+        constructor() {
+            super();
+        }
         static create(render, material, subShaderIndex, commandBuffer) {
             var cmd;
             cmd = DrawRenderCMD._pool.length > 0 ? DrawRenderCMD._pool.pop() : new DrawRenderCMD();
@@ -11321,9 +11332,6 @@
             cmd._subShaderIndex = subShaderIndex;
             cmd._commandBuffer = commandBuffer;
             return cmd;
-        }
-        constructor() {
-            super();
         }
         _elementRender(renderElement, context) {
             renderElement.renderSubShader = this._material._shader.getSubShaderAt(this._subShaderIndex);
@@ -11451,6 +11459,19 @@
     }
 
     class DrawMeshInstancedCMD extends Command {
+        constructor() {
+            super();
+            this._subShaderIndex = 0;
+            this._transform = Laya.LayaGL.renderOBJCreate.createTransform(null);
+            this._instanceRenderElementArray = [];
+            this._instanceGeometryArray = [];
+            this._instanceWorldMatrixData = new Float32Array(DrawMeshInstancedCMD.maxInstanceCount * 16);
+            this._instanceWorldMatrixBuffer = Laya.LayaGL.renderOBJCreate.createVertexBuffer3D(this._instanceWorldMatrixData.length * 4, Laya.BufferUsage.Dynamic, false);
+            this._instanceWorldMatrixBuffer.vertexDeclaration = Laya.VertexMesh.instanceWorldMatrixDeclaration;
+            this._instanceWorldMatrixBuffer.instanceBuffer = true;
+            this._render = new BaseRender();
+            this._render._shaderValues.addDefine(MeshSprite3DShaderDeclaration.SHADERDEFINE_GPU_INSTANCE);
+        }
         static create(mesh, subMeshIndex, matrixs, material, subShaderIndex, instanceProperty, drawnums, commandBuffer) {
             var cmd;
             if ((matrixs && matrixs.length > DrawMeshInstancedCMD.maxInstanceCount) || drawnums > DrawMeshInstancedCMD.maxInstanceCount) {
@@ -11469,19 +11490,6 @@
             cmd._setInstanceBuffer();
             cmd.setContext(RenderContext3D._instance);
             return cmd;
-        }
-        constructor() {
-            super();
-            this._subShaderIndex = 0;
-            this._transform = Laya.LayaGL.renderOBJCreate.createTransform(null);
-            this._instanceRenderElementArray = [];
-            this._instanceGeometryArray = [];
-            this._instanceWorldMatrixData = new Float32Array(DrawMeshInstancedCMD.maxInstanceCount * 16);
-            this._instanceWorldMatrixBuffer = Laya.LayaGL.renderOBJCreate.createVertexBuffer3D(this._instanceWorldMatrixData.length * 4, Laya.BufferUsage.Dynamic, false);
-            this._instanceWorldMatrixBuffer.vertexDeclaration = Laya.VertexMesh.instanceWorldMatrixDeclaration;
-            this._instanceWorldMatrixBuffer.instanceBuffer = true;
-            this._render = new BaseRender();
-            this._render._shaderValues.addDefine(MeshSprite3DShaderDeclaration.SHADERDEFINE_GPU_INSTANCE);
         }
         set material(value) {
             this._material && this._material._removeReference(1);
@@ -11833,6 +11841,10 @@
     }
 
     class BoundSphere {
+        constructor(center = new Laya.Vector3, radius = 0) {
+            this._center = center;
+            this._radius = radius;
+        }
         set center(value) {
             value.cloneTo(this._center);
         }
@@ -11844,10 +11856,6 @@
         }
         get radius() {
             return this._radius;
-        }
-        constructor(center = new Laya.Vector3, radius = 0) {
-            this._center = center;
-            this._radius = radius;
         }
         toDefault() {
             this._center.toDefault();
@@ -12006,31 +12014,6 @@
     })(exports.ShadowLightType || (exports.ShadowLightType = {}));
 
     class ShadowCasterPass {
-        static __init__() {
-            ShadowCasterPass._frustumPlanes = new Array(new Plane(new Laya.Vector3(), 0), new Plane(new Laya.Vector3(), 0), new Plane(new Laya.Vector3(), 0), new Plane(new Laya.Vector3(), 0), new Plane(new Laya.Vector3(), 0), new Plane(new Laya.Vector3(), 0));
-            ShadowCasterPass.SHADOW_BIAS = Laya.Shader3D.propertyNameToID("u_ShadowBias");
-            ShadowCasterPass.SHADOW_LIGHT_DIRECTION = Laya.Shader3D.propertyNameToID("u_ShadowLightDirection");
-            ShadowCasterPass.SHADOW_SPLIT_SPHERES = Laya.Shader3D.propertyNameToID("u_ShadowSplitSpheres");
-            ShadowCasterPass.SHADOW_MATRICES = Laya.Shader3D.propertyNameToID("u_ShadowMatrices");
-            ShadowCasterPass.SHADOW_MAP_SIZE = Laya.Shader3D.propertyNameToID("u_ShadowMapSize");
-            ShadowCasterPass.SHADOW_MAP = Laya.Shader3D.propertyNameToID("u_ShadowMap");
-            ShadowCasterPass.SHADOW_PARAMS = Laya.Shader3D.propertyNameToID("u_ShadowParams");
-            ShadowCasterPass.SHADOW_SPOTMAP_SIZE = Laya.Shader3D.propertyNameToID("u_SpotShadowMapSize");
-            ShadowCasterPass.SHADOW_SPOTMAP = Laya.Shader3D.propertyNameToID("u_SpotShadowMap");
-            ShadowCasterPass.SHADOW_SPOTMATRICES = Laya.Shader3D.propertyNameToID("u_SpotViewProjectMatrix");
-            const sceneUniformMap = Laya.LayaGL.renderOBJCreate.createGlobalUniformMap("Scene3D");
-            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_BIAS, "u_ShadowBias");
-            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_LIGHT_DIRECTION, "u_ShadowLightDirection");
-            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_SPLIT_SPHERES, "u_ShadowSplitSpheres");
-            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_MATRICES, "u_ShadowMatrices");
-            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_MAP_SIZE, "u_ShadowMapSize");
-            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_MAP, "u_ShadowMap");
-            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_PARAMS, "u_ShadowParams");
-            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_SPOTMAP_SIZE, "u_SpotShadowMapSize");
-            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_SPOTMAP, "u_SpotShadowMap");
-            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_SPOTMATRICES, "u_SpotViewProjectMatrix");
-            sceneUniformMap.addShaderUniform(Laya.Shader3D.propertyNameToID(Laya.UniformBufferObject.UBONAME_SHADOW), Laya.UniformBufferObject.UBONAME_SHADOW);
-        }
         constructor() {
             this._shadowBias = new Laya.Vector4();
             this._shadowParams = new Laya.Vector4();
@@ -12061,6 +12044,31 @@
                     this._castDepthCameraBufferOBJ = Laya.UniformBufferObject.create(Laya.UniformBufferObject.UBONAME_CAMERA, Laya.BufferUsage.Dynamic, this._castDepthCameraBufferData.getbyteLength(), false);
                 }
             }
+        }
+        static __init__() {
+            ShadowCasterPass._frustumPlanes = new Array(new Plane(new Laya.Vector3(), 0), new Plane(new Laya.Vector3(), 0), new Plane(new Laya.Vector3(), 0), new Plane(new Laya.Vector3(), 0), new Plane(new Laya.Vector3(), 0), new Plane(new Laya.Vector3(), 0));
+            ShadowCasterPass.SHADOW_BIAS = Laya.Shader3D.propertyNameToID("u_ShadowBias");
+            ShadowCasterPass.SHADOW_LIGHT_DIRECTION = Laya.Shader3D.propertyNameToID("u_ShadowLightDirection");
+            ShadowCasterPass.SHADOW_SPLIT_SPHERES = Laya.Shader3D.propertyNameToID("u_ShadowSplitSpheres");
+            ShadowCasterPass.SHADOW_MATRICES = Laya.Shader3D.propertyNameToID("u_ShadowMatrices");
+            ShadowCasterPass.SHADOW_MAP_SIZE = Laya.Shader3D.propertyNameToID("u_ShadowMapSize");
+            ShadowCasterPass.SHADOW_MAP = Laya.Shader3D.propertyNameToID("u_ShadowMap");
+            ShadowCasterPass.SHADOW_PARAMS = Laya.Shader3D.propertyNameToID("u_ShadowParams");
+            ShadowCasterPass.SHADOW_SPOTMAP_SIZE = Laya.Shader3D.propertyNameToID("u_SpotShadowMapSize");
+            ShadowCasterPass.SHADOW_SPOTMAP = Laya.Shader3D.propertyNameToID("u_SpotShadowMap");
+            ShadowCasterPass.SHADOW_SPOTMATRICES = Laya.Shader3D.propertyNameToID("u_SpotViewProjectMatrix");
+            const sceneUniformMap = Laya.LayaGL.renderOBJCreate.createGlobalUniformMap("Scene3D");
+            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_BIAS, "u_ShadowBias");
+            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_LIGHT_DIRECTION, "u_ShadowLightDirection");
+            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_SPLIT_SPHERES, "u_ShadowSplitSpheres");
+            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_MATRICES, "u_ShadowMatrices");
+            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_MAP_SIZE, "u_ShadowMapSize");
+            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_MAP, "u_ShadowMap");
+            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_PARAMS, "u_ShadowParams");
+            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_SPOTMAP_SIZE, "u_SpotShadowMapSize");
+            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_SPOTMAP, "u_SpotShadowMap");
+            sceneUniformMap.addShaderUniform(ShadowCasterPass.SHADOW_SPOTMATRICES, "u_SpotViewProjectMatrix");
+            sceneUniformMap.addShaderUniform(Laya.Shader3D.propertyNameToID(Laya.UniformBufferObject.UBONAME_SHADOW), Laya.UniformBufferObject.UBONAME_SHADOW);
         }
         _setupShadowCasterShaderValues(context, shaderValues, shadowSliceData, LightParam, shadowparams, shadowBias, lightType) {
             shaderValues.setVector(ShadowCasterPass.SHADOW_BIAS, shadowBias);
@@ -12294,21 +12302,6 @@
     ShadowCasterPass._frustumPlanes = new Array();
 
     class BlitFrameBufferCMD {
-        static __init__() {
-            BlitFrameBufferCMD.shaderdata = Laya.LayaGL.renderOBJCreate.createShaderData(null);
-            BlitFrameBufferCMD.GAMMAOUT = Laya.Shader3D.getDefineByName("GAMMAOUT");
-        }
-        static create(source, dest, viewport, offsetScale = null, shader = null, shaderData = null, subShader = 0) {
-            var cmd;
-            cmd = BlitFrameBufferCMD._pool.length > 0 ? BlitFrameBufferCMD._pool.pop() : new BlitFrameBufferCMD();
-            cmd._source = source;
-            cmd._dest = dest;
-            cmd._offsetScale = offsetScale;
-            cmd.setshader(shader, subShader, shaderData);
-            cmd._source && cmd._texture_size.setValue(source.width, source.height, 1.0 / source.width, 1.0 / source.height);
-            cmd._viewPort = viewport;
-            return cmd;
-        }
         constructor() {
             this._source = null;
             this._dest = null;
@@ -12323,6 +12316,21 @@
             this._renderElement.setTransform(this._transform3D);
             this._renderElement.setGeometry(ScreenQuad.instance);
             this._texture_size = new Laya.Vector4();
+        }
+        static __init__() {
+            BlitFrameBufferCMD.shaderdata = Laya.LayaGL.renderOBJCreate.createShaderData(null);
+            BlitFrameBufferCMD.GAMMAOUT = Laya.Shader3D.getDefineByName("GAMMAOUT");
+        }
+        static create(source, dest, viewport, offsetScale = null, shader = null, shaderData = null, subShader = 0) {
+            var cmd;
+            cmd = BlitFrameBufferCMD._pool.length > 0 ? BlitFrameBufferCMD._pool.pop() : new BlitFrameBufferCMD();
+            cmd._source = source;
+            cmd._dest = dest;
+            cmd._offsetScale = offsetScale;
+            cmd.setshader(shader, subShader, shaderData);
+            cmd._source && cmd._texture_size.setValue(source.width, source.height, 1.0 / source.width, 1.0 / source.height);
+            cmd._viewPort = viewport;
+            return cmd;
         }
         set shaderData(value) {
             this._shaderData = value || BlitFrameBufferCMD.shaderdata;
@@ -12452,6 +12460,13 @@
     }
 
     class BVHSpatialBox {
+        constructor(bvhmanager, config) {
+            this._bounds = new Bounds(new Laya.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE), new Laya.Vector3(-Number.MAX_VALUE, -Number.MAX_VALUE, -Number.MAX_VALUE));
+            this._cellList = [];
+            this._cellCount = 0;
+            this._bvhmanager = bvhmanager;
+            this._config = config;
+        }
         static sciContainsBox(box, cullInfo) {
             const p = BVHSpatialBox._tempV3;
             const n = BVHSpatialBox._tempV3_2;
@@ -12513,13 +12528,6 @@
                 }
             }
             return pass;
-        }
-        constructor(bvhmanager, config) {
-            this._bounds = new Bounds(new Laya.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE), new Laya.Vector3(-Number.MAX_VALUE, -Number.MAX_VALUE, -Number.MAX_VALUE));
-            this._cellList = [];
-            this._cellCount = 0;
-            this._bvhmanager = bvhmanager;
-            this._config = config;
         }
         set parent(value) {
             this._parent = value;
@@ -12766,14 +12774,14 @@
     BVHSpatialBox._tempV3_2 = new Laya.Vector3();
 
     class BVHSpatial {
-        _creatChildNode() {
-            return new BVHSpatialBox(this._BVHManager, this._BVHConfig);
-        }
         constructor(bvhConfig = null, bvhManager = null) {
             this._isBuild = false;
             this._BVHConfig = bvhConfig ? bvhConfig : new BVHSpatialConfig();
             this._BVHManager = bvhManager ? bvhManager : new BVHSpatialManager();
             this._BVHSpatialBox = this._creatChildNode();
+        }
+        _creatChildNode() {
+            return new BVHSpatialBox(this._BVHManager, this._BVHConfig);
         }
         cellLegal(cell) {
             let extend = cell.bounds.getExtent();
@@ -13135,7 +13143,88 @@
         }
     }
 
+    exports.FogMode = void 0;
+    (function (FogMode) {
+        FogMode[FogMode["Linear"] = 0] = "Linear";
+        FogMode[FogMode["EXP"] = 1] = "EXP";
+        FogMode[FogMode["EXP2"] = 2] = "EXP2";
+    })(exports.FogMode || (exports.FogMode = {}));
     class Scene3D extends Laya.Sprite {
+        constructor() {
+            super();
+            this._reflectionsSource = 0;
+            this._reflectionsResolution = "256";
+            this._reflectionsIblSamples = 128;
+            this._lightCount = 0;
+            this._pointLights = new LightQueue();
+            this._spotLights = new LightQueue();
+            this._directionLights = new LightQueue();
+            this._alternateLights = new AlternateLightQueue();
+            this._lightmaps = [];
+            this._skyRenderer = new SkyRenderer();
+            this._time = 0;
+            this._sunColor = new Laya.Color(1.0, 1.0, 1.0);
+            this._sundir = new Laya.Vector3();
+            this._id = Scene3D.sceneID++;
+            this._physicsdisableSimulation = false;
+            this._collsionTestList = [];
+            this._key = new Laya.SubmitKey();
+            this._opaqueQueue = Laya.LayaGL.renderOBJCreate.createBaseRenderQueue(false);
+            this._transparentQueue = Laya.LayaGL.renderOBJCreate.createBaseRenderQueue(true);
+            this._cameraPool = [];
+            this._UI3DManager = new UI3DManager();
+            this.currentCreationLayer = Math.pow(2, 0);
+            this.enableLight = true;
+            this._ShadowMapupdateFrequency = 1;
+            this._is3D = true;
+            this._componentDriver = new Laya.ComponentDriver();
+            this._timer = Laya.ILaya.timer;
+            if (Laya.LayaEnv.isConch && !window.conchConfig.conchWebGL) {
+                this._nativeObj = new window.conchSubmitScene3D(this.renderSubmit.bind(this));
+            }
+            if (Physics3D._bullet)
+                this._physicsSimulation = new PhysicsSimulation(Scene3D.physicsSettings);
+            this._shaderValues = Laya.LayaGL.renderOBJCreate.createShaderData(null);
+            this._shaderValues._defineDatas.addDefineDatas(Laya.Shader3D._configDefineValues);
+            if (Laya.Config3D._uniformBlock) {
+                this._sceneUniformObj = Laya.UniformBufferObject.getBuffer(Laya.UniformBufferObject.UBONAME_SCENE, 0);
+                this._sceneUniformData = Scene3D.createSceneUniformBlock();
+                if (!this._sceneUniformObj) {
+                    this._sceneUniformObj = Laya.UniformBufferObject.create(Laya.UniformBufferObject.UBONAME_SCENE, Laya.BufferUsage.Dynamic, this._sceneUniformData.getbyteLength(), true);
+                }
+                this._shaderValues._addCheckUBO(Laya.UniformBufferObject.UBONAME_SCENE, this._sceneUniformObj, this._sceneUniformData);
+                this._shaderValues.setUniformBuffer(Scene3D.SCENEUNIFORMBLOCK, this._sceneUniformObj);
+                this._shaderValues._addCheckUBO(Laya.UniformBufferObject.UBONAME_SHADOW, Scene3D._shadowCasterPass._castDepthBufferOBJ, Scene3D._shadowCasterPass._castDepthBufferData);
+                this._shaderValues.setUniformBuffer(Laya.Shader3D.propertyNameToID(Laya.UniformBufferObject.UBONAME_SHADOW), Scene3D._shadowCasterPass._castDepthBufferOBJ);
+            }
+            this._fogParams = new Laya.Vector4(300, 1000, 0.01, 0);
+            this.enableFog = false;
+            this.fogStart = 300;
+            this.fogEnd = 1000;
+            this.fogDensity = 0.01;
+            this.fogColor = new Laya.Color(0.7, 0.7, 0.7);
+            this.fogMode = exports.FogMode.Linear;
+            this.GIRotate = 0;
+            this._scene = this;
+            if (Laya.Config3D.useBVHCull) {
+                let bvhConfig = new BVHSpatialConfig();
+                bvhConfig.Min_BVH_Build_Nums = Laya.Config3D.BVH_Min_Build_nums;
+                bvhConfig.limit_size = Laya.Config3D.BVH_limit_size;
+                bvhConfig.max_SpatialCount = Laya.Config3D.BVH_max_SpatialCount;
+                this._sceneRenderManager = new BVHSceneRenderManager(bvhConfig);
+                this._cullPass = new BVHCullPass();
+            }
+            else {
+                this._sceneRenderManager = new SceneRenderManager();
+                this._cullPass = Laya.LayaGL.renderOBJCreate.createCullPass();
+            }
+            if (Laya.Config3D.debugFrustumCulling) ;
+            this._volumeManager = new VolumeManager();
+            this._UI3DManager = new UI3DManager();
+            this.sceneReflectionProb = this._volumeManager.reflectionProbeManager.sceneReflectionProbe;
+            this._sceneReflectionProb.reflectionIntensity = 1.0;
+            this.ambientColor = new Laya.Color(0.212, 0.227, 0.259);
+        }
         static set _updateMark(value) {
             Scene3D.__updateMark = value;
         }
@@ -13144,6 +13233,9 @@
         }
         static shaderValueInit() {
             Scene3DShaderDeclaration.SHADERDEFINE_FOG = Laya.Shader3D.getDefineByName("FOG");
+            Scene3DShaderDeclaration.SHADERDEFINE_FOG_LINEAR = Laya.Shader3D.getDefineByName("FOG_LINEAR");
+            Scene3DShaderDeclaration.SHADERDEFINE_FOG_EXP = Laya.Shader3D.getDefineByName("FOG_EXP");
+            Scene3DShaderDeclaration.SHADERDEFINE_FOG_EXP2 = Laya.Shader3D.getDefineByName("FOG_EXP2");
             Scene3DShaderDeclaration.SHADERDEFINE_DIRECTIONLIGHT = Laya.Shader3D.getDefineByName("DIRECTIONLIGHT");
             Scene3DShaderDeclaration.SHADERDEFINE_POINTLIGHT = Laya.Shader3D.getDefineByName("POINTLIGHT");
             Scene3DShaderDeclaration.SHADERDEFINE_SPOTLIGHT = Laya.Shader3D.getDefineByName("SPOTLIGHT");
@@ -13155,8 +13247,7 @@
             Scene3DShaderDeclaration.SHADERDEFINE_SHADOW_SPOT_SOFT_SHADOW_LOW = Laya.Shader3D.getDefineByName("SHADOW_SPOT_SOFT_SHADOW_LOW");
             Scene3DShaderDeclaration.SHADERDEFINE_SHADOW_SPOT_SOFT_SHADOW_HIGH = Laya.Shader3D.getDefineByName("SHADOW_SPOT_SOFT_SHADOW_HIGH");
             Scene3D.FOGCOLOR = Laya.Shader3D.propertyNameToID("u_FogColor");
-            Scene3D.FOGSTART = Laya.Shader3D.propertyNameToID("u_FogStart");
-            Scene3D.FOGRANGE = Laya.Shader3D.propertyNameToID("u_FogRange");
+            Scene3D.FOGPARAMS = Laya.Shader3D.propertyNameToID("u_FogParams");
             Scene3D.DIRECTIONLIGHTCOUNT = Laya.Shader3D.propertyNameToID("u_DirationLightCount");
             Scene3D.LIGHTBUFFER = Laya.Shader3D.propertyNameToID("u_LightBuffer");
             Scene3D.CLUSTERBUFFER = Laya.Shader3D.propertyNameToID("u_LightClusterBuffer");
@@ -13165,8 +13256,7 @@
             Scene3D.SCENEUNIFORMBLOCK = Laya.Shader3D.propertyNameToID(Laya.UniformBufferObject.UBONAME_SCENE);
             let sceneUniformMap = Scene3D.sceneUniformMap = Laya.LayaGL.renderOBJCreate.createGlobalUniformMap("Scene3D");
             sceneUniformMap.addShaderUniform(Scene3D.FOGCOLOR, "u_FogColor");
-            sceneUniformMap.addShaderUniform(Scene3D.FOGSTART, "u_FogStart");
-            sceneUniformMap.addShaderUniform(Scene3D.FOGRANGE, "u_FogRange");
+            sceneUniformMap.addShaderUniform(Scene3D.FOGPARAMS, "u_FogParams");
             sceneUniformMap.addShaderUniform(Scene3D.DIRECTIONLIGHTCOUNT, "u_DirationLightCount");
             sceneUniformMap.addShaderUniform(Scene3D.LIGHTBUFFER, "u_LightBuffer");
             sceneUniformMap.addShaderUniform(Scene3D.CLUSTERBUFFER, "u_LightClusterBuffer");
@@ -13202,8 +13292,7 @@
             if (!Scene3D.SceneUBOData) {
                 let uniformpara = new Map();
                 uniformpara.set("u_Time", Laya.UniformBufferParamsType.Number);
-                uniformpara.set("u_FogStart", Laya.UniformBufferParamsType.Number);
-                uniformpara.set("u_FogRange", Laya.UniformBufferParamsType.Number);
+                uniformpara.set("u_FogParams", Laya.UniformBufferParamsType.Vector4);
                 uniformpara.set("u_FogColor", Laya.UniformBufferParamsType.Vector4);
                 let uniformMap = new Map();
                 uniformpara.forEach((value, key) => {
@@ -13277,6 +13366,29 @@
                     this._shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_FOG);
             }
         }
+        get fogMode() {
+            return this._fogMode;
+        }
+        set fogMode(value) {
+            this._fogMode = value;
+            switch (value) {
+                case exports.FogMode.Linear:
+                    this._shaderValues.addDefine(Scene3DShaderDeclaration.SHADERDEFINE_FOG_LINEAR);
+                    this._shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_FOG_EXP);
+                    this._shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_FOG_EXP2);
+                    break;
+                case exports.FogMode.EXP:
+                    this._shaderValues.addDefine(Scene3DShaderDeclaration.SHADERDEFINE_FOG_EXP);
+                    this._shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_FOG_LINEAR);
+                    this._shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_FOG_EXP2);
+                    break;
+                case exports.FogMode.EXP2:
+                    this._shaderValues.addDefine(Scene3DShaderDeclaration.SHADERDEFINE_FOG_EXP2);
+                    this._shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_FOG_LINEAR);
+                    this._shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_FOG_EXP);
+                    break;
+            }
+        }
         get fogColor() {
             return this._shaderValues.getColor(Scene3D.FOGCOLOR);
         }
@@ -13284,16 +13396,31 @@
             this._shaderValues.setColor(Scene3D.FOGCOLOR, value);
         }
         get fogStart() {
-            return this._shaderValues.getNumber(Scene3D.FOGSTART);
+            return this._fogParams.x;
         }
         set fogStart(value) {
-            this._shaderValues.setNumber(Scene3D.FOGSTART, value);
+            this._fogParams.x = value;
+            this.fogParams = this._fogParams;
         }
-        get fogRange() {
-            return this._shaderValues.getNumber(Scene3D.FOGRANGE);
+        get fogEnd() {
+            return this._fogParams.y;
         }
-        set fogRange(value) {
-            this._shaderValues.setNumber(Scene3D.FOGRANGE, value);
+        set fogEnd(value) {
+            this._fogParams.y = value;
+            this.fogParams = this._fogParams;
+        }
+        get fogDensity() {
+            return this._fogParams.z;
+        }
+        set fogDensity(value) {
+            this._fogParams.z = value;
+            this.fogParams = this._fogParams;
+        }
+        get fogParams() {
+            return this._shaderValues.getVector(Scene3D.FOGPARAMS);
+        }
+        set fogParams(value) {
+            this._shaderValues.setVector(Scene3D.FOGPARAMS, value);
         }
         set GIRotate(value) {
             this._shaderValues.setNumber(Scene3D.GIRotate, value);
@@ -13393,85 +13520,13 @@
         set shadowMapFrequency(value) {
             this._ShadowMapupdateFrequency = value;
         }
-        constructor() {
-            super();
-            this._reflectionsSource = 0;
-            this._reflectionsResolution = "256";
-            this._reflectionsIblSamples = 128;
-            this._lightCount = 0;
-            this._pointLights = new LightQueue();
-            this._spotLights = new LightQueue();
-            this._directionLights = new LightQueue();
-            this._alternateLights = new AlternateLightQueue();
-            this._lightmaps = [];
-            this._skyRenderer = new SkyRenderer();
-            this._time = 0;
-            this._sunColor = new Laya.Color(1.0, 1.0, 1.0);
-            this._sundir = new Laya.Vector3();
-            this._id = Scene3D.sceneID++;
-            this._physicsdisableSimulation = false;
-            this._collsionTestList = [];
-            this._key = new Laya.SubmitKey();
-            this._opaqueQueue = Laya.LayaGL.renderOBJCreate.createBaseRenderQueue(false);
-            this._transparentQueue = Laya.LayaGL.renderOBJCreate.createBaseRenderQueue(true);
-            this._cameraPool = [];
-            this._UI3DManager = new UI3DManager();
-            this.currentCreationLayer = Math.pow(2, 0);
-            this.enableLight = true;
-            this._ShadowMapupdateFrequency = 1;
-            this._is3D = true;
-            this._componentDriver = new Laya.ComponentDriver();
-            this._timer = Laya.ILaya.timer;
-            if (Laya.LayaEnv.isConch && !window.conchConfig.conchWebGL) {
-                this._nativeObj = new window.conchSubmitScene3D(this.renderSubmit.bind(this));
-            }
-            if (Physics3D._bullet)
-                this._physicsSimulation = new PhysicsSimulation(Scene3D.physicsSettings);
-            this._shaderValues = Laya.LayaGL.renderOBJCreate.createShaderData(null);
-            this._shaderValues._defineDatas.addDefineDatas(Laya.Shader3D._configDefineValues);
-            if (Laya.Config3D._uniformBlock) {
-                this._sceneUniformObj = Laya.UniformBufferObject.getBuffer(Laya.UniformBufferObject.UBONAME_SCENE, 0);
-                this._sceneUniformData = Scene3D.createSceneUniformBlock();
-                if (!this._sceneUniformObj) {
-                    this._sceneUniformObj = Laya.UniformBufferObject.create(Laya.UniformBufferObject.UBONAME_SCENE, Laya.BufferUsage.Dynamic, this._sceneUniformData.getbyteLength(), true);
-                }
-                this._shaderValues._addCheckUBO(Laya.UniformBufferObject.UBONAME_SCENE, this._sceneUniformObj, this._sceneUniformData);
-                this._shaderValues.setUniformBuffer(Scene3D.SCENEUNIFORMBLOCK, this._sceneUniformObj);
-                this._shaderValues._addCheckUBO(Laya.UniformBufferObject.UBONAME_SHADOW, Scene3D._shadowCasterPass._castDepthBufferOBJ, Scene3D._shadowCasterPass._castDepthBufferData);
-                this._shaderValues.setUniformBuffer(Laya.Shader3D.propertyNameToID(Laya.UniformBufferObject.UBONAME_SHADOW), Scene3D._shadowCasterPass._castDepthBufferOBJ);
-            }
-            this.enableFog = false;
-            this.fogStart = 300;
-            this.fogRange = 1000;
-            this.fogColor = new Laya.Color(0.7, 0.7, 0.7);
-            this.GIRotate = 0;
-            this._scene = this;
-            if (Laya.Config3D.useBVHCull) {
-                let bvhConfig = new BVHSpatialConfig();
-                bvhConfig.Min_BVH_Build_Nums = Laya.Config3D.BVH_Min_Build_nums;
-                bvhConfig.limit_size = Laya.Config3D.BVH_limit_size;
-                bvhConfig.max_SpatialCount = Laya.Config3D.BVH_max_SpatialCount;
-                this._sceneRenderManager = new BVHSceneRenderManager(bvhConfig);
-                this._cullPass = new BVHCullPass();
-            }
-            else {
-                this._sceneRenderManager = new SceneRenderManager();
-                this._cullPass = Laya.LayaGL.renderOBJCreate.createCullPass();
-            }
-            if (Laya.Config3D.debugFrustumCulling) ;
-            this._volumeManager = new VolumeManager();
-            this._UI3DManager = new UI3DManager();
-            this.sceneReflectionProb = this._volumeManager.reflectionProbeManager.sceneReflectionProbe;
-            this._sceneReflectionProb.reflectionIntensity = 1.0;
-            this.ambientColor = new Laya.Color(0.212, 0.227, 0.259);
-        }
         _update() {
             var delta = this.timer._delta / 1000;
             this._time += delta;
             this._shaderValues.setNumber(Scene3D.TIME, this._time);
             let simulation = this._physicsSimulation;
             if (Laya.LayaEnv.isPlaying) {
-                if (Physics3D._enablePhysics && !PhysicsSimulation.disableSimulation) {
+                if (Physics3D._enablePhysics && !PhysicsSimulation.disableSimulation && Laya.Stat.enablePhysicsUpdate) {
                     simulation._updatePhysicsTransformFromRender();
                     PhysicsComponent._addUpdateList = false;
                     simulation._simulate(delta);
@@ -13525,14 +13580,14 @@
         }
         _prepareSceneToRender() {
             var shaderValues = this._shaderValues;
-            var multiLighting = Laya.Config3D._multiLighting;
+            var multiLighting = Laya.Config3D._multiLighting && Laya.Stat.enableMulLight;
             if (multiLighting) {
                 var ligTex = Scene3D._lightTexture;
                 var ligPix = Scene3D._lightPixles;
                 const pixelWidth = ligTex.width;
                 const floatWidth = pixelWidth * 4;
                 var curCount = 0;
-                var dirCount = this._directionLights._length;
+                var dirCount = Laya.Stat.enableLight ? this._directionLights._length : 0;
                 var dirElements = this._directionLights._elements;
                 if (dirCount > 0) {
                     var sunLightIndex = this._directionLights.getBrightestLight();
@@ -13566,7 +13621,7 @@
                 else {
                     shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_DIRECTIONLIGHT);
                 }
-                var poiCount = this._pointLights._length;
+                var poiCount = Laya.Stat.enableLight ? this._pointLights._length : 0;
                 if (poiCount > 0) {
                     var poiElements = this._pointLights._elements;
                     var mainPointLightIndex = this._pointLights.getBrightestLight();
@@ -13595,7 +13650,7 @@
                 else {
                     shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_POINTLIGHT);
                 }
-                var spoCount = this._spotLights._length;
+                var spoCount = Laya.Stat.enableLight ? this._spotLights._length : 0;
                 if (spoCount > 0) {
                     var spoElements = this._spotLights._elements;
                     var mainSpotLightIndex = this._spotLights.getBrightestLight();
@@ -13637,7 +13692,7 @@
                 shaderValues.setTexture(Scene3D.CLUSTERBUFFER, Cluster.instance._clusterTexture);
             }
             else {
-                if (this._directionLights._length > 0) {
+                if (this._directionLights._length > 0 && Laya.Stat.enableLight) {
                     var dirLight = this._directionLights._elements[0];
                     this._mainDirectionLight = dirLight;
                     dirLight._intensityColor.x = Laya.Color.gammaToLinearSpace(dirLight.color.r);
@@ -13657,7 +13712,7 @@
                 else {
                     shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_DIRECTIONLIGHT);
                 }
-                if (this._pointLights._length > 0) {
+                if (this._pointLights._length > 0 && Laya.Stat.enableLight) {
                     var poiLight = this._pointLights._elements[0];
                     this._mainPointLight = poiLight;
                     poiLight._intensityColor.x = Laya.Color.gammaToLinearSpace(poiLight.color.r);
@@ -13672,7 +13727,7 @@
                 else {
                     shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_POINTLIGHT);
                 }
-                if (this._spotLights._length > 0) {
+                if (this._spotLights._length > 0 && Laya.Stat.enableLight) {
                     var spotLight = this._spotLights._elements[0];
                     this._mainSpotLight = spotLight;
                     spotLight._intensityColor.x = Laya.Color.gammaToLinearSpace(spotLight.color.r);
@@ -13870,7 +13925,8 @@
             }
             this.enableFog = data.enableFog;
             this.fogStart = data.fogStart;
-            this.fogRange = data.fogRange;
+            this.fogEnd = data.fogEnd;
+            this.fogDensity = data.fogDensity;
             var fogColorData = data.fogColor;
             if (fogColorData) {
                 var fogCol = this.fogColor;
@@ -13976,7 +14032,6 @@
             Scene3D._updateMark++;
             for (i = 0, n = this._cameraPool.length, n - 1; i < n; i++) {
                 var camera = this._cameraPool[i];
-                this._setCullCamera(camera);
                 if (camera.renderTarget)
                     (camera.enableBuiltInRenderTexture = false);
                 else
@@ -14023,6 +14078,13 @@
         setGlobalShaderValue(name, type, value) {
             var shaderOffset = Laya.Shader3D.propertyNameToID(name);
             this._shaderValues.setShaderData(shaderOffset, type, value);
+        }
+        get fogRange() {
+            return this._fogParams.y - this.fogParams.x;
+        }
+        set fogRange(value) {
+            this._fogParams.y = value + this.fogParams.x;
+            this.fogParams = this._fogParams;
         }
         setlightmaps(value) {
             var maps = this._lightmaps;
@@ -14076,6 +14138,39 @@
         CameraEventFlags[CameraEventFlags["AfterEveryThing"] = 8] = "AfterEveryThing";
     })(exports.CameraEventFlags || (exports.CameraEventFlags = {}));
     class Camera extends BaseCamera {
+        constructor(aspectRatio = 0, nearPlane = 0.3, farPlane = 1000) {
+            super(nearPlane, farPlane);
+            this._updateViewMatrix = true;
+            this._postProcess = null;
+            this._enableHDR = false;
+            this._viewportParams = new Laya.Vector4();
+            this._projectionParams = new Laya.Vector4();
+            this._needBuiltInRenderTexture = false;
+            this._msaa = false;
+            this._offScreenRenderTexture = null;
+            this._internalRenderTexture = null;
+            this._canBlitDepth = false;
+            this._internalCommandBuffer = new CommandBuffer();
+            this._depthTextureFormat = Laya.RenderTargetFormat.DEPTH_16;
+            this._cameraEventCommandBuffer = {};
+            this._shadowCasterCommanBuffer = [];
+            this._clusterPlaneCacheFlag = new Laya.Vector2(-1, -1);
+            this._screenOffsetScale = new Laya.Vector4();
+            this.enableRender = true;
+            this.clearFlag = exports.CameraClearFlags.SolidColor;
+            this._viewMatrix = new Laya.Matrix4x4();
+            this._projectionMatrix = new Laya.Matrix4x4();
+            this._projectionViewMatrix = new Laya.Matrix4x4();
+            this._viewport = new Viewport(0, 0, 0, 0);
+            this._normalizedViewport = new Viewport(0, 0, 1, 1);
+            this._rayViewport = new Viewport(0, 0, 0, 0);
+            this._aspectRatio = aspectRatio;
+            this._boundFrustum = new BoundFrustum(new Laya.Matrix4x4());
+            this._depthTextureMode = 0;
+            this._calculateProjectionMatrix();
+            Laya.ILaya.stage.on(Laya.Event.RESIZE, this, this._onScreenSizeChanged);
+            this.transform.on(Laya.Event.TRANSFORM_CHANGED, this, this._onTransformChanged);
+        }
         static set _updateMark(value) {
             Camera.__updateMark = value;
         }
@@ -14295,7 +14390,7 @@
             Laya.LayaGL.renderEngine.getCapable(Laya.RenderCapable.MSAA) ? this._msaa = value : this._msaa = false;
         }
         get msaa() {
-            return this._msaa;
+            return this._msaa && Laya.Stat.enablemsaa;
         }
         set fxaa(value) {
             this._fxaa = value;
@@ -14427,7 +14522,7 @@
             else {
                 this._internalRenderTexture && (this._internalRenderTexture.generateDepthTexture = false);
                 if (this._cacheDepthTexture)
-                    this._cacheDepthTexture._inPool ? Laya.RenderTexture.recoverToPool(this._cacheDepthTexture) : 0;
+                    this._cacheDepthTexture._inPool ? 0 : Laya.RenderTexture.recoverToPool(this._cacheDepthTexture);
             }
         }
         get enableBlitDepth() {
@@ -14435,39 +14530,6 @@
         }
         get canblitDepth() {
             return this._canBlitDepth && this._internalRenderTexture && this._internalRenderTexture.depthStencilFormat != null;
-        }
-        constructor(aspectRatio = 0, nearPlane = 0.3, farPlane = 1000) {
-            super(nearPlane, farPlane);
-            this._updateViewMatrix = true;
-            this._postProcess = null;
-            this._enableHDR = false;
-            this._viewportParams = new Laya.Vector4();
-            this._projectionParams = new Laya.Vector4();
-            this._needBuiltInRenderTexture = false;
-            this._msaa = false;
-            this._offScreenRenderTexture = null;
-            this._internalRenderTexture = null;
-            this._canBlitDepth = false;
-            this._internalCommandBuffer = new CommandBuffer();
-            this._depthTextureFormat = Laya.RenderTargetFormat.DEPTH_16;
-            this._cameraEventCommandBuffer = {};
-            this._shadowCasterCommanBuffer = [];
-            this._clusterPlaneCacheFlag = new Laya.Vector2(-1, -1);
-            this._screenOffsetScale = new Laya.Vector4();
-            this.enableRender = true;
-            this.clearFlag = exports.CameraClearFlags.SolidColor;
-            this._viewMatrix = new Laya.Matrix4x4();
-            this._projectionMatrix = new Laya.Matrix4x4();
-            this._projectionViewMatrix = new Laya.Matrix4x4();
-            this._viewport = new Viewport(0, 0, 0, 0);
-            this._normalizedViewport = new Viewport(0, 0, 1, 1);
-            this._rayViewport = new Viewport(0, 0, 0, 0);
-            this._aspectRatio = aspectRatio;
-            this._boundFrustum = new BoundFrustum(new Laya.Matrix4x4());
-            this._depthTextureMode = 0;
-            this._calculateProjectionMatrix();
-            Laya.ILaya.stage.on(Laya.Event.RESIZE, this, this._onScreenSizeChanged);
-            this.transform.on(Laya.Event.TRANSFORM_CHANGED, this, this._onTransformChanged);
         }
         _calculationViewport(normalizedViewport, width, height) {
             var lx = normalizedViewport.x * width;
@@ -14631,6 +14693,8 @@
             }
         }
         _applyCommandBuffer(event, context) {
+            if (!Laya.Stat.enableCameraCMD)
+                return;
             var commandBufferArray = this._cameraEventCommandBuffer[event];
             if (!commandBufferArray || commandBufferArray.length == 0)
                 return;
@@ -14669,7 +14733,7 @@
             }
             var shadowCasterPass;
             var mainDirectLight = scene._mainDirectionLight;
-            var needShadowCasterPass = mainDirectLight && mainDirectLight.shadowMode !== exports.ShadowMode.None && ShadowUtils.supportShadow();
+            var needShadowCasterPass = mainDirectLight && mainDirectLight.shadowMode !== exports.ShadowMode.None && ShadowUtils.supportShadow() && Laya.Stat.enableShadow;
             if (needShadowCasterPass) {
                 scene._shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_SHADOW_SPOT);
                 scene._shaderValues.addDefine(Scene3DShaderDeclaration.SHADERDEFINE_SHADOW);
@@ -14681,7 +14745,7 @@
                 scene._shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_SHADOW);
             }
             var spotMainLight = scene._mainSpotLight;
-            var spotneedShadowCasterPass = spotMainLight && spotMainLight.shadowMode !== exports.ShadowMode.None && ShadowUtils.supportShadow();
+            var spotneedShadowCasterPass = spotMainLight && spotMainLight.shadowMode !== exports.ShadowMode.None && ShadowUtils.supportShadow() && Laya.Stat.enableShadow;
             if (spotneedShadowCasterPass) {
                 scene._shaderValues.removeDefine(Scene3DShaderDeclaration.SHADERDEFINE_SHADOW);
                 scene._shaderValues.addDefine(Scene3DShaderDeclaration.SHADERDEFINE_SHADOW_SPOT);
@@ -14749,18 +14813,17 @@
             scene._clear(context);
             this._applyCommandBuffer(exports.CameraEventFlags.BeforeForwardOpaque, context);
             this.recoverRenderContext3D(context, renderTex);
-            scene._renderScene(context, ILaya3D.Scene3D.SCENERENDERFLAG_RENDERQPAQUE);
+            Laya.Stat.enableOpaque && scene._renderScene(context, ILaya3D.Scene3D.SCENERENDERFLAG_RENDERQPAQUE);
             this._applyCommandBuffer(exports.CameraEventFlags.BeforeSkyBox, context);
             this._opaquePass && this._createOpaqueTexture(renderTex, context);
             this.recoverRenderContext3D(context, renderTex);
             scene._renderScene(context, ILaya3D.Scene3D.SCENERENDERFLAG_SKYBOX);
             this._applyCommandBuffer(exports.CameraEventFlags.BeforeTransparent, context);
             this.recoverRenderContext3D(context, renderTex);
-            scene._renderScene(context, ILaya3D.Scene3D.SCENERENDERFLAG_RENDERTRANSPARENT);
-            scene._componentDriver.callPostRender();
+            Laya.Stat.enableTransparent && scene._renderScene(context, ILaya3D.Scene3D.SCENERENDERFLAG_RENDERTRANSPARENT);
             this._applyCommandBuffer(exports.CameraEventFlags.BeforeImageEffect, context);
             (renderTex) && (renderTex._end());
-            if (needInternalRT && Camera.enablePostProcess) {
+            if (needInternalRT && Laya.Stat.enablePostprocess) {
                 if (this._postProcess && this._postProcess.enable) {
                     this._postProcess.commandContext = context;
                     this._postProcess._render(this);
@@ -14828,7 +14891,7 @@
         _aftRenderMainPass(needShadowPass) {
             if (this._cacheDepth && this._internalRenderTexture) {
                 if (this._cacheDepthTexture)
-                    this._cacheDepthTexture._inPool ? Laya.RenderTexture.recoverToPool(this._cacheDepthTexture) : 0;
+                    this._cacheDepthTexture._inPool ? 0 : Laya.RenderTexture.recoverToPool(this._cacheDepthTexture);
                 this._cacheDepthTexture = this._internalRenderTexture;
             }
             Camera.depthPass.cleanUp();
@@ -14851,12 +14914,13 @@
             var needInternalRT = this._needInternalRenderTexture();
             var context = RenderContext3D._instance;
             var scene = context.scene = this._scene;
+            scene._setCullCamera(this);
             context.pipelineMode = context.configPipeLineMode;
             context.replaceTag = replacementTag;
             context.customShader = shader;
             let texFormat = this._getRenderTextureFormat();
             if (needInternalRT) {
-                if (this._msaa) {
+                if (this.msaa) {
                     this._internalRenderTexture = Laya.RenderTexture.createFromPool(viewport.width, viewport.height, texFormat, this._depthTextureFormat, false, 4, this.canblitDepth, this._needRenderGamma(texFormat));
                     this._internalRenderTexture.filterMode = Laya.FilterMode.Bilinear;
                 }
@@ -14970,7 +15034,6 @@
     Camera._context3DViewPortCatch = new Viewport(0, 0, 0, 0);
     Camera._contextScissorPortCatch = new Laya.Vector4(0, 0, 0, 0);
     Camera.__updateMark = 0;
-    Camera.enablePostProcess = true;
 
     class GradientMode {
     }
@@ -14978,6 +15041,20 @@
     GradientMode.Fixed = 1;
 
     class Gradient {
+        constructor(maxColorRGBKeyCount, maxColorAlphaKeyCount) {
+            this._mode = 0;
+            this._maxColorRGBKeysCount = 0;
+            this._maxColorAlphaKeysCount = 0;
+            this._colorRGBKeysCount = 0;
+            this._colorAlphaKeysCount = 0;
+            this._keyRanges = new Laya.Vector4(1, 0, 1, 0);
+            this._alphaElements = null;
+            this._rgbElements = null;
+            this._maxColorRGBKeysCount = maxColorRGBKeyCount;
+            this._maxColorAlphaKeysCount = maxColorAlphaKeyCount;
+            this._rgbElements = new Float32Array(maxColorRGBKeyCount * 4);
+            this._alphaElements = new Float32Array(maxColorAlphaKeyCount * 2);
+        }
         get mode() {
             return this._mode;
         }
@@ -14995,20 +15072,6 @@
         }
         get maxColorAlphaKeysCount() {
             return this._maxColorAlphaKeysCount;
-        }
-        constructor(maxColorRGBKeyCount, maxColorAlphaKeyCount) {
-            this._mode = 0;
-            this._maxColorRGBKeysCount = 0;
-            this._maxColorAlphaKeysCount = 0;
-            this._colorRGBKeysCount = 0;
-            this._colorAlphaKeysCount = 0;
-            this._keyRanges = new Laya.Vector4(1, 0, 1, 0);
-            this._alphaElements = null;
-            this._rgbElements = null;
-            this._maxColorRGBKeysCount = maxColorRGBKeyCount;
-            this._maxColorAlphaKeysCount = maxColorAlphaKeyCount;
-            this._rgbElements = new Float32Array(maxColorRGBKeyCount * 4);
-            this._alphaElements = new Float32Array(maxColorAlphaKeyCount * 2);
         }
         addColorRGB(key, value) {
             if (this._colorRGBKeysCount < this._maxColorRGBKeysCount) {
@@ -15260,6 +15323,14 @@
     }
 
     class DirectionLightCom extends Light {
+        constructor() {
+            super();
+            this._direction = new Laya.Vector3();
+            this._shadowCascadesMode = exports.ShadowCascadesMode.NoCascades;
+            this._shadowTwoCascadeSplits = 1.0 / 3.0;
+            this._shadowFourCascadeSplits = new Laya.Vector3(1.0 / 15, 3.0 / 15.0, 7.0 / 15.0);
+            this._lightType = exports.LightType.Directional;
+        }
         get shadowCascadesMode() {
             return this._shadowCascadesMode;
         }
@@ -15280,14 +15351,6 @@
                 throw "DiretionLight:Invalid value.";
             value.cloneTo(this._shadowFourCascadeSplits);
         }
-        constructor() {
-            super();
-            this._direction = new Laya.Vector3();
-            this._shadowCascadesMode = exports.ShadowCascadesMode.NoCascades;
-            this._shadowTwoCascadeSplits = 1.0 / 3.0;
-            this._shadowFourCascadeSplits = new Laya.Vector3(1.0 / 15, 3.0 / 15.0, 7.0 / 15.0);
-            this._lightType = exports.LightType.Directional;
-        }
         _addToLightQueue() {
             this.owner.scene._directionLights.add(this);
         }
@@ -15300,6 +15363,9 @@
     }
 
     class LightSprite extends Sprite3D {
+        constructor() {
+            super();
+        }
         get color() {
             return this._light.color;
         }
@@ -15369,9 +15435,6 @@
         get lightWorldMatrix() {
             return this._light.lightWorldMatrix;
         }
-        constructor() {
-            super();
-        }
         _parse(data, spriteMap) {
             super._parse(data, spriteMap);
             var colorData = data.color;
@@ -15398,6 +15461,10 @@
     }
 
     class DirectionLight extends LightSprite {
+        constructor() {
+            super();
+            this._light = this.addComponent(DirectionLightCom);
+        }
         get shadowCascadesMode() {
             return this._light._shadowCascadesMode;
         }
@@ -15418,26 +15485,22 @@
                 throw "DiretionLight:Invalid value.";
             value.cloneTo(this._light._shadowFourCascadeSplits);
         }
-        constructor() {
-            super();
-            this._light = this.addComponent(DirectionLightCom);
-        }
         _create() {
             return new Sprite3D();
         }
     }
 
     class PointLightCom extends Light {
+        constructor() {
+            super();
+            this._range = 6.0;
+            this._lightType = exports.LightType.Point;
+        }
         get range() {
             return this._range;
         }
         set range(value) {
             this._range = value;
-        }
-        constructor() {
-            super();
-            this._range = 6.0;
-            this._lightType = exports.LightType.Point;
         }
         _addToLightQueue() {
             this.owner.scene._pointLights.add(this);
@@ -15461,16 +15524,16 @@
     }
 
     class PointLight extends LightSprite {
+        constructor() {
+            super();
+            this._light = this.addComponent(PointLightCom);
+            this._light.range = 6.0;
+        }
         get range() {
             return this._light.range;
         }
         set range(value) {
             this._light.range = value;
-        }
-        constructor() {
-            super();
-            this._light = this.addComponent(PointLightCom);
-            this._light.range = 6.0;
         }
         _parse(data, spriteMap) {
             super._parse(data, spriteMap);
@@ -15485,6 +15548,13 @@
     }
 
     class SpotLightCom extends Light {
+        constructor() {
+            super();
+            this._spotAngle = 30.0;
+            this._range = 10.0;
+            this._direction = new Laya.Vector3();
+            this._lightType = exports.LightType.Spot;
+        }
         get spotAngle() {
             return this._spotAngle;
         }
@@ -15496,13 +15566,6 @@
         }
         set range(value) {
             this._range = value;
-        }
-        constructor() {
-            super();
-            this._spotAngle = 30.0;
-            this._range = 10.0;
-            this._direction = new Laya.Vector3();
-            this._lightType = exports.LightType.Spot;
         }
         _addToLightQueue() {
             this.owner.scene._spotLights.add(this);
@@ -15527,6 +15590,10 @@
     }
 
     class SpotLight extends LightSprite {
+        constructor() {
+            super();
+            this._light = this.addComponent(SpotLightCom);
+        }
         get spotAngle() {
             return this._light.spotAngle;
         }
@@ -15538,10 +15605,6 @@
         }
         set range(value) {
             this._light.range = value;
-        }
-        constructor() {
-            super();
-            this._light = this.addComponent(SpotLightCom);
         }
         _parse(data, spriteMap) {
             super._parse(data, spriteMap);
@@ -15557,6 +15620,12 @@
     }
 
     class UnlitMaterial extends Material {
+        constructor() {
+            super();
+            this.setShaderName("Unlit");
+            this.renderMode = UnlitMaterial.RENDERMODE_OPAQUE;
+            this.albedoIntensity = 1.0;
+        }
         static __initDefine__() {
             UnlitMaterial.SHADERDEFINE_ALBEDOTEXTURE = Laya.Shader3D.getDefineByName("ALBEDOTEXTURE");
             UnlitMaterial.SHADERDEFINE_ENABLEVERTEXCOLOR = Laya.Shader3D.getDefineByName("ENABLEVERTEXCOLOR");
@@ -15606,12 +15675,6 @@
             else
                 this.removeDefine(UnlitMaterial.SHADERDEFINE_ENABLEVERTEXCOLOR);
         }
-        constructor() {
-            super();
-            this.setShaderName("Unlit");
-            this.renderMode = UnlitMaterial.RENDERMODE_OPAQUE;
-            this.albedoIntensity = 1.0;
-        }
         clone() {
             var dest = new UnlitMaterial();
             this.cloneTo(dest);
@@ -15656,6 +15719,13 @@
     UnlitMaterial.RENDERMODE_ADDTIVE = 3;
 
     class EffectMaterial extends Material {
+        constructor() {
+            super();
+            this.setShaderName("Unlit");
+            this.setVector4ByIndex(UnlitMaterial.TILINGOFFSET, new Laya.Vector4(1.0, 1.0, 0.0, 0.0));
+            this.setColorByIndex(UnlitMaterial.ALBEDOCOLOR, new Laya.Color(1.0, 1.0, 1.0, 1.0));
+            this.renderMode = EffectMaterial.RENDERMODE_ADDTIVE;
+        }
         get color() {
             return this.getColorByIndex(UnlitMaterial.ALBEDOCOLOR);
         }
@@ -15682,13 +15752,6 @@
             else {
                 this.getVector4ByIndex(UnlitMaterial.TILINGOFFSET).setValue(1.0, 1.0, 0.0, 0.0);
             }
-        }
-        constructor() {
-            super();
-            this.setShaderName("Unlit");
-            this.setVector4ByIndex(UnlitMaterial.TILINGOFFSET, new Laya.Vector4(1.0, 1.0, 0.0, 0.0));
-            this.setColorByIndex(UnlitMaterial.ALBEDOCOLOR, new Laya.Color(1.0, 1.0, 1.0, 1.0));
-            this.renderMode = EffectMaterial.RENDERMODE_ADDTIVE;
         }
         clone() {
             var dest = new EffectMaterial();
@@ -15728,6 +15791,11 @@
     EffectMaterial.RENDERMODE_ALPHABLENDED = 1;
 
     class ExtendTerrainMaterial extends Material {
+        constructor() {
+            super();
+            this.setShaderName("ExtendTerrain");
+            this.renderMode = ExtendTerrainMaterial.RENDERMODE_OPAQUE;
+        }
         static __initDefine__() {
             ExtendTerrainMaterial.SHADERDEFINE_DETAIL_NUM1 = Laya.Shader3D.getDefineByName("ExtendTerrain_DETAIL_NUM1");
             ExtendTerrainMaterial.SHADERDEFINE_DETAIL_NUM2 = Laya.Shader3D.getDefineByName("ExtendTerrain_DETAIL_NUM2");
@@ -15824,11 +15892,6 @@
                     throw new Error("ExtendTerrainMaterial:renderMode value error.");
             }
         }
-        constructor() {
-            super();
-            this.setShaderName("ExtendTerrain");
-            this.renderMode = ExtendTerrainMaterial.RENDERMODE_OPAQUE;
-        }
         _setDetailNum(value) {
             switch (value) {
                 case 1:
@@ -15896,6 +15959,20 @@
         PBRMaterialType[PBRMaterialType["Anisotropy"] = 1] = "Anisotropy";
     })(exports.PBRMaterialType || (exports.PBRMaterialType = {}));
     class PBRMaterial extends Material {
+        constructor() {
+            super();
+            this._shaderValues.setColor(PBRMaterial.ALBEDOCOLOR, new Laya.Color(1.0, 1.0, 1.0, 1.0));
+            this._shaderValues.setColor(PBRMaterial.EMISSIONCOLOR, new Laya.Color(1.0, 1.0, 1.0, 1.0));
+            this._shaderValues.setVector(PBRMaterial.TILINGOFFSET, new Laya.Vector4(1.0, 1.0, 0.0, 0.0));
+            this._shaderValues.setNumber(PBRMaterial.SMOOTHNESS, 0.5);
+            this._shaderValues.setNumber(PBRMaterial.SMOOTHNESSSCALE, 1.0);
+            this._shaderValues.setNumber(PBRMaterial.OCCLUSIONSTRENGTH, 1.0);
+            this._shaderValues.setNumber(PBRMaterial.NORMALSCALE, 1.0);
+            this._shaderValues.setNumber(PBRMaterial.PARALLAXSCALE, 0.001);
+            this._shaderValues.setNumber(Material.ALPHATESTVALUE, 0.5);
+            this.renderMode = exports.PBRRenderMode.Opaque;
+            this.materialType = exports.PBRMaterialType.Standard;
+        }
         static __init__() {
             PBRMaterial.SHADERDEFINE_ALBEDOTEXTURE = Laya.Shader3D.getDefineByName("ALBEDOTEXTURE");
             PBRMaterial.SHADERDEFINE_NORMALTEXTURE = Laya.Shader3D.getDefineByName("NORMALTEXTURE");
@@ -16187,20 +16264,6 @@
             this._materialType = value;
             this.resetNeedTBN();
         }
-        constructor() {
-            super();
-            this._shaderValues.setColor(PBRMaterial.ALBEDOCOLOR, new Laya.Color(1.0, 1.0, 1.0, 1.0));
-            this._shaderValues.setColor(PBRMaterial.EMISSIONCOLOR, new Laya.Color(1.0, 1.0, 1.0, 1.0));
-            this._shaderValues.setVector(PBRMaterial.TILINGOFFSET, new Laya.Vector4(1.0, 1.0, 0.0, 0.0));
-            this._shaderValues.setNumber(PBRMaterial.SMOOTHNESS, 0.5);
-            this._shaderValues.setNumber(PBRMaterial.SMOOTHNESSSCALE, 1.0);
-            this._shaderValues.setNumber(PBRMaterial.OCCLUSIONSTRENGTH, 1.0);
-            this._shaderValues.setNumber(PBRMaterial.NORMALSCALE, 1.0);
-            this._shaderValues.setNumber(PBRMaterial.PARALLAXSCALE, 0.001);
-            this._shaderValues.setNumber(Material.ALPHATESTVALUE, 0.5);
-            this.renderMode = exports.PBRRenderMode.Opaque;
-            this.materialType = exports.PBRMaterialType.Standard;
-        }
     }
     PBRMaterial.renderQuality = exports.PBRRenderQuality.High;
 
@@ -16210,6 +16273,11 @@
         PBRMetallicSmoothnessSource[PBRMetallicSmoothnessSource["AlbedoTextureAlpha"] = 1] = "AlbedoTextureAlpha";
     })(exports.PBRMetallicSmoothnessSource || (exports.PBRMetallicSmoothnessSource = {}));
     class PBRStandardMaterial extends PBRMaterial {
+        constructor() {
+            super();
+            this._smoothnessSource = 0;
+            this.setShaderName("PBR");
+        }
         static __init__() {
             PBRStandardMaterial.SHADERDEFINE_METALLICGLOSSTEXTURE = Laya.Shader3D.getDefineByName("METALLICGLOSSTEXTURE");
             PBRStandardMaterial.SHADERDEFINE_SMOOTHNESSSOURCE_ALBEDOTEXTURE_ALPHA = Laya.Shader3D.getDefineByName("SMOOTHNESSSOURCE_ALBEDOTEXTURE_ALPHA");
@@ -16242,11 +16310,6 @@
                 this._shaderValues.removeDefine(PBRStandardMaterial.SHADERDEFINE_SMOOTHNESSSOURCE_ALBEDOTEXTURE_ALPHA);
             this._smoothnessSource = value;
         }
-        constructor() {
-            super();
-            this._smoothnessSource = 0;
-            this.setShaderName("PBR");
-        }
         clone() {
             var dest = new PBRStandardMaterial();
             this.cloneTo(dest);
@@ -16255,6 +16318,10 @@
     }
 
     class SkyBoxMaterial extends Material {
+        constructor() {
+            super();
+            this.setShaderName("SkyBox");
+        }
         static __initDefine__() {
             SkyBoxMaterial.TINTCOLOR = Laya.Shader3D.propertyNameToID("u_TintColor");
             SkyBoxMaterial.EXPOSURE = Laya.Shader3D.propertyNameToID("u_Exposure");
@@ -16290,13 +16357,18 @@
             this.cloneTo(dest);
             return dest;
         }
-        constructor() {
-            super();
-            this.setShaderName("SkyBox");
-        }
     }
 
     class SkyPanoramicMaterial extends Material {
+        constructor() {
+            super();
+            this._textureHDRParams = new Laya.Vector4(1.0, 0.0, 0.0, 1.0);
+            this.setShaderName("SkyPanoramic");
+            this.setColorByIndex(SkyPanoramicMaterial.TINTCOLOR, new Laya.Color(0.5, 0.5, 0.5, 0.5));
+            this.setFloatByIndex(SkyPanoramicMaterial.ROTATION, 0.0);
+            this.setVector4ByIndex(SkyPanoramicMaterial.TEXTURE_HDR_PARAMS, this._textureHDRParams);
+            this.exposure = 1.3;
+        }
         static __init__() {
             SkyPanoramicMaterial.TINTCOLOR = Laya.Shader3D.propertyNameToID("u_TintColor");
             SkyPanoramicMaterial.EXPOSURE = Laya.Shader3D.propertyNameToID("u_Exposure");
@@ -16327,18 +16399,20 @@
         set panoramicTexture(value) {
             this.setTextureByIndex(SkyPanoramicMaterial.TEXTURE, value);
         }
-        constructor() {
-            super();
-            this._textureHDRParams = new Laya.Vector4(1.0, 0.0, 0.0, 1.0);
-            this.setShaderName("SkyPanoramic");
-            this.setColorByIndex(SkyPanoramicMaterial.TINTCOLOR, new Laya.Color(0.5, 0.5, 0.5, 0.5));
-            this.setFloatByIndex(SkyPanoramicMaterial.ROTATION, 0.0);
-            this.setVector4ByIndex(SkyPanoramicMaterial.TEXTURE_HDR_PARAMS, this._textureHDRParams);
-            this.exposure = 1.3;
-        }
     }
 
     class SkyProceduralMaterial extends Material {
+        constructor() {
+            super();
+            this.setShaderName("SkyProcedural");
+            this.sunDisk = SkyProceduralMaterial.SUN_HIGH_QUALITY;
+            this.sunSize = 0.04;
+            this.sunSizeConvergence = 5;
+            this.atmosphereThickness = 1.0;
+            this.skyTint = new Laya.Color(0.5, 0.5, 0.5, 1.0);
+            this.groundTint = new Laya.Color(0.369, 0.349, 0.341, 1.0);
+            this.exposure = 1.3;
+        }
         static __initDefine__() {
             SkyProceduralMaterial.SHADERDEFINE_SUN_HIGH_QUALITY = Laya.Shader3D.getDefineByName("SUN_HIGH_QUALITY");
             SkyProceduralMaterial.SHADERDEFINE_SUN_SIMPLE = Laya.Shader3D.getDefineByName("SUN_SIMPLE");
@@ -16411,17 +16485,6 @@
             value = Math.min(Math.max(0.0, value), 8.0);
             this._shaderValues.setNumber(SkyProceduralMaterial.EXPOSURE, value);
         }
-        constructor() {
-            super();
-            this.setShaderName("SkyProcedural");
-            this.sunDisk = SkyProceduralMaterial.SUN_HIGH_QUALITY;
-            this.sunSize = 0.04;
-            this.sunSizeConvergence = 5;
-            this.atmosphereThickness = 1.0;
-            this.skyTint = new Laya.Color(0.5, 0.5, 0.5, 1.0);
-            this.groundTint = new Laya.Color(0.369, 0.349, 0.341, 1.0);
-            this.exposure = 1.3;
-        }
         clone() {
             var dest = new SkyProceduralMaterial();
             this.cloneTo(dest);
@@ -16433,6 +16496,13 @@
     SkyProceduralMaterial.SUN_HIGH_QUALITY = 2;
 
     class WaterPrimaryMaterial extends Material {
+        constructor() {
+            super();
+            this.setShaderName("WaterPrimary");
+            this._shaderValues.setVector(WaterPrimaryMaterial.HORIZONCOLOR, new Laya.Vector4(0.172, 0.463, 0.435, 0));
+            this._shaderValues.setNumber(WaterPrimaryMaterial.WAVESCALE, 0.15);
+            this._shaderValues.setVector(WaterPrimaryMaterial.WAVESPEED, new Laya.Vector4(19, 9, -16, -7));
+        }
         static __initDefine__() {
             WaterPrimaryMaterial.SHADERDEFINE_MAINTEXTURE = Laya.Shader3D.getDefineByName("MAINTEXTURE");
             WaterPrimaryMaterial.SHADERDEFINE_NORMALTEXTURE = Laya.Shader3D.getDefineByName("NORMALTEXTURE");
@@ -16480,13 +16550,6 @@
         set waveSpeed(value) {
             this._shaderValues.setVector(WaterPrimaryMaterial.WAVESPEED, value);
         }
-        constructor() {
-            super();
-            this.setShaderName("WaterPrimary");
-            this._shaderValues.setVector(WaterPrimaryMaterial.HORIZONCOLOR, new Laya.Vector4(0.172, 0.463, 0.435, 0));
-            this._shaderValues.setNumber(WaterPrimaryMaterial.WAVESCALE, 0.15);
-            this._shaderValues.setVector(WaterPrimaryMaterial.WAVESPEED, new Laya.Vector4(19, 9, -16, -7));
-        }
         clone() {
             var dest = new WaterPrimaryMaterial();
             this.cloneTo(dest);
@@ -16495,17 +16558,17 @@
     }
 
     class MeshSprite3D extends RenderableSprite3D {
-        get meshFilter() {
-            return this._meshFilter;
-        }
-        get meshRenderer() {
-            return this._render;
-        }
         constructor(mesh = null, name = null) {
             super(name);
             this._meshFilter = this.addComponent(MeshFilter);
             this._render = this.addComponent(MeshRenderer);
             (mesh) && (this._meshFilter.sharedMesh = mesh);
+        }
+        get meshFilter() {
+            return this._meshFilter;
+        }
+        get meshRenderer() {
+            return this._render;
         }
         _parse(data, spriteMap) {
             super._parse(data, spriteMap);
@@ -16538,6 +16601,11 @@
     }
 
     class Burst {
+        constructor(time = 0, minCount = 0, maxCount = 0) {
+            this._time = time;
+            this._minCount = minCount;
+            this._maxCount = maxCount;
+        }
         get time() {
             return this._time;
         }
@@ -16546,11 +16614,6 @@
         }
         get maxCount() {
             return this._maxCount;
-        }
-        constructor(time = 0, minCount = 0, maxCount = 0) {
-            this._time = time;
-            this._minCount = minCount;
-            this._maxCount = maxCount;
         }
         cloneTo(destObject) {
             var destBurst = destObject;
@@ -16566,6 +16629,15 @@
     }
 
     class GradientColor {
+        constructor() {
+            this._type = 0;
+            this._constant = null;
+            this._constantMin = null;
+            this._constantMax = null;
+            this._gradient = null;
+            this._gradientMin = null;
+            this._gradientMax = null;
+        }
         static createByConstant(constant) {
             var gradientColor = new GradientColor();
             gradientColor._type = 0;
@@ -16613,15 +16685,6 @@
         get gradientMax() {
             return this._gradientMax;
         }
-        constructor() {
-            this._type = 0;
-            this._constant = null;
-            this._constantMin = null;
-            this._constantMax = null;
-            this._gradient = null;
-            this._gradientMin = null;
-            this._gradientMax = null;
-        }
         cloneTo(destObject) {
             var destGradientColor = destObject;
             destGradientColor._type = this._type;
@@ -16640,11 +16703,11 @@
     }
 
     class ColorOverLifetime {
-        get color() {
-            return this._color;
-        }
         constructor(color) {
             this._color = color;
+        }
+        get color() {
+            return this._color;
         }
         cloneTo(destObject) {
             var destColorOverLifetime = destObject;
@@ -16674,6 +16737,12 @@
     }
 
     class Emission {
+        constructor() {
+            this._emissionRate = 10;
+            this._emissionRateOverDistance = 0;
+            this._destroyed = false;
+            this._bursts = [];
+        }
         set emissionRate(value) {
             if (value < 0)
                 throw new Error("ParticleBaseShape:emissionRate value must large or equal than 0.");
@@ -16691,12 +16760,6 @@
         }
         get destroyed() {
             return this._destroyed;
-        }
-        constructor() {
-            this._emissionRate = 10;
-            this._emissionRateOverDistance = 0;
-            this._destroyed = false;
-            this._bursts = [];
         }
         destroy() {
             this._bursts = null;
@@ -16752,6 +16815,15 @@
     }
 
     class FrameOverTime {
+        constructor() {
+            this._type = 0;
+            this._constant = 0;
+            this._overTime = null;
+            this._constantMin = 0;
+            this._constantMax = 0;
+            this._overTimeMin = null;
+            this._overTimeMax = null;
+        }
         static createByConstant(constant = 0) {
             var rotationOverLifetime = new FrameOverTime();
             rotationOverLifetime._type = 0;
@@ -16799,15 +16871,6 @@
         get frameOverTimeDataMax() {
             return this._overTimeMax;
         }
-        constructor() {
-            this._type = 0;
-            this._constant = 0;
-            this._overTime = null;
-            this._constantMin = 0;
-            this._constantMax = 0;
-            this._overTimeMin = null;
-            this._overTimeMax = null;
-        }
         cloneTo(destObject) {
             var destFrameOverTime = destObject;
             destFrameOverTime._type = this._type;
@@ -16826,6 +16889,31 @@
     }
 
     class GradientAngularVelocity {
+        constructor() {
+            this._type = 0;
+            this._separateAxes = false;
+            this._constant = 0;
+            this._constantSeparate = null;
+            this._gradient = null;
+            this._gradientX = null;
+            this._gradientY = null;
+            this._gradientZ = null;
+            this._gradientW = null;
+            this._constantMin = 0;
+            this._constantMax = 0;
+            this._constantMinSeparate = null;
+            this._constantMaxSeparate = null;
+            this._gradientMin = null;
+            this._gradientMax = null;
+            this._gradientXMin = null;
+            this._gradientXMax = null;
+            this._gradientYMin = null;
+            this._gradientYMax = null;
+            this._gradientZMin = null;
+            this._gradientZMax = null;
+            this._gradientWMin = null;
+            this._gradientWMax = null;
+        }
         static createByConstant(constant) {
             var gradientAngularVelocity = new GradientAngularVelocity();
             gradientAngularVelocity._type = 0;
@@ -16963,31 +17051,6 @@
         get gradientWMax() {
             return this._gradientWMax;
         }
-        constructor() {
-            this._type = 0;
-            this._separateAxes = false;
-            this._constant = 0;
-            this._constantSeparate = null;
-            this._gradient = null;
-            this._gradientX = null;
-            this._gradientY = null;
-            this._gradientZ = null;
-            this._gradientW = null;
-            this._constantMin = 0;
-            this._constantMax = 0;
-            this._constantMinSeparate = null;
-            this._constantMaxSeparate = null;
-            this._gradientMin = null;
-            this._gradientMax = null;
-            this._gradientXMin = null;
-            this._gradientXMax = null;
-            this._gradientYMin = null;
-            this._gradientYMax = null;
-            this._gradientZMin = null;
-            this._gradientZMax = null;
-            this._gradientWMin = null;
-            this._gradientWMax = null;
-        }
         cloneTo(destObject) {
             var destGradientAngularVelocity = destObject;
             destGradientAngularVelocity._type = this._type;
@@ -17019,12 +17082,12 @@
     }
 
     class GradientDataInt {
-        get gradientCount() {
-            return this._currentLength / 2;
-        }
         constructor() {
             this._currentLength = 0;
             this._elements = new Float32Array(8);
+        }
+        get gradientCount() {
+            return this._currentLength / 2;
         }
         add(key, value) {
             if (this._currentLength < 8) {
@@ -17055,12 +17118,12 @@
     }
 
     class GradientDataNumber {
-        get gradientCount() {
-            return this._currentLength / 2;
-        }
         constructor() {
             this._currentLength = 0;
             this._elements = new Float32Array(8);
+        }
+        get gradientCount() {
+            return this._currentLength / 2;
         }
         add(key, value) {
             if (this._currentLength < 8) {
@@ -17108,6 +17171,26 @@
     }
 
     class GradientSize {
+        constructor() {
+            this._type = 0;
+            this._separateAxes = false;
+            this._gradient = null;
+            this._gradientX = null;
+            this._gradientY = null;
+            this._gradientZ = null;
+            this._constantMin = 0;
+            this._constantMax = 0;
+            this._constantMinSeparate = null;
+            this._constantMaxSeparate = null;
+            this._gradientMin = null;
+            this._gradientMax = null;
+            this._gradientXMin = null;
+            this._gradientXMax = null;
+            this._gradientYMin = null;
+            this._gradientYMax = null;
+            this._gradientZMin = null;
+            this._gradientZMax = null;
+        }
         static createByGradient(gradient) {
             var gradientSize = new GradientSize();
             gradientSize._type = 0;
@@ -17214,26 +17297,6 @@
         get gradientZMax() {
             return this._gradientZMax;
         }
-        constructor() {
-            this._type = 0;
-            this._separateAxes = false;
-            this._gradient = null;
-            this._gradientX = null;
-            this._gradientY = null;
-            this._gradientZ = null;
-            this._constantMin = 0;
-            this._constantMax = 0;
-            this._constantMinSeparate = null;
-            this._constantMaxSeparate = null;
-            this._gradientMin = null;
-            this._gradientMax = null;
-            this._gradientXMin = null;
-            this._gradientXMax = null;
-            this._gradientYMin = null;
-            this._gradientYMax = null;
-            this._gradientZMin = null;
-            this._gradientZMax = null;
-        }
         getMaxSizeInGradient(meshMode = false) {
             var i, n;
             var maxSize = -Number.MAX_VALUE;
@@ -17325,6 +17388,21 @@
     }
 
     class GradientVelocity {
+        constructor() {
+            this._type = 0;
+            this._constant = null;
+            this._gradientX = null;
+            this._gradientY = null;
+            this._gradientZ = null;
+            this._constantMin = null;
+            this._constantMax = null;
+            this._gradientXMin = null;
+            this._gradientXMax = null;
+            this._gradientYMin = null;
+            this._gradientYMax = null;
+            this._gradientZMin = null;
+            this._gradientZMax = null;
+        }
         static createByConstant(constant) {
             var gradientVelocity = new GradientVelocity();
             gradientVelocity._type = 0;
@@ -17396,21 +17474,6 @@
         get gradientZMax() {
             return this._gradientZMax;
         }
-        constructor() {
-            this._type = 0;
-            this._constant = null;
-            this._gradientX = null;
-            this._gradientY = null;
-            this._gradientZ = null;
-            this._constantMin = null;
-            this._constantMax = null;
-            this._gradientXMin = null;
-            this._gradientXMax = null;
-            this._gradientYMin = null;
-            this._gradientYMax = null;
-            this._gradientZMin = null;
-            this._gradientZMax = null;
-        }
         cloneTo(destObject) {
             var destGradientVelocity = destObject;
             destGradientVelocity._type = this._type;
@@ -17435,11 +17498,11 @@
     }
 
     class RotationOverLifetime {
-        get angularVelocity() {
-            return this._angularVelocity;
-        }
         constructor(angularVelocity) {
             this._angularVelocity = angularVelocity;
+        }
+        get angularVelocity() {
+            return this._angularVelocity;
         }
         cloneTo(destObject) {
             var destRotationOverLifetime = destObject;
@@ -18201,11 +18264,11 @@
     }
 
     class SizeOverLifetime {
-        get size() {
-            return this._size;
-        }
         constructor(size) {
             this._size = size;
+        }
+        get size() {
+            return this._size;
         }
         cloneTo(destObject) {
             var destSizeOverLifetime = destObject;
@@ -18241,6 +18304,12 @@
     }
 
     class StartFrame {
+        constructor() {
+            this._type = 0;
+            this._constant = 0;
+            this._constantMin = 0;
+            this._constantMax = 0;
+        }
         static createByConstant(constant = 0) {
             var rotationOverLifetime = new StartFrame();
             rotationOverLifetime._type = 0;
@@ -18266,12 +18335,6 @@
         get constantMax() {
             return this._constantMax;
         }
-        constructor() {
-            this._type = 0;
-            this._constant = 0;
-            this._constantMin = 0;
-            this._constantMax = 0;
-        }
         cloneTo(destObject) {
             var destStartFrame = destObject;
             destStartFrame._type = this._type;
@@ -18287,12 +18350,6 @@
     }
 
     class TextureSheetAnimation {
-        get frame() {
-            return this._frame;
-        }
-        get startFrame() {
-            return this._startFrame;
-        }
         constructor(frame, startFrame) {
             this.type = 0;
             this.randomRow = false;
@@ -18308,6 +18365,12 @@
             this.enableUVChannels = 1;
             this._frame = frame;
             this._startFrame = startFrame;
+        }
+        get frame() {
+            return this._frame;
+        }
+        get startFrame() {
+            return this._startFrame;
         }
         cloneTo(destObject) {
             var destTextureSheetAnimation = destObject;
@@ -18353,13 +18416,13 @@
     }
 
     class VelocityOverLifetime {
-        get velocity() {
-            return this._velocity;
-        }
         constructor(velocity) {
             this.enable = false;
             this.space = 0;
             this._velocity = velocity;
+        }
+        get velocity() {
+            return this._velocity;
         }
         cloneTo(destObject) {
             var destVelocityOverLifetime = destObject;
@@ -18412,6 +18475,23 @@
     VertexShuriKenParticle.PARTICLE_SIMULATIONUV = 15;
 
     class VertexShurikenParticleBillboard extends VertexShuriKenParticle {
+        constructor(cornerTextureCoordinate, positionStartLifeTime, velocity, startColor, startSize, startRotation0, startRotation1, startRotation2, ageAddScale, time, startSpeed, randoms0, randoms1, simulationWorldPostion) {
+            super();
+            this._cornerTextureCoordinate = cornerTextureCoordinate;
+            this._positionStartLifeTime = positionStartLifeTime;
+            this._velocity = velocity;
+            this._startColor = startColor;
+            this._startSize = startSize;
+            this._startRotation0 = startRotation0;
+            this._startRotation1 = startRotation1;
+            this._startRotation2 = startRotation2;
+            this._startLifeTime = ageAddScale;
+            this._time = time;
+            this._startSpeed = startSpeed;
+            this._randoms0 = randoms0;
+            this._randoms1 = randoms1;
+            this._simulationWorldPostion = simulationWorldPostion;
+        }
         static get vertexDeclaration() {
             return VertexShurikenParticleBillboard._vertexDeclaration;
         }
@@ -18513,6 +18593,9 @@
         get simulationWorldPostion() {
             return this._simulationWorldPostion;
         }
+    }
+
+    class VertexShurikenParticleMesh extends VertexShuriKenParticle {
         constructor(cornerTextureCoordinate, positionStartLifeTime, velocity, startColor, startSize, startRotation0, startRotation1, startRotation2, ageAddScale, time, startSpeed, randoms0, randoms1, simulationWorldPostion) {
             super();
             this._cornerTextureCoordinate = cornerTextureCoordinate;
@@ -18530,9 +18613,6 @@
             this._randoms1 = randoms1;
             this._simulationWorldPostion = simulationWorldPostion;
         }
-    }
-
-    class VertexShurikenParticleMesh extends VertexShuriKenParticle {
         static __init__() {
             VertexShurikenParticleMesh._vertexDeclaration = new Laya.VertexDeclaration(188, [new Laya.VertexElement(0, Laya.VertexElementFormat.Vector3, VertexShuriKenParticle.PARTICLE_POSITION0),
                 new Laya.VertexElement(12, Laya.VertexElementFormat.Vector4, VertexShuriKenParticle.PARTICLE_COLOR0),
@@ -18618,26 +18698,17 @@
         get simulationWorldPostion() {
             return this._simulationWorldPostion;
         }
-        constructor(cornerTextureCoordinate, positionStartLifeTime, velocity, startColor, startSize, startRotation0, startRotation1, startRotation2, ageAddScale, time, startSpeed, randoms0, randoms1, simulationWorldPostion) {
-            super();
-            this._cornerTextureCoordinate = cornerTextureCoordinate;
-            this._positionStartLifeTime = positionStartLifeTime;
-            this._velocity = velocity;
-            this._startColor = startColor;
-            this._startSize = startSize;
-            this._startRotation0 = startRotation0;
-            this._startRotation1 = startRotation1;
-            this._startRotation2 = startRotation2;
-            this._startLifeTime = ageAddScale;
-            this._time = time;
-            this._startSpeed = startSpeed;
-            this._randoms0 = randoms0;
-            this._randoms1 = randoms1;
-            this._simulationWorldPostion = simulationWorldPostion;
-        }
     }
 
     class Rand {
+        constructor(seed) {
+            this._temp = new Uint32Array(1);
+            this.seeds = new Uint32Array(4);
+            this.seeds[0] = seed;
+            this.seeds[1] = this.seeds[0] * 0x6C078965 + 1;
+            this.seeds[2] = this.seeds[1] * 0x6C078965 + 1;
+            this.seeds[3] = this.seeds[2] * 0x6C078965 + 1;
+        }
         static getFloatFromInt(v) {
             return (v & 0x007FFFFF) * (1.0 / 8388607.0);
         }
@@ -18648,14 +18719,6 @@
             return this.seeds[0];
         }
         set seed(seed) {
-            this.seeds[0] = seed;
-            this.seeds[1] = this.seeds[0] * 0x6C078965 + 1;
-            this.seeds[2] = this.seeds[1] * 0x6C078965 + 1;
-            this.seeds[3] = this.seeds[2] * 0x6C078965 + 1;
-        }
-        constructor(seed) {
-            this._temp = new Uint32Array(1);
-            this.seeds = new Uint32Array(4);
             this.seeds[0] = seed;
             this.seeds[1] = this.seeds[0] * 0x6C078965 + 1;
             this.seeds[2] = this.seeds[1] * 0x6C078965 + 1;
@@ -19160,6 +19223,177 @@
     ShurikenParticleData.startUVInfo = new Float32Array(4);
 
     class ShurikenParticleSystem extends GeometryElement {
+        constructor(render, meshTopology = Laya.MeshTopology.Triangles, drawType = Laya.DrawType.DrawElement) {
+            super(meshTopology, drawType);
+            this._bounds = null;
+            this._gravityOffset = new Laya.Vector2();
+            this._customBounds = null;
+            this._useCustomBounds = false;
+            this._owner = null;
+            this._ownerRender = null;
+            this._vertices = null;
+            this._floatCountPerVertex = 0;
+            this._startLifeTimeIndex = 0;
+            this._timeIndex = 0;
+            this._simulationUV_Index = 0;
+            this._simulateUpdate = false;
+            this._firstActiveElement = 0;
+            this._firstNewElement = 0;
+            this._firstFreeElement = 0;
+            this._firstRetiredElement = 0;
+            this._drawCounter = 0;
+            this._bufferMaxParticles = 0;
+            this._emission = null;
+            this._shape = null;
+            this._isEmitting = false;
+            this._isPlaying = false;
+            this._isPaused = false;
+            this._playStartDelay = 0;
+            this._frameRateTime = 0;
+            this._emissionTime = 0;
+            this._totalDelayTime = 0;
+            this._emissionDistance = 0;
+            this._emissionLastPosition = new Laya.Vector3();
+            this._burstsIndex = 0;
+            this._velocityOverLifetime = null;
+            this._colorOverLifetime = null;
+            this._sizeOverLifetime = null;
+            this._rotationOverLifetime = null;
+            this._textureSheetAnimation = null;
+            this._startLifetimeType = 0;
+            this._startLifetimeConstant = 0;
+            this._startLifeTimeGradient = null;
+            this._startLifetimeConstantMin = 0;
+            this._startLifetimeConstantMax = 0;
+            this._startLifeTimeGradientMin = null;
+            this._startLifeTimeGradientMax = null;
+            this._maxStartLifetime = 0;
+            this._uvLength = new Laya.Vector2();
+            this._vertexStride = 0;
+            this._indexStride = 0;
+            this._vertexBuffer = null;
+            this._indexBuffer = null;
+            this._bufferState = new Laya.BufferState();
+            this._updateMask = 0;
+            this._currentTime = 0;
+            this._startUpdateLoopCount = 0;
+            this._rand = null;
+            this._randomSeeds = null;
+            this.duration = 0;
+            this.looping = false;
+            this.prewarm = false;
+            this.startDelayType = 0;
+            this.startDelay = 0;
+            this.startDelayMin = 0;
+            this.startDelayMax = 0;
+            this.startSpeedType = 0;
+            this.startSpeedConstant = 0;
+            this.startSpeedConstantMin = 0;
+            this.startSpeedConstantMax = 0;
+            this.dragType = 0;
+            this.dragConstant = 0;
+            this.dragSpeedConstantMin = 0;
+            this.dragSpeedConstantMax = 0;
+            this.threeDStartSize = false;
+            this.startSizeType = 0;
+            this.startSizeConstant = 0;
+            this.startSizeConstantSeparate = null;
+            this.startSizeConstantMin = 0;
+            this.startSizeConstantMax = 0;
+            this.startSizeConstantMinSeparate = null;
+            this.startSizeConstantMaxSeparate = null;
+            this.threeDStartRotation = false;
+            this.startRotationType = 0;
+            this.startRotationConstant = 0;
+            this.startRotationConstantSeparate = null;
+            this.startRotationConstantMin = 0;
+            this.startRotationConstantMax = 0;
+            this.startRotationConstantMinSeparate = null;
+            this.startRotationConstantMaxSeparate = null;
+            this.randomizeRotationDirection = 0;
+            this.startColorType = 0;
+            this.startColorConstant = new Laya.Vector4(1, 1, 1, 1);
+            this.startColorConstantMin = new Laya.Vector4(0, 0, 0, 0);
+            this.startColorConstantMax = new Laya.Vector4(1, 1, 1, 1);
+            this.gravityModifier = 0;
+            this.simulationSpace = 0;
+            this.simulationSpeed = 1.0;
+            this.scaleMode = 1;
+            this.playOnAwake = false;
+            this.randomSeed = null;
+            this.autoRandomSeed = false;
+            this.isPerformanceMode = false;
+            this.indexFormat = Laya.IndexFormat.UInt16;
+            this._firstActiveElement = 0;
+            this._firstNewElement = 0;
+            this._firstFreeElement = 0;
+            this._firstRetiredElement = 0;
+            this._owner = render.owner;
+            this._ownerRender = render;
+            this._useCustomBounds = false;
+            this._currentTime = 0;
+            this._bounds = new Bounds(new Laya.Vector3(-Number.MAX_VALUE, -Number.MAX_VALUE, -Number.MAX_VALUE), new Laya.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE));
+            this.bufferState = this._bufferState = new Laya.BufferState();
+            this._isEmitting = false;
+            this._isPlaying = false;
+            this._isPaused = false;
+            this._burstsIndex = 0;
+            this._frameRateTime = 0;
+            this._emissionTime = 0;
+            this._totalDelayTime = 0;
+            this._simulateUpdate = false;
+            this._bufferMaxParticles = 1;
+            this.duration = 5.0;
+            this.looping = true;
+            this.prewarm = false;
+            this.startDelayType = 0;
+            this.startDelay = 0.0;
+            this.startDelayMin = 0.0;
+            this.startDelayMax = 0.0;
+            this._startLifetimeType = 0;
+            this._startLifetimeConstant = 5.0;
+            this._startLifeTimeGradient = new GradientDataNumber();
+            this._startLifetimeConstantMin = 0.0;
+            this._startLifetimeConstantMax = 5.0;
+            this._startLifeTimeGradientMin = new GradientDataNumber();
+            this._startLifeTimeGradientMax = new GradientDataNumber();
+            this._maxStartLifetime = 5.0;
+            this.startSpeedType = 0;
+            this.startSpeedConstant = 5.0;
+            this.startSpeedConstantMin = 0.0;
+            this.startSpeedConstantMax = 5.0;
+            this.dragType = 0;
+            this.dragConstant = 0;
+            this.dragSpeedConstantMin = 0;
+            this.dragSpeedConstantMax = 0;
+            this.threeDStartSize = false;
+            this.startSizeType = 0;
+            this.startSizeConstant = 1;
+            this.startSizeConstantSeparate = new Laya.Vector3(1, 1, 1);
+            this.startSizeConstantMin = 0;
+            this.startSizeConstantMax = 1;
+            this.startSizeConstantMinSeparate = new Laya.Vector3(0, 0, 0);
+            this.startSizeConstantMaxSeparate = new Laya.Vector3(1, 1, 1);
+            this.threeDStartRotation = false;
+            this.startRotationType = 0;
+            this.startRotationConstant = 0;
+            this.startRotationConstantSeparate = new Laya.Vector3(0, 0, 0);
+            this.startRotationConstantMin = 0.0;
+            this.startRotationConstantMax = 0.0;
+            this.startRotationConstantMinSeparate = new Laya.Vector3(0, 0, 0);
+            this.startRotationConstantMaxSeparate = new Laya.Vector3(0, 0, 0);
+            this.gravityModifier = 0.0;
+            this.simulationSpace = 1;
+            this.scaleMode = 1;
+            this.playOnAwake = true;
+            this._rand = new Rand(0);
+            this.autoRandomSeed = true;
+            this.randomSeed = new Uint32Array(1);
+            this._randomSeeds = new Uint32Array(ShurikenParticleSystem._RANDOMOFFSET.length);
+            this.isPerformanceMode = true;
+            this._emission = new Emission();
+            this._emission.enable = true;
+        }
         get maxParticles() {
             return this._bufferMaxParticles - 1;
         }
@@ -19690,177 +19924,6 @@
                 shaDat.removeDefine(ShuriKenParticle3DShaderDeclaration.SHADERDEFINE_TEXTURESHEETANIMATIONRANDOMCURVE);
             }
             this._textureSheetAnimation = value;
-        }
-        constructor(render, meshTopology = Laya.MeshTopology.Triangles, drawType = Laya.DrawType.DrawElement) {
-            super(meshTopology, drawType);
-            this._bounds = null;
-            this._gravityOffset = new Laya.Vector2();
-            this._customBounds = null;
-            this._useCustomBounds = false;
-            this._owner = null;
-            this._ownerRender = null;
-            this._vertices = null;
-            this._floatCountPerVertex = 0;
-            this._startLifeTimeIndex = 0;
-            this._timeIndex = 0;
-            this._simulationUV_Index = 0;
-            this._simulateUpdate = false;
-            this._firstActiveElement = 0;
-            this._firstNewElement = 0;
-            this._firstFreeElement = 0;
-            this._firstRetiredElement = 0;
-            this._drawCounter = 0;
-            this._bufferMaxParticles = 0;
-            this._emission = null;
-            this._shape = null;
-            this._isEmitting = false;
-            this._isPlaying = false;
-            this._isPaused = false;
-            this._playStartDelay = 0;
-            this._frameRateTime = 0;
-            this._emissionTime = 0;
-            this._totalDelayTime = 0;
-            this._emissionDistance = 0;
-            this._emissionLastPosition = new Laya.Vector3();
-            this._burstsIndex = 0;
-            this._velocityOverLifetime = null;
-            this._colorOverLifetime = null;
-            this._sizeOverLifetime = null;
-            this._rotationOverLifetime = null;
-            this._textureSheetAnimation = null;
-            this._startLifetimeType = 0;
-            this._startLifetimeConstant = 0;
-            this._startLifeTimeGradient = null;
-            this._startLifetimeConstantMin = 0;
-            this._startLifetimeConstantMax = 0;
-            this._startLifeTimeGradientMin = null;
-            this._startLifeTimeGradientMax = null;
-            this._maxStartLifetime = 0;
-            this._uvLength = new Laya.Vector2();
-            this._vertexStride = 0;
-            this._indexStride = 0;
-            this._vertexBuffer = null;
-            this._indexBuffer = null;
-            this._bufferState = new Laya.BufferState();
-            this._updateMask = 0;
-            this._currentTime = 0;
-            this._startUpdateLoopCount = 0;
-            this._rand = null;
-            this._randomSeeds = null;
-            this.duration = 0;
-            this.looping = false;
-            this.prewarm = false;
-            this.startDelayType = 0;
-            this.startDelay = 0;
-            this.startDelayMin = 0;
-            this.startDelayMax = 0;
-            this.startSpeedType = 0;
-            this.startSpeedConstant = 0;
-            this.startSpeedConstantMin = 0;
-            this.startSpeedConstantMax = 0;
-            this.dragType = 0;
-            this.dragConstant = 0;
-            this.dragSpeedConstantMin = 0;
-            this.dragSpeedConstantMax = 0;
-            this.threeDStartSize = false;
-            this.startSizeType = 0;
-            this.startSizeConstant = 0;
-            this.startSizeConstantSeparate = null;
-            this.startSizeConstantMin = 0;
-            this.startSizeConstantMax = 0;
-            this.startSizeConstantMinSeparate = null;
-            this.startSizeConstantMaxSeparate = null;
-            this.threeDStartRotation = false;
-            this.startRotationType = 0;
-            this.startRotationConstant = 0;
-            this.startRotationConstantSeparate = null;
-            this.startRotationConstantMin = 0;
-            this.startRotationConstantMax = 0;
-            this.startRotationConstantMinSeparate = null;
-            this.startRotationConstantMaxSeparate = null;
-            this.randomizeRotationDirection = 0;
-            this.startColorType = 0;
-            this.startColorConstant = new Laya.Vector4(1, 1, 1, 1);
-            this.startColorConstantMin = new Laya.Vector4(0, 0, 0, 0);
-            this.startColorConstantMax = new Laya.Vector4(1, 1, 1, 1);
-            this.gravityModifier = 0;
-            this.simulationSpace = 0;
-            this.simulationSpeed = 1.0;
-            this.scaleMode = 1;
-            this.playOnAwake = false;
-            this.randomSeed = null;
-            this.autoRandomSeed = false;
-            this.isPerformanceMode = false;
-            this.indexFormat = Laya.IndexFormat.UInt16;
-            this._firstActiveElement = 0;
-            this._firstNewElement = 0;
-            this._firstFreeElement = 0;
-            this._firstRetiredElement = 0;
-            this._owner = render.owner;
-            this._ownerRender = render;
-            this._useCustomBounds = false;
-            this._currentTime = 0;
-            this._bounds = new Bounds(new Laya.Vector3(-Number.MAX_VALUE, -Number.MAX_VALUE, -Number.MAX_VALUE), new Laya.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE));
-            this.bufferState = this._bufferState = new Laya.BufferState();
-            this._isEmitting = false;
-            this._isPlaying = false;
-            this._isPaused = false;
-            this._burstsIndex = 0;
-            this._frameRateTime = 0;
-            this._emissionTime = 0;
-            this._totalDelayTime = 0;
-            this._simulateUpdate = false;
-            this._bufferMaxParticles = 1;
-            this.duration = 5.0;
-            this.looping = true;
-            this.prewarm = false;
-            this.startDelayType = 0;
-            this.startDelay = 0.0;
-            this.startDelayMin = 0.0;
-            this.startDelayMax = 0.0;
-            this._startLifetimeType = 0;
-            this._startLifetimeConstant = 5.0;
-            this._startLifeTimeGradient = new GradientDataNumber();
-            this._startLifetimeConstantMin = 0.0;
-            this._startLifetimeConstantMax = 5.0;
-            this._startLifeTimeGradientMin = new GradientDataNumber();
-            this._startLifeTimeGradientMax = new GradientDataNumber();
-            this._maxStartLifetime = 5.0;
-            this.startSpeedType = 0;
-            this.startSpeedConstant = 5.0;
-            this.startSpeedConstantMin = 0.0;
-            this.startSpeedConstantMax = 5.0;
-            this.dragType = 0;
-            this.dragConstant = 0;
-            this.dragSpeedConstantMin = 0;
-            this.dragSpeedConstantMax = 0;
-            this.threeDStartSize = false;
-            this.startSizeType = 0;
-            this.startSizeConstant = 1;
-            this.startSizeConstantSeparate = new Laya.Vector3(1, 1, 1);
-            this.startSizeConstantMin = 0;
-            this.startSizeConstantMax = 1;
-            this.startSizeConstantMinSeparate = new Laya.Vector3(0, 0, 0);
-            this.startSizeConstantMaxSeparate = new Laya.Vector3(1, 1, 1);
-            this.threeDStartRotation = false;
-            this.startRotationType = 0;
-            this.startRotationConstant = 0;
-            this.startRotationConstantSeparate = new Laya.Vector3(0, 0, 0);
-            this.startRotationConstantMin = 0.0;
-            this.startRotationConstantMax = 0.0;
-            this.startRotationConstantMinSeparate = new Laya.Vector3(0, 0, 0);
-            this.startRotationConstantMaxSeparate = new Laya.Vector3(0, 0, 0);
-            this.gravityModifier = 0.0;
-            this.simulationSpace = 1;
-            this.scaleMode = 1;
-            this.playOnAwake = true;
-            this._rand = new Rand(0);
-            this.autoRandomSeed = true;
-            this.randomSeed = new Uint32Array(1);
-            this._randomSeeds = new Uint32Array(ShurikenParticleSystem._RANDOMOFFSET.length);
-            this.isPerformanceMode = true;
-            this._emission = new Emission();
-            this._emission.enable = true;
         }
         _getVertexBuffer(index = 0) {
             if (index === 0)
@@ -21258,6 +21321,11 @@
     }
 
     class ShurikenParticleMaterial extends Material {
+        constructor() {
+            super();
+            this.setShaderName("PARTICLESHURIKEN");
+            this.renderMode = ShurikenParticleMaterial.RENDERMODE_ALPHABLENDED;
+        }
         static __initDefine__() {
             ShurikenParticleMaterial.SHADERDEFINE_DIFFUSEMAP = Laya.Shader3D.getDefineByName("DIFFUSEMAP");
             ShurikenParticleMaterial.SHADERDEFINE_TINTCOLOR = Laya.Shader3D.getDefineByName("TINTCOLOR");
@@ -21296,11 +21364,6 @@
             else
                 this._shaderValues.removeDefine(ShurikenParticleMaterial.SHADERDEFINE_DIFFUSEMAP);
             this._shaderValues.setTexture(ShurikenParticleMaterial.DIFFUSETEXTURE, value);
-        }
-        constructor() {
-            super();
-            this.setShaderName("PARTICLESHURIKEN");
-            this.renderMode = ShurikenParticleMaterial.RENDERMODE_ALPHABLENDED;
         }
         clone() {
             var dest = new ShurikenParticleMaterial();
@@ -21456,6 +21519,17 @@
     ShurikenParticleMaterial.RENDERMODE_ADDTIVE = 1;
 
     class ShurikenParticleRenderer extends BaseRender {
+        constructor() {
+            super();
+            this._finalGravity = new Laya.Vector3();
+            this._dragConstant = new Laya.Vector2();
+            this._mesh = null;
+            this.stretchedBillboardCameraSpeedScale = 0;
+            this.stretchedBillboardSpeedScale = 0;
+            this.stretchedBillboardLengthScale = 2;
+            this.renderMode = 0;
+            this._supportOctree = false;
+        }
         get particleSystem() {
             return this._particleSystem;
         }
@@ -21517,17 +21591,6 @@
                 this._particleSystem._initBufferDatas();
             }
         }
-        constructor() {
-            super();
-            this._finalGravity = new Laya.Vector3();
-            this._dragConstant = new Laya.Vector2();
-            this._mesh = null;
-            this.stretchedBillboardCameraSpeedScale = 0;
-            this.stretchedBillboardSpeedScale = 0;
-            this.stretchedBillboardLengthScale = 2;
-            this.renderMode = 0;
-            this._supportOctree = false;
-        }
         _onAdded() {
             super._onAdded();
             if (!Laya.LayaGL.renderEngine.getCapable(Laya.RenderCapable.DrawElement_Instance)) {
@@ -21583,6 +21646,8 @@
             }
         }
         _needRender(boundFrustum, context) {
+            if (!Laya.Stat.enableParticle)
+                return false;
             if (boundFrustum) {
                 if (boundFrustum.intersects(this.bounds)) {
                     if (this._particleSystem.isAlive)
@@ -21677,16 +21742,16 @@
     }
 
     class ShuriKenParticle3D extends RenderableSprite3D {
+        constructor() {
+            super(null);
+            this._render = this.addComponent(ShurikenParticleRenderer);
+            this._particleSystem = this._render._particleSystem;
+        }
         get particleSystem() {
             return this._particleSystem;
         }
         get particleRenderer() {
             return this._render;
-        }
-        constructor() {
-            super(null);
-            this._render = this.addComponent(ShurikenParticleRenderer);
-            this._particleSystem = this._render._particleSystem;
         }
         _parseModule(module, moduleData) {
             for (var t in moduleData) {
@@ -22429,6 +22494,9 @@
     }
 
     class SkinRenderElement extends RenderElement {
+        constructor() {
+            super();
+        }
         set render(value) {
             this._baseRender = value;
             this._renderElementOBJ._renderShaderData = value._shaderValues;
@@ -22439,9 +22507,6 @@
         setSkinData(value) {
             this._renderElementOBJ.skinnedData = value;
         }
-        constructor() {
-            super();
-        }
         _createRenderElementOBJ() {
             this._renderElementOBJ = Laya.LayaGL.renderOBJCreate.createSkinRenderElement();
         }
@@ -22451,6 +22516,15 @@
     }
 
     class SkinnedMeshRenderer extends MeshRenderer {
+        constructor() {
+            super();
+            this._bones = [];
+            this._inverseBindPosesBufferForNative = null;
+            this._skinnedMatrixCachesBufferForNative = null;
+            this._bonesTransformForNative = null;
+            this._localBounds = new Bounds(Laya.Vector3.ZERO, Laya.Vector3.ZERO);
+            this._shaderValues.addDefine(SkinnedMeshSprite3DShaderDeclaration.SHADERDEFINE_BONE);
+        }
         get localBounds() {
             return this._localBounds;
         }
@@ -22482,15 +22556,6 @@
         }
         get bones() {
             return this._bones;
-        }
-        constructor() {
-            super();
-            this._bones = [];
-            this._inverseBindPosesBufferForNative = null;
-            this._skinnedMatrixCachesBufferForNative = null;
-            this._bonesTransformForNative = null;
-            this._localBounds = new Bounds(Laya.Vector3.ZERO, Laya.Vector3.ZERO);
-            this._shaderValues.addDefine(SkinnedMeshSprite3DShaderDeclaration.SHADERDEFINE_BONE);
         }
         _computeSkinnedData() {
             if (this._cacheMesh) {
@@ -22571,6 +22636,11 @@
                     }
                 }
             }
+        }
+        _needRender(boundFrustum, context) {
+            if (!Laya.Stat.enableSkin)
+                return false;
+            return super._needRender(boundFrustum, context);
         }
         _createRenderElement() {
             let renderelement = new SkinRenderElement();
@@ -22708,6 +22778,13 @@
     }
 
     class SimpleSkinnedMeshRenderer extends SkinnedMeshRenderer {
+        constructor() {
+            super();
+            this._simpleAnimatorParams = new Laya.Vector4();
+            this._simpleAnimatorOffset = new Laya.Vector2();
+            this._shaderValues.addDefine(SkinnedMeshSprite3DShaderDeclaration.SHADERDEFINE_SIMPLEBONE);
+            this._shaderValues.addDefine(SkinnedMeshSprite3DShaderDeclaration.SHADERDEFINE_BONE);
+        }
         get simpleAnimatorTexture() {
             return this._simpleAnimatorTexture;
         }
@@ -22723,13 +22800,6 @@
         }
         set simpleAnimatorOffset(value) {
             value.cloneTo(this._simpleAnimatorOffset);
-        }
-        constructor() {
-            super();
-            this._simpleAnimatorParams = new Laya.Vector4();
-            this._simpleAnimatorOffset = new Laya.Vector2();
-            this._shaderValues.addDefine(SkinnedMeshSprite3DShaderDeclaration.SHADERDEFINE_SIMPLEBONE);
-            this._shaderValues.addDefine(SkinnedMeshSprite3DShaderDeclaration.SHADERDEFINE_BONE);
         }
         _createRenderElement() {
             let renderelement = new SubMeshRenderElement();
@@ -22786,6 +22856,12 @@
     }
 
     class SimpleSkinnedMeshSprite3D extends RenderableSprite3D {
+        constructor(mesh = null, name = null) {
+            super(name);
+            this._meshFilter = this.addComponent(MeshFilter);
+            this._render = this.addComponent(SimpleSkinnedMeshRenderer);
+            (mesh) && (this._meshFilter.sharedMesh = mesh);
+        }
         static __init__() {
             SimpleSkinnedMeshRenderer.SIMPLE_SIMPLEANIMATORPARAMS = SimpleSkinnedMeshSprite3D.SIMPLE_SIMPLEANIMATORPARAMS;
             SimpleSkinnedMeshRenderer.SIMPLE_SIMPLEANIMATORTEXTURE = SimpleSkinnedMeshSprite3D.SIMPLE_SIMPLEANIMATORTEXTURE;
@@ -22803,12 +22879,6 @@
         }
         get simpleSkinnedMeshRenderer() {
             return this._render;
-        }
-        constructor(mesh = null, name = null) {
-            super(name);
-            this._meshFilter = this.addComponent(MeshFilter);
-            this._render = this.addComponent(SimpleSkinnedMeshRenderer);
-            (mesh) && (this._meshFilter.sharedMesh = mesh);
         }
         _parse(data, spriteMap) {
             super._parse(data, spriteMap);
@@ -22873,6 +22943,12 @@
     SimpleSkinnedMeshSprite3D._tempArray0 = [];
 
     class SkinnedMeshSprite3D extends RenderableSprite3D {
+        constructor(mesh = null, name = null) {
+            super(name);
+            this._meshFilter = this.addComponent(MeshFilter);
+            this._render = this.addComponent(SkinnedMeshRenderer);
+            (mesh) && (this._meshFilter.sharedMesh = mesh);
+        }
         static __init__() {
             SkinnedMeshSprite3DShaderDeclaration.SHADERDEFINE_BONE = Laya.Shader3D.getDefineByName("BONE");
             SkinnedMeshSprite3DShaderDeclaration.SHADERDEFINE_SIMPLEBONE = Laya.Shader3D.getDefineByName("SIMPLEBONE");
@@ -22885,12 +22961,6 @@
         }
         get skinnedMeshRenderer() {
             return this._render;
-        }
-        constructor(mesh = null, name = null) {
-            super(name);
-            this._meshFilter = this.addComponent(MeshFilter);
-            this._render = this.addComponent(SkinnedMeshRenderer);
-            (mesh) && (this._meshFilter.sharedMesh = mesh);
         }
         _parse(data, spriteMap) {
             super._parse(data, spriteMap);
@@ -23306,6 +23376,11 @@
     TrailGeometry._type = GeometryElement._typeCounter++;
 
     class TrailMaterial extends Material {
+        constructor() {
+            super();
+            this.setShaderName("Trail");
+            this.materialRenderMode = exports.MaterialRenderMode.RENDERMODE_ALPHABLENDED;
+        }
         static __initDefine__() {
             TrailMaterial.MAINTEXTURE = Laya.Shader3D.propertyNameToID("u_MainTexture");
             TrailMaterial.TINTCOLOR = Laya.Shader3D.propertyNameToID("u_MainColor");
@@ -23337,11 +23412,6 @@
             else {
                 this._shaderValues.getVector(TrailMaterial.TILINGOFFSET).setValue(1.0, 1.0, 0.0, 0.0);
             }
-        }
-        constructor() {
-            super();
-            this.setShaderName("Trail");
-            this.materialRenderMode = exports.MaterialRenderMode.RENDERMODE_ALPHABLENDED;
         }
         clone() {
             var dest = new TrailMaterial();
@@ -23379,6 +23449,16 @@
     TrailMaterial.RENDERMODE_ADDTIVE = 1;
 
     class TrailFilter {
+        constructor(owner) {
+            this._textureMode = TrailTextureMode.Stretch;
+            this._totalLength = 0;
+            this._lastPosition = new Laya.Vector3();
+            this._curtime = 0;
+            this.alignment = exports.TrailAlignment.View;
+            this._ownerRender = owner;
+            this._initDefaultData();
+            this.addRenderElement();
+        }
         static __init__() {
             TrailFilter.CURTIME = Laya.Shader3D.propertyNameToID("u_CurTime");
             TrailFilter.LIFETIME = Laya.Shader3D.propertyNameToID("u_LifeTime");
@@ -23436,16 +23516,6 @@
         }
         set textureMode(value) {
             this._textureMode = value;
-        }
-        constructor(owner) {
-            this._textureMode = TrailTextureMode.Stretch;
-            this._totalLength = 0;
-            this._lastPosition = new Laya.Vector3();
-            this._curtime = 0;
-            this.alignment = exports.TrailAlignment.View;
-            this._ownerRender = owner;
-            this._initDefaultData();
-            this.addRenderElement();
         }
         addRenderElement() {
             var render = this._ownerRender;
@@ -23609,17 +23679,17 @@
     }
 
     class TrailSprite3D extends RenderableSprite3D {
+        constructor(name = null) {
+            super(name);
+            this._render = this.addComponent(TrailRenderer);
+            this._geometryFilter = this._render._trailFilter;
+        }
         static __init__() { }
         get trailFilter() {
             return this._geometryFilter;
         }
         get trailRenderer() {
             return this._render;
-        }
-        constructor(name = null) {
-            super(name);
-            this._render = this.addComponent(TrailRenderer);
-            this._geometryFilter = this._render._trailFilter;
         }
         _parse(data, spriteMap) {
             super._parse(data, spriteMap);
@@ -23678,17 +23748,17 @@
     }
 
     class InstanceRenderElement extends RenderElement {
-        static create() {
-            let elemet = InstanceRenderElement._pool.length > 0 ? InstanceRenderElement._pool.pop() : new InstanceRenderElement();
-            elemet._isInPool = false;
-            elemet.clear();
-            return elemet;
-        }
         constructor() {
             super();
             this.setGeometry(new MeshInstanceGeometry(null));
             this._instanceBatchElementList = new Laya.SingletonList();
             this._isUpdataData = true;
+        }
+        static create() {
+            let elemet = InstanceRenderElement._pool.length > 0 ? InstanceRenderElement._pool.pop() : new InstanceRenderElement();
+            elemet._isInPool = false;
+            elemet.clear();
+            return elemet;
         }
         getInvertFront() {
             return false;
@@ -23810,9 +23880,6 @@
     InstanceRenderElement._pool = [];
 
     class SubMesh extends GeometryElement {
-        get indexCount() {
-            return this._indexCount;
-        }
         constructor(mesh) {
             super(Laya.MeshTopology.Triangles, Laya.DrawType.DrawElement);
             this.indexFormat = mesh.indexFormat;
@@ -23824,6 +23891,9 @@
             this._boneIndicesList = [];
             this._subIndexBufferStart = [];
             this._subIndexBufferCount = [];
+        }
+        get indexCount() {
+            return this._indexCount;
         }
         _setIndexRange(indexStart, indexCount, indexFormat = Laya.IndexFormat.UInt16) {
             this._indexStart = indexStart;
@@ -23901,6 +23971,26 @@
         }
     }
     class Mesh extends Laya.Resource {
+        constructor(isReadable = true) {
+            super();
+            this._tempVector30 = new Laya.Vector3();
+            this._tempVector31 = new Laya.Vector3();
+            this._tempVector32 = new Laya.Vector3();
+            this._minVerticesUpdate = -1;
+            this._maxVerticesUpdate = -1;
+            this._needUpdateBounds = true;
+            this._bufferState = new Laya.BufferState();
+            this._instanceBufferStateType = 0;
+            this._vertexBuffer = null;
+            this._indexBuffer = null;
+            this._skinnedMatrixCaches = [];
+            this._vertexCount = 0;
+            this._indexFormat = Laya.IndexFormat.UInt16;
+            this._bounds = new Bounds(new Laya.Vector3(), new Laya.Vector3());
+            this._isReadable = isReadable;
+            this._subMeshes = [];
+            this.destoryedImmediately = false;
+        }
         static __init__() {
             var physics3D = Physics3D._bullet;
             if (physics3D) {
@@ -23939,26 +24029,6 @@
             this._subMeshes.forEach(element => {
                 element.indexFormat = value;
             });
-        }
-        constructor(isReadable = true) {
-            super();
-            this._tempVector30 = new Laya.Vector3();
-            this._tempVector31 = new Laya.Vector3();
-            this._tempVector32 = new Laya.Vector3();
-            this._minVerticesUpdate = -1;
-            this._maxVerticesUpdate = -1;
-            this._needUpdateBounds = true;
-            this._bufferState = new Laya.BufferState();
-            this._instanceBufferStateType = 0;
-            this._vertexBuffer = null;
-            this._indexBuffer = null;
-            this._skinnedMatrixCaches = [];
-            this._vertexCount = 0;
-            this._indexFormat = Laya.IndexFormat.UInt16;
-            this._bounds = new Bounds(new Laya.Vector3(), new Laya.Vector3());
-            this._isReadable = isReadable;
-            this._subMeshes = [];
-            this.destoryedImmediately = false;
         }
         _getPositionElement(vertexBuffer) {
             var vertexElements = vertexBuffer.vertexDeclaration._vertexElements;
@@ -24509,7 +24579,7 @@
     }
 
     const tempVec$1 = new Laya.Vector3();
-    const tempVec1$1 = new Laya.Vector3();
+    new Laya.Vector3();
     class LODInfo {
         constructor(mincullRate) {
             this._mincullRate = mincullRate;
@@ -24611,6 +24681,9 @@
             this._updateRecaculateFlag();
             this._visialIndex = -1;
             this._lodCount = this._lods.length;
+        }
+        get nowRate() {
+            return this._nowRate;
         }
         get bounds() {
             this.recalculateBounds();
@@ -24745,10 +24818,7 @@
             if (length > checkCamera.farPlane || cameraFrustum.containsPoint(this._lodPosition) == 0) {
                 return;
             }
-            checkCamera.transform.worldMatrix.getForward(tempVec1$1);
-            Laya.Vector3.normalize(tempVec$1, tempVec$1);
-            Laya.Vector3.normalize(tempVec1$1, tempVec1$1);
-            let rateYDistance = length * Math.abs(Laya.Vector3.dot(tempVec$1, tempVec1$1)) / checkCamera.farPlane * maxYDistance;
+            let rateYDistance = length / checkCamera.farPlane * maxYDistance;
             let rate = (this._size / rateYDistance);
             this._nowRate = rate;
             this._applyVisibleRate(rate);
@@ -24771,6 +24841,8 @@
     }
 
     class PixelLineVertex {
+        constructor() {
+        }
         static get vertexDeclaration() {
             return PixelLineVertex._vertexDeclaration;
         }
@@ -24780,8 +24852,6 @@
         }
         get vertexDeclaration() {
             return PixelLineVertex._vertexDeclaration;
-        }
-        constructor() {
         }
     }
 
@@ -24980,6 +25050,11 @@
     PixelLineFilter._type = GeometryElement._typeCounter++;
 
     class PixelLineMaterial extends Material {
+        constructor() {
+            super();
+            this.setShaderName("LineShader");
+            this._shaderValues.setVector(PixelLineMaterial.COLOR, new Laya.Vector4(1.0, 1.0, 1.0, 1.0));
+        }
         static __initDefine__() {
             PixelLineMaterial.COLOR = Laya.Shader3D.propertyNameToID("u_Color");
         }
@@ -24988,11 +25063,6 @@
         }
         set color(value) {
             this._shaderValues.setVector(PixelLineMaterial.COLOR, value);
-        }
-        constructor() {
-            super();
-            this.setShaderName("LineShader");
-            this._shaderValues.setVector(PixelLineMaterial.COLOR, new Laya.Vector4(1.0, 1.0, 1.0, 1.0));
         }
         clone() {
             var dest = new PixelLineMaterial();
@@ -25173,6 +25243,9 @@
     }
 
     class AnimatorPlayState {
+        constructor() {
+            this._currentState = null;
+        }
         get normalizedTime() {
             return this._normalizedTime;
         }
@@ -25181,9 +25254,6 @@
         }
         get animatorState() {
             return this._currentState;
-        }
-        constructor() {
-            this._currentState = null;
         }
         _resetPlayState(startTime, clipDuration) {
             this._finish = false;
@@ -25207,6 +25277,25 @@
     }
 
     class AnimatorControllerLayer {
+        constructor(name) {
+            this._referenceCount = 0;
+            this._playType = -1;
+            this._crossDuration = -1;
+            this._crossMark = 0;
+            this._crossNodesOwnersCount = 0;
+            this._crossNodesOwners = [];
+            this._crossNodesOwnersIndicesMap = {};
+            this._srcCrossClipNodeIndices = [];
+            this._destCrossClipNodeIndices = [];
+            this._states = [];
+            this._playStateInfo = new AnimatorPlayState();
+            this._crossPlayStateInfo = new AnimatorPlayState();
+            this.blendingMode = AnimatorControllerLayer.BLENDINGMODE_OVERRIDE;
+            this.defaultWeight = 1.0;
+            this.playOnWake = true;
+            this.enable = true;
+            this.name = name;
+        }
         get defaultState() {
             return this._defaultState;
         }
@@ -25259,25 +25348,6 @@
             }
             this._states.length = 0;
             this._states.push(...states);
-        }
-        constructor(name) {
-            this._referenceCount = 0;
-            this._playType = -1;
-            this._crossDuration = -1;
-            this._crossMark = 0;
-            this._crossNodesOwnersCount = 0;
-            this._crossNodesOwners = [];
-            this._crossNodesOwnersIndicesMap = {};
-            this._srcCrossClipNodeIndices = [];
-            this._destCrossClipNodeIndices = [];
-            this._states = [];
-            this._playStateInfo = new AnimatorPlayState();
-            this._crossPlayStateInfo = new AnimatorPlayState();
-            this.blendingMode = AnimatorControllerLayer.BLENDINGMODE_OVERRIDE;
-            this.defaultWeight = 1.0;
-            this.playOnWake = true;
-            this.enable = true;
-            this.name = name;
         }
         _removeClip(clipStateInfos, index, state) {
             var clip = state._clip;
@@ -25385,6 +25455,20 @@
     }
 
     class AnimatorState extends Laya.EventDispatcher {
+        constructor() {
+            super();
+            this._referenceCount = 0;
+            this._clip = null;
+            this._nodeOwners = [];
+            this._currentFrameIndices = null;
+            this._realtimeDatas = [];
+            this._scripts = null;
+            this._transitions = [];
+            this._soloTransitions = [];
+            this.speed = 1.0;
+            this.clipStart = 0.0;
+            this.clipEnd = 1.0;
+        }
         get clip() {
             return this._clip;
         }
@@ -25439,20 +25523,6 @@
         }
         set soloTransitions(value) {
             this._soloTransitions = value;
-        }
-        constructor() {
-            super();
-            this._referenceCount = 0;
-            this._clip = null;
-            this._nodeOwners = [];
-            this._currentFrameIndices = null;
-            this._realtimeDatas = [];
-            this._scripts = null;
-            this._transitions = [];
-            this._soloTransitions = [];
-            this.speed = 1.0;
-            this.clipStart = 0.0;
-            this.clipEnd = 1.0;
         }
         _eventStart() {
             this.event(AnimatorState.EVENT_OnStateEnter);
@@ -25584,6 +25654,21 @@
     }
 
     class Animator extends Laya.Component {
+        constructor() {
+            super();
+            this._keyframeNodeOwners = [];
+            this._updateMode = Laya.AnimatorUpdateMode.Normal;
+            this._lowUpdateDelty = 20;
+            this._animatorParams = {};
+            this._linkAvatarSpritesData = {};
+            this._linkAvatarSprites = [];
+            this._renderableSprites = [];
+            this.cullingMode = Animator.CULLINGMODE_CULLCOMPLETELY;
+            this._controllerLayers = [];
+            this._speed = 1.0;
+            this._keyframeNodeOwnerMap = {};
+            this._updateMark = 0;
+        }
         set controller(val) {
             this._controller = val;
             if (this._controller) {
@@ -25613,21 +25698,6 @@
         }
         get animatorParams() {
             return this._animatorParams;
-        }
-        constructor() {
-            super();
-            this._keyframeNodeOwners = [];
-            this._updateMode = Laya.AnimatorUpdateMode.Normal;
-            this._lowUpdateDelty = 20;
-            this._animatorParams = {};
-            this._linkAvatarSpritesData = {};
-            this._linkAvatarSprites = [];
-            this._renderableSprites = [];
-            this.cullingMode = Animator.CULLINGMODE_CULLCOMPLETELY;
-            this._controllerLayers = [];
-            this._speed = 1.0;
-            this._keyframeNodeOwnerMap = {};
-            this._updateMark = 0;
         }
         _addKeyframeNodeOwner(clipOwners, node, propertyOwner) {
             var nodeIndex = node._indexInList;
@@ -26645,6 +26715,8 @@
             delta = this._applyUpdateMode(delta);
             if (this._speed === 0 || delta === 0)
                 return;
+            if (!Laya.Stat.enableAnimatorUpdate)
+                return;
             var i, n;
             this._updateMark++;
             for (i = 0, n = this._controllerLayers.length; i < n; i++) {
@@ -27026,9 +27098,9 @@
         }
     }
 
-    var BlitVS = "#define SHADER_NAME BlitVS\n\nvarying vec2 v_Texcoord0;\n\nvoid main()\n{\n    gl_Position = vec4(u_OffsetScale.x * 2.0 - 1.0 + (a_PositionTexcoord.x + 1.0) * u_OffsetScale.z, (1.0 - ((u_OffsetScale.y * 2.0 - 1.0 + (-a_PositionTexcoord.y + 1.0) * u_OffsetScale.w) + 1.0) / 2.0) * 2.0 - 1.0, 0.0, 1.0);\n\n    v_Texcoord0 = a_PositionTexcoord.zw;\n}";
+    var BlitVS = "#define SHADER_NAME BlitVS\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nvoid main()\r\n{\r\n    gl_Position = vec4(u_OffsetScale.x * 2.0 - 1.0 + (a_PositionTexcoord.x + 1.0) * u_OffsetScale.z, (1.0 - ((u_OffsetScale.y * 2.0 - 1.0 + (-a_PositionTexcoord.y + 1.0) * u_OffsetScale.w) + 1.0) / 2.0) * 2.0 - 1.0, 0.0, 1.0);\r\n\r\n    v_Texcoord0 = a_PositionTexcoord.zw;\r\n}";
 
-    var BlitLUTShader = "#define SHADER_NAME BlitLUTFS\n\n#include \"Color.glsl\";\n\n#include \"ColorGrading.glsl\";\n#include \"LUT.glsl\";\n\nuniform sampler2D u_Lut;\nuniform vec4 u_LutParams;//w postExposure\n\n    #ifdef CUSTOMLUT\nuniform sampler2D u_CustomLut;\nuniform vec4 u_CustomLutParams;\n    #endif // CUSTOMLUT\n\nvarying vec2 v_Texcoord0;\n\nvoid main()\n{\n    gl_FragColor = texture2D(u_MainTex, v_Texcoord0);\n    vec3 color = gl_FragColor.rgb;\n    // gl_FragColor.rgb = applyLut(color, 1.0, u_Lut, u_LutParams);\n    color *= u_LutParams.w;\n    color = applyLut(u_Lut, linearToLogC(color), u_LutParams.xyz);\n\n    #ifdef CUSTOMLUT\n\n    float contrib = u_CustomLutParams.w;\n    vec3 gamma = linearToGamma(color);\n    vec3 userLut = applyLut(u_CustomLut, gamma, u_CustomLutParams);\n    gamma = mix(gamma, userLut, contrib);\n    color = gammaToLinear(gamma);\n\n    #endif // CUSTOMLUT\n\n    gl_FragColor.rgb = color;\n\n    #ifdef GAMMAOUT\n        gl_FragColor = linearToGamma(gl_FragColor);\n    #endif\n}\n";
+    var BlitLUTShader = "#define SHADER_NAME BlitLUTFS\r\n\r\n#include \"Color.glsl\";\r\n\r\n#include \"ColorGrading.glsl\";\r\n#include \"LUT.glsl\";\r\n\r\nuniform sampler2D u_Lut;\r\nuniform vec4 u_LutParams;//w postExposure\r\n\r\n    #ifdef CUSTOMLUT\r\nuniform sampler2D u_CustomLut;\r\nuniform vec4 u_CustomLutParams;\r\n    #endif // CUSTOMLUT\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nvoid main()\r\n{\r\n    gl_FragColor = texture2D(u_MainTex, v_Texcoord0);\r\n    vec3 color = gl_FragColor.rgb;\r\n    // gl_FragColor.rgb = applyLut(color, 1.0, u_Lut, u_LutParams);\r\n    color *= u_LutParams.w;\r\n    color = applyLut(u_Lut, linearToLogC(color), u_LutParams.xyz);\r\n\r\n    #ifdef CUSTOMLUT\r\n\r\n    float contrib = u_CustomLutParams.w;\r\n    vec3 gamma = linearToGamma(color);\r\n    vec3 userLut = applyLut(u_CustomLut, gamma, u_CustomLutParams);\r\n    gamma = mix(gamma, userLut, contrib);\r\n    color = gammaToLinear(gamma);\r\n\r\n    #endif // CUSTOMLUT\r\n\r\n    gl_FragColor.rgb = color;\r\n\r\n    #ifdef GAMMAOUT\r\n        gl_FragColor = linearToGamma(gl_FragColor);\r\n    #endif\r\n}\r\n";
 
     exports.ToneMappingType = void 0;
     (function (ToneMappingType) {
@@ -27036,6 +27108,58 @@
         ToneMappingType[ToneMappingType["ACES"] = 1] = "ACES";
     })(exports.ToneMappingType || (exports.ToneMappingType = {}));
     class ColorGradEffect extends PostProcessEffect {
+        constructor() {
+            super();
+            this._needBuildLUT = false;
+            this._lutBuilderMat = new Material();
+            this._lutSize = 32;
+            this._enableSplitTone = false;
+            this._splitShadow = new Laya.Vector3(0.5, 0.5, 0.5);
+            this._splitBalance = 0;
+            this._splithighlights = new Laya.Vector3(0.5, 0.5, 0.5);
+            this._u_SplitShadow = new Laya.Vector4(0, 0, 0);
+            this._enableSMH = false;
+            this._shadows = new Laya.Vector3(1, 1, 1);
+            this._midtones = new Laya.Vector3(1, 1, 1);
+            this._highlights = new Laya.Vector3(1, 1, 1);
+            this._limits = new Laya.Vector4(0, 0.33, 0.55, 1);
+            this._enableLiftGammaGain = false;
+            this._lift = new Laya.Vector3(0, 0, 0);
+            this._gamma = new Laya.Vector3(1, 1, 1);
+            this._gain = new Laya.Vector3(1, 1, 1);
+            this._enableBalance = false;
+            this._balance = new Laya.Vector3();
+            this._tint = 0;
+            this._temperature = 0;
+            this._enableColorAdjust = false;
+            this._postExposure = 1;
+            this._contrast = 1;
+            this._colorFilter = new Laya.Color(1, 1, 1);
+            this._HueShift = 0;
+            this._saturation = 1;
+            this._HueSatCon = new Laya.Vector4(0, 1, 1, 0);
+            this.default_balance = new Laya.Vector3(1, 1, 1);
+            this.default_splitShadow = new Laya.Vector4(0.5, 0.5, 0.5, 0.0);
+            this.default_splithighlights = new Laya.Vector3(0.5, 0.5, 0.5);
+            this.default_shadow = new Laya.Vector3(1, 1, 1);
+            this.default_midtones = new Laya.Vector3(1, 1, 1);
+            this.default_highlight = new Laya.Vector3(1, 1, 1);
+            this.default_limint = new Laya.Vector4(0.0, 0.3, 0.55, 1.0);
+            this.default_lift = new Laya.Vector3(0, 0, 0);
+            this.default_gamma = new Laya.Vector3(1, 1, 1);
+            this.default_gain = new Laya.Vector3(1, 1, 1);
+            this.default_ColorFilter = new Laya.Color(1, 1, 1, 1);
+            this.default_HueSatCon = new Laya.Vector4(0, 1, 1, 0);
+            this.singleton = true;
+            this.active = true;
+            this._needBuildLUT = true;
+            this._toneMapping = exports.ToneMappingType.None;
+            this._blitlutParams = new Laya.Vector4();
+            this._lutShaderData = Laya.LayaGL.renderOBJCreate.createShaderData(null);
+            this.lutSize = 32;
+            this._lutCommond = new CommandBuffer();
+            this._lutBuilderMat = new Material();
+        }
         static init() {
             ColorGradEffect.__initDefine__();
             let attributeMap = {
@@ -27284,58 +27408,6 @@
             this._needBuildLUT = true;
             this._saturation = value;
         }
-        constructor() {
-            super();
-            this._needBuildLUT = false;
-            this._lutBuilderMat = new Material();
-            this._lutSize = 32;
-            this._enableSplitTone = false;
-            this._splitShadow = new Laya.Vector3(0.5, 0.5, 0.5);
-            this._splitBalance = 0;
-            this._splithighlights = new Laya.Vector3(0.5, 0.5, 0.5);
-            this._u_SplitShadow = new Laya.Vector4(0, 0, 0);
-            this._enableSMH = false;
-            this._shadows = new Laya.Vector3(1, 1, 1);
-            this._midtones = new Laya.Vector3(1, 1, 1);
-            this._highlights = new Laya.Vector3(1, 1, 1);
-            this._limits = new Laya.Vector4(0, 0.33, 0.55, 1);
-            this._enableLiftGammaGain = false;
-            this._lift = new Laya.Vector3(0, 0, 0);
-            this._gamma = new Laya.Vector3(1, 1, 1);
-            this._gain = new Laya.Vector3(1, 1, 1);
-            this._enableBalance = false;
-            this._balance = new Laya.Vector3();
-            this._tint = 0;
-            this._temperature = 0;
-            this._enableColorAdjust = false;
-            this._postExposure = 1;
-            this._contrast = 1;
-            this._colorFilter = new Laya.Color(1, 1, 1);
-            this._HueShift = 0;
-            this._saturation = 1;
-            this._HueSatCon = new Laya.Vector4(0, 1, 1, 0);
-            this.default_balance = new Laya.Vector3(1, 1, 1);
-            this.default_splitShadow = new Laya.Vector4(0.5, 0.5, 0.5, 0.0);
-            this.default_splithighlights = new Laya.Vector3(0.5, 0.5, 0.5);
-            this.default_shadow = new Laya.Vector3(1, 1, 1);
-            this.default_midtones = new Laya.Vector3(1, 1, 1);
-            this.default_highlight = new Laya.Vector3(1, 1, 1);
-            this.default_limint = new Laya.Vector4(0.0, 0.3, 0.55, 1.0);
-            this.default_lift = new Laya.Vector3(0, 0, 0);
-            this.default_gamma = new Laya.Vector3(1, 1, 1);
-            this.default_gain = new Laya.Vector3(1, 1, 1);
-            this.default_ColorFilter = new Laya.Color(1, 1, 1, 1);
-            this.default_HueSatCon = new Laya.Vector4(0, 1, 1, 0);
-            this.singleton = true;
-            this.active = true;
-            this._needBuildLUT = true;
-            this._toneMapping = exports.ToneMappingType.None;
-            this._blitlutParams = new Laya.Vector4();
-            this._lutShaderData = Laya.LayaGL.renderOBJCreate.createShaderData(null);
-            this.lutSize = 32;
-            this._lutCommond = new CommandBuffer();
-            this._lutBuilderMat = new Material();
-        }
         get lutSize() {
             return this._lutSize;
         }
@@ -27442,6 +27514,18 @@
     }
 
     class PostProcess {
+        constructor() {
+            this._compositeShader = Laya.Shader3D.find("PostProcessComposite");
+            this._compositeShaderData = Laya.LayaGL.renderOBJCreate.createShaderData(null);
+            this._effects = [];
+            this._enable = true;
+            this._enableColorGrad = false;
+            this._context = null;
+            this._context = new PostProcessRenderContext();
+            this._context.compositeShaderData = this._compositeShaderData;
+            this._context.command = new CommandBuffer();
+            this._depthtextureFlag = 0;
+        }
         static __init__() {
             PostProcess.SHADERDEFINE_BLOOM_LOW = Laya.Shader3D.getDefineByName("BLOOM_LOW");
             PostProcess.SHADERDEFINE_BLOOM = Laya.Shader3D.getDefineByName("BLOOM");
@@ -27461,18 +27545,6 @@
             for (let i = 0; i < n; i++) {
                 this._depthtextureFlag |= this.effects[i].getCameraDepthTextureModeFlag();
             }
-        }
-        constructor() {
-            this._compositeShader = Laya.Shader3D.find("PostProcessComposite");
-            this._compositeShaderData = Laya.LayaGL.renderOBJCreate.createShaderData(null);
-            this._effects = [];
-            this._enable = true;
-            this._enableColorGrad = false;
-            this._context = null;
-            this._context = new PostProcessRenderContext();
-            this._context.compositeShaderData = this._compositeShaderData;
-            this._context.command = new CommandBuffer();
-            this._depthtextureFlag = 0;
         }
         get enable() {
             return this._enable;
@@ -27593,31 +27665,60 @@
         }
     }
 
-    var BloomVS = "#define SHADER_NAME BloomVS\nvarying vec2 v_Texcoord0;\nvec4 remapPositionZ(vec4 position)\n{\n    position.z = position.z * 2.0 - position.w;\n    return position;\n}\nvoid main() {\n\tgl_Position = vec4(a_PositionTexcoord.xy, 0.0, 1.0);\n\tv_Texcoord0 = a_PositionTexcoord.zw;\n\tgl_Position = remapPositionZ(gl_Position);\n}";
+    var BloomVS = "#define SHADER_NAME BloomVS\r\nvarying vec2 v_Texcoord0;\r\nvec4 remapPositionZ(vec4 position)\r\n{\r\n    position.z = position.z * 2.0 - position.w;\r\n    return position;\r\n}\r\nvoid main() {\r\n\tgl_Position = vec4(a_PositionTexcoord.xy, 0.0, 1.0);\r\n\tv_Texcoord0 = a_PositionTexcoord.zw;\r\n\tgl_Position = remapPositionZ(gl_Position);\r\n}";
 
-    var BloomDownsample13PS = "#define SHADER_NAME BloomDownSample13FS\n#include \"Colors.glsl\";\n#include \"Sampling.glsl\";\n\nvarying vec2 v_Texcoord0;\n\nvoid fragDownsample13() {\n\tmediump vec4 color = downsampleBox13Tap(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.xy);\n\tgl_FragColor = color;\n}\n\nvoid main() {\n\tfragDownsample13();\n}";
+    var BloomDownsample13PS = "#define SHADER_NAME BloomDownSample13FS\r\n#include \"Colors.glsl\";\r\n#include \"Sampling.glsl\";\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nvoid fragDownsample13() {\r\n\tmediump vec4 color = downsampleBox13Tap(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.xy);\r\n\tgl_FragColor = color;\r\n}\r\n\r\nvoid main() {\r\n\tfragDownsample13();\r\n}";
 
-    var BloomDownsample4PS = "#define SHADER_NAME BloomDownSample4FS\n\n#include \"Colors.glsl\";\n#include \"Sampling.glsl\";\n\nvarying vec2 v_Texcoord0;\n\nvoid fragDownsample4() {\n\tmediump vec4 color = downsampleBox4Tap(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.xy);\n\tgl_FragColor = color;\n}\n\nvoid main() {\n\tfragDownsample4();\n}";
+    var BloomDownsample4PS = "#define SHADER_NAME BloomDownSample4FS\r\n\r\n#include \"Colors.glsl\";\r\n#include \"Sampling.glsl\";\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nvoid fragDownsample4() {\r\n\tmediump vec4 color = downsampleBox4Tap(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.xy);\r\n\tgl_FragColor = color;\r\n}\r\n\r\nvoid main() {\r\n\tfragDownsample4();\r\n}";
 
-    var BloomPrefilter13PS = "#define SHADER_NAME BloomPreFilter13FS\n#include \"Colors.glsl\";\n#include \"Sampling.glsl\";\n\nvarying vec2 v_Texcoord0;\n\nmediump vec4 prefilter(mediump vec4 color, vec2 uv) {\n\tmediump float autoExposure = texture2D(u_AutoExposureTex, uv).r;\n\tcolor *= autoExposure;\n\tcolor = min(vec4(u_Params.x), color); // clamp to max\n\tcolor = quadraticThreshold(color, u_Threshold.x, u_Threshold.yzw);\n\treturn color;\n}\n\nvoid fragPrefilter13() {\n\tmediump vec4 color = downsampleBox13Tap(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.xy);\n\tgl_FragColor = prefilter(safeHDR(color), v_Texcoord0);\n}\n\nvoid main() {\n\tfragPrefilter13();\n}";
+    var BloomPrefilter13PS = "#define SHADER_NAME BloomPreFilter13FS\r\n#include \"Colors.glsl\";\r\n#include \"Sampling.glsl\";\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nmediump vec4 prefilter(mediump vec4 color, vec2 uv) {\r\n\tmediump float autoExposure = texture2D(u_AutoExposureTex, uv).r;\r\n\tcolor *= autoExposure;\r\n\tcolor = min(vec4(u_Params.x), color); // clamp to max\r\n\tcolor = quadraticThreshold(color, u_Threshold.x, u_Threshold.yzw);\r\n\treturn color;\r\n}\r\n\r\nvoid fragPrefilter13() {\r\n\tmediump vec4 color = downsampleBox13Tap(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.xy);\r\n\tgl_FragColor = prefilter(safeHDR(color), v_Texcoord0);\r\n}\r\n\r\nvoid main() {\r\n\tfragPrefilter13();\r\n}";
 
-    var BloomPrefilter4PS = "#define SHADER_NAME BloomPreFilter4FS\n#include \"Colors.glsl\";\n#include \"Sampling.glsl\";\n\nvarying vec2 v_Texcoord0;\n\nmediump vec4 prefilter(mediump vec4 color, vec2 uv) {\n\tmediump float autoExposure = texture2D(u_AutoExposureTex, uv).r;\n\tcolor *= autoExposure;\n\tcolor = min(vec4(u_Params.x), color); // clamp to max\n\tcolor = quadraticThreshold(color, u_Threshold.x, u_Threshold.yzw);\n\treturn color;\n}\n\nvoid fragPrefilter4() {\n\tmediump vec4 color = downsampleBox4Tap(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.xy);\n\tgl_FragColor = prefilter(safeHDR(color), v_Texcoord0);\n}\n\nvoid main() {\n\tfragPrefilter4();\n}";
+    var BloomPrefilter4PS = "#define SHADER_NAME BloomPreFilter4FS\r\n#include \"Colors.glsl\";\r\n#include \"Sampling.glsl\";\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nmediump vec4 prefilter(mediump vec4 color, vec2 uv) {\r\n\tmediump float autoExposure = texture2D(u_AutoExposureTex, uv).r;\r\n\tcolor *= autoExposure;\r\n\tcolor = min(vec4(u_Params.x), color); // clamp to max\r\n\tcolor = quadraticThreshold(color, u_Threshold.x, u_Threshold.yzw);\r\n\treturn color;\r\n}\r\n\r\nvoid fragPrefilter4() {\r\n\tmediump vec4 color = downsampleBox4Tap(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.xy);\r\n\tgl_FragColor = prefilter(safeHDR(color), v_Texcoord0);\r\n}\r\n\r\nvoid main() {\r\n\tfragPrefilter4();\r\n}";
 
-    var BloomUpsampleBoxPS = "#define SHADER_NAME BloomUpSampleBoxFS\n\n#include \"Colors.glsl\";\n#include \"Sampling.glsl\";\n\nvarying vec2 v_Texcoord0;\n\nmediump vec4 combine(mediump vec4 bloom, vec2 uv) {\n\tmediump vec4 color = texture2D(u_BloomTex, uv);\n\treturn bloom + color;\n}\n\nvoid fragUpsampleBox() {\n\tmediump vec4 bloom = upsampleBox(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.xy, vec4(u_SampleScale));\n\tgl_FragColor = combine(bloom, v_Texcoord0);\n}\n\nvoid main() {\n\tfragUpsampleBox();\n}";
+    var BloomUpsampleBoxPS = "#define SHADER_NAME BloomUpSampleBoxFS\r\n\r\n#include \"Colors.glsl\";\r\n#include \"Sampling.glsl\";\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nmediump vec4 combine(mediump vec4 bloom, vec2 uv) {\r\n\tmediump vec4 color = texture2D(u_BloomTex, uv);\r\n\treturn bloom + color;\r\n}\r\n\r\nvoid fragUpsampleBox() {\r\n\tmediump vec4 bloom = upsampleBox(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.xy, vec4(u_SampleScale));\r\n\tgl_FragColor = combine(bloom, v_Texcoord0);\r\n}\r\n\r\nvoid main() {\r\n\tfragUpsampleBox();\r\n}";
 
-    var BloomUpsampleTentPS = "#define SHADER_NAME BloomUpSampleTentFS\n\n#include \"Colors.glsl\";\n#include \"Sampling.glsl\";\n\nvarying vec2 v_Texcoord0;\n\nmediump vec4 combine(mediump vec4 bloom, vec2 uv) {\n\tmediump vec4 color = texture2D(u_BloomTex, uv);\n\treturn bloom + color;\n}\n\nvoid fragUpsampleTent() {\n\tmediump vec4 bloom = upsampleTent(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.xy, vec4(u_SampleScale));\n\tgl_FragColor = combine(bloom, v_Texcoord0);\n}\n\nvoid main() {\n\tfragUpsampleTent();\n}";
+    var BloomUpsampleTentPS = "#define SHADER_NAME BloomUpSampleTentFS\r\n\r\n#include \"Colors.glsl\";\r\n#include \"Sampling.glsl\";\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nmediump vec4 combine(mediump vec4 bloom, vec2 uv) {\r\n\tmediump vec4 color = texture2D(u_BloomTex, uv);\r\n\treturn bloom + color;\r\n}\r\n\r\nvoid fragUpsampleTent() {\r\n\tmediump vec4 bloom = upsampleTent(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.xy, vec4(u_SampleScale));\r\n\tgl_FragColor = combine(bloom, v_Texcoord0);\r\n}\r\n\r\nvoid main() {\r\n\tfragUpsampleTent();\r\n}";
 
-    var CompositePS = "#define SHADER_NAME CompositeFS\n\n#include \"Colors.glsl\";\n#include \"Sampling.glsl\";\n\nvarying vec2 v_Texcoord0;\n\nvoid main() {\n\tmediump float autoExposure = texture2D(u_AutoExposureTex, v_Texcoord0).r;\n\tmediump vec4 color=vec4(0.0);\n\tcolor = texture2D(u_MainTex, v_Texcoord0);\n\t\n\t//color = sRGBToLinear(color);\n\tcolor.rgb *= autoExposure;\n\t\n\t#if defined(BLOOM)||defined(BLOOM_LOW)\n\t\t#ifdef BLOOM\n\t\t\tmediump vec4 bloom = upsampleTent(u_BloomTex, v_Texcoord0, u_BloomTex_TexelSize.xy, vec4(u_Bloom_Settings.x));\n\t\t#else\n\t\t\tmediump vec4 bloom = upsampleBox(u_BloomTex, v_Texcoord0, u_BloomTex_TexelSize.xy, vec4(u_Bloom_Settings.x));\n\t\t#endif\n\n\t\t// UVs should be Distort(uv * u_Bloom_DirtTileOffset.xy + u_Bloom_DirtTileOffset.zw)\n\t\t// but considering we use a cover-style scale on the dirt texture the difference\n\t\t// isn't massive so we chose to save a few ALUs here instead in case lens distortion\n\t\t// is active\n\t\tmediump vec4 dirt =vec4(texture2D(u_Bloom_DirtTex, v_Texcoord0 * u_Bloom_DirtTileOffset.xy + u_Bloom_DirtTileOffset.zw).rgb, 0.0);\n\n\t\t// Additive bloom (artist friendly)\n\t\tbloom *= u_Bloom_Settings.y;\n\t\tdirt *= u_Bloom_Settings.z;\n\t\tmediump vec4 bloomColor=vec4(u_Bloom_Color, 1.0);\n\t\tcolor += bloom * bloomColor;\n\t\tcolor += dirt * bloom;\n\t#endif\n\t\n\tmediump vec4 finalColor = color;\n\t//finalColor = linearToSRGB(finalColor);\n\t//finalColor.rgb = Dither(finalColor.rgb, v_Texcoord0);//TODO:抖动\n\tgl_FragColor = finalColor;\n}";
+    var CompositePS = "#define SHADER_NAME CompositeFS\r\n\r\n#include \"Colors.glsl\";\r\n#include \"Sampling.glsl\";\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nvoid main() {\r\n\tmediump float autoExposure = texture2D(u_AutoExposureTex, v_Texcoord0).r;\r\n\tmediump vec4 color=vec4(0.0);\r\n\tcolor = texture2D(u_MainTex, v_Texcoord0);\r\n\t\r\n\t//color = sRGBToLinear(color);\r\n\tcolor.rgb *= autoExposure;\r\n\t\r\n\t#if defined(BLOOM)||defined(BLOOM_LOW)\r\n\t\t#ifdef BLOOM\r\n\t\t\tmediump vec4 bloom = upsampleTent(u_BloomTex, v_Texcoord0, u_BloomTex_TexelSize.xy, vec4(u_Bloom_Settings.x));\r\n\t\t#else\r\n\t\t\tmediump vec4 bloom = upsampleBox(u_BloomTex, v_Texcoord0, u_BloomTex_TexelSize.xy, vec4(u_Bloom_Settings.x));\r\n\t\t#endif\r\n\r\n\t\t// UVs should be Distort(uv * u_Bloom_DirtTileOffset.xy + u_Bloom_DirtTileOffset.zw)\r\n\t\t// but considering we use a cover-style scale on the dirt texture the difference\r\n\t\t// isn't massive so we chose to save a few ALUs here instead in case lens distortion\r\n\t\t// is active\r\n\t\tmediump vec4 dirt =vec4(texture2D(u_Bloom_DirtTex, v_Texcoord0 * u_Bloom_DirtTileOffset.xy + u_Bloom_DirtTileOffset.zw).rgb, 0.0);\r\n\r\n\t\t// Additive bloom (artist friendly)\r\n\t\tbloom *= u_Bloom_Settings.y;\r\n\t\tdirt *= u_Bloom_Settings.z;\r\n\t\tmediump vec4 bloomColor=vec4(u_Bloom_Color, 1.0);\r\n\t\tcolor += bloom * bloomColor;\r\n\t\tcolor += dirt * bloom;\r\n\t#endif\r\n\t\r\n\tmediump vec4 finalColor = color;\r\n\t//finalColor = linearToSRGB(finalColor);\r\n\t//finalColor.rgb = Dither(finalColor.rgb, v_Texcoord0);//TODO:抖动\r\n\tgl_FragColor = finalColor;\r\n}";
 
-    var CompositeVS = "#define SHADER_NAME CompositeVS\nvarying vec2 v_Texcoord0;\nvec4 remapPositionZ(vec4 position)\n{\n    position.z = position.z * 2.0 - position.w;\n    return position;\n}\nvoid main() {\n\tgl_Position = vec4(a_PositionTexcoord.xy, 0.0, 1.0);\n\tv_Texcoord0 = a_PositionTexcoord.zw;\n\tgl_Position = remapPositionZ(gl_Position);\n}";
+    var CompositeVS = "#define SHADER_NAME CompositeVS\r\nvarying vec2 v_Texcoord0;\r\nvec4 remapPositionZ(vec4 position)\r\n{\r\n    position.z = position.z * 2.0 - position.w;\r\n    return position;\r\n}\r\nvoid main() {\r\n\tgl_Position = vec4(a_PositionTexcoord.xy, 0.0, 1.0);\r\n\tv_Texcoord0 = a_PositionTexcoord.zw;\r\n\tgl_Position = remapPositionZ(gl_Position);\r\n}";
 
-    var SamplingGLSL = "// Better, temporally stable box filtering\n// [Jimenez14] http://goo.gl/eomGso\n// . . . . . . .\n// . A . B . C .\n// . . D . E . .\n// . F . G . H .\n// . . I . J . .\n// . K . L . M .\n// . . . . . . .\nmediump vec4 downsampleBox13Tap(sampler2D tex, vec2 uv, vec2 texelSize)\n{\n    mediump vec4 A = texture2D(tex, uv + texelSize * vec2(-1.0, -1.0));\n    mediump vec4 B = texture2D(tex, uv + texelSize * vec2( 0.0, -1.0));\n    mediump vec4 C = texture2D(tex, uv + texelSize * vec2( 1.0, -1.0));\n    mediump vec4 D = texture2D(tex, uv + texelSize * vec2(-0.5, -0.5));\n    mediump vec4 E = texture2D(tex, uv + texelSize * vec2( 0.5, -0.5));\n    mediump vec4 F = texture2D(tex, uv + texelSize * vec2(-1.0,  0.0));\n    mediump vec4 G = texture2D(tex, uv);\n    mediump vec4 H = texture2D(tex, uv + texelSize * vec2( 1.0,  0.0));\n    mediump vec4 I = texture2D(tex, uv + texelSize * vec2(-0.5,  0.5));\n    mediump vec4 J = texture2D(tex, uv + texelSize * vec2( 0.5,  0.5));\n    mediump vec4 K = texture2D(tex, uv + texelSize * vec2(-1.0,  1.0));\n    mediump vec4 L = texture2D(tex, uv + texelSize * vec2( 0.0,  1.0));\n    mediump vec4 M = texture2D(tex, uv + texelSize * vec2( 1.0,  1.0));\n\n\tmediump vec2 scale= vec2(0.5, 0.125);\n    mediump vec2 div = (1.0 / 4.0) * scale;\n\n    mediump vec4 o = (D + E + I + J) * div.x;\n    o += (A + B + G + F) * div.y;\n    o += (B + C + H + G) * div.y;\n    o += (F + G + L + K) * div.y;\n    o += (G + H + M + L) * div.y;\n\n    return o;\n}\n\n// Standard box filtering\nmediump vec4 downsampleBox4Tap(sampler2D tex, vec2 uv, vec2 texelSize)\n{\n    vec4 d = texelSize.xyxy * vec4(-1.0, -1.0, 1.0, 1.0);\n\n    mediump vec4 s =  texture2D(tex, uv + d.xy);\n    s += texture2D(tex, uv + d.zy);\n    s += texture2D(tex, uv + d.xw);\n    s += texture2D(tex, uv + d.zw);\n\n    return s * (1.0 / 4.0);\n}\n\n// 9-tap bilinear upsampler (tent filter)\n// . . . . . . .\n// . 1 . 2 . 1 .\n// . . . . . . .\n// . 2 . 4 . 2 .\n// . . . . . . .\n// . 1 . 2 . 1 .\n// . . . . . . .\nmediump vec4 upsampleTent(sampler2D tex, vec2 uv, vec2 texelSize, vec4 sampleScale)\n{\n    vec4 d = texelSize.xyxy * vec4(1.0, 1.0, -1.0, 0.0) * sampleScale;\n\n    mediump vec4 s =  texture2D(tex, uv - d.xy);\n    s += texture2D(tex, uv - d.wy) * 2.0;\n    s += texture2D(tex, uv - d.zy);\n\n    s += texture2D(tex, uv + d.zw) * 2.0;\n    s += texture2D(tex, uv) * 4.0;\n    s += texture2D(tex,\tuv + d.xw) * 2.0;\n\n    s += texture2D(tex, uv + d.zy);\n    s += texture2D(tex, uv + d.wy) * 2.0;\n    s += texture2D(tex, uv + d.xy);\n\n    return s * (1.0 / 16.0);\n}\n\n// Standard box filtering\nmediump vec4 upsampleBox(sampler2D tex, vec2 uv, vec2 texelSize, vec4 sampleScale)\n{\n    vec4 d = texelSize.xyxy * vec4(-1.0, -1.0, 1.0, 1.0) * 0.5 * sampleScale;\n\n    mediump vec4 s =  texture2D(tex, uv + d.xy);\n    s += texture2D(tex, uv + d.zy);\n    s += texture2D(tex, uv + d.xw);\n    s += texture2D(tex, uv + d.zw);\n\n    return s * (1.0 / 4.0);\n}";
+    var SamplingGLSL = "// Better, temporally stable box filtering\r\n// [Jimenez14] http://goo.gl/eomGso\r\n// . . . . . . .\r\n// . A . B . C .\r\n// . . D . E . .\r\n// . F . G . H .\r\n// . . I . J . .\r\n// . K . L . M .\r\n// . . . . . . .\r\nmediump vec4 downsampleBox13Tap(sampler2D tex, vec2 uv, vec2 texelSize)\r\n{\r\n    mediump vec4 A = texture2D(tex, uv + texelSize * vec2(-1.0, -1.0));\r\n    mediump vec4 B = texture2D(tex, uv + texelSize * vec2( 0.0, -1.0));\r\n    mediump vec4 C = texture2D(tex, uv + texelSize * vec2( 1.0, -1.0));\r\n    mediump vec4 D = texture2D(tex, uv + texelSize * vec2(-0.5, -0.5));\r\n    mediump vec4 E = texture2D(tex, uv + texelSize * vec2( 0.5, -0.5));\r\n    mediump vec4 F = texture2D(tex, uv + texelSize * vec2(-1.0,  0.0));\r\n    mediump vec4 G = texture2D(tex, uv);\r\n    mediump vec4 H = texture2D(tex, uv + texelSize * vec2( 1.0,  0.0));\r\n    mediump vec4 I = texture2D(tex, uv + texelSize * vec2(-0.5,  0.5));\r\n    mediump vec4 J = texture2D(tex, uv + texelSize * vec2( 0.5,  0.5));\r\n    mediump vec4 K = texture2D(tex, uv + texelSize * vec2(-1.0,  1.0));\r\n    mediump vec4 L = texture2D(tex, uv + texelSize * vec2( 0.0,  1.0));\r\n    mediump vec4 M = texture2D(tex, uv + texelSize * vec2( 1.0,  1.0));\r\n\r\n\tmediump vec2 scale= vec2(0.5, 0.125);\r\n    mediump vec2 div = (1.0 / 4.0) * scale;\r\n\r\n    mediump vec4 o = (D + E + I + J) * div.x;\r\n    o += (A + B + G + F) * div.y;\r\n    o += (B + C + H + G) * div.y;\r\n    o += (F + G + L + K) * div.y;\r\n    o += (G + H + M + L) * div.y;\r\n\r\n    return o;\r\n}\r\n\r\n// Standard box filtering\r\nmediump vec4 downsampleBox4Tap(sampler2D tex, vec2 uv, vec2 texelSize)\r\n{\r\n    vec4 d = texelSize.xyxy * vec4(-1.0, -1.0, 1.0, 1.0);\r\n\r\n    mediump vec4 s =  texture2D(tex, uv + d.xy);\r\n    s += texture2D(tex, uv + d.zy);\r\n    s += texture2D(tex, uv + d.xw);\r\n    s += texture2D(tex, uv + d.zw);\r\n\r\n    return s * (1.0 / 4.0);\r\n}\r\n\r\n// 9-tap bilinear upsampler (tent filter)\r\n// . . . . . . .\r\n// . 1 . 2 . 1 .\r\n// . . . . . . .\r\n// . 2 . 4 . 2 .\r\n// . . . . . . .\r\n// . 1 . 2 . 1 .\r\n// . . . . . . .\r\nmediump vec4 upsampleTent(sampler2D tex, vec2 uv, vec2 texelSize, vec4 sampleScale)\r\n{\r\n    vec4 d = texelSize.xyxy * vec4(1.0, 1.0, -1.0, 0.0) * sampleScale;\r\n\r\n    mediump vec4 s =  texture2D(tex, uv - d.xy);\r\n    s += texture2D(tex, uv - d.wy) * 2.0;\r\n    s += texture2D(tex, uv - d.zy);\r\n\r\n    s += texture2D(tex, uv + d.zw) * 2.0;\r\n    s += texture2D(tex, uv) * 4.0;\r\n    s += texture2D(tex,\tuv + d.xw) * 2.0;\r\n\r\n    s += texture2D(tex, uv + d.zy);\r\n    s += texture2D(tex, uv + d.wy) * 2.0;\r\n    s += texture2D(tex, uv + d.xy);\r\n\r\n    return s * (1.0 / 16.0);\r\n}\r\n\r\n// Standard box filtering\r\nmediump vec4 upsampleBox(sampler2D tex, vec2 uv, vec2 texelSize, vec4 sampleScale)\r\n{\r\n    vec4 d = texelSize.xyxy * vec4(-1.0, -1.0, 1.0, 1.0) * 0.5 * sampleScale;\r\n\r\n    mediump vec4 s =  texture2D(tex, uv + d.xy);\r\n    s += texture2D(tex, uv + d.zy);\r\n    s += texture2D(tex, uv + d.xw);\r\n    s += texture2D(tex, uv + d.zw);\r\n\r\n    return s * (1.0 / 4.0);\r\n}";
 
-    var StdLibGLSL = "#define HALF_MAX       65504.0 // (2 - 2^-10) * 2^15\n\n#define FLT_EPSILON    1.192092896e-07 // Smallest positive number, such that 1.0 + FLT_EPSILON != 1.0\n\nmediump vec4 safeHDR(mediump vec4 c)\n{\n    return min(c, HALF_MAX);\n}\n\nfloat max3(float a, float b, float c)\n{\n    return max(max(a, b), c);\n}\n\nvec3 positivePow(vec3 base, vec3 power)\n{\n    return pow(max(abs(base), vec3(FLT_EPSILON, FLT_EPSILON, FLT_EPSILON)), power);\n}";
+    var StdLibGLSL = "#define HALF_MAX       65504.0 // (2 - 2^-10) * 2^15\r\n\r\n#define FLT_EPSILON    1.192092896e-07 // Smallest positive number, such that 1.0 + FLT_EPSILON != 1.0\r\n\r\nmediump vec4 safeHDR(mediump vec4 c)\r\n{\r\n    return min(c, HALF_MAX);\r\n}\r\n\r\nfloat max3(float a, float b, float c)\r\n{\r\n    return max(max(a, b), c);\r\n}\r\n\r\nvec3 positivePow(vec3 base, vec3 power)\r\n{\r\n    return pow(max(abs(base), vec3(FLT_EPSILON, FLT_EPSILON, FLT_EPSILON)), power);\r\n}";
 
-    var ColorsGLSL = "#include \"StdLib.glsl\";\n\n#define EPSILON 1.0e-4\n\n// Quadratic color thresholding\n// curve = (threshold - knee, knee * 2, 0.25 / knee)\nmediump vec4 quadraticThreshold(mediump vec4 color, mediump float threshold, mediump vec3 curve) {\n\t// Pixel brightness\n\tmediump float br = max3(color.r, color.g, color.b);\n\n\t// Under-threshold part: quadratic curve\n\tmediump float rq = clamp(br - curve.x, 0.0, curve.y);\n\trq = curve.z * rq * rq;\n\n\t// Combine and apply the brightness response curve.\n\tcolor *= max(rq, br - threshold) / max(br, EPSILON);\n\n\treturn color;\n}\n\n\n\n//\n// sRGB transfer functions\n// Fast path ref: http://chilliant.blogspot.com.au/2012/08/srgb-approximations-for-hlsl.html?m=1\n//\n// mediump vec3 sRGBToLinear(mediump vec3 c) {\n// \t#ifdef USE_VERY_FAST_SRGB\n// \t\treturn c * c;\n// \t#elif defined(USE_FAST_SRGB)\n// \t\treturn c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878);\n// \t#else\n// \t\tmediump vec3 linearRGBLo = c / 12.92;\n// \t\tmediump vec3 power=vec3(2.4, 2.4, 2.4);\n// \t\tmediump vec3 linearRGBHi = positivePow((c + 0.055) / 1.055, power);\n// \t\tmediump vec3 linearRGB =vec3((c.r<=0.04045) ? linearRGBLo.r : linearRGBHi.r,(c.g<=0.04045) ? linearRGBLo.g : linearRGBHi.g,(c.b<=0.04045) ? linearRGBLo.b : linearRGBHi.b);\n// \t\treturn linearRGB;\n// \t#endif\n// }\n\n// mediump vec4 sRGBToLinear(mediump vec4 c){\n//     return vec4(sRGBToLinear(c.rgb), c.a);\n// }\n\n\n\n// mediump vec3 linearToSRGB(mediump vec3 c) {\n// \t#ifdef USE_VERY_FAST_SRGB\n// \t\treturn sqrt(c);\n// \t#elif defined(USE_FAST_SRGB)\n// \t\treturn max(1.055 * PositivePow(c, 0.416666667) - 0.055, 0.0);\n// \t#else\n// \t\tmediump vec3 sRGBLo = c * 12.92;\n// \t\tmediump vec3 power=vec3(1.0 / 2.4, 1.0 / 2.4, 1.0 / 2.4);\n// \t\tmediump vec3 sRGBHi = (positivePow(c, power) * 1.055) - 0.055;\n// \t\tmediump vec3 sRGB =vec3((c.r<=0.0031308) ? sRGBLo.r : sRGBHi.r,(c.g<=0.0031308) ? sRGBLo.g : sRGBHi.g,(c.b<=0.0031308) ? sRGBLo.b : sRGBHi.b);\n// \t\treturn sRGB;\n// \t#endif\n// }\n\n// mediump vec4 linearToSRGB(mediump vec4 c){\n//     return vec4(linearToSRGB(c.rgb), c.a);\n// }";
+    var ColorsGLSL = "#include \"StdLib.glsl\";\r\n\r\n#define EPSILON 1.0e-4\r\n\r\n// Quadratic color thresholding\r\n// curve = (threshold - knee, knee * 2, 0.25 / knee)\r\nmediump vec4 quadraticThreshold(mediump vec4 color, mediump float threshold, mediump vec3 curve) {\r\n\t// Pixel brightness\r\n\tmediump float br = max3(color.r, color.g, color.b);\r\n\r\n\t// Under-threshold part: quadratic curve\r\n\tmediump float rq = clamp(br - curve.x, 0.0, curve.y);\r\n\trq = curve.z * rq * rq;\r\n\r\n\t// Combine and apply the brightness response curve.\r\n\tcolor *= max(rq, br - threshold) / max(br, EPSILON);\r\n\r\n\treturn color;\r\n}\r\n\r\n\r\n\r\n//\r\n// sRGB transfer functions\r\n// Fast path ref: http://chilliant.blogspot.com.au/2012/08/srgb-approximations-for-hlsl.html?m=1\r\n//\r\n// mediump vec3 sRGBToLinear(mediump vec3 c) {\r\n// \t#ifdef USE_VERY_FAST_SRGB\r\n// \t\treturn c * c;\r\n// \t#elif defined(USE_FAST_SRGB)\r\n// \t\treturn c * (c * (c * 0.305306011 + 0.682171111) + 0.012522878);\r\n// \t#else\r\n// \t\tmediump vec3 linearRGBLo = c / 12.92;\r\n// \t\tmediump vec3 power=vec3(2.4, 2.4, 2.4);\r\n// \t\tmediump vec3 linearRGBHi = positivePow((c + 0.055) / 1.055, power);\r\n// \t\tmediump vec3 linearRGB =vec3((c.r<=0.04045) ? linearRGBLo.r : linearRGBHi.r,(c.g<=0.04045) ? linearRGBLo.g : linearRGBHi.g,(c.b<=0.04045) ? linearRGBLo.b : linearRGBHi.b);\r\n// \t\treturn linearRGB;\r\n// \t#endif\r\n// }\r\n\r\n// mediump vec4 sRGBToLinear(mediump vec4 c){\r\n//     return vec4(sRGBToLinear(c.rgb), c.a);\r\n// }\r\n\r\n\r\n\r\n// mediump vec3 linearToSRGB(mediump vec3 c) {\r\n// \t#ifdef USE_VERY_FAST_SRGB\r\n// \t\treturn sqrt(c);\r\n// \t#elif defined(USE_FAST_SRGB)\r\n// \t\treturn max(1.055 * PositivePow(c, 0.416666667) - 0.055, 0.0);\r\n// \t#else\r\n// \t\tmediump vec3 sRGBLo = c * 12.92;\r\n// \t\tmediump vec3 power=vec3(1.0 / 2.4, 1.0 / 2.4, 1.0 / 2.4);\r\n// \t\tmediump vec3 sRGBHi = (positivePow(c, power) * 1.055) - 0.055;\r\n// \t\tmediump vec3 sRGB =vec3((c.r<=0.0031308) ? sRGBLo.r : sRGBHi.r,(c.g<=0.0031308) ? sRGBLo.g : sRGBHi.g,(c.b<=0.0031308) ? sRGBLo.b : sRGBHi.b);\r\n// \t\treturn sRGB;\r\n// \t#endif\r\n// }\r\n\r\n// mediump vec4 linearToSRGB(mediump vec4 c){\r\n//     return vec4(linearToSRGB(c.rgb), c.a);\r\n// }";
 
     class BloomEffect extends PostProcessEffect {
+        constructor() {
+            super();
+            this._shader = null;
+            this._shaderData = Laya.LayaGL.renderOBJCreate.createShaderData(null);
+            this._linearColor = new Laya.Color();
+            this._bloomTextureTexelSize = new Laya.Vector4();
+            this._shaderThreshold = new Laya.Vector4();
+            this._shaderParams = new Laya.Vector4();
+            this._pyramid = null;
+            this._intensity = 0.0;
+            this._threshold = 1.0;
+            this._softKnee = 0.5;
+            this._diffusion = 7.0;
+            this._anamorphicRatio = 0.0;
+            this._dirtIntensity = 0.0;
+            this._shaderSetting = new Laya.Vector4();
+            this._dirtTileOffset = new Laya.Vector4();
+            this._fastMode = false;
+            this._dirtTexture = null;
+            this.singleton = true;
+            this.active = true;
+            this.intensity = 1.0;
+            this.threshold = 1.0;
+            this.softKnee = 0.5;
+            this.clamp = 65472;
+            this.diffusion = 7;
+            this.anamorphicRatio = 0;
+            this.color = new Laya.Color(1.0, 1.0, 1.0, 1.0);
+        }
         static init() {
             Laya.Shader3D.addInclude("StdLib.glsl", StdLibGLSL);
             Laya.Shader3D.addInclude("Colors.glsl", ColorsGLSL);
@@ -27781,35 +27882,6 @@
         set dirtIntensity(value) {
             this._dirtIntensity = Math.max(value, 0.0);
         }
-        constructor() {
-            super();
-            this._shader = null;
-            this._shaderData = Laya.LayaGL.renderOBJCreate.createShaderData(null);
-            this._linearColor = new Laya.Color();
-            this._bloomTextureTexelSize = new Laya.Vector4();
-            this._shaderThreshold = new Laya.Vector4();
-            this._shaderParams = new Laya.Vector4();
-            this._pyramid = null;
-            this._intensity = 0.0;
-            this._threshold = 1.0;
-            this._softKnee = 0.5;
-            this._diffusion = 7.0;
-            this._anamorphicRatio = 0.0;
-            this._dirtIntensity = 0.0;
-            this._shaderSetting = new Laya.Vector4();
-            this._dirtTileOffset = new Laya.Vector4();
-            this._fastMode = false;
-            this._dirtTexture = null;
-            this.singleton = true;
-            this.active = true;
-            this.intensity = 1.0;
-            this.threshold = 1.0;
-            this.softKnee = 0.5;
-            this.clamp = 65472;
-            this.diffusion = 7;
-            this.anamorphicRatio = 0;
-            this.color = new Laya.Color(1.0, 1.0, 1.0, 1.0);
-        }
         effectInit(postprocess) {
             super.effectInit(postprocess);
             this._shader = Laya.Shader3D.find("PostProcessBloom");
@@ -27919,19 +27991,28 @@
     BloomEffect.SUBSHADER_UPSAMPLEBOX = 5;
     BloomEffect.MAXPYRAMIDSIZE = 16;
 
-    var FullScreenVert = "#define SHADER_NAME SCREENVS\n\nvarying vec2 v_Texcoord0;\n\nvec4 remapPositionZ(vec4 position)\n{\n    position.z = position.z * 2.0 - position.w;\n    return position;\n}\n\nvoid main() {\t\n\tgl_Position = vec4(u_OffsetScale.x*2.0-1.0+(a_PositionTexcoord.x+1.0)*u_OffsetScale.z,(1.0-((u_OffsetScale.y*2.0-1.0+(-a_PositionTexcoord.y+1.0)*u_OffsetScale.w)+1.0)/2.0)*2.0-1.0, 0.0, 1.0);\t\n\tv_Texcoord0 = a_PositionTexcoord.zw;\n\tgl_Position = remapPositionZ(gl_Position);\n}\n";
+    var FullScreenVert = "#define SHADER_NAME SCREENVS\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nvec4 remapPositionZ(vec4 position)\r\n{\r\n    position.z = position.z * 2.0 - position.w;\r\n    return position;\r\n}\r\n\r\nvoid main() {\t\r\n\tgl_Position = vec4(u_OffsetScale.x*2.0-1.0+(a_PositionTexcoord.x+1.0)*u_OffsetScale.z,(1.0-((u_OffsetScale.y*2.0-1.0+(-a_PositionTexcoord.y+1.0)*u_OffsetScale.w)+1.0)/2.0)*2.0-1.0, 0.0, 1.0);\t\r\n\tv_Texcoord0 = a_PositionTexcoord.zw;\r\n\tgl_Position = remapPositionZ(gl_Position);\r\n}\r\n";
 
-    var CoCFS = "#define SHADER_NAME COCFS\n\n#ifdef CAMERA_NORMALDEPTH\n    uniform sampler2D u_CameraDepthNormalTexture;\n#else\n    uniform sampler2D u_CameraDepthTexture;\n#endif\n\n\nvarying vec2 v_Texcoord0;\n\n// Z buffer to linear 0..1 depth\nfloat Linear01Depth(float z,vec4 zbufferParams)\n{\n    return 1.0 / (zbufferParams.x * z + zbufferParams.y);\n}\n\n// Z buffer to linear depth\nfloat LinearEyeDepth(float z,vec4 zbufferParams)\n{\n    return 1.0 / (zbufferParams.z * z + zbufferParams.w);\n}\n\nfloat DecodeFloatRG(vec2 enc )\n{\n    vec2 kDecodeDot = vec2(1.0, 1.0/255.0);\n    return dot( enc, kDecodeDot );\n}\n\nvoid DecodeDepthNormal(vec4 enc, out float depth)\n{\n    depth = DecodeFloatRG (enc.zw);\n}\n\nvoid main() {\n\n    #ifdef CAMERA_NORMALDEPTH\n        vec4 depthNormal = texture2D(u_CameraDepthNormalTexture, v_Texcoord0);\n        float depth = 0.0;\n        DecodeDepthNormal(depthNormal, depth);\n        depth = ((1.0 / depth) - u_ZBufferParams.y) * (1.0 / u_ZBufferParams.x);\n    #else\n        float depth = texture2D(u_CameraDepthTexture, v_Texcoord0).x;\n    #endif\n\n    depth = LinearEyeDepth(depth, u_ZBufferParams);\n    float farStart = u_CoCParams.x;\n    float farEnd = u_CoCParams.y;\n\n    float coc = (depth - farStart) / (farEnd - farStart);\n    coc = clamp(coc, 0.0, 1.0);\n    gl_FragColor = vec4(coc, coc, coc, 1.0);\n}\n";
+    var CoCFS = "#define SHADER_NAME COCFS\r\n\r\n#ifdef CAMERA_NORMALDEPTH\r\n    uniform sampler2D u_CameraDepthNormalTexture;\r\n#else\r\n    uniform sampler2D u_CameraDepthTexture;\r\n#endif\r\n\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\n// Z buffer to linear 0..1 depth\r\nfloat Linear01Depth(float z,vec4 zbufferParams)\r\n{\r\n    return 1.0 / (zbufferParams.x * z + zbufferParams.y);\r\n}\r\n\r\n// Z buffer to linear depth\r\nfloat LinearEyeDepth(float z,vec4 zbufferParams)\r\n{\r\n    return 1.0 / (zbufferParams.z * z + zbufferParams.w);\r\n}\r\n\r\nfloat DecodeFloatRG(vec2 enc )\r\n{\r\n    vec2 kDecodeDot = vec2(1.0, 1.0/255.0);\r\n    return dot( enc, kDecodeDot );\r\n}\r\n\r\nvoid DecodeDepthNormal(vec4 enc, out float depth)\r\n{\r\n    depth = DecodeFloatRG (enc.zw);\r\n}\r\n\r\nvoid main() {\r\n\r\n    #ifdef CAMERA_NORMALDEPTH\r\n        vec4 depthNormal = texture2D(u_CameraDepthNormalTexture, v_Texcoord0);\r\n        float depth = 0.0;\r\n        DecodeDepthNormal(depthNormal, depth);\r\n        depth = ((1.0 / depth) - u_ZBufferParams.y) * (1.0 / u_ZBufferParams.x);\r\n    #else\r\n        float depth = texture2D(u_CameraDepthTexture, v_Texcoord0).x;\r\n    #endif\r\n\r\n    depth = LinearEyeDepth(depth, u_ZBufferParams);\r\n    float farStart = u_CoCParams.x;\r\n    float farEnd = u_CoCParams.y;\r\n\r\n    float coc = (depth - farStart) / (farEnd - farStart);\r\n    coc = clamp(coc, 0.0, 1.0);\r\n    gl_FragColor = vec4(coc, coc, coc, 1.0);\r\n}\r\n";
 
-    var PrefilterFS = "#define SHADER_NAME PrefilterFS\n\nvarying vec2 v_Texcoord0;\n\nconst int kCount = 5;\nvec2 kTaps[5];\n\nvoid main () {\n\n    kTaps[0] = vec2( 0.0,  0.0);\n    kTaps[1] = vec2( 0.9, -0.4);\n    kTaps[2] = vec2(-0.9,  0.4);\n    kTaps[3] = vec2( 0.4,  0.9);\n    kTaps[4] = vec2(-0.4, -0.9);\n\n    vec3 colorAcc = vec3(0.0);\n    float farCoCAcc = 0.0;\n    for (int i = 0; i < kCount; i++) {\n        vec2 uv = u_MainTex_TexelSize.xy * kTaps[i] + v_Texcoord0;\n        vec3 tapColor = texture2D(u_MainTex, uv).rgb;\n        float coc = texture2D(u_FullCoCTex, uv).r;\n\n        colorAcc += tapColor * coc;\n        farCoCAcc += coc;\n    }\n    vec3 color = colorAcc * (1.0 / float(kCount));\n    float farCoC = farCoCAcc * (1.0 / float(kCount));\n\n    // float farCoC = texture2D(u_FullCoCTex, v_Texcoord0).x;\n    // vec3 color = texture2D(u_MainTex, v_Texcoord0).rgb;\n    // color *= farCoC;\n\n    gl_FragColor = vec4(color, farCoC);\n}";
+    var PrefilterFS = "#define SHADER_NAME PrefilterFS\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nconst int kCount = 5;\r\nvec2 kTaps[5];\r\n\r\nvoid main () {\r\n\r\n    kTaps[0] = vec2( 0.0,  0.0);\r\n    kTaps[1] = vec2( 0.9, -0.4);\r\n    kTaps[2] = vec2(-0.9,  0.4);\r\n    kTaps[3] = vec2( 0.4,  0.9);\r\n    kTaps[4] = vec2(-0.4, -0.9);\r\n\r\n    vec3 colorAcc = vec3(0.0);\r\n    float farCoCAcc = 0.0;\r\n    for (int i = 0; i < kCount; i++) {\r\n        vec2 uv = u_MainTex_TexelSize.xy * kTaps[i] + v_Texcoord0;\r\n        vec3 tapColor = texture2D(u_MainTex, uv).rgb;\r\n        float coc = texture2D(u_FullCoCTex, uv).r;\r\n\r\n        colorAcc += tapColor * coc;\r\n        farCoCAcc += coc;\r\n    }\r\n    vec3 color = colorAcc * (1.0 / float(kCount));\r\n    float farCoC = farCoCAcc * (1.0 / float(kCount));\r\n\r\n    // float farCoC = texture2D(u_FullCoCTex, v_Texcoord0).x;\r\n    // vec3 color = texture2D(u_MainTex, v_Texcoord0).rgb;\r\n    // color *= farCoC;\r\n\r\n    gl_FragColor = vec4(color, farCoC);\r\n}";
 
-    var BlurVFS = "#define SHADER_NAME BlurVFS\n\nvarying vec2 v_Texcoord0;\n\n// todo 3 & 5\nconst int kTapCount = 3;\nfloat kOffsets[3];\nfloat kCoeffs[3];\n\n\nvec4 Blur(vec2 dir, float premultiply) {\n\n    kOffsets[0] = -1.33333333;\n    kOffsets[1] = 0.00000000;\n    kOffsets[2] = 1.33333333;\n\n    kCoeffs[0] = 0.35294118;\n    kCoeffs[1] = 0.29411765;\n    kCoeffs[2] = 0.3529411;\n\n    vec2 uv = v_Texcoord0;\n    // ivec2 positionSS = ivec2(u_SourceSize.xy * uv);\n\n    vec4 halfColor = texture2D(u_MainTex, uv);\n    float samp0CoC = halfColor.a;\n\n    float maxRadius = u_CoCParams.z;\n    vec2 offset = u_SourceSize.zw * dir * samp0CoC * maxRadius;\n\n    vec4 acc = vec4(0.0);\n\n    for (int i = 0; i < kTapCount; i++) {\n        vec2 sampCoord = uv + kOffsets[i] * offset;\n        vec4 samp = texture2D(u_MainTex, sampCoord);\n        float sampCoC = samp.w;\n        vec3 sampColor = samp.xyz;\n\n        float weight = clamp(1.0 - (samp0CoC - sampCoC), 0.0, 1.0);\n        acc += vec4(sampColor, 1.0) * kCoeffs[i] * weight;\n    }\n\n    acc.xyz /= acc.w + 1e-4;\n    return vec4(acc.xyz, 1.0);\n}\n\nvoid main() {\n    gl_FragColor = Blur(vec2(0.0, 1.0), 0.0);\n    // gl_FragColor = texture2D(u_MainTex, v_Texcoord0);\n}\n";
+    var BlurVFS = "#define SHADER_NAME BlurVFS\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\n// todo 3 & 5\r\nconst int kTapCount = 3;\r\nfloat kOffsets[3];\r\nfloat kCoeffs[3];\r\n\r\n\r\nvec4 Blur(vec2 dir, float premultiply) {\r\n\r\n    kOffsets[0] = -1.33333333;\r\n    kOffsets[1] = 0.00000000;\r\n    kOffsets[2] = 1.33333333;\r\n\r\n    kCoeffs[0] = 0.35294118;\r\n    kCoeffs[1] = 0.29411765;\r\n    kCoeffs[2] = 0.3529411;\r\n\r\n    vec2 uv = v_Texcoord0;\r\n    // ivec2 positionSS = ivec2(u_SourceSize.xy * uv);\r\n\r\n    vec4 halfColor = texture2D(u_MainTex, uv);\r\n    float samp0CoC = halfColor.a;\r\n\r\n    float maxRadius = u_CoCParams.z;\r\n    vec2 offset = u_SourceSize.zw * dir * samp0CoC * maxRadius;\r\n\r\n    vec4 acc = vec4(0.0);\r\n\r\n    for (int i = 0; i < kTapCount; i++) {\r\n        vec2 sampCoord = uv + kOffsets[i] * offset;\r\n        vec4 samp = texture2D(u_MainTex, sampCoord);\r\n        float sampCoC = samp.w;\r\n        vec3 sampColor = samp.xyz;\r\n\r\n        float weight = clamp(1.0 - (samp0CoC - sampCoC), 0.0, 1.0);\r\n        acc += vec4(sampColor, 1.0) * kCoeffs[i] * weight;\r\n    }\r\n\r\n    acc.xyz /= acc.w + 1e-4;\r\n    return vec4(acc.xyz, 1.0);\r\n}\r\n\r\nvoid main() {\r\n    gl_FragColor = Blur(vec2(0.0, 1.0), 0.0);\r\n    // gl_FragColor = texture2D(u_MainTex, v_Texcoord0);\r\n}\r\n";
 
-    var BlurHFS = "#define SHADER_NAME BlurHFS\n\nvarying vec2 v_Texcoord0;\n\nconst int kTapCount = 3;\nfloat kOffsets[3];\nfloat kCoeffs[3];\n\nvec4 Blur(vec2 dir, float premultiply) {\n\n    kOffsets[0] = -1.33333333;\n    kOffsets[1] = 0.00000000;\n    kOffsets[2] = 1.33333333;\n\n    kCoeffs[0] = 0.35294118;\n    kCoeffs[1] = 0.29411765;\n    kCoeffs[2] = 0.3529411;\n\n    vec2 uv = v_Texcoord0;\n    // ivec2 positionSS = ivec2(u_SourceSize.xy * uv);\n\n    vec4 halfColor = texture2D(u_MainTex, uv);\n    float samp0CoC = halfColor.a;\n\n    float maxRadius = u_CoCParams.z;\n    vec2 offset = u_SourceSize.zw  * dir * samp0CoC * maxRadius;\n\n    vec4 acc = vec4(0.0);\n\n    for (int i = 0; i < kTapCount; i++) {\n        vec2 sampCoord = uv + kOffsets[i] * offset;\n        vec4 samp = texture2D(u_MainTex, sampCoord);\n        float sampCoC = samp.a;\n        vec3 sampColor = samp.rgb;\n\n        float weight = clamp(1.0 - (samp0CoC - sampCoC), 0.0, 1.0);\n        acc += vec4(sampColor, sampCoC) * kCoeffs[i] * weight;\n    }\n\n    acc.xyz /= acc.w + 1e-4;\n    return vec4(acc.xyz, samp0CoC);\n}\n\nvoid main() {\n    gl_FragColor = Blur(vec2(1.0, 0.0), 1.0);\n}";
+    var BlurHFS = "#define SHADER_NAME BlurHFS\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nconst int kTapCount = 3;\r\nfloat kOffsets[3];\r\nfloat kCoeffs[3];\r\n\r\nvec4 Blur(vec2 dir, float premultiply) {\r\n\r\n    kOffsets[0] = -1.33333333;\r\n    kOffsets[1] = 0.00000000;\r\n    kOffsets[2] = 1.33333333;\r\n\r\n    kCoeffs[0] = 0.35294118;\r\n    kCoeffs[1] = 0.29411765;\r\n    kCoeffs[2] = 0.3529411;\r\n\r\n    vec2 uv = v_Texcoord0;\r\n    // ivec2 positionSS = ivec2(u_SourceSize.xy * uv);\r\n\r\n    vec4 halfColor = texture2D(u_MainTex, uv);\r\n    float samp0CoC = halfColor.a;\r\n\r\n    float maxRadius = u_CoCParams.z;\r\n    vec2 offset = u_SourceSize.zw  * dir * samp0CoC * maxRadius;\r\n\r\n    vec4 acc = vec4(0.0);\r\n\r\n    for (int i = 0; i < kTapCount; i++) {\r\n        vec2 sampCoord = uv + kOffsets[i] * offset;\r\n        vec4 samp = texture2D(u_MainTex, sampCoord);\r\n        float sampCoC = samp.a;\r\n        vec3 sampColor = samp.rgb;\r\n\r\n        float weight = clamp(1.0 - (samp0CoC - sampCoC), 0.0, 1.0);\r\n        acc += vec4(sampColor, sampCoC) * kCoeffs[i] * weight;\r\n    }\r\n\r\n    acc.xyz /= acc.w + 1e-4;\r\n    return vec4(acc.xyz, samp0CoC);\r\n}\r\n\r\nvoid main() {\r\n    gl_FragColor = Blur(vec2(1.0, 0.0), 1.0);\r\n}";
 
-    var CompositeFS = "#define SHADER_NAME CompositeFS\n\nvarying vec2 v_Texcoord0;\n\nvoid main() {\n\n    vec3 baseColor = texture2D(u_MainTex, v_Texcoord0).rgb;\n    vec4 samplevalue = texture2D(u_BlurCoCTex, v_Texcoord0);\n    vec3 farColor = samplevalue.rgb;\n    float coc = texture2D(u_FullCoCTex, v_Texcoord0).r;\n\n    vec3 dstColor = vec3(0.0);\n    float dstAlpha = 1.0;\n\n    float blend = sqrt(coc * 3.14 * 2.0);\n    dstColor = farColor * clamp(blend, 0.0, 1.0);\n    dstAlpha = clamp(1.0 - blend, 0.0, 1.0);\n\n\n    gl_FragColor = vec4(baseColor * dstAlpha + dstColor, 1.0);\n\n}";
+    var CompositeFS = "#define SHADER_NAME CompositeFS\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nvoid main() {\r\n\r\n    vec3 baseColor = texture2D(u_MainTex, v_Texcoord0).rgb;\r\n    vec4 samplevalue = texture2D(u_BlurCoCTex, v_Texcoord0);\r\n    vec3 farColor = samplevalue.rgb;\r\n    float coc = texture2D(u_FullCoCTex, v_Texcoord0).r;\r\n\r\n    vec3 dstColor = vec3(0.0);\r\n    float dstAlpha = 1.0;\r\n\r\n    float blend = sqrt(coc * 3.14 * 2.0);\r\n    dstColor = farColor * clamp(blend, 0.0, 1.0);\r\n    dstAlpha = clamp(1.0 - blend, 0.0, 1.0);\r\n\r\n\r\n    gl_FragColor = vec4(baseColor * dstAlpha + dstColor, 1.0);\r\n\r\n}";
 
     class GaussianDoF extends PostProcessEffect {
+        constructor() {
+            super();
+            this._shader = Laya.Shader3D.find("GaussianDoF");
+            this._shaderData = Laya.LayaGL.renderOBJCreate.createShaderData(null);
+            this._shaderData.setVector3(GaussianDoF.COCPARAMS, new Laya.Vector3(10, 30, 1));
+            this._zBufferParams = new Laya.Vector4();
+            this._sourceSize = new Laya.Vector4();
+            this._dowmSampleScale = new Laya.Vector4();
+        }
         static init() {
             GaussianDoF.SOURCESIZE = Laya.Shader3D.propertyNameToID("u_SourceSize");
             GaussianDoF.ZBUFFERPARAMS = Laya.Shader3D.propertyNameToID("u_ZBufferParams");
@@ -27972,15 +28053,6 @@
             let compositeSubShader = new Laya.SubShader(attributeMap, uniformMap);
             shader.addSubShader(compositeSubShader);
             compositeSubShader.addShaderPass(FullScreenVert, CompositeFS);
-        }
-        constructor() {
-            super();
-            this._shader = Laya.Shader3D.find("GaussianDoF");
-            this._shaderData = Laya.LayaGL.renderOBJCreate.createShaderData(null);
-            this._shaderData.setVector3(GaussianDoF.COCPARAMS, new Laya.Vector3(10, 30, 1));
-            this._zBufferParams = new Laya.Vector4();
-            this._sourceSize = new Laya.Vector4();
-            this._dowmSampleScale = new Laya.Vector4();
         }
         set farStart(value) {
             let cocParams = this._shaderData.getVector3(GaussianDoF.COCPARAMS);
@@ -28052,13 +28124,13 @@
         }
     }
 
-    var FragAO = "#if defined(GL_FRAGMENT_PRECISION_HIGH)\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n\n#define SHADER_NAME OcclusionEstimation:FS\n\n#include \"DepthNormalUtil.glsl\";\n\n#include \"AmbientOcclusion.glsl\";\n\n#define FIX_SAMPLING_PATTERN\n\n// Check if the camera is perspective.\n// (returns 1.0 when orthographic)\nfloat CheckPerspective(float x)\n{   \n    // todo ortho\n    return mix(x, 1.0, 0.0);\n}\n\nvec3 ReconstructViewPos(vec2 uv, float depth, vec2 p11_22, vec2 p13_31)\n{\n    return vec3((uv * 2.0 - 1.0 - p13_31) / p11_22 * CheckPerspective(depth), depth);\n}\n\n// Pseudo random number generator with 2D coordinates\n// https://stackoverflow.com/questions/12964279/whats-the-origin-of-this-glsl-rand-one-liner\nfloat UVRandom(float u, float v) {\n    float f = dot(vec2(12.9898, 78.233), vec2(u, v));\n    return fract(43758.5453 * sin(f));\n}\n\nvec2 CosSin(float theta)\n{\n    // float sn, cs;\n    // sincos(theta, sn, cs);\n    float sn = sin(theta);\n    float cs = cos(theta);\n    return vec2(cs, sn);\n}\n\nfloat GradientNoise(vec2 uv)\n{\n    uv = floor(uv * u_MainTex_TexelSize.zw);\n    float f = dot(vec2(0.06711056, 0.00583715), uv);\n    return fract(52.9829189 * fract(f));\n}\n\n// Sample point picker\nvec3 PickSamplePoint(vec2 uv, float index) \n{\n    #if defined(FIX_SAMPLING_PATTERN)\n        float gn = GradientNoise(uv * DOWNSAMPLE);\n        float u = fract(UVRandom(0.0, index + uv.x * 1e-10) + gn) * 2.0 - 1.0;\n        float theta = (UVRandom(1.0, index + uv.x * 1e-10) + gn) * TWO_PI;\n    #else\n        float u = UVRandom(uv.x + u_PlugTime.x, uv.y + index) * 2.0 - 1.0;\n        float theta = UVRandom(-uv.x - u_PlugTime.x, uv.y + index) * TWO_PI;\n    #endif\n\n    vec3 v = vec3(CosSin(theta) * sqrt(1.0 - u * u), u);\n    float l = sqrt((index + 1.0) / float(SAMPLE_COUNT)) * RADIUS;\n    return v * l;\n}\n\nvoid main()\n{\n    vec2 uv = v_Texcoord0;\n\n    mat3 proj = mat3(u_Projection);\n    vec2 p11_22 = vec2(u_Projection[0][0], u_Projection[1][1]);\n    vec2 p13_31 = vec2(u_Projection[2][0], u_Projection[2][1]);\n\n    vec3 norm_o;\n    float depth_o = SampleDepthNormal(uv, norm_o);\n\n    // Reconstruct the view-space position.\n    vec3 vpos_o = ReconstructViewPos(uv, depth_o, p11_22, p13_31);\n\n    float ao = 0.0;\n\n    for (int s = 0; s < int(SAMPLE_COUNT); s++) {\n        float s_float = float(s);\n        vec3 v_s1 = PickSamplePoint(uv, s_float);\n\n        v_s1 = faceforward(v_s1, -norm_o, v_s1);\n        vec3 vpos_s1 = vpos_o + v_s1;\n\n        // Reproject the sample point\n        vec3 spos_s1 = proj * vpos_s1;\n        vec2 uv_s1_01 = (spos_s1.xy / CheckPerspective(vpos_s1.z) + 1.0) * 0.5;\n\n        float depth_s1 = SampleDepth(uv_s1_01);\n\n        vec3 vpos_s2 = ReconstructViewPos(uv_s1_01, depth_s1, p11_22, p13_31);\n        vec3 v_s2 = vpos_s2 - vpos_o;\n\n        float a1 = max(dot(v_s2, norm_o) - kBeta * depth_o, 0.0);\n        float a2 = dot(v_s2, v_s2) + EPSILON;\n\n        ao += a1 / a2;\n    }\n\n    ao *= RADIUS;\n\n    ao = PositivePow(ao * INTENSITY / float(SAMPLE_COUNT), kContrast);\n\n    gl_FragColor = PackAONormal(ao, norm_o);\n}\n\n/**\n    0.8741,     0,          0,          0, \n    0,          1.7320,     0,          0, \n    0,          0,          -1.0152,    -1, \n    0,          0,          -0.3046,    0\n**/";
+    var FragAO = "#if defined(GL_FRAGMENT_PRECISION_HIGH)\r\nprecision highp float;\r\n#else\r\nprecision mediump float;\r\n#endif\r\n\r\n#define SHADER_NAME OcclusionEstimation:FS\r\n\r\n#include \"DepthNormalUtil.glsl\";\r\n\r\n#include \"AmbientOcclusion.glsl\";\r\n\r\n#define FIX_SAMPLING_PATTERN\r\n\r\n// Check if the camera is perspective.\r\n// (returns 1.0 when orthographic)\r\nfloat CheckPerspective(float x)\r\n{   \r\n    // todo ortho\r\n    return mix(x, 1.0, 0.0);\r\n}\r\n\r\nvec3 ReconstructViewPos(vec2 uv, float depth, vec2 p11_22, vec2 p13_31)\r\n{\r\n    return vec3((uv * 2.0 - 1.0 - p13_31) / p11_22 * CheckPerspective(depth), depth);\r\n}\r\n\r\n// Pseudo random number generator with 2D coordinates\r\n// https://stackoverflow.com/questions/12964279/whats-the-origin-of-this-glsl-rand-one-liner\r\nfloat UVRandom(float u, float v) {\r\n    float f = dot(vec2(12.9898, 78.233), vec2(u, v));\r\n    return fract(43758.5453 * sin(f));\r\n}\r\n\r\nvec2 CosSin(float theta)\r\n{\r\n    // float sn, cs;\r\n    // sincos(theta, sn, cs);\r\n    float sn = sin(theta);\r\n    float cs = cos(theta);\r\n    return vec2(cs, sn);\r\n}\r\n\r\nfloat GradientNoise(vec2 uv)\r\n{\r\n    uv = floor(uv * u_MainTex_TexelSize.zw);\r\n    float f = dot(vec2(0.06711056, 0.00583715), uv);\r\n    return fract(52.9829189 * fract(f));\r\n}\r\n\r\n// Sample point picker\r\nvec3 PickSamplePoint(vec2 uv, float index) \r\n{\r\n    #if defined(FIX_SAMPLING_PATTERN)\r\n        float gn = GradientNoise(uv * DOWNSAMPLE);\r\n        float u = fract(UVRandom(0.0, index + uv.x * 1e-10) + gn) * 2.0 - 1.0;\r\n        float theta = (UVRandom(1.0, index + uv.x * 1e-10) + gn) * TWO_PI;\r\n    #else\r\n        float u = UVRandom(uv.x + u_PlugTime.x, uv.y + index) * 2.0 - 1.0;\r\n        float theta = UVRandom(-uv.x - u_PlugTime.x, uv.y + index) * TWO_PI;\r\n    #endif\r\n\r\n    vec3 v = vec3(CosSin(theta) * sqrt(1.0 - u * u), u);\r\n    float l = sqrt((index + 1.0) / float(SAMPLE_COUNT)) * RADIUS;\r\n    return v * l;\r\n}\r\n\r\nvoid main()\r\n{\r\n    vec2 uv = v_Texcoord0;\r\n\r\n    mat3 proj = mat3(u_Projection);\r\n    vec2 p11_22 = vec2(u_Projection[0][0], u_Projection[1][1]);\r\n    vec2 p13_31 = vec2(u_Projection[2][0], u_Projection[2][1]);\r\n\r\n    vec3 norm_o;\r\n    float depth_o = SampleDepthNormal(uv, norm_o);\r\n\r\n    // Reconstruct the view-space position.\r\n    vec3 vpos_o = ReconstructViewPos(uv, depth_o, p11_22, p13_31);\r\n\r\n    float ao = 0.0;\r\n\r\n    for (int s = 0; s < int(SAMPLE_COUNT); s++) {\r\n        float s_float = float(s);\r\n        vec3 v_s1 = PickSamplePoint(uv, s_float);\r\n\r\n        v_s1 = faceforward(v_s1, -norm_o, v_s1);\r\n        vec3 vpos_s1 = vpos_o + v_s1;\r\n\r\n        // Reproject the sample point\r\n        vec3 spos_s1 = proj * vpos_s1;\r\n        vec2 uv_s1_01 = (spos_s1.xy / CheckPerspective(vpos_s1.z) + 1.0) * 0.5;\r\n\r\n        float depth_s1 = SampleDepth(uv_s1_01);\r\n\r\n        vec3 vpos_s2 = ReconstructViewPos(uv_s1_01, depth_s1, p11_22, p13_31);\r\n        vec3 v_s2 = vpos_s2 - vpos_o;\r\n\r\n        float a1 = max(dot(v_s2, norm_o) - kBeta * depth_o, 0.0);\r\n        float a2 = dot(v_s2, v_s2) + EPSILON;\r\n\r\n        ao += a1 / a2;\r\n    }\r\n\r\n    ao *= RADIUS;\r\n\r\n    ao = PositivePow(ao * INTENSITY / float(SAMPLE_COUNT), kContrast);\r\n\r\n    gl_FragColor = PackAONormal(ao, norm_o);\r\n}\r\n\r\n/**\r\n    0.8741,     0,          0,          0, \r\n    0,          1.7320,     0,          0, \r\n    0,          0,          -1.0152,    -1, \r\n    0,          0,          -0.3046,    0\r\n**/";
 
-    var AoBlurHorizontal = "#if defined(GL_FRAGMENT_PRECISION_HIGH)\n\tprecision highp float;\n#else\n\tprecision mediump float;\n#endif\n\n\n#define SHADER_NAME AOBlurHorizontal\n//质量\n#define BLUR_HIGH_QUALITY 0\n\n\nvarying vec2 v_Texcoord0;\n\n// uniform vec2 u_Delty;\n\nvec3 GetPackedNormal(vec4 p)\n{\n    return p.gba * 2.0 - 1.0;\n}\n\nfloat CompareNormal(vec3 d1, vec3 d2)\n{\n    return smoothstep(0.8, 1.0, dot(d1, d2));\n}\n\nfloat GetPackedAO(vec4 p)\n{\n    return p.r;\n}\n\nvec4 PackAONormal(float ao, vec3 normal) {\n    return vec4(ao, normal * 0.5 + 0.5);\n}\n\nvoid main() {\n\t vec2 delta = vec2(u_MainTex_TexelSize.x * 2.0*u_Delty.x,u_Delty.y*u_MainTex_TexelSize.y*2.0);\n\t vec2 uv = v_Texcoord0;\n\n\n#if defined(BLUR_HIGH_QUALITY)\n\n    // High quality 7-tap Gaussian with adaptive sampling\n\tvec2 uvtran = uv;\n    vec4 p0  = texture2D(u_MainTex,uv);\n\tuvtran = uv-delta;\n    vec4 p1a = texture2D(u_MainTex,uvtran);\n\tuvtran = uv+delta;\n    vec4 p1b = texture2D(u_MainTex,uvtran);\n\tuvtran = uv-delta*2.0;\n    vec4 p2a =  texture2D(u_MainTex,uvtran);\n\tuvtran = uv+delta*2.0;\n    vec4 p2b =  texture2D(u_MainTex,uvtran);\n\tuvtran = uv-delta * 3.2307692308;\n    vec4 p3a =  texture2D(u_MainTex,uvtran);;\n\tuvtran = uv+delta * 3.2307692308;\n    vec4 p3b =  texture2D(u_MainTex,uvtran);;\n\n    vec3 n0 = GetPackedNormal(p0);\n    \n\n    float w0  = 0.37004405286;\n    float w1a = CompareNormal(n0, GetPackedNormal(p1a)) * 0.31718061674;\n    float w1b = CompareNormal(n0, GetPackedNormal(p1b)) * 0.31718061674;\n    float w2a = CompareNormal(n0, GetPackedNormal(p2a)) * 0.19823788546;\n    float w2b = CompareNormal(n0, GetPackedNormal(p2b)) * 0.19823788546;\n    float w3a = CompareNormal(n0, GetPackedNormal(p3a)) * 0.11453744493;\n    float w3b = CompareNormal(n0, GetPackedNormal(p3b)) * 0.11453744493;\n\n    float s;\n    s  = GetPackedAO(p0)  * w0;\n    s += GetPackedAO(p1a) * w1a;\n    s += GetPackedAO(p1b) * w1b;\n    s += GetPackedAO(p2a) * w2a;\n    s += GetPackedAO(p2b) * w2b;\n    s += GetPackedAO(p3a) * w3a;\n    s += GetPackedAO(p3b) * w3b;\n\n    s /= w0 + w1a + w1b + w2a + w2b + w3a + w3b;\n\n#else\n\n    // Fater 5-tap Gaussian with linear sampling\n    vec4 p0  = texture2D(u_MainTex, sampler_MainTex, i.texcoordStereo);\n    vec4 p1a = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, UnityStereoTransformScreenSpaceTex(i.texcoord - delta * 1.3846153846));\n    vec4 p1b = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, UnityStereoTransformScreenSpaceTex(i.texcoord + delta * 1.3846153846));\n    vec4 p2a = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, UnityStereoTransformScreenSpaceTex(i.texcoord - delta * 3.2307692308));\n    vec4 p2b = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, UnityStereoTransformScreenSpaceTex(i.texcoord + delta * 3.2307692308));\n\n\tvec2 uvtran = uv;\n    vec4 p0  = texture2D(u_MainTex,uv);\n\tuvtran = uv-delta * 1.3846153846;\n    vec4 p1a = texture2D(u_MainTex,uvtran);\n\tuvtran = uv+delta * 1.3846153846;\n    vec4 p1b = texture2D(u_MainTex,uvtran);\n\tuvtran = uv-delta*3.2307692308;\n    vec4 p2a =  texture2D(u_MainTex,uvtran);\n\tuvtran = uv+delta*3.2307692308;\n    vec4 p2b =  texture2D(u_MainTex,uvtran);\n\n \tvec3 n0 = GetPackedNormal(p0);\n\n    float w0  = 0.2270270270;\n    float w1a = CompareNormal(n0, GetPackedNormal(p1a)) * 0.3162162162;\n    float w1b = CompareNormal(n0, GetPackedNormal(p1b)) * 0.3162162162;\n    float w2a = CompareNormal(n0, GetPackedNormal(p2a)) * 0.0702702703;\n    float w2b = CompareNormal(n0, GetPackedNormal(p2b)) * 0.0702702703;\n\n    float s;\n    s  = GetPackedAO(p0)  * w0;\n    s += GetPackedAO(p1a) * w1a;\n    s += GetPackedAO(p1b) * w1b;\n    s += GetPackedAO(p2a) * w2a;\n    s += GetPackedAO(p2b) * w2b;\n\n    s /= w0 + w1a + w1b + w2a + w2b;\n\n#endif\n\n    gl_FragColor = PackAONormal(s, n0);;\n}";
+    var AoBlurHorizontal = "#if defined(GL_FRAGMENT_PRECISION_HIGH)\r\n\tprecision highp float;\r\n#else\r\n\tprecision mediump float;\r\n#endif\r\n\r\n\r\n#define SHADER_NAME AOBlurHorizontal\r\n//质量\r\n#define BLUR_HIGH_QUALITY 0\r\n\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\n// uniform vec2 u_Delty;\r\n\r\nvec3 GetPackedNormal(vec4 p)\r\n{\r\n    return p.gba * 2.0 - 1.0;\r\n}\r\n\r\nfloat CompareNormal(vec3 d1, vec3 d2)\r\n{\r\n    return smoothstep(0.8, 1.0, dot(d1, d2));\r\n}\r\n\r\nfloat GetPackedAO(vec4 p)\r\n{\r\n    return p.r;\r\n}\r\n\r\nvec4 PackAONormal(float ao, vec3 normal) {\r\n    return vec4(ao, normal * 0.5 + 0.5);\r\n}\r\n\r\nvoid main() {\r\n\t vec2 delta = vec2(u_MainTex_TexelSize.x * 2.0*u_Delty.x,u_Delty.y*u_MainTex_TexelSize.y*2.0);\r\n\t vec2 uv = v_Texcoord0;\r\n\r\n\r\n#if defined(BLUR_HIGH_QUALITY)\r\n\r\n    // High quality 7-tap Gaussian with adaptive sampling\r\n\tvec2 uvtran = uv;\r\n    vec4 p0  = texture2D(u_MainTex,uv);\r\n\tuvtran = uv-delta;\r\n    vec4 p1a = texture2D(u_MainTex,uvtran);\r\n\tuvtran = uv+delta;\r\n    vec4 p1b = texture2D(u_MainTex,uvtran);\r\n\tuvtran = uv-delta*2.0;\r\n    vec4 p2a =  texture2D(u_MainTex,uvtran);\r\n\tuvtran = uv+delta*2.0;\r\n    vec4 p2b =  texture2D(u_MainTex,uvtran);\r\n\tuvtran = uv-delta * 3.2307692308;\r\n    vec4 p3a =  texture2D(u_MainTex,uvtran);;\r\n\tuvtran = uv+delta * 3.2307692308;\r\n    vec4 p3b =  texture2D(u_MainTex,uvtran);;\r\n\r\n    vec3 n0 = GetPackedNormal(p0);\r\n    \r\n\r\n    float w0  = 0.37004405286;\r\n    float w1a = CompareNormal(n0, GetPackedNormal(p1a)) * 0.31718061674;\r\n    float w1b = CompareNormal(n0, GetPackedNormal(p1b)) * 0.31718061674;\r\n    float w2a = CompareNormal(n0, GetPackedNormal(p2a)) * 0.19823788546;\r\n    float w2b = CompareNormal(n0, GetPackedNormal(p2b)) * 0.19823788546;\r\n    float w3a = CompareNormal(n0, GetPackedNormal(p3a)) * 0.11453744493;\r\n    float w3b = CompareNormal(n0, GetPackedNormal(p3b)) * 0.11453744493;\r\n\r\n    float s;\r\n    s  = GetPackedAO(p0)  * w0;\r\n    s += GetPackedAO(p1a) * w1a;\r\n    s += GetPackedAO(p1b) * w1b;\r\n    s += GetPackedAO(p2a) * w2a;\r\n    s += GetPackedAO(p2b) * w2b;\r\n    s += GetPackedAO(p3a) * w3a;\r\n    s += GetPackedAO(p3b) * w3b;\r\n\r\n    s /= w0 + w1a + w1b + w2a + w2b + w3a + w3b;\r\n\r\n#else\r\n\r\n    // Fater 5-tap Gaussian with linear sampling\r\n    vec4 p0  = texture2D(u_MainTex, sampler_MainTex, i.texcoordStereo);\r\n    vec4 p1a = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, UnityStereoTransformScreenSpaceTex(i.texcoord - delta * 1.3846153846));\r\n    vec4 p1b = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, UnityStereoTransformScreenSpaceTex(i.texcoord + delta * 1.3846153846));\r\n    vec4 p2a = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, UnityStereoTransformScreenSpaceTex(i.texcoord - delta * 3.2307692308));\r\n    vec4 p2b = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, UnityStereoTransformScreenSpaceTex(i.texcoord + delta * 3.2307692308));\r\n\r\n\tvec2 uvtran = uv;\r\n    vec4 p0  = texture2D(u_MainTex,uv);\r\n\tuvtran = uv-delta * 1.3846153846;\r\n    vec4 p1a = texture2D(u_MainTex,uvtran);\r\n\tuvtran = uv+delta * 1.3846153846;\r\n    vec4 p1b = texture2D(u_MainTex,uvtran);\r\n\tuvtran = uv-delta*3.2307692308;\r\n    vec4 p2a =  texture2D(u_MainTex,uvtran);\r\n\tuvtran = uv+delta*3.2307692308;\r\n    vec4 p2b =  texture2D(u_MainTex,uvtran);\r\n\r\n \tvec3 n0 = GetPackedNormal(p0);\r\n\r\n    float w0  = 0.2270270270;\r\n    float w1a = CompareNormal(n0, GetPackedNormal(p1a)) * 0.3162162162;\r\n    float w1b = CompareNormal(n0, GetPackedNormal(p1b)) * 0.3162162162;\r\n    float w2a = CompareNormal(n0, GetPackedNormal(p2a)) * 0.0702702703;\r\n    float w2b = CompareNormal(n0, GetPackedNormal(p2b)) * 0.0702702703;\r\n\r\n    float s;\r\n    s  = GetPackedAO(p0)  * w0;\r\n    s += GetPackedAO(p1a) * w1a;\r\n    s += GetPackedAO(p1b) * w1b;\r\n    s += GetPackedAO(p2a) * w2a;\r\n    s += GetPackedAO(p2b) * w2b;\r\n\r\n    s /= w0 + w1a + w1b + w2a + w2b;\r\n\r\n#endif\r\n\r\n    gl_FragColor = PackAONormal(s, n0);;\r\n}";
 
-    var AOComposition = "#if defined(GL_FRAGMENT_PRECISION_HIGH)\n\tprecision highp float;\n#else\n\tprecision mediump float;\n#endif\n\n#define SHADER_NAME AOComposition\n#define BLUR_HIGH_QUALITY 0\n\n\nvarying vec2 v_Texcoord0;\n\nvec3 GetPackedNormal(vec4 p)\n{\n    return p.gba * 2.0 - 1.0;\n}\nfloat CompareNormal(vec3 d1, vec3 d2)\n{\n    return smoothstep(0.8, 1.0, dot(d1, d2));\n}\nfloat GetPackedAO(vec4 p)\n{\n    return p.r;\n}\n\n// Geometry-aware bilateral filter (single pass/small kernel)\nfloat BlurSmall(sampler2D tex, vec2 uv, vec2 delta)\n{\n    vec4 p0 = texture2D(tex,uv);\n    vec2 uvtran =uv+vec2(-delta.x,-delta.y) ;\n    vec4 p1 = texture2D(tex,uvtran);\n    uvtran =uv+vec2(delta.x,-delta.y);\n    vec4 p2 = texture2D(tex, uvtran);\n    uvtran =uv+vec2(-delta.x,delta.y) ;\n    vec4 p3 = texture2D(tex, uvtran);\n    uvtran =uv+delta;\n    vec4 p4 = texture2D(tex, uvtran);\n\n    vec3 n0 = GetPackedNormal(p0);\n\n    float w0 = 1.0;\n    float w1 = CompareNormal(n0, GetPackedNormal(p1));\n    float w2 = CompareNormal(n0, GetPackedNormal(p2));\n    float w3 = CompareNormal(n0, GetPackedNormal(p3));\n    float w4 = CompareNormal(n0, GetPackedNormal(p4));\n\n    float s;\n    s  = GetPackedAO(p0) * w0;\n    s += GetPackedAO(p1) * w1;\n    s += GetPackedAO(p2) * w2;\n    s += GetPackedAO(p3) * w3;\n    s += GetPackedAO(p4) * w4;\n\n    return s / (w0 + w1 + w2 + w3 + w4);\n}\n\nvoid main() {\n    vec2 uv = v_Texcoord0;\n    vec2 delty = u_MainTex_TexelSize.xy;\n    float ao = BlurSmall(u_compositionAoTexture,uv,delty);\n    vec4 albedo = texture2D(u_MainTex,uv);\n    vec4 aocolor = vec4(ao*u_AOColor.rgb,ao);\n    albedo.rgb = albedo.rgb*(1.0-ao)+ao*u_AOColor.rgb*ao;\n    gl_FragColor = albedo;\n\n\n}";
+    var AOComposition = "#if defined(GL_FRAGMENT_PRECISION_HIGH)\r\n\tprecision highp float;\r\n#else\r\n\tprecision mediump float;\r\n#endif\r\n\r\n#define SHADER_NAME AOComposition\r\n#define BLUR_HIGH_QUALITY 0\r\n\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nvec3 GetPackedNormal(vec4 p)\r\n{\r\n    return p.gba * 2.0 - 1.0;\r\n}\r\nfloat CompareNormal(vec3 d1, vec3 d2)\r\n{\r\n    return smoothstep(0.8, 1.0, dot(d1, d2));\r\n}\r\nfloat GetPackedAO(vec4 p)\r\n{\r\n    return p.r;\r\n}\r\n\r\n// Geometry-aware bilateral filter (single pass/small kernel)\r\nfloat BlurSmall(sampler2D tex, vec2 uv, vec2 delta)\r\n{\r\n    vec4 p0 = texture2D(tex,uv);\r\n    vec2 uvtran =uv+vec2(-delta.x,-delta.y) ;\r\n    vec4 p1 = texture2D(tex,uvtran);\r\n    uvtran =uv+vec2(delta.x,-delta.y);\r\n    vec4 p2 = texture2D(tex, uvtran);\r\n    uvtran =uv+vec2(-delta.x,delta.y) ;\r\n    vec4 p3 = texture2D(tex, uvtran);\r\n    uvtran =uv+delta;\r\n    vec4 p4 = texture2D(tex, uvtran);\r\n\r\n    vec3 n0 = GetPackedNormal(p0);\r\n\r\n    float w0 = 1.0;\r\n    float w1 = CompareNormal(n0, GetPackedNormal(p1));\r\n    float w2 = CompareNormal(n0, GetPackedNormal(p2));\r\n    float w3 = CompareNormal(n0, GetPackedNormal(p3));\r\n    float w4 = CompareNormal(n0, GetPackedNormal(p4));\r\n\r\n    float s;\r\n    s  = GetPackedAO(p0) * w0;\r\n    s += GetPackedAO(p1) * w1;\r\n    s += GetPackedAO(p2) * w2;\r\n    s += GetPackedAO(p3) * w3;\r\n    s += GetPackedAO(p4) * w4;\r\n\r\n    return s / (w0 + w1 + w2 + w3 + w4);\r\n}\r\n\r\nvoid main() {\r\n    vec2 uv = v_Texcoord0;\r\n    vec2 delty = u_MainTex_TexelSize.xy;\r\n    float ao = BlurSmall(u_compositionAoTexture,uv,delty);\r\n    vec4 albedo = texture2D(u_MainTex,uv);\r\n    vec4 aocolor = vec4(ao*u_AOColor.rgb,ao);\r\n    albedo.rgb = albedo.rgb*(1.0-ao)+ao*u_AOColor.rgb*ao;\r\n    gl_FragColor = albedo;\r\n\r\n\r\n}";
 
-    var AmbientOcclusion = "#include \"Camera.glsl\";\n// const \n#define TWO_PI 6.2831852\n\n#define EPSILON         1.0e-4\n#define FLT_EPSILON     1.192092896e-07 // Smallest positive number, such that 1.0 + FLT_EPSILON != 1.0\n\nconst float kContrast = 0.6;\nconst float kGeometryCoeff = 0.8;\nconst float kBeta = 0.002;\n\n\n// varying\nvarying vec2 v_Texcoord0;\n\n#if defined(AO_High)\n\t#define SAMPLE_COUNT 12\n#elif defined(AO_MEDIUM)\n\t#define SAMPLE_COUNT 8\n#else\n\t#define SAMPLE_COUNT 4\n#endif\n\n#ifdef AOLOWEST\n#define SAMPLE_COUNT 8\n#endif\n\n#ifdef AOLOWEST\n#define SAMPLE_COUNT 8\n#endif\n\n\n#define INTENSITY u_AOParams.x\n#define RADIUS u_AOParams.y\n#define DOWNSAMPLE u_AOParams.z\n\nfloat PositivePow(float base, float power)\n{\n    return pow(max(abs(base), float(FLT_EPSILON)), power);\n}\n\n\n// Boundary check for depth sampler\n// (returns a very large value if it lies out of bounds)\nfloat CheckBounds(vec2 uv, float d) \n{\n    float ob = 0.0;\n    // todo\n    if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) \n    {\n        ob = 1.0;\n    }\n    if (d <= 0.00001) {\n        ob += 1.0;\n    }\n\n    return ob * 1e8;\n}\n\nfloat SampleDepth(vec2 uv) \n{\n    float depthTex_Depth = SAMPLE_DEPTH_TEXTURE(u_CameraDepthTexture, uv);\n    float depthTex_Linear01Depth = Linear01Depth(depthTex_Depth, u_ZBufferParams);\n    return  depthTex_Linear01Depth * u_ProjectionParams.y + CheckBounds(uv, depthTex_Linear01Depth);\n}\n\nvec3 SampleNormal(vec2 uv) \n{\n    vec4 col = texture2D(u_CameraDepthNormalsTexture, uv);\n    vec3 depthNormal_Normal = DecodeViewNormalStereo(col);\n    return depthNormal_Normal * vec3(1.0, 1.0, -1.0);\n}\n\nfloat SampleDepthNormal(vec2 uv, out vec3 normal) \n{\n    normal = SampleNormal(uv);\n    return SampleDepth(uv);\n}\n\n// Normal vector comparer (for geometry-aware weighting)\nfloat CompareNormal(vec3 d1, vec3 d2)\n{\n    return smoothstep(kGeometryCoeff, 1.0, dot(d1, d2));\n}\n\n// Accessors for packed AO/normal buffer\nvec4 PackAONormal(float ao, vec3 n) \n{\n    return vec4(ao, n * 0.5 + 0.5);\n}\n\nvec3 GetPackedNormal(vec4 p)\n{\n    return p.gba * 2.0 - 1.0;\n}\n\nfloat GetPackAO(vec4 p)\n{\n    return p.r;\n}\n\n\n";
+    var AmbientOcclusion = "#include \"Camera.glsl\";\r\n// const \r\n#define TWO_PI 6.2831852\r\n\r\n#define EPSILON         1.0e-4\r\n#define FLT_EPSILON     1.192092896e-07 // Smallest positive number, such that 1.0 + FLT_EPSILON != 1.0\r\n\r\nconst float kContrast = 0.6;\r\nconst float kGeometryCoeff = 0.8;\r\nconst float kBeta = 0.002;\r\n\r\n\r\n// varying\r\nvarying vec2 v_Texcoord0;\r\n\r\n#if defined(AO_High)\r\n\t#define SAMPLE_COUNT 12\r\n#elif defined(AO_MEDIUM)\r\n\t#define SAMPLE_COUNT 8\r\n#else\r\n\t#define SAMPLE_COUNT 4\r\n#endif\r\n\r\n#ifdef AOLOWEST\r\n#define SAMPLE_COUNT 8\r\n#endif\r\n\r\n#ifdef AOLOWEST\r\n#define SAMPLE_COUNT 8\r\n#endif\r\n\r\n\r\n#define INTENSITY u_AOParams.x\r\n#define RADIUS u_AOParams.y\r\n#define DOWNSAMPLE u_AOParams.z\r\n\r\nfloat PositivePow(float base, float power)\r\n{\r\n    return pow(max(abs(base), float(FLT_EPSILON)), power);\r\n}\r\n\r\n\r\n// Boundary check for depth sampler\r\n// (returns a very large value if it lies out of bounds)\r\nfloat CheckBounds(vec2 uv, float d) \r\n{\r\n    float ob = 0.0;\r\n    // todo\r\n    if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) \r\n    {\r\n        ob = 1.0;\r\n    }\r\n    if (d <= 0.00001) {\r\n        ob += 1.0;\r\n    }\r\n\r\n    return ob * 1e8;\r\n}\r\n\r\nfloat SampleDepth(vec2 uv) \r\n{\r\n    float depthTex_Depth = SAMPLE_DEPTH_TEXTURE(u_CameraDepthTexture, uv);\r\n    float depthTex_Linear01Depth = Linear01Depth(depthTex_Depth, u_ZBufferParams);\r\n    return  depthTex_Linear01Depth * u_ProjectionParams.y + CheckBounds(uv, depthTex_Linear01Depth);\r\n}\r\n\r\nvec3 SampleNormal(vec2 uv) \r\n{\r\n    vec4 col = texture2D(u_CameraDepthNormalsTexture, uv);\r\n    vec3 depthNormal_Normal = DecodeViewNormalStereo(col);\r\n    return depthNormal_Normal * vec3(1.0, 1.0, -1.0);\r\n}\r\n\r\nfloat SampleDepthNormal(vec2 uv, out vec3 normal) \r\n{\r\n    normal = SampleNormal(uv);\r\n    return SampleDepth(uv);\r\n}\r\n\r\n// Normal vector comparer (for geometry-aware weighting)\r\nfloat CompareNormal(vec3 d1, vec3 d2)\r\n{\r\n    return smoothstep(kGeometryCoeff, 1.0, dot(d1, d2));\r\n}\r\n\r\n// Accessors for packed AO/normal buffer\r\nvec4 PackAONormal(float ao, vec3 n) \r\n{\r\n    return vec4(ao, n * 0.5 + 0.5);\r\n}\r\n\r\nvec3 GetPackedNormal(vec4 p)\r\n{\r\n    return p.gba * 2.0 - 1.0;\r\n}\r\n\r\nfloat GetPackAO(vec4 p)\r\n{\r\n    return p.r;\r\n}\r\n\r\n\r\n";
 
     exports.AOQUALITY = void 0;
     (function (AOQUALITY) {
@@ -28067,6 +28139,19 @@
         AOQUALITY[AOQUALITY["LOWEST"] = 2] = "LOWEST";
     })(exports.AOQUALITY || (exports.AOQUALITY = {}));
     class ScalableAO extends PostProcessEffect {
+        constructor() {
+            super();
+            this._aoParams = new Laya.Vector3();
+            this._aoQuality = exports.AOQUALITY.MEDIUM;
+            this._shader = Laya.Shader3D.find("ScalableAO");
+            this._shaderData = Laya.LayaGL.renderOBJCreate.createShaderData(null);
+            this._aoParams = new Laya.Vector3(0.12, 0.15, 1);
+            this._shaderData.setVector3(ScalableAO.AOParams, this._aoParams);
+            this._shaderData.setVector(BaseCamera.DEPTHZBUFFERPARAMS, new Laya.Vector4());
+            this._aoBlurHorizontalShader = Laya.Shader3D.find("AOBlurHorizontal");
+            this._aoComposition = Laya.Shader3D.find("AOComposition");
+            this.aoQuality = exports.AOQUALITY.MEDIUM;
+        }
         static init() {
             ScalableAO.BlurDelty = Laya.Shader3D.propertyNameToID("u_Delty");
             ScalableAO.AOColor = Laya.Shader3D.propertyNameToID("u_AOColor");
@@ -28103,19 +28188,6 @@
             subShader = new Laya.SubShader(attributeMap, uniformMap);
             shader.addSubShader(subShader);
             subShader.addShaderPass(BlitVS, AOComposition);
-        }
-        constructor() {
-            super();
-            this._aoParams = new Laya.Vector3();
-            this._aoQuality = exports.AOQUALITY.MEDIUM;
-            this._shader = Laya.Shader3D.find("ScalableAO");
-            this._shaderData = Laya.LayaGL.renderOBJCreate.createShaderData(null);
-            this._aoParams = new Laya.Vector3(0.12, 0.15, 1);
-            this._shaderData.setVector3(ScalableAO.AOParams, this._aoParams);
-            this._shaderData.setVector(BaseCamera.DEPTHZBUFFERPARAMS, new Laya.Vector4());
-            this._aoBlurHorizontalShader = Laya.Shader3D.find("AOBlurHorizontal");
-            this._aoComposition = Laya.Shader3D.find("AOComposition");
-            this.aoQuality = exports.AOQUALITY.MEDIUM;
         }
         set aoColor(value) {
             this._shaderData.setColor(ScalableAO.AOColor, value);
@@ -28643,7 +28715,7 @@
     InstanceBatchManager.instance = new InstanceBatchManager();
 
     const tempVec = new Laya.Vector3();
-    const tempVec1 = new Laya.Vector3();
+    new Laya.Vector3();
     class BatchRender extends BaseRender {
         constructor() {
             super();
@@ -28714,13 +28786,9 @@
             else {
                 let checkCamera = this.owner.scene.cullInfoCamera;
                 let maxYDistance = checkCamera.maxlocalYDistance;
-                checkCamera.boundFrustum;
                 Laya.Vector3.subtract(this._bounds.getCenter(), checkCamera.transform.position, tempVec);
                 let length = tempVec.length();
-                checkCamera.transform.worldMatrix.getForward(tempVec1);
-                Laya.Vector3.normalize(tempVec, tempVec);
-                Laya.Vector3.normalize(tempVec1, tempVec1);
-                let rateYDistance = length * Math.abs(Laya.Vector3.dot(tempVec, tempVec1)) / checkCamera.farPlane * maxYDistance;
+                let rateYDistance = length / checkCamera.farPlane * maxYDistance;
                 let rate = (this._lodsize / rateYDistance);
                 for (let i = 0; i < this._lodRateArray.length; i++) {
                     if (rate < this._lodRateArray[i])
@@ -28983,6 +29051,16 @@
     }
 
     class StaticBatchVolume extends Volume {
+        constructor() {
+            super();
+            this._customBatchs = [];
+            this.checkLOD = true;
+            this._enableStaticInstanceBatch = false;
+            this._enableStaticVertexMergeBatch = false;
+            this._cacheRender = new Laya.SingletonList();
+            this._batchRender = new Laya.SingletonList();
+            this._enableCustomBatch = false;
+        }
         _getStaticInstanceBatchRender() {
             let render = this.owner.getComponent(StaticInstanceBatchRender);
             if (!render) {
@@ -29071,16 +29149,6 @@
         }
         get customBatchRenders() {
             return this._customBatchs;
-        }
-        constructor() {
-            super();
-            this._customBatchs = [];
-            this.checkLOD = true;
-            this._enableStaticInstanceBatch = false;
-            this._enableStaticVertexMergeBatch = false;
-            this._cacheRender = new Laya.SingletonList();
-            this._batchRender = new Laya.SingletonList();
-            this._enableCustomBatch = false;
         }
         _restorRenderNode() {
             if (this.enableCustomBatchRender) {
@@ -30183,7 +30251,8 @@
 
     class MeshLoader {
         load(task) {
-            return task.loader.fetch(task.url, "arraybuffer", task.progress.createCallback(), task.options).then(data => {
+            let url = Laya.AssetDb.inst.getSubAssetURL(task.url, task.uuid, null, "lm");
+            return task.loader.fetch(url, "arraybuffer", task.progress.createCallback(), task.options).then(data => {
                 if (!data)
                     return null;
                 return MeshReader._parse(data);
@@ -31063,9 +31132,6 @@
     c$1("ColorGradEffect", ColorGradEffect);
 
     class SubMeshInstanceBatch extends GeometryElement {
-        static __init__() {
-            SubMeshInstanceBatch.instance = new SubMeshInstanceBatch();
-        }
         constructor() {
             super(Laya.MeshTopology.Triangles, Laya.DrawType.DrawElementInstance);
             this.instanceWorldMatrixData = new Float32Array(SubMeshInstanceBatch.maxInstanceCount * 16);
@@ -31077,6 +31143,9 @@
             this.instanceSimpleAnimatorBuffer = Laya.LayaGL.renderOBJCreate.createVertexBuffer3D(this.instanceSimpleAnimatorData.length * 4, Laya.BufferUsage.Dynamic, false);
             this.instanceSimpleAnimatorBuffer.vertexDeclaration = Laya.VertexMesh.instanceSimpleAnimatorDeclaration;
             this.instanceSimpleAnimatorBuffer.instanceBuffer = true;
+        }
+        static __init__() {
+            SubMeshInstanceBatch.instance = new SubMeshInstanceBatch();
         }
         _updateRenderParams(state) {
             var element = state.renderElement;
@@ -31092,6 +31161,12 @@
     SubMeshInstanceBatch.maxInstanceCount = 1024;
 
     class VertexPositionTerrain {
+        constructor(position, normal, textureCoord0, textureCoord1) {
+            this._position = position;
+            this._normal = normal;
+            this._textureCoord0 = textureCoord0;
+            this._textureCoord1 = textureCoord1;
+        }
         static __init__() {
             VertexPositionTerrain._vertexDeclaration = new Laya.VertexDeclaration(40, [new Laya.VertexElement(0, Laya.VertexElementFormat.Vector3, VertexPositionTerrain.TERRAIN_POSITION0),
                 new Laya.VertexElement(12, Laya.VertexElementFormat.Vector3, VertexPositionTerrain.TERRAIN_NORMAL0),
@@ -31115,12 +31190,6 @@
         }
         get vertexDeclaration() {
             return VertexPositionTerrain._vertexDeclaration;
-        }
-        constructor(position, normal, textureCoord0, textureCoord1) {
-            this._position = position;
-            this._normal = normal;
-            this._textureCoord0 = textureCoord0;
-            this._textureCoord1 = textureCoord1;
         }
     }
     VertexPositionTerrain.TERRAIN_POSITION0 = 0;
@@ -31616,59 +31685,61 @@
         }
     }
 
-    var UtilsGLSL = "#if !defined(Utils_lib)\n    #define Utils_lib\n\n#endif // Utils_lib";
+    var UtilsGLSL = "#if !defined(Utils_lib)\r\n    #define Utils_lib\r\n\r\n#endif // Utils_lib";
 
-    var ColorGLSL = "#if !defined(Color_lib)\n    #define Color_lib\n\n    #include \"Math.glsl\";\n\nvec3 linearToGamma(in vec3 value)\n{\n    return vec3(mix(pow(value.rgb, vec3(0.41666)) * 1.055 - vec3(0.055), value.rgb * 12.92, vec3(lessThanEqual(value.rgb, vec3(0.0031308)))));\n}\n\nvec4 linearToGamma(in vec4 value)\n{\n    return vec4(linearToGamma(value.rgb), value.a);\n}\n\nvec3 gammaToLinear(in vec3 value)\n{\n    return pow((value + 0.055) / 1.055, vec3(2.4));\n}\n\nvec4 gammaToLinear(in vec4 value)\n{\n    return vec4(gammaToLinear(value.rgb), value.a);\n}\n\nconst float c_RGBDMaxRange = 255.0;\n\n// float color to rgbd\nvec4 encodeRGBD(in vec3 color)\n{\n    float maxRGB = max(vecmax(color), FLT_EPS);\n    float d = max(1.0, c_RGBDMaxRange / maxRGB);\n    d = saturate(d / 255.0);\n\n    vec3 rgb = color.rgb * d;\n    rgb = saturate(rgb);\n    return vec4(rgb, d);\n}\n\n// rgbd to float color\nvec3 decodeRGBD(in vec4 rgbd)\n{\n    vec3 color = rgbd.rgb * (1.0 / rgbd.a);\n    return color;\n}\n\n// float color to rgbm\nvec4 encodeRGBM(in vec3 color, float range)\n{\n    color *= 1.0 / range;\n    float maxRGB = max(vecmax(color), FLT_EPS);\n    float m = ceil(maxRGB * 255.0) / 255.0;\n    vec3 rgb = color.rgb * 1.0 / m;\n\n    vec4 rgbm = vec4(rgb, m);\n    return rgbm;\n}\n\n// rgbm to float color\nvec3 decodeRGBM(in vec4 rgbm, float range)\n{\n    return range * rgbm.rgb * rgbm.a;\n}\n\n#endif // Color_lib";
+    var ColorGLSL = "#if !defined(Color_lib)\r\n    #define Color_lib\r\n\r\n    #include \"Math.glsl\";\r\n\r\nvec3 linearToGamma(in vec3 value)\r\n{\r\n    return vec3(mix(pow(value.rgb, vec3(0.41666)) * 1.055 - vec3(0.055), value.rgb * 12.92, vec3(lessThanEqual(value.rgb, vec3(0.0031308)))));\r\n}\r\n\r\nvec4 linearToGamma(in vec4 value)\r\n{\r\n    return vec4(linearToGamma(value.rgb), value.a);\r\n}\r\n\r\nvec3 gammaToLinear(in vec3 value)\r\n{\r\n    return pow((value + 0.055) / 1.055, vec3(2.4));\r\n}\r\n\r\nvec4 gammaToLinear(in vec4 value)\r\n{\r\n    return vec4(gammaToLinear(value.rgb), value.a);\r\n}\r\n\r\nconst float c_RGBDMaxRange = 255.0;\r\n\r\n// float color to rgbd\r\nvec4 encodeRGBD(in vec3 color)\r\n{\r\n    float maxRGB = max(vecmax(color), FLT_EPS);\r\n    float d = max(1.0, c_RGBDMaxRange / maxRGB);\r\n    d = saturate(d / 255.0);\r\n\r\n    vec3 rgb = color.rgb * d;\r\n    rgb = saturate(rgb);\r\n    return vec4(rgb, d);\r\n}\r\n\r\n// rgbd to float color\r\nvec3 decodeRGBD(in vec4 rgbd)\r\n{\r\n    vec3 color = rgbd.rgb * (1.0 / rgbd.a);\r\n    return color;\r\n}\r\n\r\n// float color to rgbm\r\nvec4 encodeRGBM(in vec3 color, float range)\r\n{\r\n    color *= 1.0 / range;\r\n    float maxRGB = max(vecmax(color), FLT_EPS);\r\n    float m = ceil(maxRGB * 255.0) / 255.0;\r\n    vec3 rgb = color.rgb * 1.0 / m;\r\n\r\n    vec4 rgbm = vec4(rgb, m);\r\n    return rgbm;\r\n}\r\n\r\n// rgbm to float color\r\nvec3 decodeRGBM(in vec4 rgbm, float range)\r\n{\r\n    return range * rgbm.rgb * rgbm.a;\r\n}\r\n\r\n#endif // Color_lib";
 
-    var MathGLSL = "#if !defined(Math_lib)\n    #define Math_lib\n\n    #ifndef GRAPHICS_API_GLES3\nmat2 inverse(mat2 m)\n{\n    return mat2(m[1][1], -m[0][1], -m[1][0], m[0][0]) / (m[0][0] * m[1][1] - m[0][1] * m[1][0]);\n}\nmat3 inverse(mat3 m)\n{\n    float a00 = m[0][0], a01 = m[0][1], a02 = m[0][2];\n    float a10 = m[1][0], a11 = m[1][1], a12 = m[1][2];\n    float a20 = m[2][0], a21 = m[2][1], a22 = m[2][2];\n\n    float b01 = a22 * a11 - a12 * a21;\n    float b11 = -a22 * a10 + a12 * a20;\n    float b21 = a21 * a10 - a11 * a20;\n\n    float det = a00 * b01 + a01 * b11 + a02 * b21;\n\n    return mat3(b01, (-a22 * a01 + a02 * a21), (a12 * a01 - a02 * a11), b11, (a22 * a00 - a02 * a20),\n\t       (-a12 * a00 + a02 * a10), b21, (-a21 * a00 + a01 * a20), (a11 * a00 - a01 * a10))\n\t/ det;\n}\n\nmat4 inverse(mat4 m)\n{\n    float a00 = m[0][0], a01 = m[0][1], a02 = m[0][2], a03 = m[0][3], a10 = m[1][0], a11 = m[1][1], a12 = m[1][2],\n\t  a13 = m[1][3], a20 = m[2][0], a21 = m[2][1], a22 = m[2][2], a23 = m[2][3], a30 = m[3][0], a31 = m[3][1],\n\t  a32 = m[3][2], a33 = m[3][3],\n\n\t  b00 = a00 * a11 - a01 * a10, b01 = a00 * a12 - a02 * a10, b02 = a00 * a13 - a03 * a10,\n\t  b03 = a01 * a12 - a02 * a11, b04 = a01 * a13 - a03 * a11, b05 = a02 * a13 - a03 * a12,\n\t  b06 = a20 * a31 - a21 * a30, b07 = a20 * a32 - a22 * a30, b08 = a20 * a33 - a23 * a30,\n\t  b09 = a21 * a32 - a22 * a31, b10 = a21 * a33 - a23 * a31, b11 = a22 * a33 - a23 * a32,\n\n\t  det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;\n\n    return mat4(a11 * b11 - a12 * b10 + a13 * b09, a02 * b10 - a01 * b11 - a03 * b09, a31 * b05 - a32 * b04 + a33 * b03,\n\t       a22 * b04 - a21 * b05 - a23 * b03, a12 * b08 - a10 * b11 - a13 * b07, a00 * b11 - a02 * b08 + a03 * b07,\n\t       a32 * b02 - a30 * b05 - a33 * b01, a20 * b05 - a22 * b02 + a23 * b01, a10 * b10 - a11 * b08 + a13 * b06,\n\t       a01 * b08 - a00 * b10 - a03 * b06, a30 * b04 - a31 * b02 + a33 * b00, a21 * b02 - a20 * b04 - a23 * b00,\n\t       a11 * b07 - a10 * b09 - a12 * b06, a00 * b09 - a01 * b07 + a02 * b06, a31 * b01 - a30 * b03 - a32 * b00,\n\t       a20 * b03 - a21 * b01 + a22 * b00)\n\t/ det;\n}\n\nmat4 transpose(mat4 m){\n    return mat4(m[0][0],m[1][0],m[2][0],m[3][0],\n                m[0][1],m[1][1],m[2][1],m[3][1],\n                m[0][2],m[1][2],m[2][2],m[3][2],\n                m[0][3],m[1][3],m[2][3],m[3][3]);\n}\nmat3 transpose(mat3 m){\n    return mat3(m[0][0],m[1][0],m[2][0],\n                m[0][1],m[1][1],m[2][1],\n                m[0][2],m[1][2],m[2][2]);\n}\n    #endif // GRAPHICS_API_GLES3\n\n    #define PI 3.14159265359\n\n    #define INVERT_PI 0.31830988618\n\n    #define HALF_PI 1.570796327\n\n    #define MEDIUMP_FLT_MAX 65504.0\n    #define MEDIUMP_FLT_MIN 0.00006103515625\n\n    #if defined(GL_FRAGMENT_PRECISION_HIGH)\n\t#define FLT_EPS\t\t   1e-5\n\t#define saturateMediump(x) x\n    #else\n\t#define FLT_EPS\t\t   MEDIUMP_FLT_MIN\n\t#define saturateMediump(x) min(x, MEDIUMP_FLT_MAX)\n    #endif // GL_FRAGMENT_PRECISION_HIGH\n\n    #define saturate(x) clamp(x, 0.0, 1.0)\n\nfloat pow2(float x)\n{\n    return x * x;\n}\n\nfloat pow5(float x)\n{\n    float x2 = x * x;\n    return x2 * x2 * x;\n}\n\nconst float INVERT_LOG10 = 0.43429448190325176;\n\nfloat log10(float x)\n{\n    return log(x) * INVERT_LOG10;\n}\n\nfloat vecmax(const vec2 v)\n{\n    return max(v.x, v.y);\n}\n\nfloat vecmax(const vec3 v)\n{\n    return max(v.x, max(v.y, v.z));\n}\n\nfloat vecmax(const vec4 v)\n{\n    return max(max(v.x, v.y), max(v.z, v.w));\n}\n\nfloat vecmin(const vec2 v)\n{\n    return min(v.x, v.y);\n}\n\nfloat vecmin(const vec3 v)\n{\n    return min(v.x, min(v.y, v.z));\n}\n\nfloat vecmin(const vec4 v)\n{\n    return min(min(v.x, v.y), min(v.z, v.w));\n}\n\nvec3 SafeNormalize(in vec3 inVec)\n{\n    float dp3 = max(0.001, dot(inVec, inVec));\n    return inVec * inversesqrt(dp3);\n}\n\n/**\n * Approximates acos(x) with a max absolute error of 9.0x10^-3.\n * Valid in the range -1..1.\n */\nfloat acosFast(float x)\n{\n    // Lagarde 2014, \"Inverse trigonometric functions GPU optimization for AMD GCN architecture\"\n    // This is the approximation of degree 1, with a max absolute error of 9.0x10^-3\n    float y = abs(x);\n    float p = -0.1565827 * y + 1.570796;\n    p *= sqrt(1.0 - y);\n    return x >= 0.0 ? p : PI - p;\n}\n\n/**\n * Approximates acos(x) with a max absolute error of 9.0x10^-3.\n * Valid only in the range 0..1.\n */\nfloat acosFastPositive(float x)\n{\n    float p = -0.1565827 * x + 1.570796;\n    return p * sqrt(1.0 - x);\n}\n\n/*\n * Random number between 0 and 1, using interleaved gradient noise.\n * w must not be normalized (e.g. window coordinates)\n */\nfloat interleavedGradientNoise(const highp vec2 w)\n{\n    const vec3 m = vec3(0.06711056, 0.00583715, 52.9829189);\n    return fract(m.z * fract(dot(w, m.xy)));\n}\n\n/*\n * vertex rotate by Euler\n */\nvec3 rotationByEuler(in vec3 vector, in vec3 rot)\n{\n    float halfRoll = rot.z * 0.5;\n    float halfPitch = rot.x * 0.5;\n    float halfYaw = rot.y * 0.5;\n\n    float sinRoll = sin(halfRoll);\n    float cosRoll = cos(halfRoll);\n    float sinPitch = sin(halfPitch);\n    float cosPitch = cos(halfPitch);\n    float sinYaw = sin(halfYaw);\n    float cosYaw = cos(halfYaw);\n\n    float quaX = (cosYaw * sinPitch * cosRoll) + (sinYaw * cosPitch * sinRoll);\n    float quaY = (sinYaw * cosPitch * cosRoll) - (cosYaw * sinPitch * sinRoll);\n    float quaZ = (cosYaw * cosPitch * sinRoll) - (sinYaw * sinPitch * cosRoll);\n    float quaW = (cosYaw * cosPitch * cosRoll) + (sinYaw * sinPitch * sinRoll);\n\n    // vec4 q=vec4(quaX,quaY,quaZ,quaW);\n    // vec3 temp = cross(q.xyz, vector) + q.w * vector;\n    // return (cross(temp, -q.xyz) + dot(q.xyz,vector) * q.xyz + q.w * temp);\n\n    float x = quaX + quaX;\n    float y = quaY + quaY;\n    float z = quaZ + quaZ;\n    float wx = quaW * x;\n    float wy = quaW * y;\n    float wz = quaW * z;\n    float xx = quaX * x;\n    float xy = quaX * y;\n    float xz = quaX * z;\n    float yy = quaY * y;\n    float yz = quaY * z;\n    float zz = quaZ * z;\n\n    return vec3(((vector.x * ((1.0 - yy) - zz)) + (vector.y * (xy - wz))) + (vector.z * (xz + wy)),\n\t((vector.x * (xy + wz)) + (vector.y * ((1.0 - xx) - zz))) + (vector.z * (yz - wx)),\n\t((vector.x * (xz - wy)) + (vector.y * (yz + wx))) + (vector.z * ((1.0 - xx) - yy)));\n}\n\n/*\n * Assume that axis has been normalized\n * point rotate by one axis\n */\nvec3 rotationByAxis(in vec3 vector, in vec3 axis, in float angle)\n{\n    float halfAngle = angle * 0.5;\n    float sin = sin(halfAngle);\n\n    float quaX = axis.x * sin;\n    float quaY = axis.y * sin;\n    float quaZ = axis.z * sin;\n    float quaW = cos(halfAngle);\n\n    // vec4 q=vec4(quaX,quaY,quaZ,quaW);\n    // vec3 temp = cross(q.xyz, vector) + q.w * vector;\n    // return (cross(temp, -q.xyz) + dot(q.xyz,vector) * q.xyz + q.w * temp);\n\n    float x = quaX + quaX;\n    float y = quaY + quaY;\n    float z = quaZ + quaZ;\n    float wx = quaW * x;\n    float wy = quaW * y;\n    float wz = quaW * z;\n    float xx = quaX * x;\n    float xy = quaX * y;\n    float xz = quaX * z;\n    float yy = quaY * y;\n    float yz = quaY * z;\n    float zz = quaZ * z;\n\n    return vec3(((vector.x * ((1.0 - yy) - zz)) + (vector.y * (xy - wz))) + (vector.z * (xz + wy)),\n\t((vector.x * (xy + wz)) + (vector.y * ((1.0 - xx) - zz))) + (vector.z * (yz - wx)),\n\t((vector.x * (xz - wy)) + (vector.y * (yz + wx))) + (vector.z * ((1.0 - xx) - yy)));\n}\n\n/*\n *rotate by quaternions\n */\nvec3 rotationByQuaternions(in vec3 v, in vec4 q)\n{\n    return v + 2.0 * cross(q.xyz, cross(q.xyz, v) + q.w * v);\n}\n\n#endif // Math_lib";
+    var MathGLSL = "#if !defined(Math_lib)\r\n    #define Math_lib\r\n\r\n    #ifndef GRAPHICS_API_GLES3\r\nmat2 inverse(mat2 m)\r\n{\r\n    return mat2(m[1][1], -m[0][1], -m[1][0], m[0][0]) / (m[0][0] * m[1][1] - m[0][1] * m[1][0]);\r\n}\r\nmat3 inverse(mat3 m)\r\n{\r\n    float a00 = m[0][0], a01 = m[0][1], a02 = m[0][2];\r\n    float a10 = m[1][0], a11 = m[1][1], a12 = m[1][2];\r\n    float a20 = m[2][0], a21 = m[2][1], a22 = m[2][2];\r\n\r\n    float b01 = a22 * a11 - a12 * a21;\r\n    float b11 = -a22 * a10 + a12 * a20;\r\n    float b21 = a21 * a10 - a11 * a20;\r\n\r\n    float det = a00 * b01 + a01 * b11 + a02 * b21;\r\n\r\n    return mat3(b01, (-a22 * a01 + a02 * a21), (a12 * a01 - a02 * a11), b11, (a22 * a00 - a02 * a20),\r\n\t       (-a12 * a00 + a02 * a10), b21, (-a21 * a00 + a01 * a20), (a11 * a00 - a01 * a10))\r\n\t/ det;\r\n}\r\n\r\nmat4 inverse(mat4 m)\r\n{\r\n    float a00 = m[0][0], a01 = m[0][1], a02 = m[0][2], a03 = m[0][3], a10 = m[1][0], a11 = m[1][1], a12 = m[1][2],\r\n\t  a13 = m[1][3], a20 = m[2][0], a21 = m[2][1], a22 = m[2][2], a23 = m[2][3], a30 = m[3][0], a31 = m[3][1],\r\n\t  a32 = m[3][2], a33 = m[3][3],\r\n\r\n\t  b00 = a00 * a11 - a01 * a10, b01 = a00 * a12 - a02 * a10, b02 = a00 * a13 - a03 * a10,\r\n\t  b03 = a01 * a12 - a02 * a11, b04 = a01 * a13 - a03 * a11, b05 = a02 * a13 - a03 * a12,\r\n\t  b06 = a20 * a31 - a21 * a30, b07 = a20 * a32 - a22 * a30, b08 = a20 * a33 - a23 * a30,\r\n\t  b09 = a21 * a32 - a22 * a31, b10 = a21 * a33 - a23 * a31, b11 = a22 * a33 - a23 * a32,\r\n\r\n\t  det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;\r\n\r\n    return mat4(a11 * b11 - a12 * b10 + a13 * b09, a02 * b10 - a01 * b11 - a03 * b09, a31 * b05 - a32 * b04 + a33 * b03,\r\n\t       a22 * b04 - a21 * b05 - a23 * b03, a12 * b08 - a10 * b11 - a13 * b07, a00 * b11 - a02 * b08 + a03 * b07,\r\n\t       a32 * b02 - a30 * b05 - a33 * b01, a20 * b05 - a22 * b02 + a23 * b01, a10 * b10 - a11 * b08 + a13 * b06,\r\n\t       a01 * b08 - a00 * b10 - a03 * b06, a30 * b04 - a31 * b02 + a33 * b00, a21 * b02 - a20 * b04 - a23 * b00,\r\n\t       a11 * b07 - a10 * b09 - a12 * b06, a00 * b09 - a01 * b07 + a02 * b06, a31 * b01 - a30 * b03 - a32 * b00,\r\n\t       a20 * b03 - a21 * b01 + a22 * b00)\r\n\t/ det;\r\n}\r\n\r\nmat4 transpose(mat4 m){\r\n    return mat4(m[0][0],m[1][0],m[2][0],m[3][0],\r\n                m[0][1],m[1][1],m[2][1],m[3][1],\r\n                m[0][2],m[1][2],m[2][2],m[3][2],\r\n                m[0][3],m[1][3],m[2][3],m[3][3]);\r\n}\r\nmat3 transpose(mat3 m){\r\n    return mat3(m[0][0],m[1][0],m[2][0],\r\n                m[0][1],m[1][1],m[2][1],\r\n                m[0][2],m[1][2],m[2][2]);\r\n}\r\n    #endif // GRAPHICS_API_GLES3\r\n\r\n    #define PI 3.14159265359\r\n\r\n    #define INVERT_PI 0.31830988618\r\n\r\n    #define HALF_PI 1.570796327\r\n\r\n    #define MEDIUMP_FLT_MAX 65504.0\r\n    #define MEDIUMP_FLT_MIN 0.00006103515625\r\n\r\n    #if defined(GL_FRAGMENT_PRECISION_HIGH)\r\n\t#define FLT_EPS\t\t   1e-5\r\n\t#define saturateMediump(x) x\r\n    #else\r\n\t#define FLT_EPS\t\t   MEDIUMP_FLT_MIN\r\n\t#define saturateMediump(x) min(x, MEDIUMP_FLT_MAX)\r\n    #endif // GL_FRAGMENT_PRECISION_HIGH\r\n\r\n    #define saturate(x) clamp(x, 0.0, 1.0)\r\n\r\nfloat pow2(float x)\r\n{\r\n    return x * x;\r\n}\r\n\r\nfloat pow5(float x)\r\n{\r\n    float x2 = x * x;\r\n    return x2 * x2 * x;\r\n}\r\n\r\nconst float INVERT_LOG10 = 0.43429448190325176;\r\n\r\nfloat log10(float x)\r\n{\r\n    return log(x) * INVERT_LOG10;\r\n}\r\n\r\nfloat vecmax(const vec2 v)\r\n{\r\n    return max(v.x, v.y);\r\n}\r\n\r\nfloat vecmax(const vec3 v)\r\n{\r\n    return max(v.x, max(v.y, v.z));\r\n}\r\n\r\nfloat vecmax(const vec4 v)\r\n{\r\n    return max(max(v.x, v.y), max(v.z, v.w));\r\n}\r\n\r\nfloat vecmin(const vec2 v)\r\n{\r\n    return min(v.x, v.y);\r\n}\r\n\r\nfloat vecmin(const vec3 v)\r\n{\r\n    return min(v.x, min(v.y, v.z));\r\n}\r\n\r\nfloat vecmin(const vec4 v)\r\n{\r\n    return min(min(v.x, v.y), min(v.z, v.w));\r\n}\r\n\r\nvec3 SafeNormalize(in vec3 inVec)\r\n{\r\n    float dp3 = max(0.001, dot(inVec, inVec));\r\n    return inVec * inversesqrt(dp3);\r\n}\r\n\r\n/**\r\n * Approximates acos(x) with a max absolute error of 9.0x10^-3.\r\n * Valid in the range -1..1.\r\n */\r\nfloat acosFast(float x)\r\n{\r\n    // Lagarde 2014, \"Inverse trigonometric functions GPU optimization for AMD GCN architecture\"\r\n    // This is the approximation of degree 1, with a max absolute error of 9.0x10^-3\r\n    float y = abs(x);\r\n    float p = -0.1565827 * y + 1.570796;\r\n    p *= sqrt(1.0 - y);\r\n    return x >= 0.0 ? p : PI - p;\r\n}\r\n\r\n/**\r\n * Approximates acos(x) with a max absolute error of 9.0x10^-3.\r\n * Valid only in the range 0..1.\r\n */\r\nfloat acosFastPositive(float x)\r\n{\r\n    float p = -0.1565827 * x + 1.570796;\r\n    return p * sqrt(1.0 - x);\r\n}\r\n\r\n/*\r\n * Random number between 0 and 1, using interleaved gradient noise.\r\n * w must not be normalized (e.g. window coordinates)\r\n */\r\nfloat interleavedGradientNoise(const highp vec2 w)\r\n{\r\n    const vec3 m = vec3(0.06711056, 0.00583715, 52.9829189);\r\n    return fract(m.z * fract(dot(w, m.xy)));\r\n}\r\n\r\n/*\r\n * vertex rotate by Euler\r\n */\r\nvec3 rotationByEuler(in vec3 vector, in vec3 rot)\r\n{\r\n    float halfRoll = rot.z * 0.5;\r\n    float halfPitch = rot.x * 0.5;\r\n    float halfYaw = rot.y * 0.5;\r\n\r\n    float sinRoll = sin(halfRoll);\r\n    float cosRoll = cos(halfRoll);\r\n    float sinPitch = sin(halfPitch);\r\n    float cosPitch = cos(halfPitch);\r\n    float sinYaw = sin(halfYaw);\r\n    float cosYaw = cos(halfYaw);\r\n\r\n    float quaX = (cosYaw * sinPitch * cosRoll) + (sinYaw * cosPitch * sinRoll);\r\n    float quaY = (sinYaw * cosPitch * cosRoll) - (cosYaw * sinPitch * sinRoll);\r\n    float quaZ = (cosYaw * cosPitch * sinRoll) - (sinYaw * sinPitch * cosRoll);\r\n    float quaW = (cosYaw * cosPitch * cosRoll) + (sinYaw * sinPitch * sinRoll);\r\n\r\n    // vec4 q=vec4(quaX,quaY,quaZ,quaW);\r\n    // vec3 temp = cross(q.xyz, vector) + q.w * vector;\r\n    // return (cross(temp, -q.xyz) + dot(q.xyz,vector) * q.xyz + q.w * temp);\r\n\r\n    float x = quaX + quaX;\r\n    float y = quaY + quaY;\r\n    float z = quaZ + quaZ;\r\n    float wx = quaW * x;\r\n    float wy = quaW * y;\r\n    float wz = quaW * z;\r\n    float xx = quaX * x;\r\n    float xy = quaX * y;\r\n    float xz = quaX * z;\r\n    float yy = quaY * y;\r\n    float yz = quaY * z;\r\n    float zz = quaZ * z;\r\n\r\n    return vec3(((vector.x * ((1.0 - yy) - zz)) + (vector.y * (xy - wz))) + (vector.z * (xz + wy)),\r\n\t((vector.x * (xy + wz)) + (vector.y * ((1.0 - xx) - zz))) + (vector.z * (yz - wx)),\r\n\t((vector.x * (xz - wy)) + (vector.y * (yz + wx))) + (vector.z * ((1.0 - xx) - yy)));\r\n}\r\n\r\n/*\r\n * Assume that axis has been normalized\r\n * point rotate by one axis\r\n */\r\nvec3 rotationByAxis(in vec3 vector, in vec3 axis, in float angle)\r\n{\r\n    float halfAngle = angle * 0.5;\r\n    float sin = sin(halfAngle);\r\n\r\n    float quaX = axis.x * sin;\r\n    float quaY = axis.y * sin;\r\n    float quaZ = axis.z * sin;\r\n    float quaW = cos(halfAngle);\r\n\r\n    // vec4 q=vec4(quaX,quaY,quaZ,quaW);\r\n    // vec3 temp = cross(q.xyz, vector) + q.w * vector;\r\n    // return (cross(temp, -q.xyz) + dot(q.xyz,vector) * q.xyz + q.w * temp);\r\n\r\n    float x = quaX + quaX;\r\n    float y = quaY + quaY;\r\n    float z = quaZ + quaZ;\r\n    float wx = quaW * x;\r\n    float wy = quaW * y;\r\n    float wz = quaW * z;\r\n    float xx = quaX * x;\r\n    float xy = quaX * y;\r\n    float xz = quaX * z;\r\n    float yy = quaY * y;\r\n    float yz = quaY * z;\r\n    float zz = quaZ * z;\r\n\r\n    return vec3(((vector.x * ((1.0 - yy) - zz)) + (vector.y * (xy - wz))) + (vector.z * (xz + wy)),\r\n\t((vector.x * (xy + wz)) + (vector.y * ((1.0 - xx) - zz))) + (vector.z * (yz - wx)),\r\n\t((vector.x * (xz - wy)) + (vector.y * (yz + wx))) + (vector.z * ((1.0 - xx) - yy)));\r\n}\r\n\r\n/*\r\n *rotate by quaternions\r\n */\r\nvec3 rotationByQuaternions(in vec3 v, in vec4 q)\r\n{\r\n    return v + 2.0 * cross(q.xyz, cross(q.xyz, v) + q.w * v);\r\n}\r\n\r\n#endif // Math_lib";
 
-    var TBNNormalGLSL = "#if !defined(TBNNormal_lib)\n    #define TBNNormal_lib\n\n    #ifdef NEEDTBN\n\nmat3 generateTBNMat(in VertexParams params)\n{\n    vec3 normalWS = params.normalWS;\n    vec3 tangentWS = params.tangentWS.xyz;\n    vec3 biNormalWS = params.biNormalWS;\n\n    mat3 TBNMat = mat3(tangentWS, biNormalWS, normalWS);\n    return TBNMat;\n}\n\nvec3 sampleTBNNormalMap(in VertexParams params, in mat3 TBN, sampler2D normalMap, in vec2 uv)\n{\n    // vec2 uv = params.texCoord0;\n    vec3 samplerNormal = texture2D(normalMap, uv).rgb;\n    samplerNormal = normalize(samplerNormal * 2.0 - 1.0);;\n    vec3 normalWS = normalize(TBN * samplerNormal);\n    return normalWS;\n}\n\n    #endif // NEEDTBN\n\n#endif // TBNNormal_lib";
+    var TBNNormalGLSL = "#if !defined(TBNNormal_lib)\r\n    #define TBNNormal_lib\r\n\r\n    #ifdef NEEDTBN\r\n\r\nmat3 generateTBNMat(in VertexParams params)\r\n{\r\n    vec3 normalWS = params.normalWS;\r\n    vec3 tangentWS = params.tangentWS.xyz;\r\n    vec3 biNormalWS = params.biNormalWS;\r\n\r\n    mat3 TBNMat = mat3(tangentWS, biNormalWS, normalWS);\r\n    return TBNMat;\r\n}\r\n\r\nvec3 sampleTBNNormalMap(in VertexParams params, in mat3 TBN, sampler2D normalMap, in vec2 uv)\r\n{\r\n    // vec2 uv = params.texCoord0;\r\n    vec3 samplerNormal = texture2D(normalMap, uv).rgb;\r\n    samplerNormal = normalize(samplerNormal * 2.0 - 1.0);;\r\n    vec3 normalWS = normalize(TBN * samplerNormal);\r\n    return normalWS;\r\n}\r\n\r\n    #endif // NEEDTBN\r\n\r\n#endif // TBNNormal_lib";
 
-    var BakedBoneMatrixSamplerGLSL = "#if !defined(BakeBoneAnimSampler_lib)\n    #define BakeBoneAnimSampler_lib\n\nmat4 loadBakedMatMatrix(float FramePos, float boneIndices, float offset)\n{\n    vec2 uv;\n    float PixelPos = FramePos + boneIndices * 4.0;\n    float halfOffset = offset * 0.5;\n    float uvoffset = PixelPos / u_SimpleAnimatorTextureSize;\n    uv.y = floor(uvoffset) * offset + halfOffset;\n    uv.x = mod(float(PixelPos), u_SimpleAnimatorTextureSize) * offset + halfOffset;\n    vec4 mat0row = texture2D(u_SimpleAnimatorTexture, uv);\n    uv.x += offset;\n    vec4 mat1row = texture2D(u_SimpleAnimatorTexture, uv);\n    uv.x += offset;\n    vec4 mat2row = texture2D(u_SimpleAnimatorTexture, uv);\n    uv.x += offset;\n    vec4 mat3row = texture2D(u_SimpleAnimatorTexture, uv);\n    mat4 m = mat4(mat0row.x, mat0row.y, mat0row.z, mat0row.w,\n\tmat1row.x, mat1row.y, mat1row.z, mat1row.w,\n\tmat2row.x, mat2row.y, mat2row.z, mat2row.w,\n\tmat3row.x, mat3row.y, mat3row.z, mat3row.w);\n    return m;\n}\n\n#endif // BakeBoneAnimSampler_lib";
+    var BakedBoneMatrixSamplerGLSL = "#if !defined(BakeBoneAnimSampler_lib)\r\n    #define BakeBoneAnimSampler_lib\r\n\r\nmat4 loadBakedMatMatrix(float FramePos, float boneIndices, float offset)\r\n{\r\n    vec2 uv;\r\n    float PixelPos = FramePos + boneIndices * 4.0;\r\n    float halfOffset = offset * 0.5;\r\n    float uvoffset = PixelPos / u_SimpleAnimatorTextureSize;\r\n    uv.y = floor(uvoffset) * offset + halfOffset;\r\n    uv.x = mod(float(PixelPos), u_SimpleAnimatorTextureSize) * offset + halfOffset;\r\n    vec4 mat0row = texture2D(u_SimpleAnimatorTexture, uv);\r\n    uv.x += offset;\r\n    vec4 mat1row = texture2D(u_SimpleAnimatorTexture, uv);\r\n    uv.x += offset;\r\n    vec4 mat2row = texture2D(u_SimpleAnimatorTexture, uv);\r\n    uv.x += offset;\r\n    vec4 mat3row = texture2D(u_SimpleAnimatorTexture, uv);\r\n    mat4 m = mat4(mat0row.x, mat0row.y, mat0row.z, mat0row.w,\r\n\tmat1row.x, mat1row.y, mat1row.z, mat1row.w,\r\n\tmat2row.x, mat2row.y, mat2row.z, mat2row.w,\r\n\tmat3row.x, mat3row.y, mat3row.z, mat3row.w);\r\n    return m;\r\n}\r\n\r\n#endif // BakeBoneAnimSampler_lib";
 
-    var VertexGLSL = "#if !defined(VertexCommon_lib)\n    #define VertexCommon_lib\n\nstruct Vertex {\n\n    vec3 positionOS;\n\n    vec3 normalOS;\n\n    #ifdef TANGENT\n    vec4 tangentOS;\n    #endif // TANGENT\n\n    // todo  uv define ?\n    #ifdef UV\n    vec2 texCoord0;\n    #endif // UV\n\n    #ifdef UV1\n    vec2 texCoord1;\n    #endif // UV1\n\n    #ifdef COLOR\n    vec4 vertexColor;\n    #endif // COLOR\n};\n\n\n/**\n * vertex position\n */\nvec4 getVertexPosition()\n{\n    vec4 position = a_Position;\n    return position;\n}\n\nvec2 transformUV(in vec2 texcoord, in vec4 tilingOffset)\n{\n    vec2 uv = texcoord * tilingOffset.xy + tilingOffset.zw * vec2(1.0, -1.0) + vec2(0.0, 1.0 - tilingOffset.y);\n    return uv;\n}\n\nvoid getVertexParams(inout Vertex vertex)\n{\n    vertex.positionOS = getVertexPosition().xyz;\n\n    vertex.normalOS = a_Normal.xyz;\n\n    #ifdef TANGENT\n    vertex.tangentOS = a_Tangent0;\n    #endif // TANGENT\n\n    #ifdef UV\n    vertex.texCoord0 = a_Texcoord0;\n    #endif // UV\n\n    #ifdef UV1\n    vertex.texCoord1 = a_Texcoord1;\n    #endif // UV1\n\n    #ifdef COLOR\n    vertex.vertexColor = a_Color;\n    #endif // COLOR\n}\n\n#endif // VertexCommon_lib";
+    var VertexGLSL = "#if !defined(VertexCommon_lib)\r\n    #define VertexCommon_lib\r\n\r\nstruct Vertex {\r\n\r\n    vec3 positionOS;\r\n\r\n    vec3 normalOS;\r\n\r\n    #ifdef TANGENT\r\n    vec4 tangentOS;\r\n    #endif // TANGENT\r\n\r\n    // todo  uv define ?\r\n    #ifdef UV\r\n    vec2 texCoord0;\r\n    #endif // UV\r\n\r\n    #ifdef UV1\r\n    vec2 texCoord1;\r\n    #endif // UV1\r\n\r\n    #ifdef COLOR\r\n    vec4 vertexColor;\r\n    #endif // COLOR\r\n};\r\n\r\n\r\n/**\r\n * vertex position\r\n */\r\nvec4 getVertexPosition()\r\n{\r\n    vec4 position = a_Position;\r\n    return position;\r\n}\r\n\r\nvec2 transformUV(in vec2 texcoord, in vec4 tilingOffset)\r\n{\r\n    vec2 uv = texcoord * tilingOffset.xy + tilingOffset.zw * vec2(1.0, -1.0) + vec2(0.0, 1.0 - tilingOffset.y);\r\n    return uv;\r\n}\r\n\r\nvoid getVertexParams(inout Vertex vertex)\r\n{\r\n    vertex.positionOS = getVertexPosition().xyz;\r\n\r\n    vertex.normalOS = a_Normal.xyz;\r\n\r\n    #ifdef TANGENT\r\n    vertex.tangentOS = a_Tangent0;\r\n    #endif // TANGENT\r\n\r\n    #ifdef UV\r\n    vertex.texCoord0 = a_Texcoord0;\r\n    #endif // UV\r\n\r\n    #ifdef UV1\r\n    vertex.texCoord1 = a_Texcoord1;\r\n    #endif // UV1\r\n\r\n    #ifdef COLOR\r\n    vertex.vertexColor = a_Color;\r\n    #endif // COLOR\r\n}\r\n\r\n#endif // VertexCommon_lib";
 
-    var SceneGLSL = "#if !defined(SceneCommon_lib)\n    #define SceneCommon_lib\n\n    #ifdef ENUNIFORMBLOCK\nuniform SceneUniformBlock\n{\n    // time\n   \n    float u_Time;\n    float u_FogStart;\n    float u_FogRange;\n    \n    vec4 u_FogColor;\n\n};\n    #else // ENUNIFORMBLOCK\n// time\nuniform float u_Time;\nuniform float u_FogStart;\nuniform float u_FogRange;\nuniform vec4 u_FogColor;\n    #endif // ENUNIFORMBLOCK\n    //rotate SH IBL\nuniform float u_GIRotate;\n\n#endif // SceneCommon_lib";
+    var SceneGLSL = "#if !defined(SceneCommon_lib)\r\n    #define SceneCommon_lib\r\n\r\n    #ifdef ENUNIFORMBLOCK\r\nuniform SceneUniformBlock\r\n{\r\n    // time\r\n    float u_Time;\r\n    vec4 u_FogParams;// x start,y range,z Density\r\n    vec4 u_FogColor;\r\n};\r\n    #else // ENUNIFORMBLOCK\r\n// time\r\nuniform float u_Time;\r\nuniform vec4 u_FogParams;//x start,y range,z Density\r\nuniform vec4 u_FogColor;\r\n    #endif // ENUNIFORMBLOCK\r\n    //rotate SH IBL\r\nuniform float u_GIRotate;\r\n\r\n#endif // SceneCommon_lib";
 
-    var CameraGLSL = "#if !defined(CameraCommon_lib)\n    #define CameraCommon_lib\n\n    #ifdef ENUNIFORMBLOCK\n\nuniform CameraUniformBlock\n{\n    mat4 u_View;\n    mat4 u_Projection;\n    mat4 u_ViewProjection;\n    vec4 u_ProjectionParams; // x: near, y: far, z: invert, w: 1/far\n    vec4 u_Viewport; // x,y,width,height\n    vec3 u_CameraDirection;\n    vec3 u_CameraUp;\n    vec3 u_CameraPos;\n};\n    #else\nuniform mat4 u_View;\nuniform mat4 u_Projection;\nuniform mat4 u_ViewProjection;\nuniform vec4 u_ProjectionParams; // x: near, y: far, z: invert, w: 1/far\nuniform vec4 u_Viewport; // x, y, width, height\nuniform vec3 u_CameraDirection;\nuniform vec3 u_CameraUp;\nuniform vec3 u_CameraPos;\n    #endif // ENUNIFORMBLOCK\n\n/*Depth or DepthNormal Uniform*/\nuniform highp sampler2D u_CameraDepthTexture;\nuniform vec4 u_ZBufferParams; //(1.0 - far / near, far / near, (near - far) / (near * far), 1 / near)\nuniform mediump sampler2D u_CameraDepthNormalsTexture;\nuniform mediump sampler2D u_CameraOpaqueTexture;\n\nvec4 getPositionCS(in vec3 positionWS)\n{\n    return u_ViewProjection * vec4(positionWS, 1.0);\n}\n\nvec3 getViewDirection(in vec3 positionWS)\n{\n    return normalize(u_CameraPos - positionWS);\n}\n\n// 根据投影剧专重映射深度\nvec4 remapPositionZ(vec4 position)\n{\n    position.z = position.z * 2.0 - position.w;\n    return position;\n}\n\n#endif // CameraCommon_lib";
+    var CameraGLSL = "#if !defined(CameraCommon_lib)\r\n    #define CameraCommon_lib\r\n\r\n    #ifdef ENUNIFORMBLOCK\r\n\r\nuniform CameraUniformBlock\r\n{\r\n    mat4 u_View;\r\n    mat4 u_Projection;\r\n    mat4 u_ViewProjection;\r\n    vec4 u_ProjectionParams; // x: near, y: far, z: invert, w: 1/far\r\n    vec4 u_Viewport; // x,y,width,height\r\n    vec3 u_CameraDirection;\r\n    vec3 u_CameraUp;\r\n    vec3 u_CameraPos;\r\n};\r\n    #else\r\nuniform mat4 u_View;\r\nuniform mat4 u_Projection;\r\nuniform mat4 u_ViewProjection;\r\nuniform vec4 u_ProjectionParams; // x: near, y: far, z: invert, w: 1/far\r\nuniform vec4 u_Viewport; // x, y, width, height\r\nuniform vec3 u_CameraDirection;\r\nuniform vec3 u_CameraUp;\r\nuniform vec3 u_CameraPos;\r\n    #endif // ENUNIFORMBLOCK\r\n\r\n/*Depth or DepthNormal Uniform*/\r\nuniform highp sampler2D u_CameraDepthTexture;\r\nuniform vec4 u_ZBufferParams; //(1.0 - far / near, far / near, (near - far) / (near * far), 1 / near)\r\nuniform mediump sampler2D u_CameraDepthNormalsTexture;\r\nuniform mediump sampler2D u_CameraOpaqueTexture;\r\n\r\nvec4 getPositionCS(in vec3 positionWS)\r\n{\r\n    return u_ViewProjection * vec4(positionWS, 1.0);\r\n}\r\n\r\nvec3 getViewDirection(in vec3 positionWS)\r\n{\r\n    return normalize(u_CameraPos - positionWS);\r\n}\r\n\r\n// 根据投影剧专重映射深度\r\nvec4 remapPositionZ(vec4 position)\r\n{\r\n    position.z = position.z * 2.0 - position.w;\r\n    return position;\r\n}\r\n\r\n#endif // CameraCommon_lib";
 
-    var Sprite3DCommonGLSL = "#if !defined(Sprite3DCommon_lib)\n    #define Sprite3DCommon_lib\n\nuniform mat4 u_WorldMat;\n\n    #ifdef LIGHTMAP\nuniform vec4 u_LightmapScaleOffset;\n    #endif // LIGHTMAP\n\nvec2 tranformLightMapUV(in vec2 texcoord, in vec4 tilingOffset)\n{\n    vec2 lightMapUV = vec2(texcoord.x, 1.0 - texcoord.y) * tilingOffset.xy + tilingOffset.zw;\n    lightMapUV.y = 1.0 - lightMapUV.y;\n    return lightMapUV;\n}\n\n#endif // Sprite3DCommon_lib";
+    var Sprite3DCommonGLSL = "#if !defined(Sprite3DCommon_lib)\r\n    #define Sprite3DCommon_lib\r\n\r\nuniform mat4 u_WorldMat;\r\n\r\n    #ifdef LIGHTMAP\r\nuniform vec4 u_LightmapScaleOffset;\r\n    #endif // LIGHTMAP\r\n\r\nvec2 tranformLightMapUV(in vec2 texcoord, in vec4 tilingOffset)\r\n{\r\n    vec2 lightMapUV = vec2(texcoord.x, 1.0 - texcoord.y) * tilingOffset.xy + tilingOffset.zw;\r\n    lightMapUV.y = 1.0 - lightMapUV.y;\r\n    return lightMapUV;\r\n}\r\n\r\n#endif // Sprite3DCommon_lib";
 
-    var Sprite3DVertexGLSL = "#if !defined(Sprite3DVertex_lib)\n    #define Sprite3DVertex_lib\n\n    #include \"Sprite3DCommon.glsl\";\n\n    #ifdef BONE\n// todo const int c_MaxBoneCount = 24\nuniform mat4 u_Bones[24];\n\n\t#ifdef SIMPLEBONE\nuniform vec4 u_SimpleAnimatorParams;\nuniform sampler2D u_SimpleAnimatorTexture;\nuniform float u_SimpleAnimatorTextureSize;\n\t    #include \"BakedBoneMatrixSampler.glsl\";\n\n\t#endif // SIMPLEBONE\n\n    #endif // BONE\n\n/**\n * world matrix\n */\nmat4 getWorldMatrix()\n{\n    #ifdef GPU_INSTANCE\n    mat4 worldMat = a_WorldMat;\n    #else\n    mat4 worldMat = u_WorldMat;\n    #endif // GPU_INSTANCE\n\n    #ifdef BONE\n\n\t#ifdef SIMPLEBONE\n\n\t    #ifdef GPU_INSTANCE\n    float currentPixelPos = a_SimpleTextureParams.x + a_SimpleTextureParams.y;\n\t    #else // GPU_INSTANCE\n    float currentPixelPos = u_SimpleAnimatorParams.x + u_SimpleAnimatorParams.y;\n\t    #endif // GPU_INSTANCE\n\n    float offset = 1.0 / u_SimpleAnimatorTextureSize;\n    mat4 skinTrans = loadBakedMatMatrix(currentPixelPos, a_BoneIndices.x, offset) * a_BoneWeights.x;\n    skinTrans += loadBakedMatMatrix(currentPixelPos, a_BoneIndices.y, offset) * a_BoneWeights.y;\n    skinTrans += loadBakedMatMatrix(currentPixelPos, a_BoneIndices.z, offset) * a_BoneWeights.z;\n    skinTrans += loadBakedMatMatrix(currentPixelPos, a_BoneIndices.w, offset) * a_BoneWeights.w;\n    worldMat = worldMat * skinTrans;\n\n\t#else // SIMPLEBONE\n\n    ivec4 boneIndex = ivec4(a_BoneIndices);\n    mat4 skinTrans = u_Bones[boneIndex.x] * a_BoneWeights.x;\n    skinTrans += u_Bones[boneIndex.y] * a_BoneWeights.y;\n    skinTrans += u_Bones[boneIndex.z] * a_BoneWeights.z;\n    skinTrans += u_Bones[boneIndex.w] * a_BoneWeights.w;\n    worldMat = worldMat * skinTrans;\n\n\t#endif // SIMPLEBONE\n\n    #endif // BONE\n\n    return worldMat;\n}\n\n#endif // Sprite3DVertex_lib";
+    var Sprite3DVertexGLSL = "#if !defined(Sprite3DVertex_lib)\r\n    #define Sprite3DVertex_lib\r\n\r\n    #include \"Sprite3DCommon.glsl\";\r\n\r\n    #ifdef BONE\r\n// todo const int c_MaxBoneCount = 24\r\nuniform mat4 u_Bones[24];\r\n\r\n\t#ifdef SIMPLEBONE\r\nuniform vec4 u_SimpleAnimatorParams;\r\nuniform sampler2D u_SimpleAnimatorTexture;\r\nuniform float u_SimpleAnimatorTextureSize;\r\n\t    #include \"BakedBoneMatrixSampler.glsl\";\r\n\r\n\t#endif // SIMPLEBONE\r\n\r\n    #endif // BONE\r\n\r\n/**\r\n * world matrix\r\n */\r\nmat4 getWorldMatrix()\r\n{\r\n    #ifdef GPU_INSTANCE\r\n    mat4 worldMat = a_WorldMat;\r\n    #else\r\n    mat4 worldMat = u_WorldMat;\r\n    #endif // GPU_INSTANCE\r\n\r\n    #ifdef BONE\r\n\r\n\t#ifdef SIMPLEBONE\r\n\r\n\t    #ifdef GPU_INSTANCE\r\n    float currentPixelPos = a_SimpleTextureParams.x + a_SimpleTextureParams.y;\r\n\t    #else // GPU_INSTANCE\r\n    float currentPixelPos = u_SimpleAnimatorParams.x + u_SimpleAnimatorParams.y;\r\n\t    #endif // GPU_INSTANCE\r\n\r\n    float offset = 1.0 / u_SimpleAnimatorTextureSize;\r\n    mat4 skinTrans = loadBakedMatMatrix(currentPixelPos, a_BoneIndices.x, offset) * a_BoneWeights.x;\r\n    skinTrans += loadBakedMatMatrix(currentPixelPos, a_BoneIndices.y, offset) * a_BoneWeights.y;\r\n    skinTrans += loadBakedMatMatrix(currentPixelPos, a_BoneIndices.z, offset) * a_BoneWeights.z;\r\n    skinTrans += loadBakedMatMatrix(currentPixelPos, a_BoneIndices.w, offset) * a_BoneWeights.w;\r\n    worldMat = worldMat * skinTrans;\r\n\r\n\t#else // SIMPLEBONE\r\n\r\n    ivec4 boneIndex = ivec4(a_BoneIndices);\r\n    mat4 skinTrans = u_Bones[boneIndex.x] * a_BoneWeights.x;\r\n    skinTrans += u_Bones[boneIndex.y] * a_BoneWeights.y;\r\n    skinTrans += u_Bones[boneIndex.z] * a_BoneWeights.z;\r\n    skinTrans += u_Bones[boneIndex.w] * a_BoneWeights.w;\r\n    worldMat = worldMat * skinTrans;\r\n\r\n\t#endif // SIMPLEBONE\r\n\r\n    #endif // BONE\r\n\r\n    return worldMat;\r\n}\r\n\r\n#endif // Sprite3DVertex_lib";
 
-    var Sprite3DFragGLSL = "#if !defined(Sprite3DFrag_lib)\n    #define Sprite3DFrag_lib\n\n    #include \"Sprite3DCommon.glsl\";\n\n#endif // Sprite3DFrag_lib";
+    var Sprite3DFragGLSL = "#if !defined(Sprite3DFrag_lib)\r\n    #define Sprite3DFrag_lib\r\n\r\n    #include \"Sprite3DCommon.glsl\";\r\n\r\n#endif // Sprite3DFrag_lib";
 
-    var DepthVertexGLSL = "#if !defined(DepthVertex_lib)\n    #define DepthVertex_lib\n\n    #include \"Scene.glsl\";\n    #include \"Camera.glsl\";\n    #include \"Sprite3DVertex.glsl\";\n\n    #include \"VertexCommon.glsl\";\n\n    #if defined(SHADOW) || defined(SHADOW_SPOT)\n\n\t#ifndef DEPTHPASS\n\t    #ifdef ENUNIFORMBLOCK\nuniform ShadowUniformBlock\n{\n    vec4 u_ShadowBias; // x: depth bias, y: normal bias\n    vec3 u_ShadowLightDirection;\n};\n\t    #else // ENUNIFORMBLOCK\nuniform vec4 u_ShadowBias; // x: depth bias, y: normal bias\n\t\t#ifdef SHADOW\nuniform vec3 u_ShadowLightDirection;\n\t\t#endif // SHADOW\n\t    #endif // ENUNIFORMBLOCK\n\n// 根据投影剧专重映射深度\n//vec4 remapPositionZ(vec4 position)\n//{\n//    position.z = position.z * 2.0 - position.w;\n//    return position;\n//}\n\nvec3 applyShadowBias(vec3 positionWS, vec3 normalWS, vec3 lightDirection)\n{\n    float invNdotL = 1.0 - clamp(dot(-lightDirection, normalWS), 0.0, 1.0);\n    float scale = invNdotL * u_ShadowBias.y;\n\n    // normal bias is negative since we want to apply an inset normal offset\n    positionWS += -lightDirection * u_ShadowBias.xxx;\n    positionWS += normalWS * vec3(scale);\n    return positionWS;\n}\n\t#endif // DEPTHPASS\n    #endif // SHADOW || SHADOW_SPOT\n\n    #ifdef DEPTHPASS\n\t#include \"Camera.glsl\";\n    #endif // DEPTHPASS\n\nvec4 DepthPositionCS(in vec3 positionWS, in vec3 normalWS)\n{\n    #ifdef DEPTHPASS\n    vec4 positionCS = u_ViewProjection * vec4(positionWS, 1.0);\n    #endif // DEPTHPASS\n\n    #ifdef SHADOW\n\t#ifndef DEPTHPASS\n    positionWS = applyShadowBias(positionWS, normalWS, u_ShadowLightDirection);\n    vec4 positionCS = u_ViewProjection * vec4(positionWS, 1.0);\n    positionCS.z = max(positionCS.z, 0.0); // min ndc z is 0.0\n\t#endif // DEPTHPASS\n    #endif // SHADOW\n\n    #ifdef SHADOW_SPOT\n\t#ifndef DEPTHPASS\n    vec4 positionCS = u_ViewProjection * vec4(positionWS, 1.0);\n    positionCS.z = positionCS.z - u_ShadowBias.x / positionCS.w;\n    positionCS.z = max(positionCS.z, 0.0); // min ndc z is 0.0\n\t#endif // DEPTHPASS\n    #endif // SHADOW_SPOT\n\n    return positionCS;\n}\n\n\n#endif // DepthVertex_lib";
+    var DepthVertexGLSL = "#if !defined(DepthVertex_lib)\r\n    #define DepthVertex_lib\r\n\r\n    #include \"Scene.glsl\";\r\n    #include \"Camera.glsl\";\r\n    #include \"Sprite3DVertex.glsl\";\r\n\r\n    #include \"VertexCommon.glsl\";\r\n\r\n    #if defined(SHADOW) || defined(SHADOW_SPOT)\r\n\r\n\t#ifndef DEPTHPASS\r\n\t    #ifdef ENUNIFORMBLOCK\r\nuniform ShadowUniformBlock\r\n{\r\n    vec4 u_ShadowBias; // x: depth bias, y: normal bias\r\n    vec3 u_ShadowLightDirection;\r\n};\r\n\t    #else // ENUNIFORMBLOCK\r\nuniform vec4 u_ShadowBias; // x: depth bias, y: normal bias\r\n\t\t#ifdef SHADOW\r\nuniform vec3 u_ShadowLightDirection;\r\n\t\t#endif // SHADOW\r\n\t    #endif // ENUNIFORMBLOCK\r\n\r\n// 根据投影剧专重映射深度\r\n//vec4 remapPositionZ(vec4 position)\r\n//{\r\n//    position.z = position.z * 2.0 - position.w;\r\n//    return position;\r\n//}\r\n\r\nvec3 applyShadowBias(vec3 positionWS, vec3 normalWS, vec3 lightDirection)\r\n{\r\n    float invNdotL = 1.0 - clamp(dot(-lightDirection, normalWS), 0.0, 1.0);\r\n    float scale = invNdotL * u_ShadowBias.y;\r\n\r\n    // normal bias is negative since we want to apply an inset normal offset\r\n    positionWS += -lightDirection * u_ShadowBias.xxx;\r\n    positionWS += normalWS * vec3(scale);\r\n    return positionWS;\r\n}\r\n\t#endif // DEPTHPASS\r\n    #endif // SHADOW || SHADOW_SPOT\r\n\r\n    #ifdef DEPTHPASS\r\n\t#include \"Camera.glsl\";\r\n    #endif // DEPTHPASS\r\n\r\nvec4 DepthPositionCS(in vec3 positionWS, in vec3 normalWS)\r\n{\r\n    #ifdef DEPTHPASS\r\n    vec4 positionCS = u_ViewProjection * vec4(positionWS, 1.0);\r\n    #endif // DEPTHPASS\r\n\r\n    #ifdef SHADOW\r\n\t#ifndef DEPTHPASS\r\n    positionWS = applyShadowBias(positionWS, normalWS, u_ShadowLightDirection);\r\n    vec4 positionCS = u_ViewProjection * vec4(positionWS, 1.0);\r\n    positionCS.z = max(positionCS.z, 0.0); // min ndc z is 0.0\r\n\t#endif // DEPTHPASS\r\n    #endif // SHADOW\r\n\r\n    #ifdef SHADOW_SPOT\r\n\t#ifndef DEPTHPASS\r\n    vec4 positionCS = u_ViewProjection * vec4(positionWS, 1.0);\r\n    positionCS.z = positionCS.z - u_ShadowBias.x / positionCS.w;\r\n    positionCS.z = max(positionCS.z, 0.0); // min ndc z is 0.0\r\n\t#endif // DEPTHPASS\r\n    #endif // SHADOW_SPOT\r\n\r\n    return positionCS;\r\n}\r\n\r\n\r\n#endif // DepthVertex_lib";
 
-    var DepthFragGLSL = "#if !defined(DepthFrag_lib)\n    #define DepthFrag_lib\n\nvec4 getDepthColor()\n{\n    return vec4(0.0);\n}\n\n#endif // DepthFrag_lib";
+    var DepthFragGLSL = "#if !defined(DepthFrag_lib)\r\n    #define DepthFrag_lib\r\n\r\nvec4 getDepthColor()\r\n{\r\n    return vec4(0.0);\r\n}\r\n\r\n#endif // DepthFrag_lib";
 
-    var DepthNormalUtilGLSL = "#define SAMPLE_DEPTH_TEXTURE(textureName,coord2) (texture2D(textureName,coord2).r)\n//此方法库用来压缩解析深度贴图，法线深度贴图\n\n// Encoding/decoding view space normals into 2D 0..1 vector\nvec2 EncodeViewNormalStereo( vec3 n )\n{\n    n.z = abs(n.z);\n    float kScale = 1.7777;\n    vec2 enc;\n    enc = n.xy / (n.z+1.0);\n    enc /= kScale;\n    enc = enc*0.5+0.5;\n    return enc;\n}\n\nvec3 DecodeViewNormalStereo( vec4 enc4 )\n{\n    float kScale = 1.7777;\n    vec3 nn = enc4.xyz*vec3(2.0*kScale,2.0*kScale,0.0) + vec3(-kScale,-kScale,1.0);\n    float g = 2.0 / dot(nn.xyz,nn.xyz);\n    vec3 n;\n    n.xy = g*nn.xy;\n    n.z = g-1.0;\n    return n;\n}\n\n\n// Encoding/decoding [0..1) floats into 8 bit/channel RG. Note that 1.0 will not be encoded properly.\nvec2 EncodeFloatRG( float v )\n{\n    vec2 kEncodeMul = vec2(1.0, 255.0);\n    float kEncodeBit = 1.0/255.0;\n    vec2 enc = kEncodeMul * v;\n    enc = fract(enc);\n    enc.x -= enc.y * kEncodeBit;\n    return enc;\n}\n\n\n\nfloat DecodeFloatRG( vec2 enc )\n{\n    vec2 kDecodeDot = vec2(1.0, 1.0/255.0);\n    return dot( enc, kDecodeDot );\n}\n\nvec4 EncodeDepthNormal(float depth,vec3 normals){\n\tvec4 encode;\n\tencode.xy = EncodeViewNormalStereo(normals);\n\tencode.zw = EncodeFloatRG(depth);\n    return encode;\n}\n\nvoid DecodeDepthNormal( vec4 enc, out float depth, out vec3 normal )\n{\n    depth = DecodeFloatRG (enc.zw);\n    normal = DecodeViewNormalStereo (enc);\n}\n\n\n\nvec4 depthNormalsFragment(vec4 depthNormal)\n{\n    return EncodeDepthNormal(depthNormal.w,depthNormal.xyz);\n}\n\n\n// Z buffer to linear 0..1 depth\nfloat Linear01Depth(float z,vec4 zbufferParams)\n{\n    return 1.0 / (zbufferParams.x * z + zbufferParams.y);\n}\n// Z buffer to linear depth\nfloat LinearEyeDepth(float z,vec4 zbufferParams)\n{\n    return 1.0 / (zbufferParams.z * z + zbufferParams.w);\n}\n";
+    var DepthNormalUtilGLSL = "#define SAMPLE_DEPTH_TEXTURE(textureName,coord2) (texture2D(textureName,coord2).r)\r\n//此方法库用来压缩解析深度贴图，法线深度贴图\r\n\r\n// Encoding/decoding view space normals into 2D 0..1 vector\r\nvec2 EncodeViewNormalStereo( vec3 n )\r\n{\r\n    n.z = abs(n.z);\r\n    float kScale = 1.7777;\r\n    vec2 enc;\r\n    enc = n.xy / (n.z+1.0);\r\n    enc /= kScale;\r\n    enc = enc*0.5+0.5;\r\n    return enc;\r\n}\r\n\r\nvec3 DecodeViewNormalStereo( vec4 enc4 )\r\n{\r\n    float kScale = 1.7777;\r\n    vec3 nn = enc4.xyz*vec3(2.0*kScale,2.0*kScale,0.0) + vec3(-kScale,-kScale,1.0);\r\n    float g = 2.0 / dot(nn.xyz,nn.xyz);\r\n    vec3 n;\r\n    n.xy = g*nn.xy;\r\n    n.z = g-1.0;\r\n    return n;\r\n}\r\n\r\n\r\n// Encoding/decoding [0..1) floats into 8 bit/channel RG. Note that 1.0 will not be encoded properly.\r\nvec2 EncodeFloatRG( float v )\r\n{\r\n    vec2 kEncodeMul = vec2(1.0, 255.0);\r\n    float kEncodeBit = 1.0/255.0;\r\n    vec2 enc = kEncodeMul * v;\r\n    enc = fract(enc);\r\n    enc.x -= enc.y * kEncodeBit;\r\n    return enc;\r\n}\r\n\r\n\r\n\r\nfloat DecodeFloatRG( vec2 enc )\r\n{\r\n    vec2 kDecodeDot = vec2(1.0, 1.0/255.0);\r\n    return dot( enc, kDecodeDot );\r\n}\r\n\r\nvec4 EncodeDepthNormal(float depth,vec3 normals){\r\n\tvec4 encode;\r\n\tencode.xy = EncodeViewNormalStereo(normals);\r\n\tencode.zw = EncodeFloatRG(depth);\r\n    return encode;\r\n}\r\n\r\nvoid DecodeDepthNormal( vec4 enc, out float depth, out vec3 normal )\r\n{\r\n    depth = DecodeFloatRG (enc.zw);\r\n    normal = DecodeViewNormalStereo (enc);\r\n}\r\n\r\n\r\n\r\nvec4 depthNormalsFragment(vec4 depthNormal)\r\n{\r\n    return EncodeDepthNormal(depthNormal.w,depthNormal.xyz);\r\n}\r\n\r\n\r\n// Z buffer to linear 0..1 depth\r\nfloat Linear01Depth(float z,vec4 zbufferParams)\r\n{\r\n    return 1.0 / (zbufferParams.x * z + zbufferParams.y);\r\n}\r\n// Z buffer to linear depth\r\nfloat LinearEyeDepth(float z,vec4 zbufferParams)\r\n{\r\n    return 1.0 / (zbufferParams.z * z + zbufferParams.w);\r\n}\r\n";
 
-    var ShadowSampleTentGLSL = "// ------------------------------------------------------------------\n//  PCF Filtering Tent Functions\n// ------------------------------------------------------------------\n\n// Assuming a isoceles right angled triangle of height \"triangleHeight\" (as drawn below).\n// This function return the area of the triangle above the first texel(in Y the first texel).\n//\n// |\\      <-- 45 degree slop isosceles right angled triangle\n// | \\\n// ----    <-- length of this side is \"triangleHeight\"\n// _ _ _ _ <-- texels\nfloat sampleShadowGetIRTriangleTexelArea(float triangleHeight)\n{\n    return triangleHeight - 0.5;\n}\n\n// Assuming a isoceles triangle of 1.5 texels height and 3 texels wide lying on 4 texels.\n// This function return the area of the triangle above each of those texels.\n//    |    <-- offset from -0.5 to 0.5, 0 meaning triangle is exactly in the center\n//   / \\   <-- 45 degree slop isosceles triangle (ie tent projected in 2D)\n//  /   \\\n// _ _ _ _ <-- texels\n// X Y Z W <-- result indices (in computedArea.xyzw and computedAreaUncut.xyzw)\n// Top point at (right,top) in a texel,left bottom point at (middle,middle) in a texel,right bottom point at (middle,middle) in a texel.\nvoid sampleShadowGetTexelAreasTent3x3(float offset, out vec4 computedArea, out vec4 computedAreaUncut)\n{\n    // Compute the exterior areas,a and h is same.\n    float a = offset + 0.5;\n    float offsetSquaredHalved = a * a * 0.5;\n    computedAreaUncut.x = computedArea.x = offsetSquaredHalved - offset;\n    computedAreaUncut.w = computedArea.w = offsetSquaredHalved;\n\n    // Compute the middle areas\n    // For Y : We find the area in Y of as if the left section of the isoceles triangle would\n    // intersect the axis between Y and Z (ie where offset = 0).\n    computedAreaUncut.y = sampleShadowGetIRTriangleTexelArea(1.5 - offset);\n    // This area is superior to the one we are looking for if (offset < 0) thus we need to\n    // subtract the area of the triangle defined by (0,1.5-offset), (0,1.5+offset), (-offset,1.5).\n    float clampedOffsetLeft = min(offset,0.0);\n    float areaOfSmallLeftTriangle = clampedOffsetLeft * clampedOffsetLeft;\n    computedArea.y = computedAreaUncut.y - areaOfSmallLeftTriangle;\n\n    // We do the same for the Z but with the right part of the isoceles triangle\n    computedAreaUncut.z = sampleShadowGetIRTriangleTexelArea(1.5 + offset);\n    float clampedOffsetRight = max(offset,0.0);\n    float areaOfSmallRightTriangle = clampedOffsetRight * clampedOffsetRight;\n    computedArea.z = computedAreaUncut.z - areaOfSmallRightTriangle;\n}\n\n// Assuming a isoceles triangle of 2.5 texel height and 5 texels wide lying on 6 texels.\n// This function return the weight of each texels area relative to the full triangle area.\n//  /       \\\n// _ _ _ _ _ _ <-- texels\n// 0 1 2 3 4 5 <-- computed area indices (in texelsWeights[])\n// Top point at (right,top) in a texel,left bottom point at (middle,middle) in a texel,right bottom point at (middle,middle) in a texel.\nvoid sampleShadowGetTexelWeightsTent5x5(float offset, out vec3 texelsWeightsA, out vec3 texelsWeightsB)\n{\n    vec4 areaFrom3texelTriangle;\n    vec4 areaUncutFrom3texelTriangle;\n    sampleShadowGetTexelAreasTent3x3(offset, areaFrom3texelTriangle, areaUncutFrom3texelTriangle);\n\n    // Triangle slope is 45 degree thus we can almost reuse the result of the 3 texel wide computation.\n    // the 5 texel wide triangle can be seen as the 3 texel wide one but shifted up by one unit/texel.\n    // 0.16 is 1/(the triangle area)\n    texelsWeightsA.x = 0.16 * (areaFrom3texelTriangle.x);\n    texelsWeightsA.y = 0.16 * (areaUncutFrom3texelTriangle.y);\n    texelsWeightsA.z = 0.16 * (areaFrom3texelTriangle.y + 1.0);\n    texelsWeightsB.x = 0.16 * (areaFrom3texelTriangle.z + 1.0);\n    texelsWeightsB.y = 0.16 * (areaUncutFrom3texelTriangle.z);\n    texelsWeightsB.z = 0.16 * (areaFrom3texelTriangle.w);\n}\n\n// 5x5 Tent filter (45 degree sloped triangles in U and V)\nvoid sampleShadowComputeSamplesTent5x5(vec4 shadowMapTextureTexelSize, vec2 coord, out float fetchesWeights[9], out vec2 fetchesUV[9])\n{\n    // tent base is 5x5 base thus covering from 25 to 36 texels, thus we need 9 bilinear PCF fetches\n    vec2 tentCenterInTexelSpace = coord.xy * shadowMapTextureTexelSize.zw;\n    vec2 centerOfFetchesInTexelSpace = floor(tentCenterInTexelSpace + 0.5);\n    vec2 offsetFromTentCenterToCenterOfFetches = tentCenterInTexelSpace - centerOfFetchesInTexelSpace;\n\n    // find the weight of each texel based on the area of a 45 degree slop tent above each of them.\n    vec3 texelsWeightsUA, texelsWeightsUB;\n    vec3 texelsWeightsVA, texelsWeightsVB;\n    sampleShadowGetTexelWeightsTent5x5(offsetFromTentCenterToCenterOfFetches.x, texelsWeightsUA, texelsWeightsUB);\n    sampleShadowGetTexelWeightsTent5x5(offsetFromTentCenterToCenterOfFetches.y, texelsWeightsVA, texelsWeightsVB);\n\n    // each fetch will cover a group of 2x2 texels, the weight of each group is the sum of the weights of the texels\n    vec3 fetchesWeightsU = vec3(texelsWeightsUA.xz, texelsWeightsUB.y) + vec3(texelsWeightsUA.y, texelsWeightsUB.xz);\n    vec3 fetchesWeightsV = vec3(texelsWeightsVA.xz, texelsWeightsVB.y) + vec3(texelsWeightsVA.y, texelsWeightsVB.xz);\n\n    // move the PCF bilinear fetches to respect texels weights\n    vec3 fetchesOffsetsU = vec3(texelsWeightsUA.y, texelsWeightsUB.xz) / fetchesWeightsU.xyz + vec3(-2.5,-0.5,1.5);\n    vec3 fetchesOffsetsV = vec3(texelsWeightsVA.y, texelsWeightsVB.xz) / fetchesWeightsV.xyz + vec3(-2.5,-0.5,1.5);\n    fetchesOffsetsU *= shadowMapTextureTexelSize.xxx;\n    fetchesOffsetsV *= shadowMapTextureTexelSize.yyy;\n\n    vec2 bilinearFetchOrigin = centerOfFetchesInTexelSpace * shadowMapTextureTexelSize.xy;\n    fetchesUV[0] = bilinearFetchOrigin + vec2(fetchesOffsetsU.x, fetchesOffsetsV.x);\n    fetchesUV[1] = bilinearFetchOrigin + vec2(fetchesOffsetsU.y, fetchesOffsetsV.x);\n    fetchesUV[2] = bilinearFetchOrigin + vec2(fetchesOffsetsU.z, fetchesOffsetsV.x);\n    fetchesUV[3] = bilinearFetchOrigin + vec2(fetchesOffsetsU.x, fetchesOffsetsV.y);\n    fetchesUV[4] = bilinearFetchOrigin + vec2(fetchesOffsetsU.y, fetchesOffsetsV.y);\n    fetchesUV[5] = bilinearFetchOrigin + vec2(fetchesOffsetsU.z, fetchesOffsetsV.y);\n    fetchesUV[6] = bilinearFetchOrigin + vec2(fetchesOffsetsU.x, fetchesOffsetsV.z);\n    fetchesUV[7] = bilinearFetchOrigin + vec2(fetchesOffsetsU.y, fetchesOffsetsV.z);\n    fetchesUV[8] = bilinearFetchOrigin + vec2(fetchesOffsetsU.z, fetchesOffsetsV.z);\n\n    fetchesWeights[0] = fetchesWeightsU.x * fetchesWeightsV.x;\n    fetchesWeights[1] = fetchesWeightsU.y * fetchesWeightsV.x;\n    fetchesWeights[2] = fetchesWeightsU.z * fetchesWeightsV.x;\n    fetchesWeights[3] = fetchesWeightsU.x * fetchesWeightsV.y;\n    fetchesWeights[4] = fetchesWeightsU.y * fetchesWeightsV.y;\n    fetchesWeights[5] = fetchesWeightsU.z * fetchesWeightsV.y;\n    fetchesWeights[6] = fetchesWeightsU.x * fetchesWeightsV.z;\n    fetchesWeights[7] = fetchesWeightsU.y * fetchesWeightsV.z;\n    fetchesWeights[8] = fetchesWeightsU.z * fetchesWeightsV.z;\n}";
+    var ShadowSampleTentGLSL = "// ------------------------------------------------------------------\r\n//  PCF Filtering Tent Functions\r\n// ------------------------------------------------------------------\r\n\r\n// Assuming a isoceles right angled triangle of height \"triangleHeight\" (as drawn below).\r\n// This function return the area of the triangle above the first texel(in Y the first texel).\r\n//\r\n// |\\      <-- 45 degree slop isosceles right angled triangle\r\n// | \\\r\n// ----    <-- length of this side is \"triangleHeight\"\r\n// _ _ _ _ <-- texels\r\nfloat sampleShadowGetIRTriangleTexelArea(float triangleHeight)\r\n{\r\n    return triangleHeight - 0.5;\r\n}\r\n\r\n// Assuming a isoceles triangle of 1.5 texels height and 3 texels wide lying on 4 texels.\r\n// This function return the area of the triangle above each of those texels.\r\n//    |    <-- offset from -0.5 to 0.5, 0 meaning triangle is exactly in the center\r\n//   / \\   <-- 45 degree slop isosceles triangle (ie tent projected in 2D)\r\n//  /   \\\r\n// _ _ _ _ <-- texels\r\n// X Y Z W <-- result indices (in computedArea.xyzw and computedAreaUncut.xyzw)\r\n// Top point at (right,top) in a texel,left bottom point at (middle,middle) in a texel,right bottom point at (middle,middle) in a texel.\r\nvoid sampleShadowGetTexelAreasTent3x3(float offset, out vec4 computedArea, out vec4 computedAreaUncut)\r\n{\r\n    // Compute the exterior areas,a and h is same.\r\n    float a = offset + 0.5;\r\n    float offsetSquaredHalved = a * a * 0.5;\r\n    computedAreaUncut.x = computedArea.x = offsetSquaredHalved - offset;\r\n    computedAreaUncut.w = computedArea.w = offsetSquaredHalved;\r\n\r\n    // Compute the middle areas\r\n    // For Y : We find the area in Y of as if the left section of the isoceles triangle would\r\n    // intersect the axis between Y and Z (ie where offset = 0).\r\n    computedAreaUncut.y = sampleShadowGetIRTriangleTexelArea(1.5 - offset);\r\n    // This area is superior to the one we are looking for if (offset < 0) thus we need to\r\n    // subtract the area of the triangle defined by (0,1.5-offset), (0,1.5+offset), (-offset,1.5).\r\n    float clampedOffsetLeft = min(offset,0.0);\r\n    float areaOfSmallLeftTriangle = clampedOffsetLeft * clampedOffsetLeft;\r\n    computedArea.y = computedAreaUncut.y - areaOfSmallLeftTriangle;\r\n\r\n    // We do the same for the Z but with the right part of the isoceles triangle\r\n    computedAreaUncut.z = sampleShadowGetIRTriangleTexelArea(1.5 + offset);\r\n    float clampedOffsetRight = max(offset,0.0);\r\n    float areaOfSmallRightTriangle = clampedOffsetRight * clampedOffsetRight;\r\n    computedArea.z = computedAreaUncut.z - areaOfSmallRightTriangle;\r\n}\r\n\r\n// Assuming a isoceles triangle of 2.5 texel height and 5 texels wide lying on 6 texels.\r\n// This function return the weight of each texels area relative to the full triangle area.\r\n//  /       \\\r\n// _ _ _ _ _ _ <-- texels\r\n// 0 1 2 3 4 5 <-- computed area indices (in texelsWeights[])\r\n// Top point at (right,top) in a texel,left bottom point at (middle,middle) in a texel,right bottom point at (middle,middle) in a texel.\r\nvoid sampleShadowGetTexelWeightsTent5x5(float offset, out vec3 texelsWeightsA, out vec3 texelsWeightsB)\r\n{\r\n    vec4 areaFrom3texelTriangle;\r\n    vec4 areaUncutFrom3texelTriangle;\r\n    sampleShadowGetTexelAreasTent3x3(offset, areaFrom3texelTriangle, areaUncutFrom3texelTriangle);\r\n\r\n    // Triangle slope is 45 degree thus we can almost reuse the result of the 3 texel wide computation.\r\n    // the 5 texel wide triangle can be seen as the 3 texel wide one but shifted up by one unit/texel.\r\n    // 0.16 is 1/(the triangle area)\r\n    texelsWeightsA.x = 0.16 * (areaFrom3texelTriangle.x);\r\n    texelsWeightsA.y = 0.16 * (areaUncutFrom3texelTriangle.y);\r\n    texelsWeightsA.z = 0.16 * (areaFrom3texelTriangle.y + 1.0);\r\n    texelsWeightsB.x = 0.16 * (areaFrom3texelTriangle.z + 1.0);\r\n    texelsWeightsB.y = 0.16 * (areaUncutFrom3texelTriangle.z);\r\n    texelsWeightsB.z = 0.16 * (areaFrom3texelTriangle.w);\r\n}\r\n\r\n// 5x5 Tent filter (45 degree sloped triangles in U and V)\r\nvoid sampleShadowComputeSamplesTent5x5(vec4 shadowMapTextureTexelSize, vec2 coord, out float fetchesWeights[9], out vec2 fetchesUV[9])\r\n{\r\n    // tent base is 5x5 base thus covering from 25 to 36 texels, thus we need 9 bilinear PCF fetches\r\n    vec2 tentCenterInTexelSpace = coord.xy * shadowMapTextureTexelSize.zw;\r\n    vec2 centerOfFetchesInTexelSpace = floor(tentCenterInTexelSpace + 0.5);\r\n    vec2 offsetFromTentCenterToCenterOfFetches = tentCenterInTexelSpace - centerOfFetchesInTexelSpace;\r\n\r\n    // find the weight of each texel based on the area of a 45 degree slop tent above each of them.\r\n    vec3 texelsWeightsUA, texelsWeightsUB;\r\n    vec3 texelsWeightsVA, texelsWeightsVB;\r\n    sampleShadowGetTexelWeightsTent5x5(offsetFromTentCenterToCenterOfFetches.x, texelsWeightsUA, texelsWeightsUB);\r\n    sampleShadowGetTexelWeightsTent5x5(offsetFromTentCenterToCenterOfFetches.y, texelsWeightsVA, texelsWeightsVB);\r\n\r\n    // each fetch will cover a group of 2x2 texels, the weight of each group is the sum of the weights of the texels\r\n    vec3 fetchesWeightsU = vec3(texelsWeightsUA.xz, texelsWeightsUB.y) + vec3(texelsWeightsUA.y, texelsWeightsUB.xz);\r\n    vec3 fetchesWeightsV = vec3(texelsWeightsVA.xz, texelsWeightsVB.y) + vec3(texelsWeightsVA.y, texelsWeightsVB.xz);\r\n\r\n    // move the PCF bilinear fetches to respect texels weights\r\n    vec3 fetchesOffsetsU = vec3(texelsWeightsUA.y, texelsWeightsUB.xz) / fetchesWeightsU.xyz + vec3(-2.5,-0.5,1.5);\r\n    vec3 fetchesOffsetsV = vec3(texelsWeightsVA.y, texelsWeightsVB.xz) / fetchesWeightsV.xyz + vec3(-2.5,-0.5,1.5);\r\n    fetchesOffsetsU *= shadowMapTextureTexelSize.xxx;\r\n    fetchesOffsetsV *= shadowMapTextureTexelSize.yyy;\r\n\r\n    vec2 bilinearFetchOrigin = centerOfFetchesInTexelSpace * shadowMapTextureTexelSize.xy;\r\n    fetchesUV[0] = bilinearFetchOrigin + vec2(fetchesOffsetsU.x, fetchesOffsetsV.x);\r\n    fetchesUV[1] = bilinearFetchOrigin + vec2(fetchesOffsetsU.y, fetchesOffsetsV.x);\r\n    fetchesUV[2] = bilinearFetchOrigin + vec2(fetchesOffsetsU.z, fetchesOffsetsV.x);\r\n    fetchesUV[3] = bilinearFetchOrigin + vec2(fetchesOffsetsU.x, fetchesOffsetsV.y);\r\n    fetchesUV[4] = bilinearFetchOrigin + vec2(fetchesOffsetsU.y, fetchesOffsetsV.y);\r\n    fetchesUV[5] = bilinearFetchOrigin + vec2(fetchesOffsetsU.z, fetchesOffsetsV.y);\r\n    fetchesUV[6] = bilinearFetchOrigin + vec2(fetchesOffsetsU.x, fetchesOffsetsV.z);\r\n    fetchesUV[7] = bilinearFetchOrigin + vec2(fetchesOffsetsU.y, fetchesOffsetsV.z);\r\n    fetchesUV[8] = bilinearFetchOrigin + vec2(fetchesOffsetsU.z, fetchesOffsetsV.z);\r\n\r\n    fetchesWeights[0] = fetchesWeightsU.x * fetchesWeightsV.x;\r\n    fetchesWeights[1] = fetchesWeightsU.y * fetchesWeightsV.x;\r\n    fetchesWeights[2] = fetchesWeightsU.z * fetchesWeightsV.x;\r\n    fetchesWeights[3] = fetchesWeightsU.x * fetchesWeightsV.y;\r\n    fetchesWeights[4] = fetchesWeightsU.y * fetchesWeightsV.y;\r\n    fetchesWeights[5] = fetchesWeightsU.z * fetchesWeightsV.y;\r\n    fetchesWeights[6] = fetchesWeightsU.x * fetchesWeightsV.z;\r\n    fetchesWeights[7] = fetchesWeightsU.y * fetchesWeightsV.z;\r\n    fetchesWeights[8] = fetchesWeightsU.z * fetchesWeightsV.z;\r\n}";
 
-    var ShadowSamplerGLSL = "#if !defined(ShadowSampler_lib)\n    #define ShadowSampler_lib\n\n    #ifndef GRAPHICS_API_GLES3\n\t#define NO_NATIVE_SHADOWMAP\n    #endif // GRAPHICS_API_GLES3\n\n    #if defined(NO_NATIVE_SHADOWMAP)\n\t#define TEXTURE2D_SHADOW(textureName)\t\t     uniform mediump sampler2D textureName\n\t#define SAMPLE_TEXTURE2D_SHADOW(textureName, coord3) (texture2D(textureName, coord3.xy).r < coord3.z ? 0.0 : 1.0)\n\t#define TEXTURE2D_SHADOW_PARAM(shadowMap)\t     mediump sampler2D shadowMap\n    #else // NO_NATIVE_SHADOWMAP\n\t#define TEXTURE2D_SHADOW(textureName)\t\t     uniform mediump sampler2DShadow textureName\n\t#define SAMPLE_TEXTURE2D_SHADOW(textureName, coord3) textureLod(textureName, coord3, 0.0)\n\t#define TEXTURE2D_SHADOW_PARAM(shadowMap)\t     mediump sampler2DShadow shadowMap\n    #endif // NO_NATIVE_SHADOWMAP\n\n    // 计算阴影\n    #ifdef RECEIVESHADOW\n\n\t#include \"ShadowSampleTent.glsl\";\n\nuniform vec4 u_ShadowParams;\n\n\t#define ShadowStrength\t   u_ShadowParams.x\n\t#define SpotShadowStrength u_ShadowParams.y\n\n    // 平行光阴影\n\t#ifdef SHADOW\n\t    #define CALCULATE_SHADOWS\nvarying vec4 v_ShadowCoord;\nTEXTURE2D_SHADOW(u_ShadowMap);\nuniform vec4 u_ShadowMapSize;\n\n#ifdef SHADOW_CASCADE\nconst int c_MaxCascadeCount = 4;\n#else //SHADOW_CASCADE\nconst int c_MaxCascadeCount = 1;\n#endif//SHADOW_CASCADE\n\nuniform mat4 u_ShadowMatrices[c_MaxCascadeCount];\nuniform vec4 u_ShadowSplitSpheres[c_MaxCascadeCount];\n\t#endif // SHADOW\n\n\t// 聚光灯阴影\n\t#ifdef SHADOW_SPOT\n\t    #define CALCULATE_SPOTSHADOWS\nvarying vec4 v_SpotShadowCoord;\nTEXTURE2D_SHADOW(u_SpotShadowMap);\nuniform vec4 u_SpotShadowMapSize;\nuniform mat4 u_SpotViewProjectMatrix;\n\t#endif // SHADOW_SPOT\n\nfloat sampleShdowMapFiltered4(TEXTURE2D_SHADOW_PARAM(shadowMap), vec3 shadowCoord, vec4 shadowMapSize)\n{\n    float attenuation;\n    vec4 attenuation4;\n    vec2 offset = shadowMapSize.xy / 2.0;\n    vec3 shadowCoord0 = shadowCoord + vec3(-offset, 0.0);\n    vec3 shadowCoord1 = shadowCoord + vec3(offset.x, -offset.y, 0.0);\n    vec3 shadowCoord2 = shadowCoord + vec3(-offset.x, offset.y, 0.0);\n    vec3 shadowCoord3 = shadowCoord + vec3(offset, 0.0);\n    attenuation4.x = SAMPLE_TEXTURE2D_SHADOW(shadowMap, shadowCoord0);\n    attenuation4.y = SAMPLE_TEXTURE2D_SHADOW(shadowMap, shadowCoord1);\n    attenuation4.z = SAMPLE_TEXTURE2D_SHADOW(shadowMap, shadowCoord2);\n    attenuation4.w = SAMPLE_TEXTURE2D_SHADOW(shadowMap, shadowCoord3);\n    attenuation = dot(attenuation4, vec4(0.25));\n    return attenuation;\n}\n\nfloat sampleShdowMapFiltered9(TEXTURE2D_SHADOW_PARAM(shadowMap), vec3 shadowCoord, vec4 shadowmapSize)\n{\n    float attenuation;\n    float fetchesWeights[9];\n    vec2 fetchesUV[9];\n    sampleShadowComputeSamplesTent5x5(shadowmapSize, shadowCoord.xy, fetchesWeights, fetchesUV);\n    attenuation = fetchesWeights[0] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[0].xy, shadowCoord.z));\n    attenuation += fetchesWeights[1] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[1].xy, shadowCoord.z));\n    attenuation += fetchesWeights[2] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[2].xy, shadowCoord.z));\n    attenuation += fetchesWeights[3] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[3].xy, shadowCoord.z));\n    attenuation += fetchesWeights[4] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[4].xy, shadowCoord.z));\n    attenuation += fetchesWeights[5] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[5].xy, shadowCoord.z));\n    attenuation += fetchesWeights[6] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[6].xy, shadowCoord.z));\n    attenuation += fetchesWeights[7] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[7].xy, shadowCoord.z));\n    attenuation += fetchesWeights[8] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[8].xy, shadowCoord.z));\n    return attenuation;\n}\n    #endif // RECEIVESHADOW\n\n    // 计算平行光阴影\n    #if defined(CALCULATE_SHADOWS)\n\n#ifdef SHADOW_CASCADE\n// 平行光阴影级联索引\nmediump int computeCascadeIndex(in vec3 positionWS)\n{\n    vec3 fromCenter0 = positionWS - u_ShadowSplitSpheres[0].xyz;\n    vec3 fromCenter1 = positionWS - u_ShadowSplitSpheres[1].xyz;\n    vec3 fromCenter2 = positionWS - u_ShadowSplitSpheres[2].xyz;\n    vec3 fromCenter3 = positionWS - u_ShadowSplitSpheres[3].xyz;\n\n    mediump vec4 comparison = vec4(dot(fromCenter0, fromCenter0) < u_ShadowSplitSpheres[0].w,\n\tdot(fromCenter1, fromCenter1) < u_ShadowSplitSpheres[1].w,\n\tdot(fromCenter2, fromCenter2) < u_ShadowSplitSpheres[2].w,\n\tdot(fromCenter3, fromCenter3) < u_ShadowSplitSpheres[3].w);\n\n    comparison.yzw = clamp(comparison.yzw - comparison.xyz, 0.0, 1.0); // keep the nearest\n    mediump vec4 indexCoefficient = vec4(4.0, 3.0, 2.0, 1.0);\n    mediump int index = 4 - int(dot(comparison, indexCoefficient));\n    return index;\n}\n#endif\n\n// 平行光阴影坐标\nvec4 getShadowCoord(in vec3 positionWS)\n{\n\t#ifdef SHADOW_CASCADE\n    mediump int cascadeIndex = computeCascadeIndex(positionWS);\n\t    #ifdef GRAPHICS_API_GLES3\n    mat4 shadowMat = u_ShadowMatrices[cascadeIndex];\n\t    #else // GRAPHICS_API_GLES3\n    mat4 shadowMat;\n    if (cascadeIndex == 0)\n\t{\n\t    shadowMat = u_ShadowMatrices[0];\n\t}\n    else if (cascadeIndex == 1)\n\t{\n\t    shadowMat = u_ShadowMatrices[1];\n\t}\n    else if (cascadeIndex == 2)\n\t{\n\t    shadowMat = u_ShadowMatrices[2];\n\t}\n    else\n\t{\n\t    shadowMat = u_ShadowMatrices[3];\n\t}\n\t    #endif // GRAPHICS_API_GLES3\n\n    return shadowMat * vec4(positionWS, 1.0);\n\n\t#else // SHADOW_CASCADE\n\n    return u_ShadowMatrices[0] * vec4(positionWS, 1.0);\n\n\t#endif // SHADOW_CASCADE\n}\n\n// 采样平行光阴影\nfloat sampleShadowmap(in vec4 shadowCoord)\n{\n    float attenuation = 1.0;\n\n    vec3 coord = shadowCoord.xyz / shadowCoord.w;\n\n    vec4 shadowmapSize = u_ShadowMapSize;\n\n    if (coord.z > 0.0 && coord.z < 1.0)\n\t{\n\t#if defined(SHADOW_SOFT_SHADOW_HIGH)\n\t    attenuation = sampleShdowMapFiltered9(u_ShadowMap, coord, shadowmapSize);\n\t#elif defined(SHADOW_SOFT_SHADOW_LOW)\n\t    attenuation = sampleShdowMapFiltered4(u_ShadowMap, coord, shadowmapSize);\n\t#else // hard\n\t    attenuation = SAMPLE_TEXTURE2D_SHADOW(u_ShadowMap, coord);\n\t#endif // SHADOW_SOFT_SHADOW_HIGH\n\t    attenuation = mix(1.0, attenuation, ShadowStrength);\n\t}\n\n    return attenuation;\n}\n\n    #endif // CALCULATE_SHADOWS\n\n    // 计算 聚光灯 阴影\n    #if defined(CALCULATE_SPOTSHADOWS)\n\n// 聚光灯阴影坐标\nvec4 getSpotShadowCoord(in vec3 positionWS)\n{\n    vec4 coordinate = u_SpotViewProjectMatrix * vec4(positionWS, 1.0);\n\n    return coordinate;\n}\n\n// 采样聚光灯阴影\nfloat sampleSpotShadowmap(vec4 shadowCoord)\n{\n    float attenuation = 1.0;\n\n    vec3 coord = shadowCoord.xyz / shadowCoord.w;\n    coord.xy = coord.xy * 0.5 + 0.5;\n\n    vec4 shadowmapSize = u_SpotShadowMapSize;\n    // todo\n    if (coord.z > 0.0 && coord.z < 1.0)\n\t{\n\t#if defined(SHADOW_SPOT_SOFT_SHADOW_HIGH)\n\t    attenuation = sampleShdowMapFiltered9(u_SpotShadowMap, coord, shadowmapSize);\n\t#elif defined(SHADOW_SPOT_SOFT_SHADOW_LOW)\n\t    attenuation = sampleShdowMapFiltered4(u_SpotShadowMap, coord, shadowmapSize);\n\t#else // hard\n\t    attenuation = SAMPLE_TEXTURE2D_SHADOW(u_SpotShadowMap, coord);\n\t#endif\n\t    attenuation = mix(1.0, attenuation, SpotShadowStrength);\n\t}\n\n    return attenuation;\n}\n\n    #endif // CALCULATE_SPOTSHADOWS\n\n#endif // ShadowSampler_lib";
+    var ShadowSamplerGLSL = "#if !defined(ShadowSampler_lib)\r\n    #define ShadowSampler_lib\r\n\r\n    #ifndef GRAPHICS_API_GLES3\r\n\t#define NO_NATIVE_SHADOWMAP\r\n    #endif // GRAPHICS_API_GLES3\r\n\r\n    #if defined(NO_NATIVE_SHADOWMAP)\r\n\t#define TEXTURE2D_SHADOW(textureName)\t\t     uniform mediump sampler2D textureName\r\n\t#define SAMPLE_TEXTURE2D_SHADOW(textureName, coord3) (texture2D(textureName, coord3.xy).r < coord3.z ? 0.0 : 1.0)\r\n\t#define TEXTURE2D_SHADOW_PARAM(shadowMap)\t     mediump sampler2D shadowMap\r\n    #else // NO_NATIVE_SHADOWMAP\r\n\t#define TEXTURE2D_SHADOW(textureName)\t\t     uniform mediump sampler2DShadow textureName\r\n\t#define SAMPLE_TEXTURE2D_SHADOW(textureName, coord3) textureLod(textureName, coord3, 0.0)\r\n\t#define TEXTURE2D_SHADOW_PARAM(shadowMap)\t     mediump sampler2DShadow shadowMap\r\n    #endif // NO_NATIVE_SHADOWMAP\r\n\r\n    // 计算阴影\r\n    #ifdef RECEIVESHADOW\r\n\r\n\t#include \"ShadowSampleTent.glsl\";\r\n\r\nuniform vec4 u_ShadowParams;\r\n\r\n\t#define ShadowStrength\t   u_ShadowParams.x\r\n\t#define SpotShadowStrength u_ShadowParams.y\r\n\r\n    // 平行光阴影\r\n\t#ifdef SHADOW\r\n\t    #define CALCULATE_SHADOWS\r\nvarying vec4 v_ShadowCoord;\r\nTEXTURE2D_SHADOW(u_ShadowMap);\r\nuniform vec4 u_ShadowMapSize;\r\n\r\n#ifdef SHADOW_CASCADE\r\nconst int c_MaxCascadeCount = 4;\r\n#else //SHADOW_CASCADE\r\nconst int c_MaxCascadeCount = 1;\r\n#endif//SHADOW_CASCADE\r\n\r\nuniform mat4 u_ShadowMatrices[c_MaxCascadeCount];\r\nuniform vec4 u_ShadowSplitSpheres[c_MaxCascadeCount];\r\n\t#endif // SHADOW\r\n\r\n\t// 聚光灯阴影\r\n\t#ifdef SHADOW_SPOT\r\n\t    #define CALCULATE_SPOTSHADOWS\r\nvarying vec4 v_SpotShadowCoord;\r\nTEXTURE2D_SHADOW(u_SpotShadowMap);\r\nuniform vec4 u_SpotShadowMapSize;\r\nuniform mat4 u_SpotViewProjectMatrix;\r\n\t#endif // SHADOW_SPOT\r\n\r\nfloat sampleShdowMapFiltered4(TEXTURE2D_SHADOW_PARAM(shadowMap), vec3 shadowCoord, vec4 shadowMapSize)\r\n{\r\n    float attenuation;\r\n    vec4 attenuation4;\r\n    vec2 offset = shadowMapSize.xy / 2.0;\r\n    vec3 shadowCoord0 = shadowCoord + vec3(-offset, 0.0);\r\n    vec3 shadowCoord1 = shadowCoord + vec3(offset.x, -offset.y, 0.0);\r\n    vec3 shadowCoord2 = shadowCoord + vec3(-offset.x, offset.y, 0.0);\r\n    vec3 shadowCoord3 = shadowCoord + vec3(offset, 0.0);\r\n    attenuation4.x = SAMPLE_TEXTURE2D_SHADOW(shadowMap, shadowCoord0);\r\n    attenuation4.y = SAMPLE_TEXTURE2D_SHADOW(shadowMap, shadowCoord1);\r\n    attenuation4.z = SAMPLE_TEXTURE2D_SHADOW(shadowMap, shadowCoord2);\r\n    attenuation4.w = SAMPLE_TEXTURE2D_SHADOW(shadowMap, shadowCoord3);\r\n    attenuation = dot(attenuation4, vec4(0.25));\r\n    return attenuation;\r\n}\r\n\r\nfloat sampleShdowMapFiltered9(TEXTURE2D_SHADOW_PARAM(shadowMap), vec3 shadowCoord, vec4 shadowmapSize)\r\n{\r\n    float attenuation;\r\n    float fetchesWeights[9];\r\n    vec2 fetchesUV[9];\r\n    sampleShadowComputeSamplesTent5x5(shadowmapSize, shadowCoord.xy, fetchesWeights, fetchesUV);\r\n    attenuation = fetchesWeights[0] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[0].xy, shadowCoord.z));\r\n    attenuation += fetchesWeights[1] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[1].xy, shadowCoord.z));\r\n    attenuation += fetchesWeights[2] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[2].xy, shadowCoord.z));\r\n    attenuation += fetchesWeights[3] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[3].xy, shadowCoord.z));\r\n    attenuation += fetchesWeights[4] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[4].xy, shadowCoord.z));\r\n    attenuation += fetchesWeights[5] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[5].xy, shadowCoord.z));\r\n    attenuation += fetchesWeights[6] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[6].xy, shadowCoord.z));\r\n    attenuation += fetchesWeights[7] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[7].xy, shadowCoord.z));\r\n    attenuation += fetchesWeights[8] * SAMPLE_TEXTURE2D_SHADOW(shadowMap, vec3(fetchesUV[8].xy, shadowCoord.z));\r\n    return attenuation;\r\n}\r\n    #endif // RECEIVESHADOW\r\n\r\n    // 计算平行光阴影\r\n    #if defined(CALCULATE_SHADOWS)\r\n\r\n#ifdef SHADOW_CASCADE\r\n// 平行光阴影级联索引\r\nmediump int computeCascadeIndex(in vec3 positionWS)\r\n{\r\n    vec3 fromCenter0 = positionWS - u_ShadowSplitSpheres[0].xyz;\r\n    vec3 fromCenter1 = positionWS - u_ShadowSplitSpheres[1].xyz;\r\n    vec3 fromCenter2 = positionWS - u_ShadowSplitSpheres[2].xyz;\r\n    vec3 fromCenter3 = positionWS - u_ShadowSplitSpheres[3].xyz;\r\n\r\n    mediump vec4 comparison = vec4(dot(fromCenter0, fromCenter0) < u_ShadowSplitSpheres[0].w,\r\n\tdot(fromCenter1, fromCenter1) < u_ShadowSplitSpheres[1].w,\r\n\tdot(fromCenter2, fromCenter2) < u_ShadowSplitSpheres[2].w,\r\n\tdot(fromCenter3, fromCenter3) < u_ShadowSplitSpheres[3].w);\r\n\r\n    comparison.yzw = clamp(comparison.yzw - comparison.xyz, 0.0, 1.0); // keep the nearest\r\n    mediump vec4 indexCoefficient = vec4(4.0, 3.0, 2.0, 1.0);\r\n    mediump int index = 4 - int(dot(comparison, indexCoefficient));\r\n    return index;\r\n}\r\n#endif\r\n\r\n// 平行光阴影坐标\r\nvec4 getShadowCoord(in vec3 positionWS)\r\n{\r\n\t#ifdef SHADOW_CASCADE\r\n    mediump int cascadeIndex = computeCascadeIndex(positionWS);\r\n\t    #ifdef GRAPHICS_API_GLES3\r\n    mat4 shadowMat = u_ShadowMatrices[cascadeIndex];\r\n\t    #else // GRAPHICS_API_GLES3\r\n    mat4 shadowMat;\r\n    if (cascadeIndex == 0)\r\n\t{\r\n\t    shadowMat = u_ShadowMatrices[0];\r\n\t}\r\n    else if (cascadeIndex == 1)\r\n\t{\r\n\t    shadowMat = u_ShadowMatrices[1];\r\n\t}\r\n    else if (cascadeIndex == 2)\r\n\t{\r\n\t    shadowMat = u_ShadowMatrices[2];\r\n\t}\r\n    else\r\n\t{\r\n\t    shadowMat = u_ShadowMatrices[3];\r\n\t}\r\n\t    #endif // GRAPHICS_API_GLES3\r\n\r\n    return shadowMat * vec4(positionWS, 1.0);\r\n\r\n\t#else // SHADOW_CASCADE\r\n\r\n    return u_ShadowMatrices[0] * vec4(positionWS, 1.0);\r\n\r\n\t#endif // SHADOW_CASCADE\r\n}\r\n\r\n// 采样平行光阴影\r\nfloat sampleShadowmap(in vec4 shadowCoord)\r\n{\r\n    float attenuation = 1.0;\r\n\r\n    vec3 coord = shadowCoord.xyz / shadowCoord.w;\r\n\r\n    vec4 shadowmapSize = u_ShadowMapSize;\r\n\r\n    if (coord.z > 0.0 && coord.z < 1.0)\r\n\t{\r\n\t#if defined(SHADOW_SOFT_SHADOW_HIGH)\r\n\t    attenuation = sampleShdowMapFiltered9(u_ShadowMap, coord, shadowmapSize);\r\n\t#elif defined(SHADOW_SOFT_SHADOW_LOW)\r\n\t    attenuation = sampleShdowMapFiltered4(u_ShadowMap, coord, shadowmapSize);\r\n\t#else // hard\r\n\t    attenuation = SAMPLE_TEXTURE2D_SHADOW(u_ShadowMap, coord);\r\n\t#endif // SHADOW_SOFT_SHADOW_HIGH\r\n\t    attenuation = mix(1.0, attenuation, ShadowStrength);\r\n\t}\r\n\r\n    return attenuation;\r\n}\r\n\r\n    #endif // CALCULATE_SHADOWS\r\n\r\n    // 计算 聚光灯 阴影\r\n    #if defined(CALCULATE_SPOTSHADOWS)\r\n\r\n// 聚光灯阴影坐标\r\nvec4 getSpotShadowCoord(in vec3 positionWS)\r\n{\r\n    vec4 coordinate = u_SpotViewProjectMatrix * vec4(positionWS, 1.0);\r\n\r\n    return coordinate;\r\n}\r\n\r\n// 采样聚光灯阴影\r\nfloat sampleSpotShadowmap(vec4 shadowCoord)\r\n{\r\n    float attenuation = 1.0;\r\n\r\n    vec3 coord = shadowCoord.xyz / shadowCoord.w;\r\n    coord.xy = coord.xy * 0.5 + 0.5;\r\n\r\n    vec4 shadowmapSize = u_SpotShadowMapSize;\r\n    // todo\r\n    if (coord.z > 0.0 && coord.z < 1.0)\r\n\t{\r\n\t#if defined(SHADOW_SPOT_SOFT_SHADOW_HIGH)\r\n\t    attenuation = sampleShdowMapFiltered9(u_SpotShadowMap, coord, shadowmapSize);\r\n\t#elif defined(SHADOW_SPOT_SOFT_SHADOW_LOW)\r\n\t    attenuation = sampleShdowMapFiltered4(u_SpotShadowMap, coord, shadowmapSize);\r\n\t#else // hard\r\n\t    attenuation = SAMPLE_TEXTURE2D_SHADOW(u_SpotShadowMap, coord);\r\n\t#endif\r\n\t    attenuation = mix(1.0, attenuation, SpotShadowStrength);\r\n\t}\r\n\r\n    return attenuation;\r\n}\r\n\r\n    #endif // CALCULATE_SPOTSHADOWS\r\n\r\n#endif // ShadowSampler_lib";
 
-    var SceneFogGLSL = "#if !defined(SceneFog_lib)\n    #define SceneFog_lib\n\nvec3 scenUnlitFog(in vec3 color)\n{\n    float lerpFact = clamp((1.0 / gl_FragCoord.w - u_FogStart) / u_FogRange, 0.0, 1.0);\n\n    #ifdef ADDTIVEFOG\n    return mix(color, vec3(0.0), lerpFact);\n    #else\n    return mix(color, u_FogColor.rgb, lerpFact);\n    #endif // ADDTIVEFOG\n}\n\nvec3 sceneLitFog(in vec3 color)\n{\n    float lerpFact = clamp((1.0 / gl_FragCoord.w - u_FogStart) / u_FogRange, 0.0, 1.0);\n\n    return mix(color, u_FogColor.rgb, lerpFact);\n}\n\n#endif // SceneFog_lib";
+    var SceneFogGLSL = "#if !defined(SceneFog_lib)\r\n    #define SceneFog_lib\r\n\r\n#include \"Camera.glsl\";\r\n\r\n    \r\n#ifdef FOG\r\n    varying float v_fogFactor;\r\n    float getFogFactor()\r\n    {\r\n        return v_fogFactor;\r\n    }\r\n\r\n    vec3 scenUnlitFog(in vec3 color)\r\n    {\r\n        float lerpFact = getFogFactor();\r\n        #ifdef ADDTIVEFOG\r\n            clamp(lerpFact, 0.0, 1.0);\r\n            return mix(vec3(0.0), color, lerpFact);\r\n        #else\r\n            clamp(lerpFact, 0.0, 1.0);\r\n            return mix(u_FogColor.rgb, color, lerpFact);\r\n        #endif // ADDTIVEFOG\r\n    }\r\n\r\n    vec3 sceneLitFog(in vec3 color)\r\n    {\r\n        float lerpFact = getFogFactor();\r\n        clamp(lerpFact, 0.0, 1.0);\r\n        return mix(u_FogColor.rgb, color, lerpFact);\r\n    }\r\n\r\n#endif\r\n#endif // SceneFog_lib";
 
-    var LightingGLSL = "#if !defined(Lighting_lib)\n    #define Lighting_lib\n\n    #include \"ShadowSampler.glsl\";\n\nstruct Light {\n    vec3 color;\n    vec3 dir;\n    float attenuation;\n};\n\nstruct DirectionLight {\n    vec3 color;\n    vec3 direction;\n    float attenuation;\n    int lightMode;\n};\n\nstruct PointLight {\n    vec3 color;\n    vec3 position;\n    float range;\n    float attenuation;\n    int lightMode;\n};\n\nstruct SpotLight {\n    vec3 color;\n    vec3 position;\n    float range;\n    vec3 direction;\n    float spot;\n    float attenuation;\n    int lightMode;\n};\n\n    #define LightMode_Mix      0\n    #define LightMode_RealTime 1\n\nint getAttenuationByMode(float lightMapMode)\n{\n    #ifdef LIGHTMAP // mix 0 realtime 1\n    return int(lightMapMode);\n    #endif\n    return LightMode_RealTime;\n}\n\n    #if defined(DIRECTIONLIGHT) || defined(POINTLIGHT) || defined(SPOTLIGHT)\n\n\t#define LIGHTING\n\n// 灯光衰减函数\nfloat attenuation(in vec3 L, in float invLightRadius)\n{\n    float fRatio = clamp(length(L) * invLightRadius, 0.0, 1.0);\n    fRatio *= fRatio;\n    return 1.0 / (1.0 + 25.0 * fRatio) * clamp(4.0 * (1.0 - fRatio), 0.0, 1.0);\n}\n\n// 平行光\nLight getLight(in DirectionLight directionLight)\n{\n    Light light;\n    light.color = directionLight.color;\n    light.dir = directionLight.direction;\n    light.attenuation = directionLight.attenuation;\n    return light;\n}\n\n// 点光\nLight getLight(in PointLight pointLight, in vec3 normalWS, in vec3 positionWS)\n{\n    vec3 lightDirection = positionWS - pointLight.position;\n    float rangeAttenuate = attenuation(lightDirection, 1.0 / pointLight.range);\n\n    Light light;\n    light.color = pointLight.color * rangeAttenuate;\n    light.dir = normalize(lightDirection);\n    light.attenuation = pointLight.attenuation;\n    return light;\n}\n\n// 聚光灯\nLight getLight(in SpotLight spotLight, in vec3 normalWS, in vec3 positionWS)\n{\n    vec3 lightDirection = positionWS - spotLight.position;\n    vec3 normalizeLightDir = normalize(lightDirection);\n\n    vec2 cosAngles = cos(vec2(spotLight.spot, spotLight.spot * 0.5) * 0.5);\n    float dirAttenuate = dot(spotLight.direction, normalizeLightDir);\n    dirAttenuate *= smoothstep(cosAngles.x, cosAngles.y, dirAttenuate);\n\n    float rangeAttenuate = attenuation(lightDirection, 1.0 / spotLight.range);\n\n    Light light;\n    light.color = spotLight.color * rangeAttenuate * dirAttenuate;\n    light.dir = normalizeLightDir;\n    light.attenuation = spotLight.attenuation;\n    return light;\n}\n\n\t#ifdef LEGACYSINGLELIGHTING\n\t    #define CalculateLightCount 1\n\t    #define DirectionCount\t1\n\n\t    #ifdef DIRECTIONLIGHT\nuniform DirectionLight u_DirectionLight;\n\t    #endif // DIRECTIONLIGHT\n\n\t    #ifdef POINTLIGHT\nuniform PointLight u_PointLight;\n\t    #endif // POINTLIGHT\n\n\t    #ifdef SPOTLIGHT\nuniform SpotLight u_SpotLight;\n\t    #endif // SPOTLIGHT\n\n\t#else // LEGACYSINGLELIGHTING\n\t    #define CalculateLightCount MAX_LIGHT_COUNT\n\t    #define DirectionCount\tu_DirationLightCount\n\nuniform sampler2D u_LightBuffer;\n\n\t    #ifdef DIRECTIONLIGHT\nuniform mediump int u_DirationLightCount;\n\t    #endif\n\n\t    #if defined(POINTLIGHT) || defined(SPOTLIGHT)\nconst int c_ClusterBufferWidth = CLUSTER_X_COUNT * CLUSTER_Y_COUNT;\nconst int c_ClusterBufferHeight = CLUSTER_Z_COUNT * (1 + int(ceil(float(MAX_LIGHT_COUNT_PER_CLUSTER) / 4.0)));\nconst int c_ClusterBufferFloatWidth = c_ClusterBufferWidth * 4;\nuniform sampler2D u_LightClusterBuffer;\n\nint getLightIndex(in int offset, in int index)\n{\n    int totalOffset = offset + index;\n    int row = totalOffset / c_ClusterBufferFloatWidth;\n    int lastRowFloat = totalOffset - row * c_ClusterBufferFloatWidth;\n    int col = lastRowFloat / 4;\n    vec2 uv = vec2((float(col) + 0.5) / float(c_ClusterBufferWidth), (float(row) + 0.5) / float(c_ClusterBufferHeight));\n    vec4 texPixel = texture2D(u_LightClusterBuffer, uv);\n    int pixelComponent = lastRowFloat - col * 4;\n\n\t\t#ifdef GRAPHICS_API_GLES3\n    return int(texPixel[pixelComponent]);\n\t\t#else\n    if (pixelComponent == 0)\n\treturn int(texPixel.x);\n    else if (pixelComponent == 1)\n\treturn int(texPixel.y);\n    else if (pixelComponent == 2)\n\treturn int(texPixel.z);\n    else\n\treturn int(texPixel.w);\n\t\t#endif\n}\n\t    #endif // POINTLIGHT || SPOTLIGHT\n\n\t#endif // LEGACYSINGLELIGHTING\n\n\t#ifdef DIRECTIONLIGHT\nDirectionLight getDirectionLight(in int index, in vec3 positionWS)\n{\n    DirectionLight light;\n\t    #ifdef LEGACYSINGLELIGHTING\n    light.color = u_DirectionLight.color;\n    light.direction = u_DirectionLight.direction;\n    light.attenuation = 1.0;\n    light.lightMode = LightMode_RealTime;\n\t    #else // LEGACYSINGLELIGHTING\n    float v = (float(index) + 0.5) / float(CalculateLightCount);\n    vec4 p1 = texture2D(u_LightBuffer, vec2(0.125, v));\n    vec4 p2 = texture2D(u_LightBuffer, vec2(0.375, v));\n    light.color = p1.rgb;\n    light.direction = p2.rgb;\n    light.attenuation = 1.0;\n    light.lightMode = getAttenuationByMode(p1.a);\n\t    #endif // LEGACYSINGLELIGHTING\n\n\t    #if defined(CALCULATE_SHADOWS)\n    if (index == 0)\n\t{\n\t    vec4 shadowCoord = getShadowCoord(positionWS);\n\t    float shadowAttenuation = sampleShadowmap(shadowCoord);\n\t    light.attenuation = shadowAttenuation;\n\t}\n\t    #endif // CALCULATE_SHADOWS\n\n    return light;\n}\n\t#endif // DIRECTIONLIGHT\n\n\t#if defined(POINTLIGHT) || defined(SPOTLIGHT)\nivec4 getClusterInfo(mat4 viewMatrix, vec4 viewport, vec3 positionWS, vec4 fragCoord, vec4 projectParams)\n{\n\t    #ifdef LEGACYSINGLELIGHTING\n    return ivec4(1, 1, 0, 0);\n\t    #else // LEGACYSINGLELIGHTING\n    // todo  这个地方 用 positionVS 替换?\n    vec3 viewPos = vec3(viewMatrix * vec4(positionWS, 1.0));\n    int clusterXIndex = int(floor(fragCoord.x / (float(viewport.z) / float(CLUSTER_X_COUNT))));\n    int clusterYIndex = int(floor((viewport.w * (projectParams.z < 0.0 ? 0.0 : 1.0) - fragCoord.y * projectParams.z) / (float(viewport.w) / float(CLUSTER_Y_COUNT))));\n    float zSliceParam = float(CLUSTER_Z_COUNT) / log2(projectParams.y / projectParams.x);\n    int clusterZIndex = int(floor(log2(-viewPos.z) * zSliceParam - log2(projectParams.x) * zSliceParam));\n    // todo 化简\n    vec2 uv = vec2((float(clusterXIndex + clusterYIndex * CLUSTER_X_COUNT) + 0.5) / float(c_ClusterBufferWidth), (float(clusterZIndex) + 0.5) / float(c_ClusterBufferHeight));\n    vec4 clusterPixel = texture2D(u_LightClusterBuffer, uv);\n    return ivec4(clusterPixel); // X:Point Count Y:Spot Count Z、W:Light Offset\n\t    #endif // LEGACYSINGLELIGHTING\n}\n\t#endif // POINTLIGHT || SPOTLIGHT\n\n\t#ifdef POINTLIGHT\nPointLight getPointLight(in int index, in ivec4 clusterInfo, in vec3 positionWS)\n{\n\n    PointLight light;\n\t    #ifdef LEGACYSINGLELIGHTING\n    light.color = u_PointLight.color;\n    light.position = u_PointLight.position;\n    light.range = u_PointLight.range;\n    light.attenuation = 1.0;\n\t    #else // LEGACYSINGLELIGHTING\n    // todo  重复计算\n    int indexOffset = clusterInfo.z * c_ClusterBufferFloatWidth + clusterInfo.w;\n    int pointIndex = getLightIndex(indexOffset, index);\n    float v = (float(pointIndex) + 0.5) / float(CalculateLightCount);\n    vec4 p1 = texture2D(u_LightBuffer, vec2(0.125, v));\n    vec4 p2 = texture2D(u_LightBuffer, vec2(0.375, v));\n    light.color = p1.rgb;\n    light.range = p1.a;\n    light.position = p2.rgb;\n    light.attenuation = 1.0;\n    light.lightMode = getAttenuationByMode(p2.a);\n\t    #endif // LEGACYSINGLELIGHTING\n    return light;\n}\n\t#endif // POINTLIGHT\n\n\t#ifdef SPOTLIGHT\nSpotLight getSpotLight(in int index, in ivec4 clusterInfo, in vec3 positionWS)\n{\n    SpotLight light;\n\n\t    #ifdef LEGACYSINGLELIGHTING\n    light.color = u_SpotLight.color;\n    light.position = u_SpotLight.position;\n    light.range = u_SpotLight.range;\n    light.direction = u_SpotLight.direction;\n    light.spot = u_SpotLight.spot;\n    light.attenuation = 1.0;\n\t    #else // LEGACYSINGLELIGHTING\n    // todo  重复计算\n    int indexOffset = clusterInfo.z * c_ClusterBufferFloatWidth + clusterInfo.w;\n    int spotIndex = getLightIndex(indexOffset, index + clusterInfo.x);\n    float v = (float(spotIndex) + 0.5) / float(CalculateLightCount);\n    vec4 p1 = texture2D(u_LightBuffer, vec2(0.125, v));\n    vec4 p2 = texture2D(u_LightBuffer, vec2(0.375, v));\n    vec4 p3 = texture2D(u_LightBuffer, vec2(0.625, v));\n    light.color = p1.rgb;\n    light.range = p1.a;\n    light.position = p2.rgb;\n    light.spot = p2.a;\n    light.direction = p3.rgb;\n    light.attenuation = 1.0;\n    light.lightMode = getAttenuationByMode(p3.a);\n\t    #endif // LEGACYSINGLELIGHTING\n\n\t    #if defined(CALCULATE_SPOTSHADOWS)\n    if (index == 0)\n\t{\n\t    vec4 shadowCoord = getSpotShadowCoord(positionWS);\n\t    float shadowAttenuation = sampleSpotShadowmap(shadowCoord);\n\t    light.attenuation = shadowAttenuation;\n\t}\n\t    #endif // CALCULATE_SPOTSHADOWS\n\n    return light;\n}\n\t#endif // SPOTLIGHT\n\n    #endif // DIRECTIONLIGHT || POINTLIGHT || SPOTLIGHT\n\n#endif // Lighting_lib";
+    var SceneFogInputGLSL = "#if !defined(SceneFog_lib)\r\n    #define SceneFog_lib\r\n\r\n#include \"Camera.glsl\";\r\n\r\n    \r\n#ifdef FOG\r\n    varying float v_fogFactor;\r\n    void FogHandle(in float fact)\r\n    {\r\n        float lerpFact = 0.0;\r\n        #ifdef FOG_EXP\r\n            lerpFact = fact * (u_FogParams.z / log(2.0));\r\n            lerpFact = exp2(-lerpFact);\r\n        #elif defined(FOG_EXP2)\r\n            lerpFact = fact * (u_FogParams.z / sqrt(log(2.0)));\r\n            lerpFact = exp2(-lerpFact);\r\n        #else // default FOG_LINEAR\r\n            lerpFact = (-1.0 * fact / (u_FogParams.y - u_FogParams.x) + u_FogParams.y / (u_FogParams.y - u_FogParams.x));\r\n        #endif\r\n        v_fogFactor = lerpFact;\r\n    }\r\n#endif\r\n#endif // SceneFog_lib";
 
-    var GlobalIlluminationGLSL = "#if !defined(globalIllumination_lib)\n    #define globalIllumination_lib\n\nvec3 rotateByYAixs(in vec3 normal)\n{\n    float co = cos(u_GIRotate);\n    float si = sin(u_GIRotate);\n    float x = normal.x * co - normal.z * si;\n    float z = normal.x * si + normal.z * co;\n    return vec3(x, normal.y, z);\n}\n\nvec4 rotateByYAixs(in vec4 normal)\n{\n    float co = cos(u_GIRotate);\n    float si = sin(u_GIRotate);\n    float x = normal.x * co - normal.z * si;\n    float z = normal.x * si + normal.z * co;\n    return vec4(x, normal.y, z, normal.w);\n}\nuniform float u_AmbientIntensity;\nuniform float u_ReflectionIntensity;\n\n    #ifdef GI_IBL\n\nuniform vec3 u_IblSH[9];\n\n\t#define IBL_ROUGHNESS_LEVEL 4.0\nuniform samplerCube u_IBLTex;\n\n// todo 格式\nvec3 diffuseIrradiance(in vec3 normal)\n{\n    // todo cmeng 生成的数据问题， 临时转换下\n    vec3 n = normal * vec3(-1.0, 1.0, 1.0);\n    n = rotateByYAixs(n);\n    return max(\n\tu_IblSH[0]\n\t    + u_IblSH[1] * n.y\n\t    + u_IblSH[2] * n.z\n\t    + u_IblSH[3] * n.x\n\t    + u_IblSH[4] * (n.y * n.x)\n\t    + u_IblSH[5] * (n.y * n.z)\n\t    + u_IblSH[6] * (3.0 * n.z * n.z - 1.0)\n\t    + u_IblSH[7] * (n.z * n.x)\n\t    + u_IblSH[8] * (n.x * n.x - n.y * n.y),\n\t0.0);\n}\n\nvec3 specularIrradiance(in vec3 r, in float perceptualRoughness)\n{\n    float lod = IBL_ROUGHNESS_LEVEL * perceptualRoughness;\n\n    // todo 临时转换\n    vec3 reflectDir = r * vec3(-1.0, 1.0, 1.0);\n\n    // todo rotateY SceneConfig\n    reflectDir = rotateByYAixs(reflectDir);\n\n    // todo float 编码 ?\n    vec4 reflectSampler = textureCubeLodEXT(u_IBLTex, reflectDir, lod);\n\n\t#ifdef IBL_RGBD\n    return decodeRGBD(reflectSampler);\n\t#else // IBL_RGBD\n    return reflectSampler.rgb;\n\t#endif // IBL_RGBD\n}\n\n    #endif // GI_IBL\n\n    #ifdef GI_LEGACYIBL\n\nuniform vec4 u_AmbientSHAr;\nuniform vec4 u_AmbientSHAg;\nuniform vec4 u_AmbientSHAb;\nuniform vec4 u_AmbientSHBr;\nuniform vec4 u_AmbientSHBg;\nuniform vec4 u_AmbientSHBb;\nuniform vec4 u_AmbientSHC;\n\n\t#define LAYA_SPECCUBE_LOD_STEPS 6.0\nuniform samplerCube u_ReflectTexture;\nuniform vec4 u_ReflectCubeHDRParams;\n\nvec3 shEvalLinearL0L1(in vec4 normal)\n{\n    vec3 x;\n    x.r = dot(u_AmbientSHAr, normal);\n    x.g = dot(u_AmbientSHAg, normal);\n    x.b = dot(u_AmbientSHAb, normal);\n    return x;\n}\n\nvec3 shEvalLinearL2(in vec4 normal)\n{\n    vec3 x1, x2;\n    // 4 of the quadratic (L2) polynomials\n    vec4 vB = normal.xyzz * normal.yzzx;\n    x1.r = dot(u_AmbientSHBr, vB);\n    x1.g = dot(u_AmbientSHBg, vB);\n    x1.b = dot(u_AmbientSHBb, vB);\n\n    // Final (5th) quadratic (L2) polynomial\n    float vC = normal.x * normal.x - normal.y * normal.y;\n    x2 = u_AmbientSHC.rgb * vC;\n\n    return x1 + x2;\n}\n\nvec3 diffuseIrradiance(in vec3 normalWS)\n{\n    // todo -x 坐标转换\n    vec4 normal = vec4(-normalWS.x, normalWS.yz, 1.0);\n\n    // TODO rotate y SceneConfig\n\n    normal = rotateByYAixs(normal);\n\n    vec3 ambientContrib = shEvalLinearL0L1(normal);\n    ambientContrib += shEvalLinearL2(normal);\n    vec3 ambient = max(vec3(0.0), ambientContrib);\n\n    return ambient;\n}\n\nvec3 specularIrradiance(in vec3 r, in float perceptualRoughness)\n{\n    float roughness = perceptualRoughness * (1.7 - 0.7 * perceptualRoughness);\n    // todo 临时转换\n    r *= vec3(-1.0, 1.0, 1.0);\n    r = rotateByYAixs(r);\n\n    float lod = roughness * LAYA_SPECCUBE_LOD_STEPS;\n    vec4 rgbm = textureCubeLodEXT(u_ReflectTexture, r, lod);\n    float range = u_ReflectCubeHDRParams.x;\n    vec3 color = decodeRGBM(rgbm, range);\n    color = gammaToLinear(color);\n    return color;\n}\n\n    #endif // GI_LEGACYIBL\n\n    #ifndef GI_IBL\n\t#ifndef GI_LEGACYIBL\n\nuniform vec4 u_AmbientColor;\n\nvec3 diffuseIrradiance(in vec3 normalWS)\n{\n    return u_AmbientColor.rgb;\n}\n\nvec3 specularIrradiance(in vec3 r, in float perceptualRoughness)\n{\n    // todo\n    return u_AmbientColor.rgb;\n}\n\n\t#endif // GI_LEGACYIBL\n    #endif // GI_IBL\n\n    #ifdef LIGHTMAP\nuniform sampler2D u_LightMap;\nvec3 getBakedLightmapColor(in vec2 lightmapUV)\n{\n    vec4 lightmapSampler = texture2D(u_LightMap, lightmapUV);\n\t// todo lightmap rgbm encode color space\n\t#ifdef Gamma_u_LightMap\n    lightmapSampler = gammaToLinear(lightmapSampler);\n\t#endif // Gamma_u_LightMap\n    return lightmapSampler.rgb;\n}\n    #endif // LIGHTMAP\n\n#ifdef SPECCUBE_BOX_PROJECTION\n\nuniform vec3 u_SpecCubeProbePosition;\nuniform vec3 u_SpecCubeBoxMax;\nuniform vec3 u_SpecCubeBoxMin;\n\nvec3 getBoxProjectionReflectedVector(vec3 r, vec3 positionWS, vec3 boxCenter, vec3 boxMin, vec3 boxMax)\n{\n    vec3 nr = normalize(r);\n    vec3 rbmax = boxMax - positionWS;\n    vec3 rbmin = boxMin - positionWS;\n    vec3 select = step(vec3(0.0), r);\n    vec3 rbminmax = mix(rbmin, rbmax, select) / nr;\n    float scalar = vecmin(rbminmax);\n    vec3 boxr = nr * scalar + positionWS - boxCenter;\n    return boxr;\n}\n\n#endif // SPECCUBE_BOX_PROJECTION\n\n#endif // globalIllumination_lib";
+    var LightingGLSL = "#if !defined(Lighting_lib)\r\n    #define Lighting_lib\r\n\r\n    #include \"ShadowSampler.glsl\";\r\n\r\nstruct Light {\r\n    vec3 color;\r\n    vec3 dir;\r\n    float attenuation;\r\n};\r\n\r\nstruct DirectionLight {\r\n    vec3 color;\r\n    vec3 direction;\r\n    float attenuation;\r\n    int lightMode;\r\n};\r\n\r\nstruct PointLight {\r\n    vec3 color;\r\n    vec3 position;\r\n    float range;\r\n    float attenuation;\r\n    int lightMode;\r\n};\r\n\r\nstruct SpotLight {\r\n    vec3 color;\r\n    vec3 position;\r\n    float range;\r\n    vec3 direction;\r\n    float spot;\r\n    float attenuation;\r\n    int lightMode;\r\n};\r\n\r\n    #define LightMode_Mix      0\r\n    #define LightMode_RealTime 1\r\n\r\nint getAttenuationByMode(float lightMapMode)\r\n{\r\n    #ifdef LIGHTMAP // mix 0 realtime 1\r\n    return int(lightMapMode);\r\n    #endif\r\n    return LightMode_RealTime;\r\n}\r\n\r\n    #if defined(DIRECTIONLIGHT) || defined(POINTLIGHT) || defined(SPOTLIGHT)\r\n\r\n\t#define LIGHTING\r\n\r\n// 灯光衰减函数\r\nfloat attenuation(in vec3 L, in float invLightRadius)\r\n{\r\n    float fRatio = clamp(length(L) * invLightRadius, 0.0, 1.0);\r\n    fRatio *= fRatio;\r\n    return 1.0 / (1.0 + 25.0 * fRatio) * clamp(4.0 * (1.0 - fRatio), 0.0, 1.0);\r\n}\r\n\r\n// 平行光\r\nLight getLight(in DirectionLight directionLight)\r\n{\r\n    Light light;\r\n    light.color = directionLight.color;\r\n    light.dir = directionLight.direction;\r\n    light.attenuation = directionLight.attenuation;\r\n    return light;\r\n}\r\n\r\n// 点光\r\nLight getLight(in PointLight pointLight, in vec3 normalWS, in vec3 positionWS)\r\n{\r\n    vec3 lightDirection = positionWS - pointLight.position;\r\n    float rangeAttenuate = attenuation(lightDirection, 1.0 / pointLight.range);\r\n\r\n    Light light;\r\n    light.color = pointLight.color * rangeAttenuate;\r\n    light.dir = normalize(lightDirection);\r\n    light.attenuation = pointLight.attenuation;\r\n    return light;\r\n}\r\n\r\n// 聚光灯\r\nLight getLight(in SpotLight spotLight, in vec3 normalWS, in vec3 positionWS)\r\n{\r\n    vec3 lightDirection = positionWS - spotLight.position;\r\n    vec3 normalizeLightDir = normalize(lightDirection);\r\n\r\n    vec2 cosAngles = cos(vec2(spotLight.spot, spotLight.spot * 0.5) * 0.5);\r\n    float dirAttenuate = dot(spotLight.direction, normalizeLightDir);\r\n    dirAttenuate *= smoothstep(cosAngles.x, cosAngles.y, dirAttenuate);\r\n\r\n    float rangeAttenuate = attenuation(lightDirection, 1.0 / spotLight.range);\r\n\r\n    Light light;\r\n    light.color = spotLight.color * rangeAttenuate * dirAttenuate;\r\n    light.dir = normalizeLightDir;\r\n    light.attenuation = spotLight.attenuation;\r\n    return light;\r\n}\r\n\r\n\t#ifdef LEGACYSINGLELIGHTING\r\n\t    #define CalculateLightCount 1\r\n\t    #define DirectionCount\t1\r\n\r\n\t    #ifdef DIRECTIONLIGHT\r\nuniform DirectionLight u_DirectionLight;\r\n\t    #endif // DIRECTIONLIGHT\r\n\r\n\t    #ifdef POINTLIGHT\r\nuniform PointLight u_PointLight;\r\n\t    #endif // POINTLIGHT\r\n\r\n\t    #ifdef SPOTLIGHT\r\nuniform SpotLight u_SpotLight;\r\n\t    #endif // SPOTLIGHT\r\n\r\n\t#else // LEGACYSINGLELIGHTING\r\n\t    #define CalculateLightCount MAX_LIGHT_COUNT\r\n\t    #define DirectionCount\tu_DirationLightCount\r\n\r\nuniform sampler2D u_LightBuffer;\r\n\r\n\t    #ifdef DIRECTIONLIGHT\r\nuniform mediump int u_DirationLightCount;\r\n\t    #endif\r\n\r\n\t    #if defined(POINTLIGHT) || defined(SPOTLIGHT)\r\nconst int c_ClusterBufferWidth = CLUSTER_X_COUNT * CLUSTER_Y_COUNT;\r\nconst int c_ClusterBufferHeight = CLUSTER_Z_COUNT * (1 + int(ceil(float(MAX_LIGHT_COUNT_PER_CLUSTER) / 4.0)));\r\nconst int c_ClusterBufferFloatWidth = c_ClusterBufferWidth * 4;\r\nuniform sampler2D u_LightClusterBuffer;\r\n\r\nint getLightIndex(in int offset, in int index)\r\n{\r\n    int totalOffset = offset + index;\r\n    int row = totalOffset / c_ClusterBufferFloatWidth;\r\n    int lastRowFloat = totalOffset - row * c_ClusterBufferFloatWidth;\r\n    int col = lastRowFloat / 4;\r\n    vec2 uv = vec2((float(col) + 0.5) / float(c_ClusterBufferWidth), (float(row) + 0.5) / float(c_ClusterBufferHeight));\r\n    vec4 texPixel = texture2D(u_LightClusterBuffer, uv);\r\n    int pixelComponent = lastRowFloat - col * 4;\r\n\r\n\t\t#ifdef GRAPHICS_API_GLES3\r\n    return int(texPixel[pixelComponent]);\r\n\t\t#else\r\n    if (pixelComponent == 0)\r\n\treturn int(texPixel.x);\r\n    else if (pixelComponent == 1)\r\n\treturn int(texPixel.y);\r\n    else if (pixelComponent == 2)\r\n\treturn int(texPixel.z);\r\n    else\r\n\treturn int(texPixel.w);\r\n\t\t#endif\r\n}\r\n\t    #endif // POINTLIGHT || SPOTLIGHT\r\n\r\n\t#endif // LEGACYSINGLELIGHTING\r\n\r\n\t#ifdef DIRECTIONLIGHT\r\nDirectionLight getDirectionLight(in int index, in vec3 positionWS)\r\n{\r\n    DirectionLight light;\r\n\t    #ifdef LEGACYSINGLELIGHTING\r\n    light.color = u_DirectionLight.color;\r\n    light.direction = u_DirectionLight.direction;\r\n    light.attenuation = 1.0;\r\n    light.lightMode = LightMode_RealTime;\r\n\t    #else // LEGACYSINGLELIGHTING\r\n    float v = (float(index) + 0.5) / float(CalculateLightCount);\r\n    vec4 p1 = texture2D(u_LightBuffer, vec2(0.125, v));\r\n    vec4 p2 = texture2D(u_LightBuffer, vec2(0.375, v));\r\n    light.color = p1.rgb;\r\n    light.direction = p2.rgb;\r\n    light.attenuation = 1.0;\r\n    light.lightMode = getAttenuationByMode(p1.a);\r\n\t    #endif // LEGACYSINGLELIGHTING\r\n\r\n\t    #if defined(CALCULATE_SHADOWS)\r\n    if (index == 0)\r\n\t{\r\n\t    vec4 shadowCoord = getShadowCoord(positionWS);\r\n\t    float shadowAttenuation = sampleShadowmap(shadowCoord);\r\n\t    light.attenuation = shadowAttenuation;\r\n\t}\r\n\t    #endif // CALCULATE_SHADOWS\r\n\r\n    return light;\r\n}\r\n\t#endif // DIRECTIONLIGHT\r\n\r\n\t#if defined(POINTLIGHT) || defined(SPOTLIGHT)\r\nivec4 getClusterInfo(mat4 viewMatrix, vec4 viewport, vec3 positionWS, vec4 fragCoord, vec4 projectParams)\r\n{\r\n\t    #ifdef LEGACYSINGLELIGHTING\r\n    return ivec4(1, 1, 0, 0);\r\n\t    #else // LEGACYSINGLELIGHTING\r\n    // todo  这个地方 用 positionVS 替换?\r\n    vec3 viewPos = vec3(viewMatrix * vec4(positionWS, 1.0));\r\n    int clusterXIndex = int(floor(fragCoord.x / (float(viewport.z) / float(CLUSTER_X_COUNT))));\r\n    int clusterYIndex = int(floor((viewport.w * (projectParams.z < 0.0 ? 0.0 : 1.0) - fragCoord.y * projectParams.z) / (float(viewport.w) / float(CLUSTER_Y_COUNT))));\r\n    float zSliceParam = float(CLUSTER_Z_COUNT) / log2(projectParams.y / projectParams.x);\r\n    int clusterZIndex = int(floor(log2(-viewPos.z) * zSliceParam - log2(projectParams.x) * zSliceParam));\r\n    // todo 化简\r\n    vec2 uv = vec2((float(clusterXIndex + clusterYIndex * CLUSTER_X_COUNT) + 0.5) / float(c_ClusterBufferWidth), (float(clusterZIndex) + 0.5) / float(c_ClusterBufferHeight));\r\n    vec4 clusterPixel = texture2D(u_LightClusterBuffer, uv);\r\n    return ivec4(clusterPixel); // X:Point Count Y:Spot Count Z、W:Light Offset\r\n\t    #endif // LEGACYSINGLELIGHTING\r\n}\r\n\t#endif // POINTLIGHT || SPOTLIGHT\r\n\r\n\t#ifdef POINTLIGHT\r\nPointLight getPointLight(in int index, in ivec4 clusterInfo, in vec3 positionWS)\r\n{\r\n\r\n    PointLight light;\r\n\t    #ifdef LEGACYSINGLELIGHTING\r\n    light.color = u_PointLight.color;\r\n    light.position = u_PointLight.position;\r\n    light.range = u_PointLight.range;\r\n    light.attenuation = 1.0;\r\n\t    #else // LEGACYSINGLELIGHTING\r\n    // todo  重复计算\r\n    int indexOffset = clusterInfo.z * c_ClusterBufferFloatWidth + clusterInfo.w;\r\n    int pointIndex = getLightIndex(indexOffset, index);\r\n    float v = (float(pointIndex) + 0.5) / float(CalculateLightCount);\r\n    vec4 p1 = texture2D(u_LightBuffer, vec2(0.125, v));\r\n    vec4 p2 = texture2D(u_LightBuffer, vec2(0.375, v));\r\n    light.color = p1.rgb;\r\n    light.range = p1.a;\r\n    light.position = p2.rgb;\r\n    light.attenuation = 1.0;\r\n    light.lightMode = getAttenuationByMode(p2.a);\r\n\t    #endif // LEGACYSINGLELIGHTING\r\n    return light;\r\n}\r\n\t#endif // POINTLIGHT\r\n\r\n\t#ifdef SPOTLIGHT\r\nSpotLight getSpotLight(in int index, in ivec4 clusterInfo, in vec3 positionWS)\r\n{\r\n    SpotLight light;\r\n\r\n\t    #ifdef LEGACYSINGLELIGHTING\r\n    light.color = u_SpotLight.color;\r\n    light.position = u_SpotLight.position;\r\n    light.range = u_SpotLight.range;\r\n    light.direction = u_SpotLight.direction;\r\n    light.spot = u_SpotLight.spot;\r\n    light.attenuation = 1.0;\r\n\t    #else // LEGACYSINGLELIGHTING\r\n    // todo  重复计算\r\n    int indexOffset = clusterInfo.z * c_ClusterBufferFloatWidth + clusterInfo.w;\r\n    int spotIndex = getLightIndex(indexOffset, index + clusterInfo.x);\r\n    float v = (float(spotIndex) + 0.5) / float(CalculateLightCount);\r\n    vec4 p1 = texture2D(u_LightBuffer, vec2(0.125, v));\r\n    vec4 p2 = texture2D(u_LightBuffer, vec2(0.375, v));\r\n    vec4 p3 = texture2D(u_LightBuffer, vec2(0.625, v));\r\n    light.color = p1.rgb;\r\n    light.range = p1.a;\r\n    light.position = p2.rgb;\r\n    light.spot = p2.a;\r\n    light.direction = p3.rgb;\r\n    light.attenuation = 1.0;\r\n    light.lightMode = getAttenuationByMode(p3.a);\r\n\t    #endif // LEGACYSINGLELIGHTING\r\n\r\n\t    #if defined(CALCULATE_SPOTSHADOWS)\r\n    if (index == 0)\r\n\t{\r\n\t    vec4 shadowCoord = getSpotShadowCoord(positionWS);\r\n\t    float shadowAttenuation = sampleSpotShadowmap(shadowCoord);\r\n\t    light.attenuation = shadowAttenuation;\r\n\t}\r\n\t    #endif // CALCULATE_SPOTSHADOWS\r\n\r\n    return light;\r\n}\r\n\t#endif // SPOTLIGHT\r\n\r\n    #endif // DIRECTIONLIGHT || POINTLIGHT || SPOTLIGHT\r\n\r\n#endif // Lighting_lib";
 
-    var BlinnPhongLightingGLSL = "#if !defined(BlinnPhongLighting_lib)\n    #define BlinnPhongLighting_lib\n\n    #include \"Lighting.glsl\";\n    #include \"globalIllumination.glsl\";\n\nstruct PixelInfo {\n    vec3 positionWS;\n    vec3 normalWS;\n    vec3 viewDir;\n\n    #ifdef LIGHTMAP\n\t#ifdef UV1\n    vec2 lightmapUV;\n\t#endif // UV1\n    #endif // LIGHTMAP\n};\n\nstruct Surface {\n    vec3 diffuseColor;\n    vec3 specularColor;\n    float shininess;\n    vec3 gloss;\n    float alpha;\n    float alphaClip;\n};\n\nvec3 BlinnPhongLighting(in Surface surface, in Light light, in PixelInfo pixel)\n{\n    vec3 l = normalize(-light.dir);\n    vec3 v = pixel.viewDir;\n\n    vec3 normalWS = pixel.normalWS;\n\n    vec3 diffuseColor = surface.diffuseColor;\n    float shininess = surface.shininess;\n    vec3 specularColor = surface.specularColor;\n    vec3 gloss = surface.gloss;\n\n    // difffuse\n    float ndl = max(0.0, dot(normalWS, l));\n    vec3 lightDiffuse = light.color * diffuseColor * ndl;\n\n    // specular\n    mediump vec3 h = normalize(v + l);\n    lowp float ndh = max(0.0, dot(h, normalWS));\n    float specularIntensity = pow(ndh, shininess * 128.0);\n    vec3 lightSpecular = light.color * specularColor * specularIntensity * gloss;\n\n    return lightDiffuse + lightSpecular;\n}\n\nvec3 BlinnPhongGI(const in Surface surface, const in PixelInfo info)\n{\n    vec3 indirect = vec3(0.0);\n\n    #ifdef LIGHTMAP\n\t#ifdef UV1\n\n    vec2 lightmapUV = info.lightmapUV;\n    vec3 bakedColor = getBakedLightmapColor(lightmapUV);\n    // todo  surface.diffuseColor ？\n    indirect = bakedColor;\n\n\t#endif // UV1\n\n    #else // LIGHTMAP\n\n    vec3 n = info.normalWS;\n    indirect = diffuseIrradiance(n) * surface.diffuseColor * u_AmbientIntensity;\n\n    #endif // LIGHTMAP\n\n    return indirect;\n}\n\n#endif // BlinnPhongLighting_lib";
+    var GlobalIlluminationGLSL = "#if !defined(globalIllumination_lib)\r\n    #define globalIllumination_lib\r\n\r\nvec3 rotateByYAixs(in vec3 normal)\r\n{\r\n    float co = cos(u_GIRotate);\r\n    float si = sin(u_GIRotate);\r\n    float x = normal.x * co - normal.z * si;\r\n    float z = normal.x * si + normal.z * co;\r\n    return vec3(x, normal.y, z);\r\n}\r\n\r\nvec4 rotateByYAixs(in vec4 normal)\r\n{\r\n    float co = cos(u_GIRotate);\r\n    float si = sin(u_GIRotate);\r\n    float x = normal.x * co - normal.z * si;\r\n    float z = normal.x * si + normal.z * co;\r\n    return vec4(x, normal.y, z, normal.w);\r\n}\r\nuniform float u_AmbientIntensity;\r\nuniform float u_ReflectionIntensity;\r\n\r\n    #ifdef GI_IBL\r\n\r\nuniform vec3 u_IblSH[9];\r\n\r\n\t#define IBL_ROUGHNESS_LEVEL 4.0\r\nuniform samplerCube u_IBLTex;\r\n\r\n// todo 格式\r\nvec3 diffuseIrradiance(in vec3 normal)\r\n{\r\n    // todo cmeng 生成的数据问题， 临时转换下\r\n    vec3 n = normal * vec3(-1.0, 1.0, 1.0);\r\n    n = rotateByYAixs(n);\r\n    return max(\r\n\tu_IblSH[0]\r\n\t    + u_IblSH[1] * n.y\r\n\t    + u_IblSH[2] * n.z\r\n\t    + u_IblSH[3] * n.x\r\n\t    + u_IblSH[4] * (n.y * n.x)\r\n\t    + u_IblSH[5] * (n.y * n.z)\r\n\t    + u_IblSH[6] * (3.0 * n.z * n.z - 1.0)\r\n\t    + u_IblSH[7] * (n.z * n.x)\r\n\t    + u_IblSH[8] * (n.x * n.x - n.y * n.y),\r\n\t0.0);\r\n}\r\n\r\nvec3 specularIrradiance(in vec3 r, in float perceptualRoughness)\r\n{\r\n    float lod = IBL_ROUGHNESS_LEVEL * perceptualRoughness;\r\n\r\n    // todo 临时转换\r\n    vec3 reflectDir = r * vec3(-1.0, 1.0, 1.0);\r\n\r\n    // todo rotateY SceneConfig\r\n    reflectDir = rotateByYAixs(reflectDir);\r\n\r\n    // todo float 编码 ?\r\n    vec4 reflectSampler = textureCubeLodEXT(u_IBLTex, reflectDir, lod);\r\n\r\n\t#ifdef IBL_RGBD\r\n    return decodeRGBD(reflectSampler);\r\n\t#else // IBL_RGBD\r\n    return reflectSampler.rgb;\r\n\t#endif // IBL_RGBD\r\n}\r\n\r\n    #endif // GI_IBL\r\n\r\n    #ifdef GI_LEGACYIBL\r\n\r\nuniform vec4 u_AmbientSHAr;\r\nuniform vec4 u_AmbientSHAg;\r\nuniform vec4 u_AmbientSHAb;\r\nuniform vec4 u_AmbientSHBr;\r\nuniform vec4 u_AmbientSHBg;\r\nuniform vec4 u_AmbientSHBb;\r\nuniform vec4 u_AmbientSHC;\r\n\r\n\t#define LAYA_SPECCUBE_LOD_STEPS 6.0\r\nuniform samplerCube u_ReflectTexture;\r\nuniform vec4 u_ReflectCubeHDRParams;\r\n\r\nvec3 shEvalLinearL0L1(in vec4 normal)\r\n{\r\n    vec3 x;\r\n    x.r = dot(u_AmbientSHAr, normal);\r\n    x.g = dot(u_AmbientSHAg, normal);\r\n    x.b = dot(u_AmbientSHAb, normal);\r\n    return x;\r\n}\r\n\r\nvec3 shEvalLinearL2(in vec4 normal)\r\n{\r\n    vec3 x1, x2;\r\n    // 4 of the quadratic (L2) polynomials\r\n    vec4 vB = normal.xyzz * normal.yzzx;\r\n    x1.r = dot(u_AmbientSHBr, vB);\r\n    x1.g = dot(u_AmbientSHBg, vB);\r\n    x1.b = dot(u_AmbientSHBb, vB);\r\n\r\n    // Final (5th) quadratic (L2) polynomial\r\n    float vC = normal.x * normal.x - normal.y * normal.y;\r\n    x2 = u_AmbientSHC.rgb * vC;\r\n\r\n    return x1 + x2;\r\n}\r\n\r\nvec3 diffuseIrradiance(in vec3 normalWS)\r\n{\r\n    // todo -x 坐标转换\r\n    vec4 normal = vec4(-normalWS.x, normalWS.yz, 1.0);\r\n\r\n    // TODO rotate y SceneConfig\r\n\r\n    normal = rotateByYAixs(normal);\r\n\r\n    vec3 ambientContrib = shEvalLinearL0L1(normal);\r\n    ambientContrib += shEvalLinearL2(normal);\r\n    vec3 ambient = max(vec3(0.0), ambientContrib);\r\n\r\n    return ambient;\r\n}\r\n\r\nvec3 specularIrradiance(in vec3 r, in float perceptualRoughness)\r\n{\r\n    float roughness = perceptualRoughness * (1.7 - 0.7 * perceptualRoughness);\r\n    // todo 临时转换\r\n    r *= vec3(-1.0, 1.0, 1.0);\r\n    r = rotateByYAixs(r);\r\n\r\n    float lod = roughness * LAYA_SPECCUBE_LOD_STEPS;\r\n    vec4 rgbm = textureCubeLodEXT(u_ReflectTexture, r, lod);\r\n    float range = u_ReflectCubeHDRParams.x;\r\n    vec3 color = decodeRGBM(rgbm, range);\r\n    color = gammaToLinear(color);\r\n    return color;\r\n}\r\n\r\n    #endif // GI_LEGACYIBL\r\n\r\n    #ifndef GI_IBL\r\n\t#ifndef GI_LEGACYIBL\r\n\r\nuniform vec4 u_AmbientColor;\r\n\r\nvec3 diffuseIrradiance(in vec3 normalWS)\r\n{\r\n    return u_AmbientColor.rgb;\r\n}\r\n\r\nvec3 specularIrradiance(in vec3 r, in float perceptualRoughness)\r\n{\r\n    // todo\r\n    return u_AmbientColor.rgb;\r\n}\r\n\r\n\t#endif // GI_LEGACYIBL\r\n    #endif // GI_IBL\r\n\r\n    #ifdef LIGHTMAP\r\nuniform sampler2D u_LightMap;\r\nvec3 getBakedLightmapColor(in vec2 lightmapUV)\r\n{\r\n    vec4 lightmapSampler = texture2D(u_LightMap, lightmapUV);\r\n\t// todo lightmap rgbm encode color space\r\n\t#ifdef Gamma_u_LightMap\r\n    lightmapSampler = gammaToLinear(lightmapSampler);\r\n\t#endif // Gamma_u_LightMap\r\n    return lightmapSampler.rgb;\r\n}\r\n    #endif // LIGHTMAP\r\n\r\n#ifdef SPECCUBE_BOX_PROJECTION\r\n\r\nuniform vec3 u_SpecCubeProbePosition;\r\nuniform vec3 u_SpecCubeBoxMax;\r\nuniform vec3 u_SpecCubeBoxMin;\r\n\r\nvec3 getBoxProjectionReflectedVector(vec3 r, vec3 positionWS, vec3 boxCenter, vec3 boxMin, vec3 boxMax)\r\n{\r\n    vec3 nr = normalize(r);\r\n    vec3 rbmax = boxMax - positionWS;\r\n    vec3 rbmin = boxMin - positionWS;\r\n    vec3 select = step(vec3(0.0), r);\r\n    vec3 rbminmax = mix(rbmin, rbmax, select) / nr;\r\n    float scalar = vecmin(rbminmax);\r\n    vec3 boxr = nr * scalar + positionWS - boxCenter;\r\n    return boxr;\r\n}\r\n\r\n#endif // SPECCUBE_BOX_PROJECTION\r\n\r\n#endif // globalIllumination_lib";
 
-    var PBRLightingGLSL = "#if !defined(PBRLighting_lib)\n    #define PBRLighting_lib\n\n    #include \"Lighting.glsl\";\n\n    // 精度\n    #if !defined(GL_FRAGMENT_PRECISION_HIGH)\n\t#define MIN_PERCEPTUAL_ROUGHNESS 0.089\n\t#define MIN_ROUGHNESS\t\t 0.007921\n    #else\n\t#define MIN_PERCEPTUAL_ROUGHNESS 0.045\n\t#define MIN_ROUGHNESS\t\t 0.002025\n    #endif\n\n    #define MIN_N_DOT_V 1e-4\n\n    #include \"BRDF.glsl\";\n\nstruct PixelInfo {\n    vec3 positionWS;\n    vec3 normalWS;\n\n    #ifdef NEEDTBN\n    vec3 tangentWS;\n    vec3 biNormalWS;\n\n\t#ifdef ANISOTROPIC\n    float ToV;\n    float BoV;\n\t#endif // ANISOTROPIC\n\n    #endif // NEEDTBN\n\n    vec3 viewDir;\n    float NoV;\n\n    #ifdef LIGHTMAP\n\t#ifdef UV1\n    vec2 lightmapUV;\n\t#endif // UV1\n    #endif // LIGHTMAP\n};\n\nstruct Surface {\n    vec3 diffuseColor;\n    float alpha;\n    vec3 f0;\n    float roughness;\n    float perceptualRoughness;\n    float occlusion;\n\n    #ifdef ANISOTROPIC\n    float anisotropy;\n    #endif // ANISOTROPIC\n};\n\nstruct LightParams {\n    vec3 h;\n    float NoL;\n    float NoH;\n    float LoH;\n\n    #ifdef ANISOTROPIC\n    float ToL;\n    float BoL;\n    #endif // ANISOTROPIC\n};\n\n// 获取反射向量\nvec3 getReflectedVector(const in Surface surface, const in PixelInfo info)\n{\n    vec3 v = info.viewDir;\n    vec3 n = info.normalWS;\n\n    #ifdef ANISOTROPIC\n\n    vec3 direction = surface.anisotropy >= 0.0 ? info.biNormalWS : info.tangentWS;\n    vec3 at = cross(direction, v);\n    vec3 an = cross(at, direction);\n    float bendFactor = abs(surface.anisotropy) * saturate(5.0 * surface.perceptualRoughness);\n    vec3 bentNormal = normalize(mix(n, an, bendFactor));\n    return reflect(-v, bentNormal);\n\n    #else // ANISOTROPIC\n    return reflect(-v, n);\n    #endif // ANISOTROPIC\n}\n\nvoid initLightParams(inout LightParams params, const in PixelInfo pixel, const in Light light)\n{\n    vec3 l = normalize(-light.dir);\n    vec3 v = pixel.viewDir;\n    vec3 n = pixel.normalWS;\n\n    vec3 h = SafeNormalize(v + l);\n    params.h = h;\n    params.NoL = saturate(dot(n, l));\n    params.NoH = saturate(dot(n, h));\n    params.LoH = saturate(dot(l, h));\n\n    #ifdef ANISOTROPIC\n    params.ToL = dot(pixel.tangentWS, l);\n    params.BoL = dot(pixel.biNormalWS, l);\n    #endif // ANISOTROPIC\n}\n\nvec3 diffuseLobe(in Surface surface, const in PixelInfo pixel, const in LightParams lightParams)\n{\n    return surface.diffuseColor * diffuse();\n    // return surface.diffuseColor * Fd_Burley(surface.roughness, pixel.NoV, lightParams.NoL, lightParams.LoH);\n}\n\nvec3 specularLobe(const in Surface surface, const in PixelInfo pixel, const in LightParams lightParams)\n{\n    float roughness = surface.roughness;\n    #ifdef ANISOTROPIC\n\n\t#ifdef NEEDTBN\n\n    float at = max(roughness * (1.0 + surface.anisotropy), 0.001);\n    float ab = max(roughness * (1.0 - surface.anisotropy), 0.001);\n\n    float D = D_GGX_Anisotropic(lightParams.NoH, lightParams.h, pixel.tangentWS, pixel.biNormalWS, at, ab);\n    float V = V_SmithGGXCorrelated_Anisotropic(at, ab, pixel.ToV, pixel.BoV, lightParams.ToL, lightParams.BoL, pixel.NoV, lightParams.NoL);\n\n\t#endif // NEEDTBN\n\n    #else // ANISOTROPIC\n\n    float D = distribution(roughness, lightParams.NoH, lightParams.h, pixel.normalWS);\n    float V = visibility(roughness, pixel.NoV, lightParams.NoL);\n\n    #endif // ANISOTROPIC\n\n    vec3 F = fresnel(surface.f0, lightParams.LoH);\n\n    return (D * V) * F;\n}\n\nvec3 PBRLighting(const in Surface surface, const in PixelInfo pixel, const in Light light)\n{\n    LightParams lightParams;\n    initLightParams(lightParams, pixel, light);\n\n    vec3 Fd = diffuseLobe(surface, pixel, lightParams);\n\n    vec3 Fr = specularLobe(surface, pixel, lightParams);\n\n    return (Fd + Fr) * light.color * lightParams.NoL;\n}\n\n    // gi\n    #include \"PBRGI.glsl\";\n\n#endif // PBRLighting_lib";
+    var BlinnPhongLightingGLSL = "#if !defined(BlinnPhongLighting_lib)\r\n    #define BlinnPhongLighting_lib\r\n\r\n    #include \"Lighting.glsl\";\r\n    #include \"globalIllumination.glsl\";\r\n\r\nstruct PixelInfo {\r\n    vec3 positionWS;\r\n    vec3 normalWS;\r\n    vec3 viewDir;\r\n\r\n    #ifdef LIGHTMAP\r\n\t#ifdef UV1\r\n    vec2 lightmapUV;\r\n\t#endif // UV1\r\n    #endif // LIGHTMAP\r\n};\r\n\r\nstruct Surface {\r\n    vec3 diffuseColor;\r\n    vec3 specularColor;\r\n    float shininess;\r\n    vec3 gloss;\r\n    float alpha;\r\n    float alphaClip;\r\n};\r\n\r\nvec3 BlinnPhongLighting(in Surface surface, in Light light, in PixelInfo pixel)\r\n{\r\n    vec3 l = normalize(-light.dir);\r\n    vec3 v = pixel.viewDir;\r\n\r\n    vec3 normalWS = pixel.normalWS;\r\n\r\n    vec3 diffuseColor = surface.diffuseColor;\r\n    float shininess = surface.shininess;\r\n    vec3 specularColor = surface.specularColor;\r\n    vec3 gloss = surface.gloss;\r\n\r\n    // difffuse\r\n    float ndl = max(0.0, dot(normalWS, l));\r\n    vec3 lightDiffuse = light.color * diffuseColor * ndl;\r\n\r\n    // specular\r\n    mediump vec3 h = normalize(v + l);\r\n    lowp float ndh = max(0.0, dot(h, normalWS));\r\n    float specularIntensity = pow(ndh, shininess * 128.0);\r\n    vec3 lightSpecular = light.color * specularColor * specularIntensity * gloss;\r\n\r\n    return lightDiffuse + lightSpecular;\r\n}\r\n\r\nvec3 BlinnPhongGI(const in Surface surface, const in PixelInfo info)\r\n{\r\n    vec3 indirect = vec3(0.0);\r\n\r\n    #ifdef LIGHTMAP\r\n\t#ifdef UV1\r\n\r\n    vec2 lightmapUV = info.lightmapUV;\r\n    vec3 bakedColor = getBakedLightmapColor(lightmapUV);\r\n    // todo  surface.diffuseColor ？\r\n    indirect = bakedColor;\r\n\r\n\t#endif // UV1\r\n\r\n    #else // LIGHTMAP\r\n\r\n    vec3 n = info.normalWS;\r\n    indirect = diffuseIrradiance(n) * surface.diffuseColor * u_AmbientIntensity;\r\n\r\n    #endif // LIGHTMAP\r\n\r\n    return indirect;\r\n}\r\n\r\n#endif // BlinnPhongLighting_lib";
 
-    var BlitFS = "#define SHADER_NAME BlitFS\n\n#include \"Color.glsl\";\n#include \"FastApproximateAntiAliasing.glsl\";\n\nvarying vec2 v_Texcoord0;\n\nvoid main()\n{\n#ifdef FXAA\n    gl_FragColor = FXAAMain(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.zw);\n#else\n    gl_FragColor = texture2D(u_MainTex, v_Texcoord0);\n#endif\n\n#ifdef GAMMAOUT\n    gl_FragColor = linearToGamma(gl_FragColor);\n#endif\n    // gl_FragColor.rgb = FXAAMain(u_MainTex,v_Texcoord0,u_MainTex_TexelSize.zw);\n}\n";
+    var PBRLightingGLSL = "#if !defined(PBRLighting_lib)\r\n    #define PBRLighting_lib\r\n\r\n    #include \"Lighting.glsl\";\r\n\r\n    // 精度\r\n    #if !defined(GL_FRAGMENT_PRECISION_HIGH)\r\n\t#define MIN_PERCEPTUAL_ROUGHNESS 0.089\r\n\t#define MIN_ROUGHNESS\t\t 0.007921\r\n    #else\r\n\t#define MIN_PERCEPTUAL_ROUGHNESS 0.045\r\n\t#define MIN_ROUGHNESS\t\t 0.002025\r\n    #endif\r\n\r\n    #define MIN_N_DOT_V 1e-4\r\n\r\n    #include \"BRDF.glsl\";\r\n\r\nstruct PixelInfo {\r\n    vec3 positionWS;\r\n    vec3 normalWS;\r\n\r\n    #ifdef NEEDTBN\r\n    vec3 tangentWS;\r\n    vec3 biNormalWS;\r\n\r\n\t#ifdef ANISOTROPIC\r\n    float ToV;\r\n    float BoV;\r\n\t#endif // ANISOTROPIC\r\n\r\n    #endif // NEEDTBN\r\n\r\n    vec3 viewDir;\r\n    float NoV;\r\n\r\n    #ifdef LIGHTMAP\r\n\t#ifdef UV1\r\n    vec2 lightmapUV;\r\n\t#endif // UV1\r\n    #endif // LIGHTMAP\r\n};\r\n\r\nstruct Surface {\r\n    vec3 diffuseColor;\r\n    float alpha;\r\n    vec3 f0;\r\n    float roughness;\r\n    float perceptualRoughness;\r\n    float occlusion;\r\n\r\n    #ifdef ANISOTROPIC\r\n    float anisotropy;\r\n    #endif // ANISOTROPIC\r\n};\r\n\r\nstruct LightParams {\r\n    vec3 h;\r\n    float NoL;\r\n    float NoH;\r\n    float LoH;\r\n\r\n    #ifdef ANISOTROPIC\r\n    float ToL;\r\n    float BoL;\r\n    #endif // ANISOTROPIC\r\n};\r\n\r\n// 获取反射向量\r\nvec3 getReflectedVector(const in Surface surface, const in PixelInfo info)\r\n{\r\n    vec3 v = info.viewDir;\r\n    vec3 n = info.normalWS;\r\n\r\n    #ifdef ANISOTROPIC\r\n\r\n    vec3 direction = surface.anisotropy >= 0.0 ? info.biNormalWS : info.tangentWS;\r\n    vec3 at = cross(direction, v);\r\n    vec3 an = cross(at, direction);\r\n    float bendFactor = abs(surface.anisotropy) * saturate(5.0 * surface.perceptualRoughness);\r\n    vec3 bentNormal = normalize(mix(n, an, bendFactor));\r\n    return reflect(-v, bentNormal);\r\n\r\n    #else // ANISOTROPIC\r\n    return reflect(-v, n);\r\n    #endif // ANISOTROPIC\r\n}\r\n\r\nvoid initLightParams(inout LightParams params, const in PixelInfo pixel, const in Light light)\r\n{\r\n    vec3 l = normalize(-light.dir);\r\n    vec3 v = pixel.viewDir;\r\n    vec3 n = pixel.normalWS;\r\n\r\n    vec3 h = SafeNormalize(v + l);\r\n    params.h = h;\r\n    params.NoL = saturate(dot(n, l));\r\n    params.NoH = saturate(dot(n, h));\r\n    params.LoH = saturate(dot(l, h));\r\n\r\n    #ifdef ANISOTROPIC\r\n    params.ToL = dot(pixel.tangentWS, l);\r\n    params.BoL = dot(pixel.biNormalWS, l);\r\n    #endif // ANISOTROPIC\r\n}\r\n\r\nvec3 diffuseLobe(in Surface surface, const in PixelInfo pixel, const in LightParams lightParams)\r\n{\r\n    return surface.diffuseColor * diffuse();\r\n    // return surface.diffuseColor * Fd_Burley(surface.roughness, pixel.NoV, lightParams.NoL, lightParams.LoH);\r\n}\r\n\r\nvec3 specularLobe(const in Surface surface, const in PixelInfo pixel, const in LightParams lightParams)\r\n{\r\n    float roughness = surface.roughness;\r\n    #ifdef ANISOTROPIC\r\n\r\n\t#ifdef NEEDTBN\r\n\r\n    float at = max(roughness * (1.0 + surface.anisotropy), 0.001);\r\n    float ab = max(roughness * (1.0 - surface.anisotropy), 0.001);\r\n\r\n    float D = D_GGX_Anisotropic(lightParams.NoH, lightParams.h, pixel.tangentWS, pixel.biNormalWS, at, ab);\r\n    float V = V_SmithGGXCorrelated_Anisotropic(at, ab, pixel.ToV, pixel.BoV, lightParams.ToL, lightParams.BoL, pixel.NoV, lightParams.NoL);\r\n\r\n\t#endif // NEEDTBN\r\n\r\n    #else // ANISOTROPIC\r\n\r\n    float D = distribution(roughness, lightParams.NoH, lightParams.h, pixel.normalWS);\r\n    float V = visibility(roughness, pixel.NoV, lightParams.NoL);\r\n\r\n    #endif // ANISOTROPIC\r\n\r\n    vec3 F = fresnel(surface.f0, lightParams.LoH);\r\n\r\n    return (D * V) * F;\r\n}\r\n\r\nvec3 PBRLighting(const in Surface surface, const in PixelInfo pixel, const in Light light)\r\n{\r\n    LightParams lightParams;\r\n    initLightParams(lightParams, pixel, light);\r\n\r\n    vec3 Fd = diffuseLobe(surface, pixel, lightParams);\r\n\r\n    vec3 Fr = specularLobe(surface, pixel, lightParams);\r\n\r\n    return (Fd + Fr) * light.color * lightParams.NoL;\r\n}\r\n\r\n    // gi\r\n    #include \"PBRGI.glsl\";\r\n\r\n#endif // PBRLighting_lib";
 
-    var FXAA = "#if !defined(FXAA_lib)\n    #define FXAA_lib\n#ifdef FXAA\n    #define EDGE_THRESHOLD_MIN 0.0312\n    #define EDGE_THRESHOLD_MAX 0.125\n    #define QUALITY(q)\t       ((q) < 5 ? 1.0 : ((q) > 5 ? ((q) < 10 ? 2.0 : ((q) < 11 ? 4.0 : 8.0)) : 1.5))\n    #define ITERATIONS\t       12\n    #define SUBPIXEL_QUALITY   0.75\n\nfloat rgb2luma(in vec3 rgb)\n{\n    return dot(rgb, vec3(0.299, 0.587, 0.114));\n}\n\nvec3 textureOffsetbyScreenSize(in sampler2D mainTex, in vec2 uv, in vec2 offset, in vec2 inverseScreenSize)\n{\n    vec2 sampleruv = uv + inverseScreenSize * offset; // u_texturesize表示每个像素的偏移量\n    return texture2D(mainTex, sampleruv).rgb;\n}\n\nvec4 FXAAMain(in sampler2D mainTex, in vec2 texuv, in vec2 inverseScreenSize)\n{\n\n    vec4 mainColor = texture2D(mainTex, texuv);\n    vec3 colorCenter = mainColor.rgb;\n    // Luma at the current fragment\n    float lumaCenter = rgb2luma(colorCenter);\n\n    // Luma at the four direct neighbours of the current fragment.\n    float lumaDown = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(0, -1), inverseScreenSize));\n    float lumaUp = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(0, 1), inverseScreenSize));\n    float lumaLeft = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(-1, 0), inverseScreenSize));\n    float lumaRight = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(1, 0), inverseScreenSize));\n\n    // Find the maximum and minimum luma around the current fragment.\n    float lumaMin = min(lumaCenter, min(min(lumaDown, lumaUp), min(lumaLeft, lumaRight)));\n    float lumaMax = max(lumaCenter, max(max(lumaDown, lumaUp), max(lumaLeft, lumaRight)));\n\n    // Compute the delta.\n    float lumaRange = lumaMax - lumaMin;\n\n    // If the luma variation is lower that a threshold (or if we are in a really dark area), we are not on an edge, don't perform any AA.\n    if (lumaRange < max(EDGE_THRESHOLD_MIN, lumaMax * EDGE_THRESHOLD_MAX))\n\t{\n\t    return mainColor;\n\t}\n\n    // Query the 4 remaining corners lumas.\n    float lumaDownLeft = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(-1, -1), inverseScreenSize));\n    float lumaUpRight = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(1, 1), inverseScreenSize));\n    float lumaUpLeft = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(-1, 1), inverseScreenSize));\n    float lumaDownRight = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(1, -1), inverseScreenSize));\n\n    // Combine the four edges lumas (using intermediary variables for future computations with the same values).\n    float lumaDownUp = lumaDown + lumaUp;\n    float lumaLeftRight = lumaLeft + lumaRight;\n\n    // Same for corners\n    float lumaLeftCorners = lumaDownLeft + lumaUpLeft;\n    float lumaDownCorners = lumaDownLeft + lumaDownRight;\n    float lumaRightCorners = lumaDownRight + lumaUpRight;\n    float lumaUpCorners = lumaUpRight + lumaUpLeft;\n\n    // Compute an estimation of the gradient along the horizontal and vertical axis.\n    float edgeHorizontal = abs(-2.0 * lumaLeft + lumaLeftCorners) + abs(-2.0 * lumaCenter + lumaDownUp) * 2.0 + abs(-2.0 * lumaRight + lumaRightCorners);\n    float edgeVertical = abs(-2.0 * lumaUp + lumaUpCorners) + abs(-2.0 * lumaCenter + lumaLeftRight) * 2.0 + abs(-2.0 * lumaDown + lumaDownCorners);\n\n    // Is the local edge horizontal or vertical ?\n    bool isHorizontal = (edgeHorizontal >= edgeVertical);\n\n    // Choose the step size (one pixel) accordingly.\n    float stepLength = isHorizontal ? inverseScreenSize.y : inverseScreenSize.x;\n\n    // Select the two neighboring texels lumas in the opposite direction to the local edge.\n    float luma1 = isHorizontal ? lumaDown : lumaLeft;\n    float luma2 = isHorizontal ? lumaUp : lumaRight;\n    // Compute gradients in this direction.\n    float gradient1 = luma1 - lumaCenter;\n    float gradient2 = luma2 - lumaCenter;\n\n    // Which direction is the steepest ?\n    bool is1Steepest = abs(gradient1) >= abs(gradient2);\n\n    // Gradient in the corresponding direction, normalized.\n    float gradientScaled = 0.25 * max(abs(gradient1), abs(gradient2));\n\n    // Average luma in the correct direction.\n    float lumaLocalAverage = 0.0;\n    if (is1Steepest)\n\t{\n\t    // Switch the direction\n\t    stepLength = -stepLength;\n\t    lumaLocalAverage = 0.5 * (luma1 + lumaCenter);\n\t}\n    else\n\t{\n\t    lumaLocalAverage = 0.5 * (luma2 + lumaCenter);\n\t}\n\n    // Shift UV in the correct direction by half a pixel.\n    vec2 currentUv = texuv;\n    if (isHorizontal)\n\t{\n\t    currentUv.y += stepLength * 0.5;\n\t}\n    else\n\t{\n\t    currentUv.x += stepLength * 0.5;\n\t}\n\n    // Compute offset (for each iteration step) in the right direction.\n    vec2 offset = isHorizontal ? vec2(inverseScreenSize.x, 0.0) : vec2(0.0, inverseScreenSize.y);\n    // Compute UVs to explore on each side of the edge, orthogonally. The QUALITY allows us to step faster.\n    vec2 uv1 = currentUv - offset * QUALITY(0);\n    vec2 uv2 = currentUv + offset * QUALITY(0);\n\n    // Read the lumas at both current extremities of the exploration segment, and compute the delta wrt to the local average luma.\n    float lumaEnd1 = rgb2luma(textureOffsetbyScreenSize(mainTex, uv1, vec2(0.0, 0.0), inverseScreenSize));\n    float lumaEnd2 = rgb2luma(textureOffsetbyScreenSize(mainTex, uv2, vec2(0.0, 0.0), inverseScreenSize));\n    lumaEnd1 -= lumaLocalAverage;\n    lumaEnd2 -= lumaLocalAverage;\n\n    // If the luma deltas at the current extremities is larger than the local gradient, we have reached the side of the edge.\n    bool reached1 = abs(lumaEnd1) >= gradientScaled;\n    bool reached2 = abs(lumaEnd2) >= gradientScaled;\n    bool reachedBoth = reached1 && reached2;\n\n    // If the side is not reached, we continue to explore in this direction.\n    if (!reached1)\n\t{\n\t    uv1 -= offset * QUALITY(1);\n\t}\n    if (!reached2)\n\t{\n\t    uv2 += offset * QUALITY(1);\n\t}\n\n    // If both sides have not been reached, continue to explore.\n    if (!reachedBoth)\n\t{\n\n\t    for (int i = 2; i < ITERATIONS; i++)\n\t\t{\n\t\t    // If needed, read luma in 1st direction, compute delta.\n\t\t    if (!reached1)\n\t\t\t{\n\t\t\t    lumaEnd1 = rgb2luma(textureOffsetbyScreenSize(mainTex, uv1, vec2(0.0, 0.0), inverseScreenSize));\n\t\t\t    lumaEnd1 = lumaEnd1 - lumaLocalAverage;\n\t\t\t}\n\t\t    // If needed, read luma in opposite direction, compute delta.\n\t\t    if (!reached2)\n\t\t\t{\n\t\t\t    lumaEnd2 = rgb2luma(textureOffsetbyScreenSize(mainTex, uv2, vec2(0.0, 0.0), inverseScreenSize));\n\t\t\t    lumaEnd2 = lumaEnd2 - lumaLocalAverage;\n\t\t\t}\n\t\t    // If the luma deltas at the current extremities is larger than the local gradient, we have reached the side of the edge.\n\t\t    reached1 = abs(lumaEnd1) >= gradientScaled;\n\t\t    reached2 = abs(lumaEnd2) >= gradientScaled;\n\t\t    reachedBoth = reached1 && reached2;\n\n\t\t    // If the side is not reached, we continue to explore in this direction, with a variable quality.\n\t\t    if (!reached1)\n\t\t\t{\n\t\t\t    uv1 -= offset * QUALITY(i);\n\t\t\t}\n\t\t    if (!reached2)\n\t\t\t{\n\t\t\t    uv2 += offset * QUALITY(i);\n\t\t\t}\n\n\t\t    // If both sides have been reached, stop the exploration.\n\t\t    if (reachedBoth)\n\t\t\t{\n\t\t\t    break;\n\t\t\t}\n\t\t}\n\t}\n\n    // Compute the distances to each side edge of the edge (!).\n    float distance1 = isHorizontal ? (texuv.x - uv1.x) : (texuv.y - uv1.y);\n    float distance2 = isHorizontal ? (uv2.x - texuv.x) : (uv2.y - texuv.y);\n\n    // In which direction is the side of the edge closer ?\n    bool isDirection1 = distance1 < distance2;\n    float distanceFinal = min(distance1, distance2);\n\n    // Thickness of the edge.\n    float edgeThickness = (distance1 + distance2);\n\n    // Is the luma at center smaller than the local average ?\n    bool isLumaCenterSmaller = lumaCenter < lumaLocalAverage;\n\n    // If the luma at center is smaller than at its neighbour, the delta luma at each end should be positive (same variation).\n    bool correctVariation1 = (lumaEnd1 < 0.0) != isLumaCenterSmaller;\n    bool correctVariation2 = (lumaEnd2 < 0.0) != isLumaCenterSmaller;\n\n    // Only keep the result in the direction of the closer side of the edge.\n    bool correctVariation = isDirection1 ? correctVariation1 : correctVariation2;\n\n    // UV offset: read in the direction of the closest side of the edge.\n    float pixelOffset = -distanceFinal / edgeThickness + 0.5;\n\n    // If the luma variation is incorrect, do not offset.\n    float finalOffset = correctVariation ? pixelOffset : 0.0;\n\n    // Sub-pixel shifting\n    // Full weighted average of the luma over the 3x3 neighborhood.\n    float lumaAverage = (1.0 / 12.0) * (2.0 * (lumaDownUp + lumaLeftRight) + lumaLeftCorners + lumaRightCorners);\n    // Ratio of the delta between the global average and the center luma, over the luma range in the 3x3 neighborhood.\n    float subPixelOffset1 = clamp(abs(lumaAverage - lumaCenter) / lumaRange, 0.0, 1.0);\n    float subPixelOffset2 = (-2.0 * subPixelOffset1 + 3.0) * subPixelOffset1 * subPixelOffset1;\n    // Compute a sub-pixel offset based on this delta.\n    float subPixelOffsetFinal = subPixelOffset2 * subPixelOffset2 * SUBPIXEL_QUALITY;\n\n    // Pick the biggest of the two offsets.\n    finalOffset = max(finalOffset, subPixelOffsetFinal);\n\n    // Compute the final UV coordinates.\n    vec2 finalUv = texuv;\n    if (isHorizontal)\n\t{\n\t    finalUv.y += finalOffset * stepLength;\n\t}\n    else\n\t{\n\t    finalUv.x += finalOffset * stepLength;\n\t}\n\n    // Read the color at the new UV coordinates, and use it.\n    return texture2D(mainTex, finalUv);\n}\n#endif//FXAA\n#endif // Color_lib\n";
+    var BlitFS = "#define SHADER_NAME BlitFS\r\n\r\n#include \"Color.glsl\";\r\n#include \"FastApproximateAntiAliasing.glsl\";\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\nvoid main()\r\n{\r\n#ifdef FXAA\r\n    gl_FragColor = FXAAMain(u_MainTex, v_Texcoord0, u_MainTex_TexelSize.zw);\r\n#else\r\n    gl_FragColor = texture2D(u_MainTex, v_Texcoord0);\r\n#endif\r\n\r\n#ifdef GAMMAOUT\r\n    gl_FragColor = linearToGamma(gl_FragColor);\r\n#endif\r\n    // gl_FragColor.rgb = FXAAMain(u_MainTex,v_Texcoord0,u_MainTex_TexelSize.zw);\r\n}\r\n";
 
-    var ColorGradingGLSL = "#if !defined(ColorGrading_lib)\n    #define ColorGrading_lib\n\nconst float ACEScc_MAX = 1.4679964;\nconst float ACEScc_MIDGRAY = 0.4135884;\n\nconst float LogC_cut = 0.011361;\nconst float LogC_a = 5.555556;\nconst float LogC_b = 0.047996;\nconst float LogC_c = 0.244161;\nconst float LogC_d = 0.386036;\nconst float LogC_e = 5.301883;\nconst float LogC_f = 0.092819;\n\nfloat linearToLogC(float x)\n{\n    float o;\n    if (x > LogC_cut)\n\t{\n\t    o = LogC_c * log10(max(LogC_a * x + LogC_b, 0.0)) + LogC_d;\n\t}\n    else\n\t{\n\t    o = LogC_e * x + LogC_f;\n\t}\n    return o;\n}\n\nvec3 linearToLogC(vec3 x)\n{\n    vec3 logc;\n    logc.x = linearToLogC(x.x);\n    logc.y = linearToLogC(x.y);\n    logc.z = linearToLogC(x.z);\n    return logc;\n}\n\nfloat logCToLinear(float x)\n{\n    float o;\n    if (x > LogC_e * LogC_cut + LogC_f)\n\to = (pow(10.0, (x - LogC_d) / LogC_c) - LogC_b) / LogC_a;\n    else\n\to = (x - LogC_f) / LogC_e;\n    return o;\n}\n\nvec3 logCToLinear(vec3 x)\n{\n    vec3 linear;\n    linear.x = logCToLinear(x.x);\n    linear.y = logCToLinear(x.y);\n    linear.z = logCToLinear(x.z);\n    return linear;\n}\n\n// Hue, Saturation, Value\n// Ranges:\n//  Hue [0.0, 1.0]\n//  Sat [0.0, 1.0]\n//  Lum [0.0, HALF_MAX]\nvec3 RgbToHsv(vec3 c)\n{\n    const vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);\n    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));\n    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));\n    float d = q.x - min(q.w, q.y);\n    const float e = 1.0e-4;\n    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);\n}\n\nvec3 HsvToRgb(vec3 c)\n{\n    const vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\n    vec3 p = abs(fract(vec3(c.x) + K.xyz) * 6.0 - K.www);\n    return c.z * mix(vec3(K.x) , saturate(p - vec3(K.x)), c.y);\n}\n\nfloat RotateHue(float value, float low, float hi)\n{\n    return (value < low)\n            ? value + hi\n            : (value > hi)\n                ? value - hi\n                : value;\n}\n\n\nconst mat3 Linear_to_LMS_MAT = mat3(\n    vec3(3.90405e-1, 7.08416e-2, 2.31082e-2),\n    vec3(5.49941e-1, 9.63172e-1, 1.28021e-1),\n    vec3(8.92632e-3, 1.35775e-3, 9.36245e-1));\n\nconst mat3 LMS_to_Linear_MAT = mat3(\n    vec3(2.85847e+0, -2.10182e-1, -4.18120e-2),\n    vec3(-1.62879e+0, 1.15820e+0, -1.18169e-1),\n    vec3(-2.48910e-2, 3.24281e-4, 1.06867e+0));\n\n// white balance\nuniform vec3 u_ColorBalance;\n\n// split toning\nuniform vec4 u_SplitShadows;\nuniform vec3 u_Splithighlights;\n\n// shadows, midtones, highlights\nuniform vec3 u_Shadows;\nuniform vec3 u_Midtones;\nuniform vec3 u_Highlights;\nuniform vec4 u_Limits;\n\n// lift, gamma, gain\nuniform vec3 u_Lift;\nuniform vec3 u_Gamma;\nuniform vec3 u_Gain;\n\n//color adjusted\nuniform vec4 u_ColorFilter;\nuniform vec4 u_HueSatCon;\n\nfloat luminance(in vec3 color)\n{\n    #ifdef ACES\n    float luma = dot(color, AP1_RGB2Y);\n    #else\n    float luma = dot(color, vec3(0.2126729, 0.7151522, 0.0721750));\n    #endif // ACES\n    return luma;\n}\n\nvec3 softlight(vec3 base, vec3 blend)\n{\n    vec3 r1 = 2.0 * base * blend + base * base * (1.0 - 2.0 * blend);\n    vec3 r2 = sqrt(base) * (2.0 * blend - 1.0) + 2.0 * base * (1.0 - blend);\n    vec3 t = step(0.5, blend);\n    return r2 * t + (1.0 - t) * r1;\n}\n\n// input linear sRGB\n// if ACES tonemap, calculate in ACEScg, return ACEScg\n// else calculate in logC, return linear sRGB\nvec3 colorGrade(in vec3 color)\n{\n    // White balance in LMS space\n    vec3 colorLMS = Linear_to_LMS_MAT * color;\n    colorLMS *= u_ColorBalance.xyz;\n    color = LMS_to_Linear_MAT * colorLMS;\n\n    // Do contrast in log after white balance\n    #ifdef ACES\n        vec3 colorLog = ACES_to_ACEScc(sRGB_to_AP0_MAT * color);\n    #else\n        vec3 colorLog = linearToLogC(color);\n    #endif\n    \n    colorLog = (colorLog - vec3(ACEScc_MIDGRAY)) * u_HueSatCon.z + vec3(ACEScc_MIDGRAY);\n\n\n    #ifdef ACES\n        //colorLinear = ACES_to_ACEScg(ACEScc_to_ACES(colorLog));\n        color = AP0_to_AP1_MAT * ACEScc_to_ACES(colorLog);\n    #else\n        color = logCToLinear(colorLog);\n    #endif // ACES\n\n    // Color filter is just an unclipped multiplier\n    color = color * u_ColorFilter.rgb;\n\n    color = max(vec3(0.0), color);\n\n    // split toning\n    float balance = u_SplitShadows.w;\n    vec3 gamma = linearToGamma(color);\n    float splitLuma = saturate(luminance(color)) + balance;\n    vec3 splitShadows = mix(vec3(0.5, 0.5, 0.5), u_SplitShadows.xyz, 1.0 - splitLuma);\n    vec3 splitHeighlights = mix(vec3(0.5, 0.5, 0.5), u_Splithighlights.xyz, splitLuma);\n    gamma = softlight(gamma, splitShadows);\n    gamma = softlight(gamma, splitHeighlights);\n    color = gammaToLinear(gamma);\n\n    // shadows, midtones, highlights\n    float luma = luminance(color);\n    float shadowFactor = 1.0 - smoothstep(u_Limits.x, u_Limits.y, luma);\n    float highlightsFactor = smoothstep(u_Limits.z, u_Limits.w, luma);\n    float midtonesFactor = 1.0 - shadowFactor - highlightsFactor;\n    color = color * u_Shadows.xyz * shadowFactor + color * u_Midtones.xyz * midtonesFactor + color * u_Highlights.xyz * highlightsFactor;\n\n    // Lift, gamma, gain\n    color = color * u_Gain.xyz + u_Lift.xyz;\n    color = sign(color) * pow(abs(color), u_Gamma.xyz);\n    \n    // HSV operations\n    vec3 hsv = RgbToHsv(color);\n    // Hue Shift & Hue Vs Hue\n    float hue = hsv.x + u_HueSatCon.x;\n    hsv.x = RotateHue(hsv.x, 0.0, 1.0);\n    color = HsvToRgb(hsv);\n\n    // Global saturation\n    luma = luminance(color);\n    color = vec3(luma) + (vec3(u_HueSatCon.y)) * (color - vec3(luma));\n    \n    return color;\n}\n\n#endif // ColorGrading_lib";
+    var FXAA = "#if !defined(FXAA_lib)\r\n    #define FXAA_lib\r\n#ifdef FXAA\r\n    #define EDGE_THRESHOLD_MIN 0.0312\r\n    #define EDGE_THRESHOLD_MAX 0.125\r\n    #define QUALITY(q)\t       ((q) < 5 ? 1.0 : ((q) > 5 ? ((q) < 10 ? 2.0 : ((q) < 11 ? 4.0 : 8.0)) : 1.5))\r\n    #define ITERATIONS\t       12\r\n    #define SUBPIXEL_QUALITY   0.75\r\n\r\nfloat rgb2luma(in vec3 rgb)\r\n{\r\n    return dot(rgb, vec3(0.299, 0.587, 0.114));\r\n}\r\n\r\nvec3 textureOffsetbyScreenSize(in sampler2D mainTex, in vec2 uv, in vec2 offset, in vec2 inverseScreenSize)\r\n{\r\n    vec2 sampleruv = uv + inverseScreenSize * offset; // u_texturesize表示每个像素的偏移量\r\n    return texture2D(mainTex, sampleruv).rgb;\r\n}\r\n\r\nvec4 FXAAMain(in sampler2D mainTex, in vec2 texuv, in vec2 inverseScreenSize)\r\n{\r\n\r\n    vec4 mainColor = texture2D(mainTex, texuv);\r\n    vec3 colorCenter = mainColor.rgb;\r\n    // Luma at the current fragment\r\n    float lumaCenter = rgb2luma(colorCenter);\r\n\r\n    // Luma at the four direct neighbours of the current fragment.\r\n    float lumaDown = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(0, -1), inverseScreenSize));\r\n    float lumaUp = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(0, 1), inverseScreenSize));\r\n    float lumaLeft = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(-1, 0), inverseScreenSize));\r\n    float lumaRight = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(1, 0), inverseScreenSize));\r\n\r\n    // Find the maximum and minimum luma around the current fragment.\r\n    float lumaMin = min(lumaCenter, min(min(lumaDown, lumaUp), min(lumaLeft, lumaRight)));\r\n    float lumaMax = max(lumaCenter, max(max(lumaDown, lumaUp), max(lumaLeft, lumaRight)));\r\n\r\n    // Compute the delta.\r\n    float lumaRange = lumaMax - lumaMin;\r\n\r\n    // If the luma variation is lower that a threshold (or if we are in a really dark area), we are not on an edge, don't perform any AA.\r\n    if (lumaRange < max(EDGE_THRESHOLD_MIN, lumaMax * EDGE_THRESHOLD_MAX))\r\n\t{\r\n\t    return mainColor;\r\n\t}\r\n\r\n    // Query the 4 remaining corners lumas.\r\n    float lumaDownLeft = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(-1, -1), inverseScreenSize));\r\n    float lumaUpRight = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(1, 1), inverseScreenSize));\r\n    float lumaUpLeft = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(-1, 1), inverseScreenSize));\r\n    float lumaDownRight = rgb2luma(textureOffsetbyScreenSize(mainTex, texuv, vec2(1, -1), inverseScreenSize));\r\n\r\n    // Combine the four edges lumas (using intermediary variables for future computations with the same values).\r\n    float lumaDownUp = lumaDown + lumaUp;\r\n    float lumaLeftRight = lumaLeft + lumaRight;\r\n\r\n    // Same for corners\r\n    float lumaLeftCorners = lumaDownLeft + lumaUpLeft;\r\n    float lumaDownCorners = lumaDownLeft + lumaDownRight;\r\n    float lumaRightCorners = lumaDownRight + lumaUpRight;\r\n    float lumaUpCorners = lumaUpRight + lumaUpLeft;\r\n\r\n    // Compute an estimation of the gradient along the horizontal and vertical axis.\r\n    float edgeHorizontal = abs(-2.0 * lumaLeft + lumaLeftCorners) + abs(-2.0 * lumaCenter + lumaDownUp) * 2.0 + abs(-2.0 * lumaRight + lumaRightCorners);\r\n    float edgeVertical = abs(-2.0 * lumaUp + lumaUpCorners) + abs(-2.0 * lumaCenter + lumaLeftRight) * 2.0 + abs(-2.0 * lumaDown + lumaDownCorners);\r\n\r\n    // Is the local edge horizontal or vertical ?\r\n    bool isHorizontal = (edgeHorizontal >= edgeVertical);\r\n\r\n    // Choose the step size (one pixel) accordingly.\r\n    float stepLength = isHorizontal ? inverseScreenSize.y : inverseScreenSize.x;\r\n\r\n    // Select the two neighboring texels lumas in the opposite direction to the local edge.\r\n    float luma1 = isHorizontal ? lumaDown : lumaLeft;\r\n    float luma2 = isHorizontal ? lumaUp : lumaRight;\r\n    // Compute gradients in this direction.\r\n    float gradient1 = luma1 - lumaCenter;\r\n    float gradient2 = luma2 - lumaCenter;\r\n\r\n    // Which direction is the steepest ?\r\n    bool is1Steepest = abs(gradient1) >= abs(gradient2);\r\n\r\n    // Gradient in the corresponding direction, normalized.\r\n    float gradientScaled = 0.25 * max(abs(gradient1), abs(gradient2));\r\n\r\n    // Average luma in the correct direction.\r\n    float lumaLocalAverage = 0.0;\r\n    if (is1Steepest)\r\n\t{\r\n\t    // Switch the direction\r\n\t    stepLength = -stepLength;\r\n\t    lumaLocalAverage = 0.5 * (luma1 + lumaCenter);\r\n\t}\r\n    else\r\n\t{\r\n\t    lumaLocalAverage = 0.5 * (luma2 + lumaCenter);\r\n\t}\r\n\r\n    // Shift UV in the correct direction by half a pixel.\r\n    vec2 currentUv = texuv;\r\n    if (isHorizontal)\r\n\t{\r\n\t    currentUv.y += stepLength * 0.5;\r\n\t}\r\n    else\r\n\t{\r\n\t    currentUv.x += stepLength * 0.5;\r\n\t}\r\n\r\n    // Compute offset (for each iteration step) in the right direction.\r\n    vec2 offset = isHorizontal ? vec2(inverseScreenSize.x, 0.0) : vec2(0.0, inverseScreenSize.y);\r\n    // Compute UVs to explore on each side of the edge, orthogonally. The QUALITY allows us to step faster.\r\n    vec2 uv1 = currentUv - offset * QUALITY(0);\r\n    vec2 uv2 = currentUv + offset * QUALITY(0);\r\n\r\n    // Read the lumas at both current extremities of the exploration segment, and compute the delta wrt to the local average luma.\r\n    float lumaEnd1 = rgb2luma(textureOffsetbyScreenSize(mainTex, uv1, vec2(0.0, 0.0), inverseScreenSize));\r\n    float lumaEnd2 = rgb2luma(textureOffsetbyScreenSize(mainTex, uv2, vec2(0.0, 0.0), inverseScreenSize));\r\n    lumaEnd1 -= lumaLocalAverage;\r\n    lumaEnd2 -= lumaLocalAverage;\r\n\r\n    // If the luma deltas at the current extremities is larger than the local gradient, we have reached the side of the edge.\r\n    bool reached1 = abs(lumaEnd1) >= gradientScaled;\r\n    bool reached2 = abs(lumaEnd2) >= gradientScaled;\r\n    bool reachedBoth = reached1 && reached2;\r\n\r\n    // If the side is not reached, we continue to explore in this direction.\r\n    if (!reached1)\r\n\t{\r\n\t    uv1 -= offset * QUALITY(1);\r\n\t}\r\n    if (!reached2)\r\n\t{\r\n\t    uv2 += offset * QUALITY(1);\r\n\t}\r\n\r\n    // If both sides have not been reached, continue to explore.\r\n    if (!reachedBoth)\r\n\t{\r\n\r\n\t    for (int i = 2; i < ITERATIONS; i++)\r\n\t\t{\r\n\t\t    // If needed, read luma in 1st direction, compute delta.\r\n\t\t    if (!reached1)\r\n\t\t\t{\r\n\t\t\t    lumaEnd1 = rgb2luma(textureOffsetbyScreenSize(mainTex, uv1, vec2(0.0, 0.0), inverseScreenSize));\r\n\t\t\t    lumaEnd1 = lumaEnd1 - lumaLocalAverage;\r\n\t\t\t}\r\n\t\t    // If needed, read luma in opposite direction, compute delta.\r\n\t\t    if (!reached2)\r\n\t\t\t{\r\n\t\t\t    lumaEnd2 = rgb2luma(textureOffsetbyScreenSize(mainTex, uv2, vec2(0.0, 0.0), inverseScreenSize));\r\n\t\t\t    lumaEnd2 = lumaEnd2 - lumaLocalAverage;\r\n\t\t\t}\r\n\t\t    // If the luma deltas at the current extremities is larger than the local gradient, we have reached the side of the edge.\r\n\t\t    reached1 = abs(lumaEnd1) >= gradientScaled;\r\n\t\t    reached2 = abs(lumaEnd2) >= gradientScaled;\r\n\t\t    reachedBoth = reached1 && reached2;\r\n\r\n\t\t    // If the side is not reached, we continue to explore in this direction, with a variable quality.\r\n\t\t    if (!reached1)\r\n\t\t\t{\r\n\t\t\t    uv1 -= offset * QUALITY(i);\r\n\t\t\t}\r\n\t\t    if (!reached2)\r\n\t\t\t{\r\n\t\t\t    uv2 += offset * QUALITY(i);\r\n\t\t\t}\r\n\r\n\t\t    // If both sides have been reached, stop the exploration.\r\n\t\t    if (reachedBoth)\r\n\t\t\t{\r\n\t\t\t    break;\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n\r\n    // Compute the distances to each side edge of the edge (!).\r\n    float distance1 = isHorizontal ? (texuv.x - uv1.x) : (texuv.y - uv1.y);\r\n    float distance2 = isHorizontal ? (uv2.x - texuv.x) : (uv2.y - texuv.y);\r\n\r\n    // In which direction is the side of the edge closer ?\r\n    bool isDirection1 = distance1 < distance2;\r\n    float distanceFinal = min(distance1, distance2);\r\n\r\n    // Thickness of the edge.\r\n    float edgeThickness = (distance1 + distance2);\r\n\r\n    // Is the luma at center smaller than the local average ?\r\n    bool isLumaCenterSmaller = lumaCenter < lumaLocalAverage;\r\n\r\n    // If the luma at center is smaller than at its neighbour, the delta luma at each end should be positive (same variation).\r\n    bool correctVariation1 = (lumaEnd1 < 0.0) != isLumaCenterSmaller;\r\n    bool correctVariation2 = (lumaEnd2 < 0.0) != isLumaCenterSmaller;\r\n\r\n    // Only keep the result in the direction of the closer side of the edge.\r\n    bool correctVariation = isDirection1 ? correctVariation1 : correctVariation2;\r\n\r\n    // UV offset: read in the direction of the closest side of the edge.\r\n    float pixelOffset = -distanceFinal / edgeThickness + 0.5;\r\n\r\n    // If the luma variation is incorrect, do not offset.\r\n    float finalOffset = correctVariation ? pixelOffset : 0.0;\r\n\r\n    // Sub-pixel shifting\r\n    // Full weighted average of the luma over the 3x3 neighborhood.\r\n    float lumaAverage = (1.0 / 12.0) * (2.0 * (lumaDownUp + lumaLeftRight) + lumaLeftCorners + lumaRightCorners);\r\n    // Ratio of the delta between the global average and the center luma, over the luma range in the 3x3 neighborhood.\r\n    float subPixelOffset1 = clamp(abs(lumaAverage - lumaCenter) / lumaRange, 0.0, 1.0);\r\n    float subPixelOffset2 = (-2.0 * subPixelOffset1 + 3.0) * subPixelOffset1 * subPixelOffset1;\r\n    // Compute a sub-pixel offset based on this delta.\r\n    float subPixelOffsetFinal = subPixelOffset2 * subPixelOffset2 * SUBPIXEL_QUALITY;\r\n\r\n    // Pick the biggest of the two offsets.\r\n    finalOffset = max(finalOffset, subPixelOffsetFinal);\r\n\r\n    // Compute the final UV coordinates.\r\n    vec2 finalUv = texuv;\r\n    if (isHorizontal)\r\n\t{\r\n\t    finalUv.y += finalOffset * stepLength;\r\n\t}\r\n    else\r\n\t{\r\n\t    finalUv.x += finalOffset * stepLength;\r\n\t}\r\n\r\n    // Read the color at the new UV coordinates, and use it.\r\n    return texture2D(mainTex, finalUv);\r\n}\r\n#endif//FXAA\r\n#endif // Color_lib\r\n";
 
-    var TonemappingGLSL = "#if !defined(Tonemapping_lib)\n    #define Tonemapping_lib\n\n// ACES Tonemapping color grading in ACEScg space\nvec3 tonemap(in vec3 ap1)\n{\n    vec3 color = ap1;\n\n    #ifdef ACES\n    vec3 aces = AP1_to_AP0_MAT * color;\n    vec3 oces = RRT(aces);\n    color = ODT_sRGB_100nits(oces);\n    #endif // ACES\n\n    // todo other tonemap\n\n    return color;\n}\n\n#endif // Tonemapping_lib";
+    var ColorGradingGLSL = "#if !defined(ColorGrading_lib)\r\n    #define ColorGrading_lib\r\n\r\nconst float ACEScc_MAX = 1.4679964;\r\nconst float ACEScc_MIDGRAY = 0.4135884;\r\n\r\nconst float LogC_cut = 0.011361;\r\nconst float LogC_a = 5.555556;\r\nconst float LogC_b = 0.047996;\r\nconst float LogC_c = 0.244161;\r\nconst float LogC_d = 0.386036;\r\nconst float LogC_e = 5.301883;\r\nconst float LogC_f = 0.092819;\r\n\r\nfloat linearToLogC(float x)\r\n{\r\n    float o;\r\n    if (x > LogC_cut)\r\n\t{\r\n\t    o = LogC_c * log10(max(LogC_a * x + LogC_b, 0.0)) + LogC_d;\r\n\t}\r\n    else\r\n\t{\r\n\t    o = LogC_e * x + LogC_f;\r\n\t}\r\n    return o;\r\n}\r\n\r\nvec3 linearToLogC(vec3 x)\r\n{\r\n    vec3 logc;\r\n    logc.x = linearToLogC(x.x);\r\n    logc.y = linearToLogC(x.y);\r\n    logc.z = linearToLogC(x.z);\r\n    return logc;\r\n}\r\n\r\nfloat logCToLinear(float x)\r\n{\r\n    float o;\r\n    if (x > LogC_e * LogC_cut + LogC_f)\r\n\to = (pow(10.0, (x - LogC_d) / LogC_c) - LogC_b) / LogC_a;\r\n    else\r\n\to = (x - LogC_f) / LogC_e;\r\n    return o;\r\n}\r\n\r\nvec3 logCToLinear(vec3 x)\r\n{\r\n    vec3 linear;\r\n    linear.x = logCToLinear(x.x);\r\n    linear.y = logCToLinear(x.y);\r\n    linear.z = logCToLinear(x.z);\r\n    return linear;\r\n}\r\n\r\n// Hue, Saturation, Value\r\n// Ranges:\r\n//  Hue [0.0, 1.0]\r\n//  Sat [0.0, 1.0]\r\n//  Lum [0.0, HALF_MAX]\r\nvec3 RgbToHsv(vec3 c)\r\n{\r\n    const vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);\r\n    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));\r\n    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));\r\n    float d = q.x - min(q.w, q.y);\r\n    const float e = 1.0e-4;\r\n    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);\r\n}\r\n\r\nvec3 HsvToRgb(vec3 c)\r\n{\r\n    const vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\r\n    vec3 p = abs(fract(vec3(c.x) + K.xyz) * 6.0 - K.www);\r\n    return c.z * mix(vec3(K.x) , saturate(p - vec3(K.x)), c.y);\r\n}\r\n\r\nfloat RotateHue(float value, float low, float hi)\r\n{\r\n    return (value < low)\r\n            ? value + hi\r\n            : (value > hi)\r\n                ? value - hi\r\n                : value;\r\n}\r\n\r\n\r\nconst mat3 Linear_to_LMS_MAT = mat3(\r\n    vec3(3.90405e-1, 7.08416e-2, 2.31082e-2),\r\n    vec3(5.49941e-1, 9.63172e-1, 1.28021e-1),\r\n    vec3(8.92632e-3, 1.35775e-3, 9.36245e-1));\r\n\r\nconst mat3 LMS_to_Linear_MAT = mat3(\r\n    vec3(2.85847e+0, -2.10182e-1, -4.18120e-2),\r\n    vec3(-1.62879e+0, 1.15820e+0, -1.18169e-1),\r\n    vec3(-2.48910e-2, 3.24281e-4, 1.06867e+0));\r\n\r\n// white balance\r\nuniform vec3 u_ColorBalance;\r\n\r\n// split toning\r\nuniform vec4 u_SplitShadows;\r\nuniform vec3 u_Splithighlights;\r\n\r\n// shadows, midtones, highlights\r\nuniform vec3 u_Shadows;\r\nuniform vec3 u_Midtones;\r\nuniform vec3 u_Highlights;\r\nuniform vec4 u_Limits;\r\n\r\n// lift, gamma, gain\r\nuniform vec3 u_Lift;\r\nuniform vec3 u_Gamma;\r\nuniform vec3 u_Gain;\r\n\r\n//color adjusted\r\nuniform vec4 u_ColorFilter;\r\nuniform vec4 u_HueSatCon;\r\n\r\nfloat luminance(in vec3 color)\r\n{\r\n    #ifdef ACES\r\n    float luma = dot(color, AP1_RGB2Y);\r\n    #else\r\n    float luma = dot(color, vec3(0.2126729, 0.7151522, 0.0721750));\r\n    #endif // ACES\r\n    return luma;\r\n}\r\n\r\nvec3 softlight(vec3 base, vec3 blend)\r\n{\r\n    vec3 r1 = 2.0 * base * blend + base * base * (1.0 - 2.0 * blend);\r\n    vec3 r2 = sqrt(base) * (2.0 * blend - 1.0) + 2.0 * base * (1.0 - blend);\r\n    vec3 t = step(0.5, blend);\r\n    return r2 * t + (1.0 - t) * r1;\r\n}\r\n\r\n// input linear sRGB\r\n// if ACES tonemap, calculate in ACEScg, return ACEScg\r\n// else calculate in logC, return linear sRGB\r\nvec3 colorGrade(in vec3 color)\r\n{\r\n    // White balance in LMS space\r\n    vec3 colorLMS = Linear_to_LMS_MAT * color;\r\n    colorLMS *= u_ColorBalance.xyz;\r\n    color = LMS_to_Linear_MAT * colorLMS;\r\n\r\n    // Do contrast in log after white balance\r\n    #ifdef ACES\r\n        vec3 colorLog = ACES_to_ACEScc(sRGB_to_AP0_MAT * color);\r\n    #else\r\n        vec3 colorLog = linearToLogC(color);\r\n    #endif\r\n    \r\n    colorLog = (colorLog - vec3(ACEScc_MIDGRAY)) * u_HueSatCon.z + vec3(ACEScc_MIDGRAY);\r\n\r\n\r\n    #ifdef ACES\r\n        //colorLinear = ACES_to_ACEScg(ACEScc_to_ACES(colorLog));\r\n        color = AP0_to_AP1_MAT * ACEScc_to_ACES(colorLog);\r\n    #else\r\n        color = logCToLinear(colorLog);\r\n    #endif // ACES\r\n\r\n    // Color filter is just an unclipped multiplier\r\n    color = color * u_ColorFilter.rgb;\r\n\r\n    color = max(vec3(0.0), color);\r\n\r\n    // split toning\r\n    float balance = u_SplitShadows.w;\r\n    vec3 gamma = linearToGamma(color);\r\n    float splitLuma = saturate(luminance(color)) + balance;\r\n    vec3 splitShadows = mix(vec3(0.5, 0.5, 0.5), u_SplitShadows.xyz, 1.0 - splitLuma);\r\n    vec3 splitHeighlights = mix(vec3(0.5, 0.5, 0.5), u_Splithighlights.xyz, splitLuma);\r\n    gamma = softlight(gamma, splitShadows);\r\n    gamma = softlight(gamma, splitHeighlights);\r\n    color = gammaToLinear(gamma);\r\n\r\n    // shadows, midtones, highlights\r\n    float luma = luminance(color);\r\n    float shadowFactor = 1.0 - smoothstep(u_Limits.x, u_Limits.y, luma);\r\n    float highlightsFactor = smoothstep(u_Limits.z, u_Limits.w, luma);\r\n    float midtonesFactor = 1.0 - shadowFactor - highlightsFactor;\r\n    color = color * u_Shadows.xyz * shadowFactor + color * u_Midtones.xyz * midtonesFactor + color * u_Highlights.xyz * highlightsFactor;\r\n\r\n    // Lift, gamma, gain\r\n    color = color * u_Gain.xyz + u_Lift.xyz;\r\n    color = sign(color) * pow(abs(color), u_Gamma.xyz);\r\n    \r\n    // HSV operations\r\n    vec3 hsv = RgbToHsv(color);\r\n    // Hue Shift & Hue Vs Hue\r\n    float hue = hsv.x + u_HueSatCon.x;\r\n    hsv.x = RotateHue(hsv.x, 0.0, 1.0);\r\n    color = HsvToRgb(hsv);\r\n\r\n    // Global saturation\r\n    luma = luminance(color);\r\n    color = vec3(luma) + (vec3(u_HueSatCon.y)) * (color - vec3(luma));\r\n    \r\n    return color;\r\n}\r\n\r\n#endif // ColorGrading_lib";
 
-    var LUTGLSL = "#if !defined(LUT_lib)\n    #define LUT_lib\n\n// scaleOffset = (1 / lut_width, 1 / lut_height, lut_height - 1)\nvec3 applyLut(sampler2D lut, vec3 uvw, vec3 scaleOffset)\n{\n    uvw.z *= scaleOffset.z;\n\n    float shift = floor(uvw.z);\n    uvw.xy = uvw.xy * scaleOffset.z * scaleOffset.xy + scaleOffset.xy * 0.5;\n    uvw.x += shift * scaleOffset.y;\n\n    uvw.xyz = mix(\n\ttexture2DLodEXT(lut, uvw.xy, 0.0).rgb,\n\ttexture2DLodEXT(lut, uvw.xy + vec2(scaleOffset.y, 0.0), 0.0).rgb,\n\tuvw.z - shift);\n    return uvw;\n}\n\n#endif // LUT_lib";
+    var TonemappingGLSL = "#if !defined(Tonemapping_lib)\r\n    #define Tonemapping_lib\r\n\r\n// ACES Tonemapping color grading in ACEScg space\r\nvec3 tonemap(in vec3 ap1)\r\n{\r\n    vec3 color = ap1;\r\n\r\n    #ifdef ACES\r\n    vec3 aces = AP1_to_AP0_MAT * color;\r\n    vec3 oces = RRT(aces);\r\n    color = ODT_sRGB_100nits(oces);\r\n    #endif // ACES\r\n\r\n    // todo other tonemap\r\n\r\n    return color;\r\n}\r\n\r\n#endif // Tonemapping_lib";
 
-    var LUTBuilderFS = "#define SHADER_NAME LutBuilder\n\n#include \"Color.glsl\";\n\n#ifdef ACES\n    #include \"ACES.glsl\";\n#endif // ACES\n\n#include \"ColorGrading.glsl\";\n\n#include \"Tonemapping.glsl\";\n\nvarying vec2 v_Texcoord0;\n\n// lut params: (lutHeight, 0.5 / lutWidth, 0.5 / lutHeight, lutHeidht / (lutHeight - 1))\nvec3 lutValue(vec2 uv, vec4 params)\n{\n    vec3 color;\n    uv -= params.yz;\n    color.r = fract(uv.x * params.x);\n    color.b = uv.x - color.r / params.x;\n    color.g = uv.y;\n    return color * params.w;\n}\n\n// internal lut logC space\nvoid main()\n{\n    vec2 uv = v_Texcoord0;\n    vec3 color = lutValue(uv, u_LutParams);\n    color = logCToLinear(color);\n    vec3 grade = colorGrade(color);\n    vec3 tone = tonemap(grade);\n\n    gl_FragColor = vec4(tone, 1.0);\n}";
+    var LUTGLSL = "#if !defined(LUT_lib)\r\n    #define LUT_lib\r\n\r\n// scaleOffset = (1 / lut_width, 1 / lut_height, lut_height - 1)\r\nvec3 applyLut(sampler2D lut, vec3 uvw, vec3 scaleOffset)\r\n{\r\n    uvw.z *= scaleOffset.z;\r\n\r\n    float shift = floor(uvw.z);\r\n    uvw.xy = uvw.xy * scaleOffset.z * scaleOffset.xy + scaleOffset.xy * 0.5;\r\n    uvw.x += shift * scaleOffset.y;\r\n\r\n    uvw.xyz = mix(\r\n\ttexture2DLodEXT(lut, uvw.xy, 0.0).rgb,\r\n\ttexture2DLodEXT(lut, uvw.xy + vec2(scaleOffset.y, 0.0), 0.0).rgb,\r\n\tuvw.z - shift);\r\n    return uvw;\r\n}\r\n\r\n#endif // LUT_lib";
+
+    var LUTBuilderFS = "#define SHADER_NAME LutBuilder\r\n\r\n#include \"Color.glsl\";\r\n\r\n#ifdef ACES\r\n    #include \"ACES.glsl\";\r\n#endif // ACES\r\n\r\n#include \"ColorGrading.glsl\";\r\n\r\n#include \"Tonemapping.glsl\";\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\n// lut params: (lutHeight, 0.5 / lutWidth, 0.5 / lutHeight, lutHeidht / (lutHeight - 1))\r\nvec3 lutValue(vec2 uv, vec4 params)\r\n{\r\n    vec3 color;\r\n    uv -= params.yz;\r\n    color.r = fract(uv.x * params.x);\r\n    color.b = uv.x - color.r / params.x;\r\n    color.g = uv.y;\r\n    return color * params.w;\r\n}\r\n\r\n// internal lut logC space\r\nvoid main()\r\n{\r\n    vec2 uv = v_Texcoord0;\r\n    vec3 color = lutValue(uv, u_LutParams);\r\n    color = logCToLinear(color);\r\n    vec3 grade = colorGrade(color);\r\n    vec3 tone = tonemap(grade);\r\n\r\n    gl_FragColor = vec4(tone, 1.0);\r\n}";
 
     class BlitScreenShaderInit {
         static init() {
@@ -31730,13 +31801,13 @@
         }
     }
 
-    var UnlitVS = "\n#define SHADER_NAME UnlitVS\n\n#include \"Camera.glsl\";\n#include \"Sprite3DVertex.glsl\";\n\n#include \"VertexCommon.glsl\";\n#include \"Color.glsl\";\n\nvarying vec4 v_Color;\nvarying vec2 v_Texcoord0;\n\nvoid main()\n{\n    Vertex vertex;\n    getVertexParams(vertex);\n\t\n#if defined(UV)\n    v_Texcoord0 = transformUV(vertex.texCoord0, u_TilingOffset);\n#else\n\tv_Texcoord0 = vec2(0);\n#endif // UV\n\n#if defined(COLOR) && defined(ENABLEVERTEXCOLOR)\n    v_Color = gammaToLinear(vertex.vertexColor);\n#endif // COLOR && ENABLEVERTEXCOLOR\n\n    mat4 worldMat = getWorldMatrix();\n\n    vec3 positionWS = (worldMat * vec4(vertex.positionOS, 1.0)).xyz;\n\n    gl_Position = getPositionCS(positionWS);\n\n    gl_Position = remapPositionZ(gl_Position);\n}";
+    var UnlitVS = "\r\n#define SHADER_NAME UnlitVS\r\n\r\n#include \"Camera.glsl\";\r\n#include \"Sprite3DVertex.glsl\";\r\n\r\n#include \"VertexCommon.glsl\";\r\n#include \"Color.glsl\";\r\n#include \"Scene.glsl\"\r\n#include \"SceneFogInput.glsl\"\r\n\r\nvarying vec4 v_Color;\r\nvarying vec2 v_Texcoord0;\r\n\r\nvoid main()\r\n{\r\n    Vertex vertex;\r\n    getVertexParams(vertex);\r\n\t\r\n#if defined(UV)\r\n    v_Texcoord0 = transformUV(vertex.texCoord0, u_TilingOffset);\r\n#else\r\n\tv_Texcoord0 = vec2(0);\r\n#endif // UV\r\n\r\n#if defined(COLOR) && defined(ENABLEVERTEXCOLOR)\r\n    v_Color = gammaToLinear(vertex.vertexColor);\r\n#endif // COLOR && ENABLEVERTEXCOLOR\r\n\r\n    mat4 worldMat = getWorldMatrix();\r\n\r\n    vec3 positionWS = (worldMat * vec4(vertex.positionOS, 1.0)).xyz;\r\n\r\n    gl_Position = getPositionCS(positionWS);\r\n\r\n    gl_Position = remapPositionZ(gl_Position);\r\n    \r\n    #ifdef FOG\r\n        FogHandle(gl_Position.z);\r\n    #endif\r\n}\r\n";
 
-    var UnlitFS = "\n#define SHADER_NAME UNLITFS\n\n#include \"Color.glsl\";\n\n#include \"Scene.glsl\";\n#include \"SceneFog.glsl\";\n\nvarying vec4 v_Color;\nvarying vec2 v_Texcoord0;\n\nvoid main()\n{\n    vec2 uv = v_Texcoord0;\n\n    vec3 color = u_AlbedoColor.rgb;\n    float alpha = u_AlbedoColor.a;\n#ifdef ALBEDOTEXTURE\n    vec4 albedoSampler = texture2D(u_AlbedoTexture, uv);\n\n    #ifdef Gamma_u_AlbedoTexture\n    albedoSampler = gammaToLinear(albedoSampler);\n    #endif // Gamma_u_AlbedoTexture\n\n    color *= albedoSampler.rgb;\n    alpha *= albedoSampler.a;\n#endif // ALBEDOTEXTURE\n\n#if defined(COLOR) && defined(ENABLEVERTEXCOLOR)\n    vec4 vertexColor = v_Color;\n    color *= vertexColor.rgb;\n    alpha *= vertexColor.a;\n#endif\n\n#ifdef ALPHATEST\n    if (alpha < u_AlphaTestValue)\n\tdiscard;\n#endif // ALPHATEST\n\n#ifdef FOG\n    color = scenUnlitFog(color);\n#endif // FOG\n\n    gl_FragColor = vec4(color, alpha);\n}";
+    var UnlitFS = "\r\n#define SHADER_NAME UNLITFS\r\n\r\n#include \"Color.glsl\";\r\n\r\n#include \"Scene.glsl\";\r\n#include \"SceneFog.glsl\";\r\n\r\nvarying vec4 v_Color;\r\nvarying vec2 v_Texcoord0;\r\n\r\nvoid main()\r\n{\r\n    vec2 uv = v_Texcoord0;\r\n\r\n    vec3 color = u_AlbedoColor.rgb;\r\n    float alpha = u_AlbedoColor.a;\r\n#ifdef ALBEDOTEXTURE\r\n    vec4 albedoSampler = texture2D(u_AlbedoTexture, uv);\r\n\r\n    #ifdef Gamma_u_AlbedoTexture\r\n    albedoSampler = gammaToLinear(albedoSampler);\r\n    #endif // Gamma_u_AlbedoTexture\r\n\r\n    color *= albedoSampler.rgb;\r\n    alpha *= albedoSampler.a;\r\n#endif // ALBEDOTEXTURE\r\n\r\n#if defined(COLOR) && defined(ENABLEVERTEXCOLOR)\r\n    vec4 vertexColor = v_Color;\r\n    color *= vertexColor.rgb;\r\n    alpha *= vertexColor.a;\r\n#endif\r\n\r\n#ifdef ALPHATEST\r\n    if (alpha < u_AlphaTestValue)\r\n\tdiscard;\r\n#endif // ALPHATEST\r\n\r\n#ifdef FOG\r\n    color = scenUnlitFog(color);\r\n#endif // FOG\r\n\r\n    gl_FragColor = vec4(color, alpha);\r\n}";
 
-    var DepthVS = "#define SHADER_NAME DepthVS\n\n#include \"DepthVertex.glsl\";\n\nvoid main()\n{\n    Vertex vertex;\n    getVertexParams(vertex);\n\n    mat4 worldMat = getWorldMatrix();\n    vec3 positionWS = (worldMat * vec4(vertex.positionOS, 1.0)).xyz;\n\n    vec3 normalWS = normalize((worldMat * vec4(vertex.normalOS, 0.0)).xyz);\n\n    vec4 positionCS = DepthPositionCS(positionWS, normalWS);\n    gl_Position = remapPositionZ(positionCS);\n}";
+    var DepthVS = "#define SHADER_NAME DepthVS\r\n\r\n#include \"DepthVertex.glsl\";\r\n\r\nvoid main()\r\n{\r\n    Vertex vertex;\r\n    getVertexParams(vertex);\r\n\r\n    mat4 worldMat = getWorldMatrix();\r\n    vec3 positionWS = (worldMat * vec4(vertex.positionOS, 1.0)).xyz;\r\n\r\n    vec3 normalWS = normalize((worldMat * vec4(vertex.normalOS, 0.0)).xyz);\r\n\r\n    vec4 positionCS = DepthPositionCS(positionWS, normalWS);\r\n    gl_Position = remapPositionZ(positionCS);\r\n}";
 
-    var DepthFS = "#define SHADER_NAME DepthFS\n\n#include \"DepthFrag.glsl\";\n\nvoid main()\n{\n    gl_FragColor = getDepthColor();\n}";
+    var DepthFS = "#define SHADER_NAME DepthFS\r\n\r\n#include \"DepthFrag.glsl\";\r\n\r\nvoid main()\r\n{\r\n    gl_FragColor = getDepthColor();\r\n}";
 
     class UnlitShaderInit {
         static init() {
@@ -31761,19 +31832,19 @@
         }
     }
 
-    var BlinnPhongCommonGLSL = "#if !defined(BlinnPhongCommon_lib)\n    #define BlinnPhongCommon_lib\n\n// varying\nvarying vec3 v_PositionWS;\nvarying vec3 v_NormalWS;\n\n    #ifdef UV\nvarying vec2 v_Texcoord0;\n    #endif // UV\n\n    #ifdef UV1\n\t#ifdef LIGHTMAP\nvarying vec2 v_Texcoord1;\n\t#endif // LIGHTMAP\n    #endif // UV1\n\n    #ifdef NEEDTBN\nvarying vec3 v_TangentWS;\nvarying vec3 v_BiNormalWS;\n    #endif // NEEDTBN\n\n    #ifdef COLOR\nvarying vec4 v_VertexColor;\n    #endif // COLOR\n\n// 记录顶点信息, 用于由vs向fs传递数据\nstruct PixelParams {\n    vec3 positionWS;\n    vec3 normalWS;\n\n    #ifdef UV\n    vec2 uv0;\n    #endif // UV\n\n    #ifdef UV1\n\t#ifdef LIGHTMAP\n    vec2 uv1;\n\t#endif // LIGHTMAP\n    #endif // UV1\n\n    #ifdef NEEDTBN\n    vec3 tangentWS;\n    vec3 biNormalWS;\n    #endif // NEEDTBN\n\n    #ifdef COLOR\n    vec4 vertexColor;\n    #endif // COLOR\n\n    vec3 viewDir;\n};\n\n#endif // BlinnPhongCommon_lib";
+    var BlinnPhongCommonGLSL = "#if !defined(BlinnPhongCommon_lib)\r\n    #define BlinnPhongCommon_lib\r\n\r\n// varying\r\nvarying vec3 v_PositionWS;\r\nvarying vec3 v_NormalWS;\r\n\r\n    #ifdef UV\r\nvarying vec2 v_Texcoord0;\r\n    #endif // UV\r\n\r\n    #ifdef UV1\r\n\t#ifdef LIGHTMAP\r\nvarying vec2 v_Texcoord1;\r\n\t#endif // LIGHTMAP\r\n    #endif // UV1\r\n\r\n    #ifdef NEEDTBN\r\nvarying vec3 v_TangentWS;\r\nvarying vec3 v_BiNormalWS;\r\n    #endif // NEEDTBN\r\n\r\n    #ifdef COLOR\r\nvarying vec4 v_VertexColor;\r\n    #endif // COLOR\r\n\r\n// 记录顶点信息, 用于由vs向fs传递数据\r\nstruct PixelParams {\r\n    vec3 positionWS;\r\n    vec3 normalWS;\r\n\r\n    #ifdef UV\r\n    vec2 uv0;\r\n    #endif // UV\r\n\r\n    #ifdef UV1\r\n\t#ifdef LIGHTMAP\r\n    vec2 uv1;\r\n\t#endif // LIGHTMAP\r\n    #endif // UV1\r\n\r\n    #ifdef NEEDTBN\r\n    vec3 tangentWS;\r\n    vec3 biNormalWS;\r\n    #endif // NEEDTBN\r\n\r\n    #ifdef COLOR\r\n    vec4 vertexColor;\r\n    #endif // COLOR\r\n\r\n    vec3 viewDir;\r\n};\r\n\r\n#endif // BlinnPhongCommon_lib";
 
-    var BlinnPhongVertexGLSL = "#if !defined(BlinnPhongVertex_lib)\n    #define BlinnPhongVertex_lib\n\n    #include \"BlinnPhongCommon.glsl\";\n\nvoid initPixelParams(inout PixelParams params, in Vertex vertex)\n{\n    mat4 worldMat = getWorldMatrix();\n    params.positionWS = (worldMat * vec4(vertex.positionOS, 1.0)).xyz;\n    v_PositionWS = params.positionWS;\n\n    params.normalWS = normalize((worldMat * vec4(vertex.normalOS, 0.0)).xyz);\n    v_NormalWS = params.normalWS;\n\n    #ifdef TANGENT\n\t#ifdef NEEDTBN\n    params.tangentWS = normalize((worldMat * vec4(vertex.tangentOS.xyz, 0.0)).xyz);\n    params.biNormalWS = normalize(cross(params.normalWS, params.tangentWS) * sign(vertex.tangentOS.w));\n    v_TangentWS = params.tangentWS;\n    v_BiNormalWS = params.biNormalWS;\n\t#endif // NEEDTBN\n    #endif // TANGENT\n\n    #ifdef UV\n    params.uv0 = transformUV(vertex.texCoord0, u_TilingOffset);\n    v_Texcoord0 = params.uv0;\n    #endif // UV\n\n    #ifdef UV1\n\t#ifdef LIGHTMAP\n    params.uv1 = tranformLightMapUV(vertex.texCoord1, u_LightmapScaleOffset);\n    v_Texcoord1 = params.uv1;\n\t#endif // LIGHTMAP\n    #endif // UV1\n\n    #ifdef COLOR\n    params.vertexColor = a_Color;\n    v_VertexColor = params.vertexColor;\n    #endif // COLOR\n}\n\n#endif // BlinnPhongVertex_lib";
+    var BlinnPhongVertexGLSL = "#if !defined(BlinnPhongVertex_lib)\r\n    #define BlinnPhongVertex_lib\r\n\r\n    #include \"BlinnPhongCommon.glsl\";\r\n\r\nvoid initPixelParams(inout PixelParams params, in Vertex vertex)\r\n{\r\n    mat4 worldMat = getWorldMatrix();\r\n    params.positionWS = (worldMat * vec4(vertex.positionOS, 1.0)).xyz;\r\n    v_PositionWS = params.positionWS;\r\n\r\n    params.normalWS = normalize((worldMat * vec4(vertex.normalOS, 0.0)).xyz);\r\n    v_NormalWS = params.normalWS;\r\n\r\n    #ifdef TANGENT\r\n\t#ifdef NEEDTBN\r\n    params.tangentWS = normalize((worldMat * vec4(vertex.tangentOS.xyz, 0.0)).xyz);\r\n    params.biNormalWS = normalize(cross(params.normalWS, params.tangentWS) * sign(vertex.tangentOS.w));\r\n    v_TangentWS = params.tangentWS;\r\n    v_BiNormalWS = params.biNormalWS;\r\n\t#endif // NEEDTBN\r\n    #endif // TANGENT\r\n\r\n    #ifdef UV\r\n    params.uv0 = transformUV(vertex.texCoord0, u_TilingOffset);\r\n    v_Texcoord0 = params.uv0;\r\n    #endif // UV\r\n\r\n    #ifdef UV1\r\n\t#ifdef LIGHTMAP\r\n    params.uv1 = tranformLightMapUV(vertex.texCoord1, u_LightmapScaleOffset);\r\n    v_Texcoord1 = params.uv1;\r\n\t#endif // LIGHTMAP\r\n    #endif // UV1\r\n\r\n    #ifdef COLOR\r\n    params.vertexColor = a_Color;\r\n    v_VertexColor = params.vertexColor;\r\n    #endif // COLOR\r\n}\r\n\r\n#endif // BlinnPhongVertex_lib";
 
-    var BlinnPhongFragGLSL = "#if !defined(BlinnPhongFrag_lib)\n    #define BlinnPhongFrag_lib\n\n    #include \"BlinnPhongLighting.glsl\";\n\n    #include \"BlinnPhongCommon.glsl\";\n\nvoid getPixelParams(inout PixelParams params)\n{\n    params.positionWS = v_PositionWS;\n    params.normalWS = normalize(v_NormalWS);\n\n    #ifdef UV\n    params.uv0 = v_Texcoord0;\n    #endif // UV\n\n    #ifdef UV1\n\t#ifdef LIGHTMAP\n    params.uv1 = v_Texcoord1;\n\t#endif // LIGHTMAP\n    #endif // UV1\n\n    #ifdef COLOR\n    params.vertexColor = v_VertexColor;\n    #endif // COLOR\n\n    params.viewDir = normalize(u_CameraPos - params.positionWS);\n\n    #ifdef TANGENT\n\t#ifdef NEEDTBN\n    params.tangentWS = normalize(v_TangentWS);\n    params.biNormalWS = normalize(v_BiNormalWS);\n    mat3 TBN = mat3(params.tangentWS, params.biNormalWS, params.normalWS);\n\n\t    #ifdef NORMALMAP\n    vec3 normalSampler = texture2D(u_NormalTexture, params.uv0).rgb;\n    normalSampler = normalize(normalSampler * 2.0 - 1.0);\n    normalSampler.y *= -1.0;\n    params.normalWS = normalize(TBN * normalSampler);\n\t    #endif // NORMALMAP\n\n\t#endif // NEEDTBN\n    #endif TANGENT\n}\n\nvoid getPixelInfo(inout PixelInfo info, const in PixelParams pixel)\n{\n    info.positionWS = pixel.positionWS;\n    info.normalWS = pixel.normalWS;\n    info.viewDir = pixel.viewDir;\n\n    #ifdef LIGHTMAP\n\t#ifdef UV1\n    info.lightmapUV = pixel.uv1;\n\t#endif // UV1\n    #endif // LIGHTMAP\n}\n\nvec3 BlinnPhongLighting(const in Surface surface, const in PixelParams pixel)\n{\n    vec3 positionWS = pixel.positionWS;\n    vec3 v = pixel.viewDir;\n    vec3 normalWS = pixel.normalWS;\n\n    PixelInfo info;\n    getPixelInfo(info, pixel);\n\n    vec3 lightColor = vec3(0.0, 0.0, 0.0);\n\n    #ifdef DIRECTIONLIGHT\n    for (int i = 0; i < CalculateLightCount; i++)\n\t{\n\t    if (i >= DirectionCount)\n\t\tbreak;\n\t    DirectionLight directionLight = getDirectionLight(i, positionWS);\n\t    if (directionLight.lightMode == LightMode_Mix)\n\t\t{\n\t\t    continue;\n\t\t}\n\t    Light light = getLight(directionLight);\n\t    lightColor += BlinnPhongLighting(surface, light, info) * light.attenuation;\n\t}\n    #endif // DIRECTIONLIGHT\n\n    #if defined(POINTLIGHT) || defined(SPOTLIGHT)\n    ivec4 clusterInfo = getClusterInfo(u_View, u_Viewport, positionWS, gl_FragCoord, u_ProjectionParams);\n    #endif // POINTLIGHT || SPOTLIGHT\n\n    #ifdef POINTLIGHT\n    for (int i = 0; i < CalculateLightCount; i++)\n\t{\n\t    if (i >= clusterInfo.x)\n\t\tbreak;\n\t    PointLight pointLight = getPointLight(i, clusterInfo, positionWS);\n\t    if (pointLight.lightMode == LightMode_Mix)\n\t\t{\n\t\t    continue;\n\t\t}\n\t    Light light = getLight(pointLight, normalWS, positionWS);\n\t    lightColor += BlinnPhongLighting(surface, light, info) * light.attenuation;\n\t}\n    #endif // POINTLIGHT\n\n    #ifdef SPOTLIGHT\n    for (int i = 0; i < CalculateLightCount; i++)\n\t{\n\t    if (i >= clusterInfo.y)\n\t\tbreak;\n\t    SpotLight spotLight = getSpotLight(i, clusterInfo, positionWS);\n\t    if (spotLight.lightMode == LightMode_Mix)\n\t\t{\n\t\t    continue;\n\t\t}\n\t    Light light = getLight(spotLight, normalWS, positionWS);\n\t    lightColor += BlinnPhongLighting(surface, light, info) * light.attenuation;\n\t}\n    #endif // SPOTLIGHT\n\n    vec3 giColor = BlinnPhongGI(surface, info);\n\n    return lightColor + giColor;\n}\n\n#endif // BlinnPhongFrag_lib";
+    var BlinnPhongFragGLSL = "#if !defined(BlinnPhongFrag_lib)\r\n    #define BlinnPhongFrag_lib\r\n\r\n    #include \"BlinnPhongLighting.glsl\";\r\n\r\n    #include \"BlinnPhongCommon.glsl\";\r\n\r\nvoid getPixelParams(inout PixelParams params)\r\n{\r\n    params.positionWS = v_PositionWS;\r\n    params.normalWS = normalize(v_NormalWS);\r\n\r\n    #ifdef UV\r\n    params.uv0 = v_Texcoord0;\r\n    #endif // UV\r\n\r\n    #ifdef UV1\r\n\t#ifdef LIGHTMAP\r\n    params.uv1 = v_Texcoord1;\r\n\t#endif // LIGHTMAP\r\n    #endif // UV1\r\n\r\n    #ifdef COLOR\r\n    params.vertexColor = v_VertexColor;\r\n    #endif // COLOR\r\n\r\n    params.viewDir = normalize(u_CameraPos - params.positionWS);\r\n\r\n    #ifdef TANGENT\r\n\t#ifdef NEEDTBN\r\n    params.tangentWS = normalize(v_TangentWS);\r\n    params.biNormalWS = normalize(v_BiNormalWS);\r\n    mat3 TBN = mat3(params.tangentWS, params.biNormalWS, params.normalWS);\r\n\r\n\t    #ifdef NORMALMAP\r\n    vec3 normalSampler = texture2D(u_NormalTexture, params.uv0).rgb;\r\n    normalSampler = normalize(normalSampler * 2.0 - 1.0);\r\n    normalSampler.y *= -1.0;\r\n    params.normalWS = normalize(TBN * normalSampler);\r\n\t    #endif // NORMALMAP\r\n\r\n\t#endif // NEEDTBN\r\n    #endif TANGENT\r\n}\r\n\r\nvoid getPixelInfo(inout PixelInfo info, const in PixelParams pixel)\r\n{\r\n    info.positionWS = pixel.positionWS;\r\n    info.normalWS = pixel.normalWS;\r\n    info.viewDir = pixel.viewDir;\r\n\r\n    #ifdef LIGHTMAP\r\n\t#ifdef UV1\r\n    info.lightmapUV = pixel.uv1;\r\n\t#endif // UV1\r\n    #endif // LIGHTMAP\r\n}\r\n\r\nvec3 BlinnPhongLighting(const in Surface surface, const in PixelParams pixel)\r\n{\r\n    vec3 positionWS = pixel.positionWS;\r\n    vec3 v = pixel.viewDir;\r\n    vec3 normalWS = pixel.normalWS;\r\n\r\n    PixelInfo info;\r\n    getPixelInfo(info, pixel);\r\n\r\n    vec3 lightColor = vec3(0.0, 0.0, 0.0);\r\n\r\n    #ifdef DIRECTIONLIGHT\r\n    for (int i = 0; i < CalculateLightCount; i++)\r\n\t{\r\n\t    if (i >= DirectionCount)\r\n\t\tbreak;\r\n\t    DirectionLight directionLight = getDirectionLight(i, positionWS);\r\n\t    if (directionLight.lightMode == LightMode_Mix)\r\n\t\t{\r\n\t\t    continue;\r\n\t\t}\r\n\t    Light light = getLight(directionLight);\r\n\t    lightColor += BlinnPhongLighting(surface, light, info) * light.attenuation;\r\n\t}\r\n    #endif // DIRECTIONLIGHT\r\n\r\n    #if defined(POINTLIGHT) || defined(SPOTLIGHT)\r\n    ivec4 clusterInfo = getClusterInfo(u_View, u_Viewport, positionWS, gl_FragCoord, u_ProjectionParams);\r\n    #endif // POINTLIGHT || SPOTLIGHT\r\n\r\n    #ifdef POINTLIGHT\r\n    for (int i = 0; i < CalculateLightCount; i++)\r\n\t{\r\n\t    if (i >= clusterInfo.x)\r\n\t\tbreak;\r\n\t    PointLight pointLight = getPointLight(i, clusterInfo, positionWS);\r\n\t    if (pointLight.lightMode == LightMode_Mix)\r\n\t\t{\r\n\t\t    continue;\r\n\t\t}\r\n\t    Light light = getLight(pointLight, normalWS, positionWS);\r\n\t    lightColor += BlinnPhongLighting(surface, light, info) * light.attenuation;\r\n\t}\r\n    #endif // POINTLIGHT\r\n\r\n    #ifdef SPOTLIGHT\r\n    for (int i = 0; i < CalculateLightCount; i++)\r\n\t{\r\n\t    if (i >= clusterInfo.y)\r\n\t\tbreak;\r\n\t    SpotLight spotLight = getSpotLight(i, clusterInfo, positionWS);\r\n\t    if (spotLight.lightMode == LightMode_Mix)\r\n\t\t{\r\n\t\t    continue;\r\n\t\t}\r\n\t    Light light = getLight(spotLight, normalWS, positionWS);\r\n\t    lightColor += BlinnPhongLighting(surface, light, info) * light.attenuation;\r\n\t}\r\n    #endif // SPOTLIGHT\r\n\r\n    vec3 giColor = BlinnPhongGI(surface, info);\r\n\r\n    return lightColor + giColor;\r\n}\r\n\r\n#endif // BlinnPhongFrag_lib";
 
-    var BlinnPhongVS = "#define SHADER_NAME BlinnPhongVS\n\n#include \"Color.glsl\";\n\n#include \"Scene.glsl\";\n#include \"Camera.glsl\";\n#include \"Sprite3DVertex.glsl\";\n\n#include \"VertexCommon.glsl\";\n\n#include \"BlinnPhongVertex.glsl\";\n\nvoid main()\n{\n    Vertex vertex;\n    getVertexParams(vertex);\n\n    PixelParams pixel;\n    initPixelParams(pixel, vertex);\n\n    gl_Position = getPositionCS(pixel.positionWS);\n\n    gl_Position = remapPositionZ(gl_Position);\n}\n";
+    var BlinnPhongVS = "#define SHADER_NAME BlinnPhongVS\r\n\r\n#include \"Color.glsl\";\r\n\r\n#include \"Scene.glsl\";\r\n#include \"Camera.glsl\";\r\n#include \"Sprite3DVertex.glsl\";\r\n\r\n#include \"VertexCommon.glsl\";\r\n\r\n#include \"BlinnPhongVertex.glsl\";\r\n#include \"SceneFogInput.glsl\"\r\n\r\nvoid main()\r\n{\r\n    Vertex vertex;\r\n    getVertexParams(vertex);\r\n\r\n    PixelParams pixel;\r\n    initPixelParams(pixel, vertex);\r\n\r\n    gl_Position = getPositionCS(pixel.positionWS);\r\n\r\n    gl_Position = remapPositionZ(gl_Position);\r\n    #ifdef FOG\r\n        FogHandle(gl_Position.z);\r\n    #endif\r\n}\r\n";
 
-    var BlinnPhongFS = "#define SHADER_NAME BlinnPhongFS\n\n#include \"Color.glsl\";\n\n#include \"Scene.glsl\";\n#include \"Camera.glsl\";\n#include \"Sprite3DFrag.glsl\";\n\n#include \"SceneFog.glsl\";\n\n#include \"BlinnPhongFrag.glsl\";\n\nvoid getBinnPhongSurfaceParams(inout Surface surface, in PixelParams pixel)\n{\n    surface.diffuseColor = u_DiffuseColor.rgb;\n    surface.alpha = u_DiffuseColor.a;\n\n#if defined(COLOR) && defined(ENABLEVERTEXCOLOR)\n    surface.diffuseColor *= pixel.vertexColor.xyz;\n    surface.alpha *= pixel.vertexColor.a;\n#endif // COLOR && ENABLEVERTEXCOLOR\n\n#ifdef UV\n    vec2 uv = pixel.uv0;\n#else // UV\n    vec2 uv = vec2(0.0);\n#endif // UV\n\n#ifdef DIFFUSEMAP\n    vec4 diffuseSampler = texture2D(u_DiffuseTexture, uv);\n    #ifdef Gamma_u_DiffuseTexture\n    diffuseSampler = gammaToLinear(diffuseSampler);\n    #endif // Gamma_u_DiffuseTexture\n    surface.diffuseColor *= u_DiffuseColor.rgb * diffuseSampler.rgb * u_AlbedoIntensity;\n    surface.alpha *= diffuseSampler.a;\n#endif // DIFFUSEMAP\n\n    surface.diffuseColor *= u_AlbedoIntensity;\n\n#ifdef ALPHATEST\n    if (surface.alpha < u_AlphaTestValue)\n\t{\n\t    discard;\n\t}\n#endif // ALPHATEST\n\n#ifdef SPECULARMAP\n    vec4 specularSampler = texture2D(u_SpecularTexture, uv);\n    #ifdef Gamma_u_SpecularTexture\n    specularSampler = gammaToLinear(specularSampler);\n    #endif // Gamma_u_SpecularTexture\n    surface.gloss = specularSampler.rgb;\n#else // SPECULARMAP\n    #ifdef DIFFUSEMAP\n    surface.gloss = vec3(diffuseSampler.a);\n    #else // DIFFUSEMAP\n    surface.gloss = vec3(1.0, 1.0, 1.0);\n    #endif // DIFFUSEMAP\n#endif // SPECULARMAP\n    surface.specularColor = u_MaterialSpecular.rgb;\n    surface.shininess = u_Shininess;\n}\n\nvoid main()\n{\n    PixelParams pixel;\n    getPixelParams(pixel);\n\n    Surface surface;\n    getBinnPhongSurfaceParams(surface, pixel);\n\n    vec3 surfaceColor = vec3(0.0);\n\n    surfaceColor = BlinnPhongLighting(surface, pixel);\n\n#ifdef FOG\n    surfaceColor = sceneLitFog(surfaceColor);\n#endif // FOG\n\n    gl_FragColor = vec4(surfaceColor, surface.alpha);\n}\n";
+    var BlinnPhongFS = "#define SHADER_NAME BlinnPhongFS\r\n\r\n#include \"Color.glsl\";\r\n\r\n#include \"Scene.glsl\";\r\n#include \"Camera.glsl\";\r\n#include \"Sprite3DFrag.glsl\";\r\n\r\n#include \"SceneFog.glsl\";\r\n\r\n#include \"BlinnPhongFrag.glsl\";\r\n\r\nvoid getBinnPhongSurfaceParams(inout Surface surface, in PixelParams pixel)\r\n{\r\n    surface.diffuseColor = u_DiffuseColor.rgb;\r\n    surface.alpha = u_DiffuseColor.a;\r\n\r\n#if defined(COLOR) && defined(ENABLEVERTEXCOLOR)\r\n    surface.diffuseColor *= pixel.vertexColor.xyz;\r\n    surface.alpha *= pixel.vertexColor.a;\r\n#endif // COLOR && ENABLEVERTEXCOLOR\r\n\r\n#ifdef UV\r\n    vec2 uv = pixel.uv0;\r\n#else // UV\r\n    vec2 uv = vec2(0.0);\r\n#endif // UV\r\n\r\n#ifdef DIFFUSEMAP\r\n    vec4 diffuseSampler = texture2D(u_DiffuseTexture, uv);\r\n    #ifdef Gamma_u_DiffuseTexture\r\n    diffuseSampler = gammaToLinear(diffuseSampler);\r\n    #endif // Gamma_u_DiffuseTexture\r\n    surface.diffuseColor *= u_DiffuseColor.rgb * diffuseSampler.rgb * u_AlbedoIntensity;\r\n    surface.alpha *= diffuseSampler.a;\r\n#endif // DIFFUSEMAP\r\n\r\n    surface.diffuseColor *= u_AlbedoIntensity;\r\n\r\n#ifdef ALPHATEST\r\n    if (surface.alpha < u_AlphaTestValue)\r\n\t{\r\n\t    discard;\r\n\t}\r\n#endif // ALPHATEST\r\n\r\n#ifdef SPECULARMAP\r\n    vec4 specularSampler = texture2D(u_SpecularTexture, uv);\r\n    #ifdef Gamma_u_SpecularTexture\r\n    specularSampler = gammaToLinear(specularSampler);\r\n    #endif // Gamma_u_SpecularTexture\r\n    surface.gloss = specularSampler.rgb;\r\n#else // SPECULARMAP\r\n    #ifdef DIFFUSEMAP\r\n    surface.gloss = vec3(diffuseSampler.a);\r\n    #else // DIFFUSEMAP\r\n    surface.gloss = vec3(1.0, 1.0, 1.0);\r\n    #endif // DIFFUSEMAP\r\n#endif // SPECULARMAP\r\n    surface.specularColor = u_MaterialSpecular.rgb;\r\n    surface.shininess = u_Shininess;\r\n}\r\n\r\nvoid main()\r\n{\r\n    PixelParams pixel;\r\n    getPixelParams(pixel);\r\n\r\n    Surface surface;\r\n    getBinnPhongSurfaceParams(surface, pixel);\r\n\r\n    vec3 surfaceColor = vec3(0.0);\r\n\r\n    surfaceColor = BlinnPhongLighting(surface, pixel);\r\n\r\n#ifdef FOG\r\n    surfaceColor = sceneLitFog(surfaceColor);\r\n#endif // FOG\r\n\r\n    gl_FragColor = vec4(surfaceColor, surface.alpha);\r\n}\r\n";
 
-    var DepthNormalVS = "#define SHADER_NAME DepthNormalVS\n\n#include \"Scene.glsl\";\n#include \"Sprite3DVertex.glsl\";\n\n#include \"VertexCommon.glsl\";\n#include \"Camera.glsl\";\n\n\n\n// uniform mat4 u_View;\n// uniform mat4 u_ViewProjection;\n// uniform vec4 u_ProjectionParams;\n\n//传入法线\nvarying vec4 v_depthNormals;\n\n\nvec4 depthNormalsVertex()\n{\n\t Vertex vertex;\n    getVertexParams(vertex);\n\n    mat4 worldMat = getWorldMatrix();\n    vec3 positionWS = (worldMat * vec4(vertex.positionOS, 1.0)).xyz;\n\n    vec3 normalWS = normalize((worldMat * vec4(vertex.normalOS, 0.0)).xyz);\n\t\n\t//存储View空间法线\n\tvec3 normalVS = mat3(u_View) * normalWS;\n\tv_depthNormals.xyz = normalVS;\n\t\n\tvec4 positionCS = u_ViewProjection * vec4(positionWS,1.0);\n\tv_depthNormals.w = (positionCS.z * 2.0 - positionCS.w)*u_ProjectionParams.w;\n\t\n    return positionCS;\n}\n\nvoid main()\n{\n\tvec4 positionCS =  depthNormalsVertex();\n\tgl_Position=remapPositionZ(positionCS);\n}";
+    var DepthNormalVS = "#define SHADER_NAME DepthNormalVS\r\n\r\n#include \"Scene.glsl\";\r\n#include \"Sprite3DVertex.glsl\";\r\n\r\n#include \"VertexCommon.glsl\";\r\n#include \"Camera.glsl\";\r\n\r\n\r\n\r\n// uniform mat4 u_View;\r\n// uniform mat4 u_ViewProjection;\r\n// uniform vec4 u_ProjectionParams;\r\n\r\n//传入法线\r\nvarying vec4 v_depthNormals;\r\n\r\n\r\nvec4 depthNormalsVertex()\r\n{\r\n\t Vertex vertex;\r\n    getVertexParams(vertex);\r\n\r\n    mat4 worldMat = getWorldMatrix();\r\n    vec3 positionWS = (worldMat * vec4(vertex.positionOS, 1.0)).xyz;\r\n\r\n    vec3 normalWS = normalize((worldMat * vec4(vertex.normalOS, 0.0)).xyz);\r\n\t\r\n\t//存储View空间法线\r\n\tvec3 normalVS = mat3(u_View) * normalWS;\r\n\tv_depthNormals.xyz = normalVS;\r\n\t\r\n\tvec4 positionCS = u_ViewProjection * vec4(positionWS,1.0);\r\n\tv_depthNormals.w = (positionCS.z * 2.0 - positionCS.w)*u_ProjectionParams.w;\r\n\t\r\n    return positionCS;\r\n}\r\n\r\nvoid main()\r\n{\r\n\tvec4 positionCS =  depthNormalsVertex();\r\n\tgl_Position=remapPositionZ(positionCS);\r\n}";
 
-    var DepthNormalFS = "#define SHADER_NAME DepthNormalFS\n\n\n#include \"DepthNormalUtil.glsl\";\n\nvarying vec4 v_depthNormals;\n\nvoid main()\n{\n\tgl_FragColor=depthNormalsFragment(v_depthNormals);\n}";
+    var DepthNormalFS = "#define SHADER_NAME DepthNormalFS\r\n\r\n\r\n#include \"DepthNormalUtil.glsl\";\r\n\r\nvarying vec4 v_depthNormals;\r\n\r\nvoid main()\r\n{\r\n\tgl_FragColor=depthNormalsFragment(v_depthNormals);\r\n}";
 
     class BlinnPhongShaderInit {
         static init() {
@@ -31808,9 +31879,9 @@
         }
     }
 
-    var TrailVS = "#define SHADER_NAME TrailVS\n\n#include \"Camera.glsl\";\n\n// Sprite uniform\nuniform float u_CurTime;\nuniform float u_LifeTime;\nuniform vec4 u_WidthCurve[10];\nuniform int u_WidthCurveKeyLength;\n\nvarying vec2 v_Texcoord0;\nvarying vec4 v_Color;\n\nfloat hermiteInterpolate(float t, float outTangent, float inTangent, float duration, float value1, float value2)\n{\n    float t2 = t * t;\n    float t3 = t2 * t;\n    float a = 2.0 * t3 - 3.0 * t2 + 1.0;\n    float b = t3 - 2.0 * t2 + t;\n    float c = t3 - t2;\n    float d = -2.0 * t3 + 3.0 * t2;\n    return a * value1 + b * outTangent * duration + c * inTangent * duration + d * value2;\n}\n\nfloat getCurWidth(in float normalizeTime)\n{\n    float width;\n    if (normalizeTime == 0.0)\n\t{\n\t    width = u_WidthCurve[0].w;\n\t}\n    else if (normalizeTime >= 1.0)\n\t{\n\t    width = u_WidthCurve[u_WidthCurveKeyLength - 1].w;\n\t}\n    else\n\t{\n\t    for (int i = 0; i < 10; i++)\n\t\t{\n\t\t    if (normalizeTime == u_WidthCurve[i].x)\n\t\t\t{\n\t\t\t    width = u_WidthCurve[i].w;\n\t\t\t    break;\n\t\t\t}\n\n\t\t    vec4 lastFrame = u_WidthCurve[i];\n\t\t    vec4 nextFrame = u_WidthCurve[i + 1];\n\t\t    if (normalizeTime > lastFrame.x && normalizeTime < nextFrame.x)\n\t\t\t{\n\t\t\t    float duration = nextFrame.x - lastFrame.x;\n\t\t\t    float t = (normalizeTime - lastFrame.x) / duration;\n\t\t\t    float outTangent = lastFrame.z;\n\t\t\t    float inTangent = nextFrame.y;\n\t\t\t    float value1 = lastFrame.w;\n\t\t\t    float value2 = nextFrame.w;\n\t\t\t    width = hermiteInterpolate(t, outTangent, inTangent, duration, value1, value2);\n\t\t\t    break;\n\t\t\t}\n\t\t}\n\t}\n    return width;\n}\n\nvoid main()\n{\n    float normalizeTime = (u_CurTime - a_BirthTime) / u_LifeTime;\n\n    v_Texcoord0 = vec2(a_Texcoord0X, 1.0 - a_Texcoord0Y) * u_TilingOffset.xy + u_TilingOffset.zw;\n\n    v_Color = a_Color;\n\n    vec3 cameraPos = (u_View * a_Position).rgb;\n    gl_Position = u_Projection * vec4(cameraPos + a_OffsetVector * getCurWidth(normalizeTime), 1.0);\n\n    gl_Position = remapPositionZ(gl_Position);\n}";
+    var TrailVS = "#define SHADER_NAME TrailVS\r\n\r\n#include \"Camera.glsl\";\r\n#include \"Scene.glsl\"\r\n#include \"SceneFogInput.glsl\"\r\n\r\n// Sprite uniform\r\nuniform float u_CurTime;\r\nuniform float u_LifeTime;\r\nuniform vec4 u_WidthCurve[10];\r\nuniform int u_WidthCurveKeyLength;\r\n\r\nvarying vec2 v_Texcoord0;\r\nvarying vec4 v_Color;\r\n\r\nfloat hermiteInterpolate(float t, float outTangent, float inTangent, float duration, float value1, float value2)\r\n{\r\n    float t2 = t * t;\r\n    float t3 = t2 * t;\r\n    float a = 2.0 * t3 - 3.0 * t2 + 1.0;\r\n    float b = t3 - 2.0 * t2 + t;\r\n    float c = t3 - t2;\r\n    float d = -2.0 * t3 + 3.0 * t2;\r\n    return a * value1 + b * outTangent * duration + c * inTangent * duration + d * value2;\r\n}\r\n\r\nfloat getCurWidth(in float normalizeTime)\r\n{\r\n    float width;\r\n    if (normalizeTime == 0.0)\r\n\t{\r\n\t    width = u_WidthCurve[0].w;\r\n\t}\r\n    else if (normalizeTime >= 1.0)\r\n\t{\r\n\t    width = u_WidthCurve[u_WidthCurveKeyLength - 1].w;\r\n\t}\r\n    else\r\n\t{\r\n\t    for (int i = 0; i < 10; i++)\r\n\t\t{\r\n\t\t    if (normalizeTime == u_WidthCurve[i].x)\r\n\t\t\t{\r\n\t\t\t    width = u_WidthCurve[i].w;\r\n\t\t\t    break;\r\n\t\t\t}\r\n\r\n\t\t    vec4 lastFrame = u_WidthCurve[i];\r\n\t\t    vec4 nextFrame = u_WidthCurve[i + 1];\r\n\t\t    if (normalizeTime > lastFrame.x && normalizeTime < nextFrame.x)\r\n\t\t\t{\r\n\t\t\t    float duration = nextFrame.x - lastFrame.x;\r\n\t\t\t    float t = (normalizeTime - lastFrame.x) / duration;\r\n\t\t\t    float outTangent = lastFrame.z;\r\n\t\t\t    float inTangent = nextFrame.y;\r\n\t\t\t    float value1 = lastFrame.w;\r\n\t\t\t    float value2 = nextFrame.w;\r\n\t\t\t    width = hermiteInterpolate(t, outTangent, inTangent, duration, value1, value2);\r\n\t\t\t    break;\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n    return width;\r\n}\r\n\r\nvoid main()\r\n{\r\n    float normalizeTime = (u_CurTime - a_BirthTime) / u_LifeTime;\r\n\r\n    v_Texcoord0 = vec2(a_Texcoord0X, 1.0 - a_Texcoord0Y) * u_TilingOffset.xy + u_TilingOffset.zw;\r\n\r\n    v_Color = a_Color;\r\n\r\n    vec3 cameraPos = (u_View * a_Position).rgb;\r\n    gl_Position = u_Projection * vec4(cameraPos + a_OffsetVector * getCurWidth(normalizeTime), 1.0);\r\n\r\n    gl_Position = remapPositionZ(gl_Position);\r\n\t#ifdef FOG\r\n        FogHandle(gl_Position.z);\r\n    #endif\r\n}";
 
-    var TrailFS = "#define SHADER_NAME TrailFS\n\n#include \"Scene.glsl\";\n#include \"SceneFog.glsl\";\n\nvarying vec2 v_Texcoord0;\nvarying vec4 v_Color;\n\nvoid main()\n{\n    vec4 color = 2.0 * u_MainColor * v_Color;\n#ifdef MAINTEXTURE\n    vec4 mainTextureColor = texture2D(u_MainTexture, v_Texcoord0);\n    color *= mainTextureColor;\n#endif\n\n#ifdef FOG\n    color.xyz = scenUnlitFog(color.xyz);\n#endif // FOG\n    gl_FragColor = color;\n}\n";
+    var TrailFS = "#define SHADER_NAME TrailFS\r\n\r\n#include \"Scene.glsl\";\r\n#include \"SceneFog.glsl\";\r\n\r\nvarying vec2 v_Texcoord0;\r\nvarying vec4 v_Color;\r\n\r\nvoid main()\r\n{\r\n    vec4 color = 2.0 * u_MainColor * v_Color;\r\n#ifdef MAINTEXTURE\r\n    vec4 mainTextureColor = texture2D(u_MainTexture, v_Texcoord0);\r\n    color *= mainTextureColor;\r\n#endif\r\n\r\n#ifdef FOG\r\n    color.xyz = scenUnlitFog(color.xyz);\r\n#endif // FOG\r\n    gl_FragColor = color;\r\n}\r\n";
 
     class TrailShaderInit {
         static init() {
@@ -31838,17 +31909,17 @@
         }
     }
 
-    var BRDFGLSL = "#if !defined(BRDF)\n    #define BRDF\n\n// Specular implementations\nfloat D_GGX(float roughness, float NoH, vec3 h, vec3 n)\n{\n    // todo 精度\n    #if !defined(GL_FRAGMENT_PRECISION_HIGH)\n    vec3 NxH = cross(n, h);\n    float oneMinusNoHSquared = dot(NxH, NxH);\n    #else\n    float oneMinusNoHSquared = 1.0 - NoH * NoH;\n    #endif\n\n    float a = NoH * roughness;\n    float k = roughness / (oneMinusNoHSquared + a * a);\n    float d = k * k * INVERT_PI;\n\n    return saturateMediump(d);\n}\n\nfloat D_GGX_Anisotropic(float NoH, const vec3 h, const vec3 t, const vec3 b, float at, float ab)\n{\n    float ToH = dot(t, h);\n    float BoH = dot(b, h);\n    float a2 = at * ab;\n    highp vec3 v = vec3(ab * ToH, at * BoH, a2 * NoH);\n    highp float v2 = dot(v, v);\n    float w2 = a2 / v2;\n    return a2 * w2 * w2 * INVERT_PI;\n}\n\nfloat V_SmithGGXCorrelated(float roughness, float NoV, float NoL)\n{\n    float a2 = roughness * roughness;\n    float lambdaV = NoL * sqrt((NoV - a2 * NoV) * NoV + a2);\n    float lambdaL = NoV * sqrt((NoL - a2 * NoL) * NoL + a2);\n    float v = 0.5 / (lambdaV + lambdaL);\n\n    return saturateMediump(v);\n}\n\nfloat V_SmithGGXCorrelated_Anisotropic(float at, float ab, float ToV, float BoV, float ToL, float BoL, float NoV, float NoL)\n{\n    float lambdaV = NoL * length(vec3(at * ToV, ab * BoV, NoV));\n    float lambdaL = NoV * length(vec3(at * ToL, ab * BoL, NoL));\n    float v = 0.5 / (lambdaV + lambdaL);\n    return saturateMediump(v);\n}\n\nvec3 F_Schlick(vec3 f0, float f90, float VoH)\n{\n    return f0 + (f90 - f0) * pow5(1.0 - VoH);\n}\n\nvec3 F_Schlick(vec3 f0, float VoH)\n{\n    return f0 + (1.0 - f0) * pow5(1.0 - VoH);\n}\n\nfloat F_Schlick(float f0, float f90, float VoH)\n{\n    return f0 + (f90 - f0) * pow5(1.0 - VoH);\n}\n\n// Specular dispatch\n\n// D\nfloat distribution(float roughness, float NoH, vec3 h, vec3 n)\n{\n    return D_GGX(roughness, NoH, h, n);\n}\n\n// V\nfloat visibility(float roughness, float NoV, float NoL)\n{\n    return V_SmithGGXCorrelated(roughness, NoV, NoL);\n}\n\n// F\nvec3 fresnel(vec3 f0, float LoH)\n{\n    float f90 = saturate(dot(f0, vec3(50.0 * 0.33)));\n    return F_Schlick(f0, f90, LoH);\n\n    // return F_Schlick(f0, LoH);\n}\n\n// diffuse BRDF implementations\n\nfloat Fd_Lambert()\n{\n    // return 1.0 / PI;\n    return 1.0;\n}\n\nfloat Fd_Burley(float roughness, float NoV, float NoL, float LoH)\n{\n    float f90 = 0.5 + 2.0 * roughness * LoH * LoH;\n    float lightScatter = F_Schlick(1.0, f90, NoL);\n    float veiwScatter = F_Schlick(1.0, f90, NoV);\n    return lightScatter * veiwScatter;\n}\n\n// diffuse dispatch \nfloat diffuse()\n{\n    return Fd_Lambert();\n}\n\n#endif // BRDF";
+    var BRDFGLSL = "#if !defined(BRDF)\r\n    #define BRDF\r\n\r\n// Specular implementations\r\nfloat D_GGX(float roughness, float NoH, vec3 h, vec3 n)\r\n{\r\n    // todo 精度\r\n    #if !defined(GL_FRAGMENT_PRECISION_HIGH)\r\n    vec3 NxH = cross(n, h);\r\n    float oneMinusNoHSquared = dot(NxH, NxH);\r\n    #else\r\n    float oneMinusNoHSquared = 1.0 - NoH * NoH;\r\n    #endif\r\n\r\n    float a = NoH * roughness;\r\n    float k = roughness / (oneMinusNoHSquared + a * a);\r\n    float d = k * k * INVERT_PI;\r\n\r\n    return saturateMediump(d);\r\n}\r\n\r\nfloat D_GGX_Anisotropic(float NoH, const vec3 h, const vec3 t, const vec3 b, float at, float ab)\r\n{\r\n    float ToH = dot(t, h);\r\n    float BoH = dot(b, h);\r\n    float a2 = at * ab;\r\n    highp vec3 v = vec3(ab * ToH, at * BoH, a2 * NoH);\r\n    highp float v2 = dot(v, v);\r\n    float w2 = a2 / v2;\r\n    return a2 * w2 * w2 * INVERT_PI;\r\n}\r\n\r\nfloat V_SmithGGXCorrelated(float roughness, float NoV, float NoL)\r\n{\r\n    float a2 = roughness * roughness;\r\n    float lambdaV = NoL * sqrt((NoV - a2 * NoV) * NoV + a2);\r\n    float lambdaL = NoV * sqrt((NoL - a2 * NoL) * NoL + a2);\r\n    float v = 0.5 / (lambdaV + lambdaL);\r\n\r\n    return saturateMediump(v);\r\n}\r\n\r\nfloat V_SmithGGXCorrelated_Anisotropic(float at, float ab, float ToV, float BoV, float ToL, float BoL, float NoV, float NoL)\r\n{\r\n    float lambdaV = NoL * length(vec3(at * ToV, ab * BoV, NoV));\r\n    float lambdaL = NoV * length(vec3(at * ToL, ab * BoL, NoL));\r\n    float v = 0.5 / (lambdaV + lambdaL);\r\n    return saturateMediump(v);\r\n}\r\n\r\nvec3 F_Schlick(vec3 f0, float f90, float VoH)\r\n{\r\n    return f0 + (f90 - f0) * pow5(1.0 - VoH);\r\n}\r\n\r\nvec3 F_Schlick(vec3 f0, float VoH)\r\n{\r\n    return f0 + (1.0 - f0) * pow5(1.0 - VoH);\r\n}\r\n\r\nfloat F_Schlick(float f0, float f90, float VoH)\r\n{\r\n    return f0 + (f90 - f0) * pow5(1.0 - VoH);\r\n}\r\n\r\n// Specular dispatch\r\n\r\n// D\r\nfloat distribution(float roughness, float NoH, vec3 h, vec3 n)\r\n{\r\n    return D_GGX(roughness, NoH, h, n);\r\n}\r\n\r\n// V\r\nfloat visibility(float roughness, float NoV, float NoL)\r\n{\r\n    return V_SmithGGXCorrelated(roughness, NoV, NoL);\r\n}\r\n\r\n// F\r\nvec3 fresnel(vec3 f0, float LoH)\r\n{\r\n    float f90 = saturate(dot(f0, vec3(50.0 * 0.33)));\r\n    return F_Schlick(f0, f90, LoH);\r\n\r\n    // return F_Schlick(f0, LoH);\r\n}\r\n\r\n// diffuse BRDF implementations\r\n\r\nfloat Fd_Lambert()\r\n{\r\n    // return 1.0 / PI;\r\n    return 1.0;\r\n}\r\n\r\nfloat Fd_Burley(float roughness, float NoV, float NoL, float LoH)\r\n{\r\n    float f90 = 0.5 + 2.0 * roughness * LoH * LoH;\r\n    float lightScatter = F_Schlick(1.0, f90, NoL);\r\n    float veiwScatter = F_Schlick(1.0, f90, NoV);\r\n    return lightScatter * veiwScatter;\r\n}\r\n\r\n// diffuse dispatch \r\nfloat diffuse()\r\n{\r\n    return Fd_Lambert();\r\n}\r\n\r\n#endif // BRDF";
 
-    var PBRGIGLSL = "#if !defined(pbrGI_lib)\n    #define pbrGI_lib\n\n    #include \"globalIllumination.glsl\";\n\n    // todo cpu 拼接？\n    #define IBL_ROUGHNESS_LEVEL 4.0\n\nvec2 prefilteredDFG_LUT(float coord, float NoV)\n{\n    return texture2DLodEXT(u_IBLDGF, vec2(NoV, 1.0 - coord), 0.0).rg;\n}\n\nvec2 EnvBRDFApproxLazarov(float roughness, float NoV)\n{\n    vec4 c0 = vec4(-1, -0.0275, -0.572, 0.022);\n    vec4 c1 = vec4(1, 0.0425, 1.04, -0.04);\n    vec4 r = roughness * c0 + c1;\n    float a004 = min(r.x * r.x, exp2(-9.28 * NoV)) * r.x + r.y;\n    vec2 AB = vec2(-1.04, 1.04) * a004 + r.zw;\n    return AB;\n}\n\nvec3 PBRGI(const in Surface surface, const in PixelInfo info)\n{\n    vec3 indirect = vec3(0.0);\n\n    #ifdef LIGHTMAP\n\n\t#ifdef UV1\n    vec2 lightmapUV = info.lightmapUV;\n    vec3 bakedColor = getBakedLightmapColor(lightmapUV);\n    // todo  surface.diffuseColor ？\n    vec3 Fd = bakedColor;\n\t#endif // UV1\n\n    #else // LIGHTMAP\n\n    vec3 n = info.normalWS;\n    vec3 Fd = diffuseIrradiance(n) * surface.diffuseColor * surface.occlusion * u_AmbientIntensity;\n\n    #endif // LIGHTMAP\n\n    // specular\n    float perceptualRoughness = surface.perceptualRoughness;\n    float NoV = info.NoV;\n    vec2 env = EnvBRDFApproxLazarov(perceptualRoughness, NoV);\n    vec3 f0 = surface.f0;\n    // todo f90 用 1.0 近似 f90\n    float f90 = 1.0;\n    vec3 specularColor = f0 * env.x + f90 * env.y;\n\n    vec3 r = getReflectedVector(surface, info);\n\n    #ifdef SPECCUBE_BOX_PROJECTION\n    r = getBoxProjectionReflectedVector(r, info.positionWS, u_SpecCubeProbePosition, u_SpecCubeBoxMin, u_SpecCubeBoxMax);\n    #endif // SPECCUBE_BOX_PROJECTION\n\n    vec3 indirectSpecular = specularIrradiance(r, perceptualRoughness) * u_ReflectionIntensity;\n\n    vec3 Fr = indirectSpecular * specularColor * surface.occlusion;\n\n    indirect = Fd + Fr;\n\n    return indirect;\n}\n\n#endif // pbrGI_lib";
+    var PBRGIGLSL = "#if !defined(pbrGI_lib)\r\n    #define pbrGI_lib\r\n\r\n    #include \"globalIllumination.glsl\";\r\n\r\n    // todo cpu 拼接？\r\n    #define IBL_ROUGHNESS_LEVEL 4.0\r\n\r\nvec2 prefilteredDFG_LUT(float coord, float NoV)\r\n{\r\n    return texture2DLodEXT(u_IBLDGF, vec2(NoV, 1.0 - coord), 0.0).rg;\r\n}\r\n\r\nvec2 EnvBRDFApproxLazarov(float roughness, float NoV)\r\n{\r\n    vec4 c0 = vec4(-1, -0.0275, -0.572, 0.022);\r\n    vec4 c1 = vec4(1, 0.0425, 1.04, -0.04);\r\n    vec4 r = roughness * c0 + c1;\r\n    float a004 = min(r.x * r.x, exp2(-9.28 * NoV)) * r.x + r.y;\r\n    vec2 AB = vec2(-1.04, 1.04) * a004 + r.zw;\r\n    return AB;\r\n}\r\n\r\nvec3 PBRGI(const in Surface surface, const in PixelInfo info)\r\n{\r\n    vec3 indirect = vec3(0.0);\r\n\r\n    #ifdef LIGHTMAP\r\n\r\n\t#ifdef UV1\r\n    vec2 lightmapUV = info.lightmapUV;\r\n    vec3 bakedColor = getBakedLightmapColor(lightmapUV);\r\n    // todo  surface.diffuseColor ？\r\n    vec3 Fd = bakedColor;\r\n\t#endif // UV1\r\n\r\n    #else // LIGHTMAP\r\n\r\n    vec3 n = info.normalWS;\r\n    vec3 Fd = diffuseIrradiance(n) * surface.diffuseColor * surface.occlusion * u_AmbientIntensity;\r\n\r\n    #endif // LIGHTMAP\r\n\r\n    // specular\r\n    float perceptualRoughness = surface.perceptualRoughness;\r\n    float NoV = info.NoV;\r\n    vec2 env = EnvBRDFApproxLazarov(perceptualRoughness, NoV);\r\n    vec3 f0 = surface.f0;\r\n    // todo f90 用 1.0 近似 f90\r\n    float f90 = 1.0;\r\n    vec3 specularColor = f0 * env.x + f90 * env.y;\r\n\r\n    vec3 r = getReflectedVector(surface, info);\r\n\r\n    #ifdef SPECCUBE_BOX_PROJECTION\r\n    r = getBoxProjectionReflectedVector(r, info.positionWS, u_SpecCubeProbePosition, u_SpecCubeBoxMin, u_SpecCubeBoxMax);\r\n    #endif // SPECCUBE_BOX_PROJECTION\r\n\r\n    vec3 indirectSpecular = specularIrradiance(r, perceptualRoughness) * u_ReflectionIntensity;\r\n\r\n    vec3 Fr = indirectSpecular * specularColor * surface.occlusion;\r\n\r\n    indirect = Fd + Fr;\r\n\r\n    return indirect;\r\n}\r\n\r\n#endif // pbrGI_lib";
 
-    var PBRCommonGLSL = "#if !defined(pbrCommon_lib)\n    #define pbrCommon_lib\n\n// varying\nvarying vec3 v_PositionWS;\nvarying vec3 v_NormalWS;\n\n    #ifdef UV\nvarying vec2 v_Texcoord0;\n    #endif // UV\n\n    #ifdef UV1\n\t#ifdef LIGHTMAP\nvarying vec2 v_Texcoord1;\n\t#endif // LIGHTMAP\n    #endif // UV1\n\n    #ifdef NEEDTBN\nvarying vec3 v_TangentWS;\nvarying vec3 v_BiNormalWS;\n    #endif // NEEDTBN\n\n    #ifdef COLOR\nvarying vec4 v_VertexColor;\n    #endif // COLOR\n\n// 记录顶点信息, 用于由vs向fs传递数据\nstruct PixelParams {\n    vec3 positionWS;\n    vec3 normalWS;\n    vec3 normalTS;\n\n    #ifdef UV\n    vec2 uv0;\n    #endif // UV\n\n    #ifdef UV1\n\t#ifdef LIGHTMAP\n    vec2 uv1;\n\t#endif // LIGHTMAP\n    #endif // UV1\n\n    #ifdef NEEDTBN\n    vec3 tangentWS;\n    vec3 biNormalWS;\n    mat3 TBN;\n\t#ifdef ANISOTROPIC\n    float ToV;\n    float BoV;\n\t#endif // ANISOTROPIC\n\n    #endif // NEEDTBN\n\n    #ifdef COLOR\n    vec4 vertexColor;\n    #endif // COLOR\n\n    vec3 viewDir;\n    float NoV;\n};\n\n#endif // pbrCommon_lib";
+    var PBRCommonGLSL = "#if !defined(pbrCommon_lib)\r\n    #define pbrCommon_lib\r\n\r\n// varying\r\nvarying vec3 v_PositionWS;\r\nvarying vec3 v_NormalWS;\r\n\r\n    #ifdef UV\r\nvarying vec2 v_Texcoord0;\r\n    #endif // UV\r\n\r\n    #ifdef UV1\r\n\t#ifdef LIGHTMAP\r\nvarying vec2 v_Texcoord1;\r\n\t#endif // LIGHTMAP\r\n    #endif // UV1\r\n\r\n    #ifdef NEEDTBN\r\nvarying vec3 v_TangentWS;\r\nvarying vec3 v_BiNormalWS;\r\n    #endif // NEEDTBN\r\n\r\n    #ifdef COLOR\r\nvarying vec4 v_VertexColor;\r\n    #endif // COLOR\r\n\r\n// 记录顶点信息, 用于由vs向fs传递数据\r\nstruct PixelParams {\r\n    vec3 positionWS;\r\n    vec3 normalWS;\r\n    vec3 normalTS;\r\n\r\n    #ifdef UV\r\n    vec2 uv0;\r\n    #endif // UV\r\n\r\n    #ifdef UV1\r\n\t#ifdef LIGHTMAP\r\n    vec2 uv1;\r\n\t#endif // LIGHTMAP\r\n    #endif // UV1\r\n\r\n    #ifdef NEEDTBN\r\n    vec3 tangentWS;\r\n    vec3 biNormalWS;\r\n    mat3 TBN;\r\n\t#ifdef ANISOTROPIC\r\n    float ToV;\r\n    float BoV;\r\n\t#endif // ANISOTROPIC\r\n\r\n    #endif // NEEDTBN\r\n\r\n    #ifdef COLOR\r\n    vec4 vertexColor;\r\n    #endif // COLOR\r\n\r\n    vec3 viewDir;\r\n    float NoV;\r\n};\r\n\r\n#endif // pbrCommon_lib";
 
-    var PBRVertexGLSL = "#if !defined(pbrVertex_lib)\n    #define pbrVertex_lib\n\n    #include \"PBRCommon.glsl\";\n\nvoid initPixelParams(inout PixelParams params, in Vertex vertex)\n{\n    mat4 worldMat = getWorldMatrix();\n    params.positionWS = (worldMat * vec4(vertex.positionOS, 1.0)).xyz;\n    v_PositionWS = params.positionWS;\n\n    params.normalWS = normalize((worldMat * vec4(vertex.normalOS, 0.0)).xyz);\n    v_NormalWS = params.normalWS;\n\n    #ifdef NEEDTBN\n\t#ifdef TANGENT\n    params.tangentWS = normalize((worldMat * vec4(a_Tangent0.xyz, 0.0)).xyz);\n    params.biNormalWS = normalize(cross(params.normalWS, params.tangentWS) * sign(a_Tangent0.w));\n\t#else // TANGENT\n    params.tangentWS = normalize((worldMat * vec4(1.0, 0.0, 0.0, 0.0)).xyz);\n    params.biNormalWS = normalize(cross(params.normalWS, params.tangentWS));\n\t#endif // TANGENT\n    v_TangentWS = params.tangentWS;\n    v_BiNormalWS = params.biNormalWS;\n    #endif // NEEDTBN\n\n    #ifdef UV\n    params.uv0 = transformUV(vertex.texCoord0, u_TilingOffset);\n    v_Texcoord0 = params.uv0;\n    #endif // UV\n\n    #ifdef UV1\n\t#ifdef LIGHTMAP\n    params.uv1 = tranformLightMapUV(vertex.texCoord1, u_LightmapScaleOffset);\n    v_Texcoord1 = params.uv1;\n\t#endif LIGHTMAP\n    #endif // UV1\n\n    #ifdef COLOR\n    params.vertexColor = a_Color;\n    v_VertexColor = params.vertexColor;\n    #endif // COLOR\n}\n\n#endif // pbrVertex_lib";
+    var PBRVertexGLSL = "#if !defined(pbrVertex_lib)\r\n    #define pbrVertex_lib\r\n\r\n    #include \"PBRCommon.glsl\";\r\n\r\nvoid initPixelParams(inout PixelParams params, in Vertex vertex)\r\n{\r\n    mat4 worldMat = getWorldMatrix();\r\n    params.positionWS = (worldMat * vec4(vertex.positionOS, 1.0)).xyz;\r\n    v_PositionWS = params.positionWS;\r\n\r\n    params.normalWS = normalize((worldMat * vec4(vertex.normalOS, 0.0)).xyz);\r\n    v_NormalWS = params.normalWS;\r\n\r\n    #ifdef NEEDTBN\r\n\t#ifdef TANGENT\r\n    params.tangentWS = normalize((worldMat * vec4(a_Tangent0.xyz, 0.0)).xyz);\r\n    params.biNormalWS = normalize(cross(params.normalWS, params.tangentWS) * sign(a_Tangent0.w));\r\n\t#else // TANGENT\r\n    params.tangentWS = normalize((worldMat * vec4(1.0, 0.0, 0.0, 0.0)).xyz);\r\n    params.biNormalWS = normalize(cross(params.normalWS, params.tangentWS));\r\n\t#endif // TANGENT\r\n    v_TangentWS = params.tangentWS;\r\n    v_BiNormalWS = params.biNormalWS;\r\n    #endif // NEEDTBN\r\n\r\n    #ifdef UV\r\n    params.uv0 = transformUV(vertex.texCoord0, u_TilingOffset);\r\n    v_Texcoord0 = params.uv0;\r\n    #endif // UV\r\n\r\n    #ifdef UV1\r\n\t#ifdef LIGHTMAP\r\n    params.uv1 = tranformLightMapUV(vertex.texCoord1, u_LightmapScaleOffset);\r\n    v_Texcoord1 = params.uv1;\r\n\t#endif LIGHTMAP\r\n    #endif // UV1\r\n\r\n    #ifdef COLOR\r\n    params.vertexColor = a_Color;\r\n    v_VertexColor = params.vertexColor;\r\n    #endif // COLOR\r\n}\r\n\r\n#endif // pbrVertex_lib";
 
-    var PBRFragGLSL = "#if !defined(pbrFrag_lib)\n    #define pbrFrag_lib\n\n    #include \"PBRLighting.glsl\";\n\n    #include \"PBRCommon.glsl\";\n\nvoid getPixelParams(inout PixelParams params)\n{\n    params.positionWS = v_PositionWS;\n    params.normalWS = normalize(v_NormalWS);\n    params.normalTS = vec3(0.0,0.0,1.0);\n    #ifdef UV\n    params.uv0 = v_Texcoord0;\n    #endif // UV\n\n    #ifdef UV1\n\t#ifdef LIGHTMAP\n    params.uv1 = v_Texcoord1;\n\t#endif // LIGHTMAP\n    #endif // UV1\n\n    #ifdef COLOR\n    params.vertexColor = v_VertexColor;\n    #endif // COLOR\n\n    params.viewDir = normalize(u_CameraPos - params.positionWS);\n    // todo NoV varying ?\n    params.NoV = max(abs(dot(params.normalWS, params.viewDir)), MIN_N_DOT_V);\n\n    #ifdef NEEDTBN\n    params.tangentWS = normalize(v_TangentWS);\n    params.biNormalWS = normalize(v_BiNormalWS);\n    mat3 TBN = mat3(params.tangentWS, params.biNormalWS, params.normalWS);\n    params.TBN = TBN;\n    \n\t#ifdef NORMALTEXTURE\n    vec3 normalSampler = texture2D(u_NormalTexture, params.uv0).rgb;\n    normalSampler = normalize(normalSampler * 2.0 - 1.0);\n    normalSampler.y *= -1.0;\n    params.normalTS = normalSampler;\n    params.normalWS = normalize(TBN * normalSampler);\n\t// params.normalWS = normalize(TBN * normalSampler);\n\t#endif // NORMALTEXTURE\n\n\t#ifdef TANGENTTEXTURE\n    vec3 tangentSampler = texture2D(u_TangentTexture, params.uv0).rgb;\n    tangentSampler = normalize(tangentSampler * 2.0 - 1.0);\n    params.tangentWS = normalize(TBN * tangentSampler);\n    params.biNormalWS = normalize(cross(params.normalWS, params.tangentWS));\n\t#endif // TANGENTTEXTURE\n\n\t#ifdef ANISOTROPIC\n    params.ToV = dot(params.tangentWS, params.viewDir);\n    params.BoV = dot(params.biNormalWS, params.viewDir);\n\t#endif // ANISOTROPIC\n\n    #endif // NEEDTBN\n}\n\nvoid getPixelInfo(inout PixelInfo info, const in PixelParams pixel)\n{\n    info.positionWS = pixel.positionWS;\n    info.normalWS = pixel.normalWS;\n    info.viewDir = pixel.viewDir;\n    info.NoV = pixel.NoV;\n\n    #ifdef LIGHTMAP\n\t#ifdef UV1\n    info.lightmapUV = pixel.uv1;\n\t#endif // UV1\n    #endif // LIGHTMAP\n\n    #ifdef NEEDTBN\n    info.tangentWS = pixel.tangentWS;\n    info.biNormalWS = pixel.biNormalWS;\n\n\t#ifdef ANISOTROPIC\n    info.ToV = pixel.ToV;\n    info.BoV = pixel.BoV;\n\t#endif // ANISOTROPIC\n\n    #endif // NEEDTBN\n}\n\nvec3 PBRLighting(const in Surface surface, const in PixelParams pixel)\n{\n\n    PixelInfo info;\n    getPixelInfo(info, pixel);\n\n    vec3 lightColor = vec3(0.0);\n    #ifdef DIRECTIONLIGHT\n    for (int i = 0; i < CalculateLightCount; i++)\n\t{\n\t    if (i >= DirectionCount)\n\t\tbreak;\n\t    DirectionLight directionLight = getDirectionLight(i, pixel.positionWS);\n        if (directionLight.lightMode == LightMode_Mix)\n\t\t{\n\t\t    continue;\n\t\t}\n\t    Light light = getLight(directionLight);\n\t    lightColor += PBRLighting(surface, info, light) * light.attenuation;\n\t}\n    #endif // DIRECTIONLIGHT\n\n    #if defined(POINTLIGHT) || defined(SPOTLIGHT)\n    ivec4 clusterInfo = getClusterInfo(u_View, u_Viewport, pixel.positionWS, gl_FragCoord, u_ProjectionParams);\n    #endif // POINTLIGHT || SPOTLIGHT\n\n    #ifdef POINTLIGHT\n    for (int i = 0; i < CalculateLightCount; i++)\n\t{\n\t    if (i >= clusterInfo.x)\n\t\tbreak;\n\t    PointLight pointLight = getPointLight(i, clusterInfo, pixel.positionWS);\n        if (pointLight.lightMode == LightMode_Mix)\n\t\t{\n\t\t    continue;\n\t\t}\n\t    Light light = getLight(pointLight, pixel.normalWS, pixel.positionWS);\n\t    lightColor += PBRLighting(surface, info, light) * light.attenuation;\n\t}\n    #endif // POINTLIGHT\n\n    #ifdef SPOTLIGHT\n    for (int i = 0; i < CalculateLightCount; i++)\n\t{\n\t    if (i >= clusterInfo.y)\n\t\tbreak;\n\t    SpotLight spotLight = getSpotLight(i, clusterInfo, pixel.positionWS);\n        if (spotLight.lightMode == LightMode_Mix)\n\t\t{\n\t\t    continue;\n\t\t}\n\t    Light light = getLight(spotLight, pixel.normalWS, pixel.positionWS);\n\t    lightColor += PBRLighting(surface, info, light) * light.attenuation;\n\t}\n    #endif // SPOTLIGHT\n\n    vec3 giColor = PBRGI(surface, info);\n\n\n    return lightColor + giColor;\n}\n\n#endif // pbrFrag_lib";
+    var PBRFragGLSL = "#if !defined(pbrFrag_lib)\r\n    #define pbrFrag_lib\r\n\r\n    #include \"PBRLighting.glsl\";\r\n\r\n    #include \"PBRCommon.glsl\";\r\n\r\nvoid getPixelParams(inout PixelParams params)\r\n{\r\n    params.positionWS = v_PositionWS;\r\n    params.normalWS = normalize(v_NormalWS);\r\n    params.normalTS = vec3(0.0,0.0,1.0);\r\n    #ifdef UV\r\n    params.uv0 = v_Texcoord0;\r\n    #endif // UV\r\n\r\n    #ifdef UV1\r\n\t#ifdef LIGHTMAP\r\n    params.uv1 = v_Texcoord1;\r\n\t#endif // LIGHTMAP\r\n    #endif // UV1\r\n\r\n    #ifdef COLOR\r\n    params.vertexColor = v_VertexColor;\r\n    #endif // COLOR\r\n\r\n    params.viewDir = normalize(u_CameraPos - params.positionWS);\r\n    // todo NoV varying ?\r\n    params.NoV = max(abs(dot(params.normalWS, params.viewDir)), MIN_N_DOT_V);\r\n\r\n    #ifdef NEEDTBN\r\n    params.tangentWS = normalize(v_TangentWS);\r\n    params.biNormalWS = normalize(v_BiNormalWS);\r\n    mat3 TBN = mat3(params.tangentWS, params.biNormalWS, params.normalWS);\r\n    params.TBN = TBN;\r\n    \r\n\t#ifdef NORMALTEXTURE\r\n    vec3 normalSampler = texture2D(u_NormalTexture, params.uv0).rgb;\r\n    normalSampler = normalize(normalSampler * 2.0 - 1.0);\r\n    normalSampler.y *= -1.0;\r\n    params.normalTS = normalSampler;\r\n    params.normalWS = normalize(TBN * normalSampler);\r\n\t// params.normalWS = normalize(TBN * normalSampler);\r\n\t#endif // NORMALTEXTURE\r\n\r\n\t#ifdef TANGENTTEXTURE\r\n    vec3 tangentSampler = texture2D(u_TangentTexture, params.uv0).rgb;\r\n    tangentSampler = normalize(tangentSampler * 2.0 - 1.0);\r\n    params.tangentWS = normalize(TBN * tangentSampler);\r\n    params.biNormalWS = normalize(cross(params.normalWS, params.tangentWS));\r\n\t#endif // TANGENTTEXTURE\r\n\r\n\t#ifdef ANISOTROPIC\r\n    params.ToV = dot(params.tangentWS, params.viewDir);\r\n    params.BoV = dot(params.biNormalWS, params.viewDir);\r\n\t#endif // ANISOTROPIC\r\n\r\n    #endif // NEEDTBN\r\n}\r\n\r\nvoid getPixelInfo(inout PixelInfo info, const in PixelParams pixel)\r\n{\r\n    info.positionWS = pixel.positionWS;\r\n    info.normalWS = pixel.normalWS;\r\n    info.viewDir = pixel.viewDir;\r\n    info.NoV = pixel.NoV;\r\n\r\n    #ifdef LIGHTMAP\r\n\t#ifdef UV1\r\n    info.lightmapUV = pixel.uv1;\r\n\t#endif // UV1\r\n    #endif // LIGHTMAP\r\n\r\n    #ifdef NEEDTBN\r\n    info.tangentWS = pixel.tangentWS;\r\n    info.biNormalWS = pixel.biNormalWS;\r\n\r\n\t#ifdef ANISOTROPIC\r\n    info.ToV = pixel.ToV;\r\n    info.BoV = pixel.BoV;\r\n\t#endif // ANISOTROPIC\r\n\r\n    #endif // NEEDTBN\r\n}\r\n\r\nvec3 PBRLighting(const in Surface surface, const in PixelParams pixel)\r\n{\r\n\r\n    PixelInfo info;\r\n    getPixelInfo(info, pixel);\r\n\r\n    vec3 lightColor = vec3(0.0);\r\n    #ifdef DIRECTIONLIGHT\r\n    for (int i = 0; i < CalculateLightCount; i++)\r\n\t{\r\n\t    if (i >= DirectionCount)\r\n\t\tbreak;\r\n\t    DirectionLight directionLight = getDirectionLight(i, pixel.positionWS);\r\n        if (directionLight.lightMode == LightMode_Mix)\r\n\t\t{\r\n\t\t    continue;\r\n\t\t}\r\n\t    Light light = getLight(directionLight);\r\n\t    lightColor += PBRLighting(surface, info, light) * light.attenuation;\r\n\t}\r\n    #endif // DIRECTIONLIGHT\r\n\r\n    #if defined(POINTLIGHT) || defined(SPOTLIGHT)\r\n    ivec4 clusterInfo = getClusterInfo(u_View, u_Viewport, pixel.positionWS, gl_FragCoord, u_ProjectionParams);\r\n    #endif // POINTLIGHT || SPOTLIGHT\r\n\r\n    #ifdef POINTLIGHT\r\n    for (int i = 0; i < CalculateLightCount; i++)\r\n\t{\r\n\t    if (i >= clusterInfo.x)\r\n\t\tbreak;\r\n\t    PointLight pointLight = getPointLight(i, clusterInfo, pixel.positionWS);\r\n        if (pointLight.lightMode == LightMode_Mix)\r\n\t\t{\r\n\t\t    continue;\r\n\t\t}\r\n\t    Light light = getLight(pointLight, pixel.normalWS, pixel.positionWS);\r\n\t    lightColor += PBRLighting(surface, info, light) * light.attenuation;\r\n\t}\r\n    #endif // POINTLIGHT\r\n\r\n    #ifdef SPOTLIGHT\r\n    for (int i = 0; i < CalculateLightCount; i++)\r\n\t{\r\n\t    if (i >= clusterInfo.y)\r\n\t\tbreak;\r\n\t    SpotLight spotLight = getSpotLight(i, clusterInfo, pixel.positionWS);\r\n        if (spotLight.lightMode == LightMode_Mix)\r\n\t\t{\r\n\t\t    continue;\r\n\t\t}\r\n\t    Light light = getLight(spotLight, pixel.normalWS, pixel.positionWS);\r\n\t    lightColor += PBRLighting(surface, info, light) * light.attenuation;\r\n\t}\r\n    #endif // SPOTLIGHT\r\n\r\n    vec3 giColor = PBRGI(surface, info);\r\n\r\n\r\n    return lightColor + giColor;\r\n}\r\n\r\n#endif // pbrFrag_lib";
 
-    var PBRMetallicGLSL = "#include \"PBRFrag.glsl\";\n\nstruct SurfaceInputs {\n    vec3 diffuseColor;\n    float alpha;\n    float alphaTest;\n    float metallic;\n    float smoothness;\n    float occlusion;\n    vec3 emissionColor;\n    float anisotropy;\n};\n\nvoid initSurface(inout Surface surface, const in SurfaceInputs inputs)\n{\n    surface.alpha = inputs.alpha;\n\n    vec3 baseColor = inputs.diffuseColor;\n    float metallic = inputs.metallic;\n    float perceptualRoughness = 1.0 - inputs.smoothness;\n    float reflectance = 0.5;\n\n    surface.diffuseColor = (1.0 - metallic) * baseColor;\n    surface.perceptualRoughness = clamp(perceptualRoughness, MIN_PERCEPTUAL_ROUGHNESS, 1.0);\n    surface.roughness = surface.perceptualRoughness * surface.perceptualRoughness;\n    surface.f0 = baseColor * metallic + (0.16 * reflectance * reflectance * (1.0 - metallic));\n\n    surface.occlusion = inputs.occlusion;\n#ifdef ANISOTROPIC\n    surface.anisotropy = inputs.anisotropy;\n#endif // ANISOTROPIC\n}\n\nvec4 PBR_Metallic_Flow(const in SurfaceInputs inputs, in PixelParams pixel)\n{\n#ifdef ALPHATEST\n    if (inputs.alpha < inputs.alphaTest)\n\t{\n\t    discard;\n\t}\n#endif // ALPHATEST\n\n    Surface surface;\n    initSurface(surface, inputs);\n\n    vec3 surfaceColor = vec3(0.0);\n\n    surfaceColor += PBRLighting(surface, pixel);\n\n// todo emission calculate\n#ifdef EMISSION\n    surfaceColor += inputs.emissionColor;\n#endif // EMISSION\n\n    return vec4(surfaceColor, surface.alpha);\n}\n";
+    var PBRMetallicGLSL = "#include \"PBRFrag.glsl\";\r\n\r\nstruct SurfaceInputs {\r\n    vec3 diffuseColor;\r\n    float alpha;\r\n    float alphaTest;\r\n    float metallic;\r\n    float smoothness;\r\n    float occlusion;\r\n    vec3 emissionColor;\r\n    float anisotropy;\r\n};\r\n\r\nvoid initSurface(inout Surface surface, const in SurfaceInputs inputs)\r\n{\r\n    surface.alpha = inputs.alpha;\r\n\r\n    vec3 baseColor = inputs.diffuseColor;\r\n    float metallic = inputs.metallic;\r\n    float perceptualRoughness = 1.0 - inputs.smoothness;\r\n    float reflectance = 0.5;\r\n\r\n    surface.diffuseColor = (1.0 - metallic) * baseColor;\r\n    surface.perceptualRoughness = clamp(perceptualRoughness, MIN_PERCEPTUAL_ROUGHNESS, 1.0);\r\n    surface.roughness = surface.perceptualRoughness * surface.perceptualRoughness;\r\n    surface.f0 = baseColor * metallic + (0.16 * reflectance * reflectance * (1.0 - metallic));\r\n\r\n    surface.occlusion = inputs.occlusion;\r\n#ifdef ANISOTROPIC\r\n    surface.anisotropy = inputs.anisotropy;\r\n#endif // ANISOTROPIC\r\n}\r\n\r\nvec4 PBR_Metallic_Flow(const in SurfaceInputs inputs, in PixelParams pixel)\r\n{\r\n#ifdef ALPHATEST\r\n    if (inputs.alpha < inputs.alphaTest)\r\n\t{\r\n\t    discard;\r\n\t}\r\n#endif // ALPHATEST\r\n\r\n    Surface surface;\r\n    initSurface(surface, inputs);\r\n\r\n    vec3 surfaceColor = vec3(0.0);\r\n\r\n    surfaceColor += PBRLighting(surface, pixel);\r\n\r\n// todo emission calculate\r\n#ifdef EMISSION\r\n    surfaceColor += inputs.emissionColor;\r\n#endif // EMISSION\r\n\r\n    return vec4(surfaceColor, surface.alpha);\r\n}\r\n";
 
     const defaultdfg = "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";
     class PBRDefaultDFG {
@@ -31884,9 +31955,9 @@
         }
     }
 
-    var PBRStandardVS = "#define SHADER_NAME PBRStandardVS\n\n#include \"Scene.glsl\";\n#include \"Camera.glsl\";\n#include \"Sprite3DVertex.glsl\";\n\n#include \"VertexCommon.glsl\";\n\n#include \"PBRVertex.glsl\";\n\n#if defined(DETAILTEXTURE)||defined(DETAILNORMAL)\n    varying vec2 v_DetailUV;\n#endif\n\nvoid main()\n{\n    Vertex vertex;\n    getVertexParams(vertex);\n\n    PixelParams pixel;\n    initPixelParams(pixel, vertex);\n\n    #if defined(DETAILTEXTURE)||defined(DETAILNORMAL)\n        #ifdef UV\n            v_DetailUV = transformUV(vertex.texCoord0, u_DetailTillingOffset);\n        #else // UV\n            v_DetailUV = vec2(0.0);\n        #endif\n    #endif\n\n\n    gl_Position = getPositionCS(pixel.positionWS);\n\n    gl_Position = remapPositionZ(gl_Position);\n}";
+    var PBRStandardVS = "#define SHADER_NAME PBRStandardVS\r\n\r\n#include \"Scene.glsl\";\r\n#include \"Camera.glsl\";\r\n#include \"Sprite3DVertex.glsl\";\r\n\r\n#include \"VertexCommon.glsl\";\r\n\r\n#include \"PBRVertex.glsl\";\r\n#include \"SceneFogInput.glsl\"\r\n\r\n#if defined(DETAILTEXTURE)||defined(DETAILNORMAL)\r\n    varying vec2 v_DetailUV;\r\n#endif\r\n\r\nvoid main()\r\n{\r\n    Vertex vertex;\r\n    getVertexParams(vertex);\r\n\r\n    PixelParams pixel;\r\n    initPixelParams(pixel, vertex);\r\n\r\n    #if defined(DETAILTEXTURE)||defined(DETAILNORMAL)\r\n        #ifdef UV\r\n            v_DetailUV = transformUV(vertex.texCoord0, u_DetailTillingOffset);\r\n        #else // UV\r\n            v_DetailUV = vec2(0.0);\r\n        #endif\r\n    #endif\r\n\r\n\r\n    gl_Position = getPositionCS(pixel.positionWS);\r\n\r\n    gl_Position = remapPositionZ(gl_Position);\r\n    \r\n    #ifdef FOG\r\n        FogHandle(gl_Position.z);\r\n    #endif\r\n}";
 
-    var PBRStandardFS = "#define SHADER_NAME PBRStandardFS\n\n#include \"Color.glsl\";\n\n#include \"Scene.glsl\";\n#include \"Camera.glsl\";\n#include \"Sprite3DFrag.glsl\";\n\n#include \"PBRMetallicFrag.glsl\"\n\n#if defined(DETAILTEXTURE)|| defined(DETAILNORMAL)\n    varying vec2 v_DetailUV;\n    #define ColorSpaceDouble vec3(4.59479380, 4.59479380, 4.59479380);\n    vec3 BlendNormals(vec3 n1, vec3 n2)\n    {\n        return normalize(vec3(n1.xy + n2.xy, n1.z*n2.z));\n    }\n    \n#endif\n\n#if defined(DETAILNORMAL)||defined(NORMALTEXTURE)\n    vec3 normalScale(vec3 normal,float scale){\n        normal.xy *= scale;    \n        normal.z = sqrt(1.0 - clamp(dot(normal.xy, normal.xy),0.0,1.0));\n        return normal;\n    }\n#endif\n\nvoid initSurfaceInputs(inout SurfaceInputs inputs,inout PixelParams pixel)\n{\n\n#ifdef UV\n    vec2 uv = pixel.uv0;\n#else // UV\n    vec2 uv = vec2(0.0);\n#endif // UV\n    inputs.diffuseColor = u_AlbedoColor.rgb;\n    inputs.alpha = u_AlbedoColor.a;\n\n#ifdef COLOR\n    #ifdef ENABLEVERTEXCOLOR\n    inputs.diffuseColor *= pixel.vertexColor.xyz;\n    inputs.alpha *= pixel.vertexColor.a;\n    #endif // ENABLEVERTEXCOLOR\n#endif // COLOR\n\n    inputs.alphaTest = u_AlphaTestValue;\n\n#ifdef ALBEDOTEXTURE\n    vec4 albedoSampler = texture2D(u_AlbedoTexture, uv);\n    #ifdef Gamma_u_AlbedoTexture\n    albedoSampler = gammaToLinear(albedoSampler);\n    #endif // Gamma_u_AlbedoTexture\n    inputs.diffuseColor *= albedoSampler.rgb;\n    inputs.alpha *= albedoSampler.a;\n#endif // ALBEDOTEXTURE\n\n//Detail Albedo\n#ifdef DETAILTEXTURE\n    vec3 detailSampler = texture2D(u_DetailAlbedoTexture,v_DetailUV).rgb;\n    #ifdef Gamma_u_DetailAlbedoTexture\n        detailSampler = gammaToLinear(detailSampler);\n    #endif // Gamma_u_DetailAlbedoTexture\n        detailSampler *= ColorSpaceDouble;\n        inputs.diffuseColor *=detailSampler;\n#endif\n\n#ifdef NORMALTEXTURE\n    vec3 normalTS = pixel.normalTS;\n    pixel.normalTS =normalScale(normalTS,u_NormalScale) ;\n    pixel.normalWS = normalize(pixel.TBN * pixel.normalTS);\n#endif\n\n#ifdef DETAILNORMAL\n    vec3 detailnormalSampler = texture2D(u_DetailNormalTexture, v_DetailUV).rgb;\n    detailnormalSampler = normalize(detailnormalSampler * 2.0 - 1.0);\n    detailnormalSampler.y *= -1.0;\n    detailnormalSampler = normalScale(detailnormalSampler,u_DetailNormalScale);\n    pixel.normalTS = BlendNormals(pixel.normalTS,detailnormalSampler);\n    pixel.normalWS = normalize(pixel.TBN * pixel.normalTS);\n#endif\n\n    inputs.metallic = u_Metallic;\n    inputs.smoothness = u_Smoothness;\n\n#ifdef SMOOTHNESSSOURCE_ALBEDOTEXTURE_ALPHA\n    inputs.smoothness = u_SmoothnessScale;\n    #ifdef ALBEDOTEXTURE\n    inputs.smoothness *= albedoSampler.a;\n    #endif // ALBEDOTEXTURE\n#endif // SMOOTHNESSSOURCE_ALBEDOTEXTURE_ALPHA\n\n#ifdef METALLICGLOSSTEXTURE\n\n    vec4 metallicSampler = texture2D(u_MetallicGlossTexture, uv);\n    #ifdef Gamma_u_MetallicGlossTexture\n    metallicSampler = gammaToLinear(metallicSampler);\n    #endif // Gamma_u_MetallicGlossTexture\n\n    inputs.metallic = metallicSampler.x;\n    inputs.smoothness = metallicSampler.w * u_SmoothnessScale;\n\n    #ifdef SMOOTHNESSSOURCE_ALBEDOTEXTURE_ALPHA\n    inputs.smoothness = u_SmoothnessScale;\n\t#ifdef ALBEDOTEXTURE\n    inputs.smoothness *= albedoSampler.a;\n\t#endif // ALBEDOTEXTURE\n    #endif // SMOOTHNESSSOURCE_ALBEDOTEXTURE_ALPHA\n\n#endif // METALLICGLOSSTEXTURE\n\n    inputs.occlusion = 1.0;\n#ifdef OCCLUSIONTEXTURE\n    vec4 occlusionSampler = texture2D(u_OcclusionTexture, uv);\n    #ifdef Gamma_u_OcclusionTexture\n    occlusionSampler = gammaToLinear(occlusionSampler);\n    #endif // Gamma_u_OcclusionTexture\n\n    float occlusion = occlusionSampler.g;\n    inputs.occlusion = (1.0 - u_OcclusionStrength) + occlusion * u_OcclusionStrength;\n#endif // OCCLUSIONTEXTURE\n\n#ifdef EMISSION\n    inputs.emissionColor = u_EmissionColor.rgb * u_EmissionIntensity;\n    #ifdef EMISSIONTEXTURE\n    vec4 emissionSampler = texture2D(u_EmissionTexture, uv);\n\t#ifdef Gamma_u_EmissionTexture\n    emissionSampler = gammaToLinear(emissionSampler);\n\t#endif // Gamma_u_EmissionTexture\n    inputs.emissionColor *= emissionSampler.rgb;\n    #endif // EMISSIONTEXTURE\n#endif // EMISSION\n\n#ifdef ANISOTROPIC\n    inputs.anisotropy = u_Anisotropy;\n#endif // ANISOTROPIC\n}\n\nvoid main()\n{\n    PixelParams pixel;\n    getPixelParams(pixel);\n\n    SurfaceInputs inputs;\n    initSurfaceInputs(inputs, pixel);\n\n    vec4 surfaceColor = PBR_Metallic_Flow(inputs, pixel);\n    gl_FragColor = surfaceColor;\n}";
+    var PBRStandardFS = "#define SHADER_NAME PBRStandardFS\r\n\r\n#include \"Color.glsl\";\r\n\r\n#include \"Scene.glsl\";\r\n#include \"Camera.glsl\";\r\n#include \"Sprite3DFrag.glsl\";\r\n#include \"SceneFog.glsl\";\r\n#include \"PBRMetallicFrag.glsl\"\r\n\r\n#if defined(DETAILTEXTURE)|| defined(DETAILNORMAL)\r\n    varying vec2 v_DetailUV;\r\n    #define ColorSpaceDouble vec3(4.59479380, 4.59479380, 4.59479380);\r\n    vec3 BlendNormals(vec3 n1, vec3 n2)\r\n    {\r\n        return normalize(vec3(n1.xy + n2.xy, n1.z*n2.z));\r\n    }\r\n    \r\n#endif\r\n\r\n#if defined(DETAILNORMAL)||defined(NORMALTEXTURE)\r\n    vec3 normalScale(vec3 normal,float scale){\r\n        normal.xy *= scale;    \r\n        normal.z = sqrt(1.0 - clamp(dot(normal.xy, normal.xy),0.0,1.0));\r\n        return normal;\r\n    }\r\n#endif\r\n\r\nvoid initSurfaceInputs(inout SurfaceInputs inputs,inout PixelParams pixel)\r\n{\r\n\r\n#ifdef UV\r\n    vec2 uv = pixel.uv0;\r\n#else // UV\r\n    vec2 uv = vec2(0.0);\r\n#endif // UV\r\n    inputs.diffuseColor = u_AlbedoColor.rgb;\r\n    inputs.alpha = u_AlbedoColor.a;\r\n\r\n#ifdef COLOR\r\n    #ifdef ENABLEVERTEXCOLOR\r\n    inputs.diffuseColor *= pixel.vertexColor.xyz;\r\n    inputs.alpha *= pixel.vertexColor.a;\r\n    #endif // ENABLEVERTEXCOLOR\r\n#endif // COLOR\r\n\r\n    inputs.alphaTest = u_AlphaTestValue;\r\n\r\n#ifdef ALBEDOTEXTURE\r\n    vec4 albedoSampler = texture2D(u_AlbedoTexture, uv);\r\n    #ifdef Gamma_u_AlbedoTexture\r\n    albedoSampler = gammaToLinear(albedoSampler);\r\n    #endif // Gamma_u_AlbedoTexture\r\n    inputs.diffuseColor *= albedoSampler.rgb;\r\n    inputs.alpha *= albedoSampler.a;\r\n#endif // ALBEDOTEXTURE\r\n\r\n//Detail Albedo\r\n#ifdef DETAILTEXTURE\r\n    vec3 detailSampler = texture2D(u_DetailAlbedoTexture,v_DetailUV).rgb;\r\n    #ifdef Gamma_u_DetailAlbedoTexture\r\n        detailSampler = gammaToLinear(detailSampler);\r\n    #endif // Gamma_u_DetailAlbedoTexture\r\n        detailSampler *= ColorSpaceDouble;\r\n        inputs.diffuseColor *=detailSampler;\r\n#endif\r\n\r\n#ifdef NORMALTEXTURE\r\n    vec3 normalTS = pixel.normalTS;\r\n    pixel.normalTS =normalScale(normalTS,u_NormalScale) ;\r\n    pixel.normalWS = normalize(pixel.TBN * pixel.normalTS);\r\n#endif\r\n\r\n#ifdef DETAILNORMAL\r\n    vec3 detailnormalSampler = texture2D(u_DetailNormalTexture, v_DetailUV).rgb;\r\n    detailnormalSampler = normalize(detailnormalSampler * 2.0 - 1.0);\r\n    detailnormalSampler.y *= -1.0;\r\n    detailnormalSampler = normalScale(detailnormalSampler,u_DetailNormalScale);\r\n    pixel.normalTS = BlendNormals(pixel.normalTS,detailnormalSampler);\r\n    pixel.normalWS = normalize(pixel.TBN * pixel.normalTS);\r\n#endif\r\n\r\n    inputs.metallic = u_Metallic;\r\n    inputs.smoothness = u_Smoothness;\r\n\r\n#ifdef SMOOTHNESSSOURCE_ALBEDOTEXTURE_ALPHA\r\n    inputs.smoothness = u_SmoothnessScale;\r\n    #ifdef ALBEDOTEXTURE\r\n    inputs.smoothness *= albedoSampler.a;\r\n    #endif // ALBEDOTEXTURE\r\n#endif // SMOOTHNESSSOURCE_ALBEDOTEXTURE_ALPHA\r\n\r\n#ifdef METALLICGLOSSTEXTURE\r\n\r\n    vec4 metallicSampler = texture2D(u_MetallicGlossTexture, uv);\r\n    #ifdef Gamma_u_MetallicGlossTexture\r\n    metallicSampler = gammaToLinear(metallicSampler);\r\n    #endif // Gamma_u_MetallicGlossTexture\r\n\r\n    inputs.metallic = metallicSampler.x;\r\n    inputs.smoothness = metallicSampler.w * u_SmoothnessScale;\r\n\r\n    #ifdef SMOOTHNESSSOURCE_ALBEDOTEXTURE_ALPHA\r\n    inputs.smoothness = u_SmoothnessScale;\r\n\t#ifdef ALBEDOTEXTURE\r\n    inputs.smoothness *= albedoSampler.a;\r\n\t#endif // ALBEDOTEXTURE\r\n    #endif // SMOOTHNESSSOURCE_ALBEDOTEXTURE_ALPHA\r\n\r\n#endif // METALLICGLOSSTEXTURE\r\n\r\n    inputs.occlusion = 1.0;\r\n#ifdef OCCLUSIONTEXTURE\r\n    vec4 occlusionSampler = texture2D(u_OcclusionTexture, uv);\r\n    #ifdef Gamma_u_OcclusionTexture\r\n    occlusionSampler = gammaToLinear(occlusionSampler);\r\n    #endif // Gamma_u_OcclusionTexture\r\n\r\n    float occlusion = occlusionSampler.g;\r\n    inputs.occlusion = (1.0 - u_OcclusionStrength) + occlusion * u_OcclusionStrength;\r\n#endif // OCCLUSIONTEXTURE\r\n\r\n#ifdef EMISSION\r\n    inputs.emissionColor = u_EmissionColor.rgb * u_EmissionIntensity;\r\n    #ifdef EMISSIONTEXTURE\r\n    vec4 emissionSampler = texture2D(u_EmissionTexture, uv);\r\n\t#ifdef Gamma_u_EmissionTexture\r\n    emissionSampler = gammaToLinear(emissionSampler);\r\n\t#endif // Gamma_u_EmissionTexture\r\n    inputs.emissionColor *= emissionSampler.rgb;\r\n    #endif // EMISSIONTEXTURE\r\n#endif // EMISSION\r\n\r\n#ifdef ANISOTROPIC\r\n    inputs.anisotropy = u_Anisotropy;\r\n#endif // ANISOTROPIC\r\n}\r\n\r\nvoid main()\r\n{\r\n    PixelParams pixel;\r\n    getPixelParams(pixel);\r\n\r\n    SurfaceInputs inputs;\r\n    initSurfaceInputs(inputs, pixel);\r\n\r\n    vec4 surfaceColor = PBR_Metallic_Flow(inputs, pixel);\r\n    \r\n    #ifdef FOG\r\n        surfaceColor.rgb = sceneLitFog(surfaceColor.rgb);\r\n    #endif // FOG\r\n    gl_FragColor = surfaceColor;\r\n\r\n}";
 
     class PBRStandardShaderInit {
         static init() {
@@ -31936,9 +32007,9 @@
         }
     }
 
-    var SkyboxVS = "#define SHADER_NAME SkyBoxVS\n\n#include \"Camera.glsl\";\n\nconst float c_deg2ang = 3.141593 / 180.0;\n\nvec4 rotateAroundYInDegrees(vec4 vertex, float deg)\n{\n    float angle = deg * c_deg2ang;\n    float sina = sin(angle);\n    float cosa = cos(angle);\n    mat2 m = mat2(cosa, -sina, sina, cosa);\n    return vec4(m * vertex.xz, vertex.yw).xzyw;\n}\n\nvec4 remapSkyPositionZ(in vec4 position)\n{\n    position.z = position.w;\n    return position;\n}\n\nvarying vec3 v_Texcoord;\n\nvoid main()\n{\n    // todo 这个转换 ？\n    v_Texcoord = vec3(-a_Position.x, a_Position.yz); //转换坐标系\n\n    vec4 position = rotateAroundYInDegrees(a_Position, u_Rotation);\n    // gl_Position = getPositionCS(position.xyz);\n\n    gl_Position = u_ViewProjection * position;\n\n    gl_Position = remapSkyPositionZ(gl_Position);\n}";
+    var SkyboxVS = "#define SHADER_NAME SkyBoxVS\r\n\r\n#include \"Camera.glsl\";\r\n\r\nconst float c_deg2ang = 3.141593 / 180.0;\r\n\r\nvec4 rotateAroundYInDegrees(vec4 vertex, float deg)\r\n{\r\n    float angle = deg * c_deg2ang;\r\n    float sina = sin(angle);\r\n    float cosa = cos(angle);\r\n    mat2 m = mat2(cosa, -sina, sina, cosa);\r\n    return vec4(m * vertex.xz, vertex.yw).xzyw;\r\n}\r\n\r\nvec4 remapSkyPositionZ(in vec4 position)\r\n{\r\n    position.z = position.w;\r\n    return position;\r\n}\r\n\r\nvarying vec3 v_Texcoord;\r\n\r\nvoid main()\r\n{\r\n    // todo 这个转换 ？\r\n    v_Texcoord = vec3(-a_Position.x, a_Position.yz); //转换坐标系\r\n\r\n    vec4 position = rotateAroundYInDegrees(a_Position, u_Rotation);\r\n    // gl_Position = getPositionCS(position.xyz);\r\n\r\n    gl_Position = u_ViewProjection * position;\r\n\r\n    gl_Position = remapSkyPositionZ(gl_Position);\r\n}";
 
-    var SkyboxFS = "#define SHADER_NAME SkyBoxFS\n\n#include \"Color.glsl\";\n\nvarying vec3 v_Texcoord;\n\nconst vec4 c_ColorSpace = vec4(4.59479380, 4.59479380, 4.59479380, 2.0);\n\nvoid main()\n{\n    vec3 uv = v_Texcoord;\n    vec4 cubeSampler = textureCube(u_CubeTexture, uv);\n#ifdef Gamma_u_CubeTexture\n    cubeSampler = gammaToLinear(cubeSampler);\n#endif // Gamma_u_CubeTexture\n\n    vec3 color = cubeSampler.rgb * u_TintColor.rgb * u_Exposure * c_ColorSpace.rgb;\n\n    gl_FragColor = vec4(color, 1.0);\n}";
+    var SkyboxFS = "#define SHADER_NAME SkyBoxFS\r\n\r\n#include \"Color.glsl\";\r\n\r\nvarying vec3 v_Texcoord;\r\n\r\nconst vec4 c_ColorSpace = vec4(4.59479380, 4.59479380, 4.59479380, 2.0);\r\n\r\nvoid main()\r\n{\r\n    vec3 uv = v_Texcoord;\r\n    vec4 cubeSampler = textureCube(u_CubeTexture, uv);\r\n#ifdef Gamma_u_CubeTexture\r\n    cubeSampler = gammaToLinear(cubeSampler);\r\n#endif // Gamma_u_CubeTexture\r\n\r\n    vec3 color = cubeSampler.rgb * u_TintColor.rgb * u_Exposure * c_ColorSpace.rgb;\r\n\r\n    gl_FragColor = vec4(color, 1.0);\r\n}";
 
     class SkyBoxShaderInit {
         static init() {
@@ -31965,13 +32036,13 @@
         }
     }
 
-    var ShurikenVS = "#define SHADER_NAME ParticleVS\n\n#include \"Camera.glsl\";\n#include \"particleShuriKenSpriteVS.glsl\";\n#include \"Math.glsl\";\n#include \"MathGradient.glsl\";\n#include \"Color.glsl\";\n\n#ifdef RENDERMODE_MESH\nvarying vec4 v_MeshColor;\n#endif\n\nvarying vec4 v_Color;\nvarying vec2 v_TextureCoordinate;\n\n//修改这里剔除没有用到的光照函数，增加粒子的编译速度\nvec2 TransformUV(vec2 texcoord, vec4 tilingOffset)\n{\n    vec2 transTexcoord = vec2(texcoord.x, texcoord.y - 1.0) * tilingOffset.xy + vec2(tilingOffset.z, -tilingOffset.w);\n    transTexcoord.y += 1.0;\n    return transTexcoord;\n}\n\n#if defined(VELOCITYOVERLIFETIMECONSTANT) || defined(VELOCITYOVERLIFETIMECURVE) || defined(VELOCITYOVERLIFETIMERANDOMCONSTANT) || defined(VELOCITYOVERLIFETIMERANDOMCURVE)\nvec3 computeParticleLifeVelocity(in float normalizedAge)\n{\n    vec3 outLifeVelocity;\n    #ifdef VELOCITYOVERLIFETIMECONSTANT\n    outLifeVelocity = u_VOLVelocityConst;\n    #endif\n    #ifdef VELOCITYOVERLIFETIMECURVE\n    outLifeVelocity = vec3(getCurValueFromGradientFloat(u_VOLVelocityGradientX, normalizedAge),\n\tgetCurValueFromGradientFloat(u_VOLVelocityGradientY, normalizedAge),\n\tgetCurValueFromGradientFloat(u_VOLVelocityGradientZ, normalizedAge));\n    #endif\n    #ifdef VELOCITYOVERLIFETIMERANDOMCONSTANT\n    outLifeVelocity = mix(u_VOLVelocityConst,\n\tu_VOLVelocityConstMax,\n\tvec3(a_Random1.y, a_Random1.z, a_Random1.w));\n    #endif\n    #ifdef VELOCITYOVERLIFETIMERANDOMCURVE\n    outLifeVelocity = vec3(\n\tmix(getCurValueFromGradientFloat(u_VOLVelocityGradientX, normalizedAge),\n\t    getCurValueFromGradientFloat(u_VOLVelocityGradientMaxX, normalizedAge),\n\t    a_Random1.y),\n\tmix(getCurValueFromGradientFloat(u_VOLVelocityGradientY, normalizedAge),\n\t    getCurValueFromGradientFloat(u_VOLVelocityGradientMaxY, normalizedAge),\n\t    a_Random1.z),\n\tmix(getCurValueFromGradientFloat(u_VOLVelocityGradientZ, normalizedAge),\n\t    getCurValueFromGradientFloat(u_VOLVelocityGradientMaxZ, normalizedAge),\n\t    a_Random1.w));\n    #endif\n\n    return outLifeVelocity;\n}\n#endif\n\n// drag\nvec3 getStartPosition(vec3 startVelocity, float age, vec3 dragData)\n{\n    vec3 startPosition;\n    float lasttime = min(startVelocity.x / dragData.x, age);\n    startPosition = lasttime * (startVelocity - 0.5 * dragData * lasttime);\n    return startPosition;\n}\n\nvec3 computeParticlePosition(in vec3 startVelocity, in vec3 lifeVelocity, in float age, in float normalizedAge, vec3 gravityVelocity, vec4 worldRotation, vec3 dragData)\n{\n    vec3 startPosition = getStartPosition(startVelocity, age, dragData);\n    vec3 lifePosition;\n#if defined(VELOCITYOVERLIFETIMECONSTANT) || defined(VELOCITYOVERLIFETIMECURVE) || defined(VELOCITYOVERLIFETIMERANDOMCONSTANT) || defined(VELOCITYOVERLIFETIMERANDOMCURVE)\n    #ifdef VELOCITYOVERLIFETIMECONSTANT\n    // startPosition = startVelocity * age;\n    lifePosition = lifeVelocity * age;\n    #endif\n    #ifdef VELOCITYOVERLIFETIMECURVE\n    // startPosition = startVelocity * age;\n    lifePosition = vec3(getTotalValueFromGradientFloat(u_VOLVelocityGradientX, normalizedAge),\n\tgetTotalValueFromGradientFloat(u_VOLVelocityGradientY, normalizedAge),\n\tgetTotalValueFromGradientFloat(u_VOLVelocityGradientZ, normalizedAge));\n    #endif\n    #ifdef VELOCITYOVERLIFETIMERANDOMCONSTANT\n    // startPosition = startVelocity * age;\n    lifePosition = lifeVelocity * age;\n    #endif\n    #ifdef VELOCITYOVERLIFETIMERANDOMCURVE\n    // startPosition = startVelocity * age;\n    lifePosition = vec3(\n\tmix(\n\t    getTotalValueFromGradientFloat(u_VOLVelocityGradientX, normalizedAge),\n\t    getTotalValueFromGradientFloat(u_VOLVelocityGradientMaxX, normalizedAge),\n\t    a_Random1.y),\n\tmix(\n\t    getTotalValueFromGradientFloat(u_VOLVelocityGradientY, normalizedAge),\n\t    getTotalValueFromGradientFloat(u_VOLVelocityGradientMaxY, normalizedAge),\n\t    a_Random1.z),\n\tmix(\n\t    getTotalValueFromGradientFloat(u_VOLVelocityGradientZ, normalizedAge),\n\t    getTotalValueFromGradientFloat(u_VOLVelocityGradientMaxZ, normalizedAge),\n\t    a_Random1.w));\n    #endif\n\n    vec3 finalPosition;\n    if (u_VOLSpaceType == 0)\n\t{\n\t    if (u_ScalingMode != 2)\n\t\tfinalPosition = rotationByQuaternions(\n\t\t    u_PositionScale * (a_ShapePositionStartLifeTime.xyz + startPosition + lifePosition),\n\t\t    worldRotation);\n\t    else\n\t\tfinalPosition = rotationByQuaternions(\n\t\t    u_PositionScale * a_ShapePositionStartLifeTime.xyz + startPosition + lifePosition,\n\t\t    worldRotation);\n\t}\n    else\n\t{\n\t    if (u_ScalingMode != 2)\n\t\tfinalPosition = rotationByQuaternions(\n\t\t\t\t    u_PositionScale * (a_ShapePositionStartLifeTime.xyz + startPosition),\n\t\t\t\t    worldRotation)\n\t\t    + lifePosition;\n\t    else\n\t\tfinalPosition = rotationByQuaternions(\n\t\t\t\t    u_PositionScale * a_ShapePositionStartLifeTime.xyz + startPosition,\n\t\t\t\t    worldRotation)\n\t\t    + lifePosition;\n\t}\n#else\n    // startPosition = startVelocity * age;\n    vec3 finalPosition;\n    if (u_ScalingMode != 2)\n\tfinalPosition = rotationByQuaternions(\n\t    u_PositionScale * (a_ShapePositionStartLifeTime.xyz + startPosition),\n\t    worldRotation);\n    else\n\tfinalPosition = rotationByQuaternions(\n\t    u_PositionScale * a_ShapePositionStartLifeTime.xyz + startPosition,\n\t    worldRotation);\n#endif\n\n    if (u_SimulationSpace == 0)\n\tfinalPosition = finalPosition + a_SimulationWorldPostion;\n    else if (u_SimulationSpace == 1)\n\tfinalPosition = finalPosition + u_WorldPosition;\n\n    finalPosition += 0.5 * gravityVelocity * age;\n\n    return finalPosition;\n}\n\nvec4 computeParticleColor(in vec4 color, in float normalizedAge)\n{\n#ifdef COLOROVERLIFETIME\n    color *= getColorFromGradient(u_ColorOverLifeGradientAlphas,\n\tu_ColorOverLifeGradientColors,\n\tnormalizedAge, u_ColorOverLifeGradientRanges);\n#endif\n\n#ifdef RANDOMCOLOROVERLIFETIME\n    color *= mix(getColorFromGradient(u_ColorOverLifeGradientAlphas,\n\t\t     u_ColorOverLifeGradientColors,\n\t\t     normalizedAge, u_ColorOverLifeGradientRanges),\n\tgetColorFromGradient(u_MaxColorOverLifeGradientAlphas,\n\t    u_MaxColorOverLifeGradientColors,\n\t    normalizedAge, u_MaxColorOverLifeGradientRanges),\n\ta_Random0.y);\n#endif\n\n    return color;\n}\n\nvec2 computeParticleSizeBillbard(in vec2 size, in float normalizedAge)\n{\n#ifdef SIZEOVERLIFETIMECURVE\n    size *= getCurValueFromGradientFloat(u_SOLSizeGradient, normalizedAge);\n#endif\n#ifdef SIZEOVERLIFETIMERANDOMCURVES\n    size *= mix(getCurValueFromGradientFloat(u_SOLSizeGradient, normalizedAge),\n\tgetCurValueFromGradientFloat(u_SOLSizeGradientMax, normalizedAge),\n\ta_Random0.z);\n#endif\n#ifdef SIZEOVERLIFETIMECURVESEPERATE\n    size *= vec2(getCurValueFromGradientFloat(u_SOLSizeGradientX, normalizedAge),\n\tgetCurValueFromGradientFloat(u_SOLSizeGradientY, normalizedAge));\n#endif\n#ifdef SIZEOVERLIFETIMERANDOMCURVESSEPERATE\n    size *= vec2(mix(getCurValueFromGradientFloat(u_SOLSizeGradientX, normalizedAge),\n\t\t     getCurValueFromGradientFloat(u_SOLSizeGradientMaxX, normalizedAge),\n\t\t     a_Random0.z),\n\tmix(getCurValueFromGradientFloat(u_SOLSizeGradientY, normalizedAge),\n\t    getCurValueFromGradientFloat(u_SOLSizeGradientMaxY, normalizedAge),\n\t    a_Random0.z));\n#endif\n    return size;\n}\n\n#ifdef RENDERMODE_MESH\nvec3 computeParticleSizeMesh(in vec3 size, in float normalizedAge)\n{\n    #ifdef SIZEOVERLIFETIMECURVE\n    size *= getCurValueFromGradientFloat(u_SOLSizeGradient, normalizedAge);\n    #endif\n    #ifdef SIZEOVERLIFETIMERANDOMCURVES\n    size *= mix(getCurValueFromGradientFloat(u_SOLSizeGradient, normalizedAge),\n\tgetCurValueFromGradientFloat(u_SOLSizeGradientMax, normalizedAge),\n\ta_Random0.z);\n    #endif\n    #ifdef SIZEOVERLIFETIMECURVESEPERATE\n    size *= vec3(getCurValueFromGradientFloat(u_SOLSizeGradientX, normalizedAge),\n\tgetCurValueFromGradientFloat(u_SOLSizeGradientY, normalizedAge),\n\tgetCurValueFromGradientFloat(u_SOLSizeGradientZ, normalizedAge));\n    #endif\n    #ifdef SIZEOVERLIFETIMERANDOMCURVESSEPERATE\n    size *= vec3(mix(getCurValueFromGradientFloat(u_SOLSizeGradientX, normalizedAge),\n\t\t     getCurValueFromGradientFloat(u_SOLSizeGradientMaxX, normalizedAge),\n\t\t     a_Random0.z),\n\tmix(getCurValueFromGradientFloat(u_SOLSizeGradientY, normalizedAge),\n\t    getCurValueFromGradientFloat(u_SOLSizeGradientMaxY, normalizedAge),\n\t    a_Random0.z),\n\tmix(getCurValueFromGradientFloat(u_SOLSizeGradientZ, normalizedAge),\n\t    getCurValueFromGradientFloat(u_SOLSizeGradientMaxZ, normalizedAge),\n\t    a_Random0.z));\n    #endif\n    return size;\n}\n#endif\n\nfloat computeParticleRotationFloat(in float rotation,\n    in float age,\n    in float normalizedAge)\n{\n#ifdef ROTATIONOVERLIFETIME\n    #ifdef ROTATIONOVERLIFETIMECONSTANT\n    float ageRot = u_ROLAngularVelocityConst * age;\n    rotation += ageRot;\n    #endif\n    #ifdef ROTATIONOVERLIFETIMECURVE\n    rotation += getTotalValueFromGradientFloat(u_ROLAngularVelocityGradient, normalizedAge);\n    #endif\n    #ifdef ROTATIONOVERLIFETIMERANDOMCONSTANTS\n    float ageRot = mix(u_ROLAngularVelocityConst, u_ROLAngularVelocityConstMax, a_Random0.w) * age;\n    rotation += ageRot;\n    #endif\n    #ifdef ROTATIONOVERLIFETIMERANDOMCURVES\n    rotation += mix(\n\tgetTotalValueFromGradientFloat(u_ROLAngularVelocityGradient, normalizedAge),\n\tgetTotalValueFromGradientFloat(u_ROLAngularVelocityGradientMax,\n\t    normalizedAge),\n\ta_Random0.w);\n    #endif\n#endif\n#ifdef ROTATIONOVERLIFETIMESEPERATE\n    #ifdef ROTATIONOVERLIFETIMECONSTANT\n    float ageRot = u_ROLAngularVelocityConstSeprarate.z * age;\n    rotation += ageRot;\n    #endif\n    #ifdef ROTATIONOVERLIFETIMECURVE\n    rotation += getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientZ,\n\tnormalizedAge);\n    #endif\n    #ifdef ROTATIONOVERLIFETIMERANDOMCONSTANTS\n    float ageRot = mix(u_ROLAngularVelocityConstSeprarate.z,\n\t\t       u_ROLAngularVelocityConstMaxSeprarate.z,\n\t\t       a_Random0.w)\n\t* age;\n    rotation += ageRot;\n    #endif\n    #ifdef ROTATIONOVERLIFETIMERANDOMCURVES\n    rotation += mix(getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientZ,\n\t\t\tnormalizedAge),\n\tgetTotalValueFromGradientFloat(\n\t    u_ROLAngularVelocityGradientMaxZ, normalizedAge),\n\ta_Random0.w);\n    #endif\n#endif\n    return rotation;\n}\n\n#if defined(RENDERMODE_MESH) && (defined(ROTATIONOVERLIFETIME) || defined(ROTATIONOVERLIFETIMESEPERATE))\nvec3 computeParticleRotationVec3(in vec3 rotation,\n    in float age,\n    in float normalizedAge)\n{\n    #ifdef ROTATIONOVERLIFETIME\n\t#ifdef ROTATIONOVERLIFETIMECONSTANT\n    float ageRot = u_ROLAngularVelocityConst * age;\n    rotation += ageRot;\n\t#endif\n\t#ifdef ROTATIONOVERLIFETIMECURVE\n    rotation += getTotalValueFromGradientFloat(u_ROLAngularVelocityGradient, normalizedAge);\n\t#endif\n\t#ifdef ROTATIONOVERLIFETIMERANDOMCONSTANTS\n    float ageRot = mix(u_ROLAngularVelocityConst, u_ROLAngularVelocityConstMax, a_Random0.w) * age;\n    rotation += ageRot;\n\t#endif\n\t#ifdef ROTATIONOVERLIFETIMERANDOMCURVES\n    rotation += mix(\n\tgetTotalValueFromGradientFloat(u_ROLAngularVelocityGradient, normalizedAge),\n\tgetTotalValueFromGradientFloat(u_ROLAngularVelocityGradientMax,\n\t    normalizedAge),\n\ta_Random0.w);\n\t#endif\n    #endif\n    #ifdef ROTATIONOVERLIFETIMESEPERATE\n\t#ifdef ROTATIONOVERLIFETIMECONSTANT\n    vec3 ageRot = u_ROLAngularVelocityConstSeprarate * age;\n    rotation += ageRot;\n\t#endif\n\t#ifdef ROTATIONOVERLIFETIMECURVE\n    rotation += vec3(getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientX,\n\t\t\t normalizedAge),\n\tgetTotalValueFromGradientFloat(u_ROLAngularVelocityGradientY,\n\t    normalizedAge),\n\tgetTotalValueFromGradientFloat(u_ROLAngularVelocityGradientZ,\n\t    normalizedAge));\n\t#endif\n\t#ifdef ROTATIONOVERLIFETIMERANDOMCONSTANTS\n    vec3 ageRot = mix(u_ROLAngularVelocityConstSeprarate,\n\t\t      u_ROLAngularVelocityConstMaxSeprarate,\n\t\t      a_Random0.w)\n\t* age;\n    rotation += ageRot;\n\t#endif\n\t#ifdef ROTATIONOVERLIFETIMERANDOMCURVES\n    rotation += vec3(mix(getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientX,\n\t\t\t     normalizedAge),\n\t\t\t getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientMaxX,\n\t\t\t     normalizedAge),\n\t\t\t a_Random0.w),\n\tmix(getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientY,\n\t\tnormalizedAge),\n\t    getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientMaxY,\n\t\tnormalizedAge),\n\t    a_Random0.w),\n\tmix(getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientZ,\n\t\tnormalizedAge),\n\t    getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientMaxZ,\n\t\tnormalizedAge),\n\t    a_Random0.w));\n\t#endif\n    #endif\n    return rotation;\n}\n#endif\n\nvec2 computeParticleUV(in vec2 uv, in float normalizedAge)\n{\n#ifdef TEXTURESHEETANIMATIONCURVE\n    float cycleNormalizedAge = normalizedAge * u_TSACycles;\n    float frame = getFrameFromGradient(\n\tu_TSAGradientUVs, cycleNormalizedAge - floor(cycleNormalizedAge));\n    float totalULength = frame * u_TSASubUVLength.x;\n    float floorTotalULength = floor(totalULength);\n    uv.x += totalULength - floorTotalULength;\n    uv.y += floorTotalULength * u_TSASubUVLength.y;\n#endif\n#ifdef TEXTURESHEETANIMATIONRANDOMCURVE\n    float cycleNormalizedAge = normalizedAge * u_TSACycles;\n    float uvNormalizedAge = cycleNormalizedAge - floor(cycleNormalizedAge);\n    float frame = floor(mix(getFrameFromGradient(u_TSAGradientUVs, uvNormalizedAge),\n\tgetFrameFromGradient(u_TSAMaxGradientUVs, uvNormalizedAge),\n\ta_Random1.x));\n    float totalULength = frame * u_TSASubUVLength.x;\n    float floorTotalULength = floor(totalULength);\n    uv.x += totalULength - floorTotalULength;\n    uv.y += floorTotalULength * u_TSASubUVLength.y;\n#endif\n    return uv;\n}\n\nvoid main()\n{\n    float age = u_CurrentTime - a_DirectionTime.w;\n    float normalizedAge = age / a_ShapePositionStartLifeTime.w;\n    vec3 lifeVelocity;\n    if (normalizedAge < 1.0)\n\t{\n\t    vec3 startVelocity = a_DirectionTime.xyz * a_StartSpeed;\n#if defined(VELOCITYOVERLIFETIMECONSTANT) || defined(VELOCITYOVERLIFETIMECURVE) || defined(VELOCITYOVERLIFETIMERANDOMCONSTANT) || defined(VELOCITYOVERLIFETIMERANDOMCURVE)\n\t    lifeVelocity = computeParticleLifeVelocity(normalizedAge); //计算粒子生命周期速度\n#endif\n\t    vec3 gravityVelocity = u_Gravity * age;\n\n\t    vec4 worldRotation;\n\t    if (u_SimulationSpace == 0)\n\t\tworldRotation = a_SimulationWorldRotation;\n\t    else\n\t\tworldRotation = u_WorldRotation;\n\n\t    // drag\n\t    vec3 dragData = a_DirectionTime.xyz * mix(u_DragConstanct.x, u_DragConstanct.y, a_Random0.x);\n\t    vec3 center = computeParticlePosition(startVelocity, lifeVelocity, age, normalizedAge, gravityVelocity, worldRotation, dragData); //计算粒子位置\n\n#ifdef SPHERHBILLBOARD\n\t    vec2 corner = a_CornerTextureCoordinate.xy; // Billboard模式z轴无效\n\t    vec3 cameraUpVector = normalize(u_CameraUp); // TODO:是否外面归一化\n\t    vec3 sideVector = normalize(cross(u_CameraDirection, cameraUpVector));\n\t    vec3 upVector = normalize(cross(sideVector, u_CameraDirection));\n\t    corner *= computeParticleSizeBillbard(a_StartSize.xy, normalizedAge);\n    #if defined(ROTATIONOVERLIFETIME) || defined(ROTATIONOVERLIFETIMESEPERATE)\n\t    if (u_ThreeDStartRotation)\n\t\t{\n\t\t    vec3 rotation = vec3(\n\t\t\ta_StartRotation0.xy,\n\t\t\tcomputeParticleRotationFloat(a_StartRotation0.z, age, normalizedAge));\n\t\t    center += u_SizeScale.xzy * rotationByEuler(corner.x * sideVector + corner.y * upVector, rotation);\n\t\t}\n\t    else\n\t\t{\n\t\t    float rot = computeParticleRotationFloat(a_StartRotation0.x, age, normalizedAge);\n\t\t    float c = cos(rot);\n\t\t    float s = sin(rot);\n\t\t    mat2 rotation = mat2(c, -s, s, c);\n\t\t    corner = rotation * corner;\n\t\t    center += u_SizeScale.xzy * (corner.x * sideVector + corner.y * upVector);\n\t\t}\n    #else\n\t    if (u_ThreeDStartRotation)\n\t\t{\n\t\t    center += u_SizeScale.xzy * rotationByEuler(corner.x * sideVector + corner.y * upVector, a_StartRotation0);\n\t\t}\n\t    else\n\t\t{\n\t\t    float c = cos(a_StartRotation0.x);\n\t\t    float s = sin(a_StartRotation0.x);\n\t\t    mat2 rotation = mat2(c, -s, s, c);\n\t\t    corner = rotation * corner;\n\t\t    center += u_SizeScale.xzy * (corner.x * sideVector + corner.y * upVector);\n\t\t}\n    #endif\n#endif\n\n#ifdef STRETCHEDBILLBOARD\n\t    vec2 corner = a_CornerTextureCoordinate.xy; // Billboard模式z轴无效\n\t    vec3 velocity;\n    #if defined(VELOCITYOVERLIFETIMECONSTANT) || defined(VELOCITYOVERLIFETIMECURVE) || defined(VELOCITYOVERLIFETIMERANDOMCONSTANT) || defined(VELOCITYOVERLIFETIMERANDOMCURVE)\n\t    if (u_VOLSpaceType == 0)\n\t\tvelocity = rotationByQuaternions(u_SizeScale * (startVelocity + lifeVelocity),\n\t\t\t       worldRotation)\n\t\t    + gravityVelocity;\n\t    else\n\t\tvelocity = rotationByQuaternions(u_SizeScale * startVelocity, worldRotation) + lifeVelocity + gravityVelocity;\n    #else\n\t    velocity = rotationByQuaternions(u_SizeScale * startVelocity, worldRotation) + gravityVelocity;\n    #endif\n\t    vec3 cameraUpVector = normalize(velocity);\n\t    vec3 direction = normalize(center - u_CameraPos);\n\t    vec3 sideVector = normalize(cross(direction, normalize(velocity)));\n\n\t    sideVector = u_SizeScale.xzy * sideVector;\n\t    cameraUpVector = length(vec3(u_SizeScale.x, 0.0, 0.0)) * cameraUpVector;\n\n\t    vec2 size = computeParticleSizeBillbard(a_StartSize.xy, normalizedAge);\n\n\t    const mat2 rotaionZHalfPI = mat2(0.0, -1.0, 1.0, 0.0);\n\t    corner = rotaionZHalfPI * corner;\n\t    corner.y = corner.y - abs(corner.y);\n\n\t    float speed = length(velocity); // TODO:\n\t    center += sign(u_SizeScale.x) * (sign(u_StretchedBillboardLengthScale) * size.x * corner.x * sideVector + (speed * u_StretchedBillboardSpeedScale + size.y * u_StretchedBillboardLengthScale) * corner.y * cameraUpVector);\n#endif\n\n#ifdef HORIZONTALBILLBOARD\n\t    vec2 corner = a_CornerTextureCoordinate.xy; // Billboard模式z轴无效\n\t    const vec3 cameraUpVector = vec3(0.0, 0.0, 1.0);\n\t    const vec3 sideVector = vec3(-1.0, 0.0, 0.0);\n\n\t    float rot = computeParticleRotationFloat(a_StartRotation0.x, age, normalizedAge);\n\t    float c = cos(rot);\n\t    float s = sin(rot);\n\t    mat2 rotation = mat2(c, -s, s, c);\n\t    corner = rotation * corner * cos(0.78539816339744830961566084581988); // TODO:临时缩小cos45,不确定U3D原因\n\t    corner *= computeParticleSizeBillbard(a_StartSize.xy, normalizedAge);\n\t    center += u_SizeScale.xzy * (corner.x * sideVector + corner.y * cameraUpVector);\n#endif\n\n#ifdef VERTICALBILLBOARD\n\t    vec2 corner = a_CornerTextureCoordinate.xy; // Billboard模式z轴无效\n\t    const vec3 cameraUpVector = vec3(0.0, 1.0, 0.0);\n\t    vec3 sideVector = normalize(cross(u_CameraDirection, cameraUpVector));\n\n\t    float rot = computeParticleRotationFloat(a_StartRotation0.x, age, normalizedAge);\n\t    float c = cos(rot);\n\t    float s = sin(rot);\n\t    mat2 rotation = mat2(c, -s, s, c);\n\t    corner = rotation * corner * cos(0.78539816339744830961566084581988); // TODO:临时缩小cos45,不确定U3D原因\n\t    corner *= computeParticleSizeBillbard(a_StartSize.xy, normalizedAge);\n\t    center += u_SizeScale.xzy * (corner.x * sideVector + corner.y * cameraUpVector);\n#endif\n\n#ifdef RENDERMODE_MESH\n\t    vec3 size = computeParticleSizeMesh(a_StartSize, normalizedAge);\n    #if defined(ROTATIONOVERLIFETIME) || defined(ROTATIONOVERLIFETIMESEPERATE)\n\t    if (u_ThreeDStartRotation)\n\t\t{\n\t\t    vec3 rotation = vec3(\n\t\t\ta_StartRotation0.xy,\n\t\t\tcomputeParticleRotationFloat(a_StartRotation0.z, age, normalizedAge));\n\t\t    center += rotationByQuaternions(\n\t\t\tu_SizeScale * rotationByEuler(a_MeshPosition * size, rotation),\n\t\t\tworldRotation);\n\t\t}\n\t    else\n\t\t{\n\t#ifdef ROTATIONOVERLIFETIME\n\t\t    float angle = computeParticleRotationFloat(a_StartRotation0.x, age, normalizedAge);\n\t\t    if (a_ShapePositionStartLifeTime.x != 0.0 || a_ShapePositionStartLifeTime.y != 0.0)\n\t\t\t{\n\t\t\t    center += (rotationByQuaternions(\n\t\t\t\trotationByAxis(\n\t\t\t\t    u_SizeScale * a_MeshPosition * size,\n\t\t\t\t    normalize(cross(vec3(0.0, 0.0, 1.0),\n\t\t\t\t\tvec3(a_ShapePositionStartLifeTime.xy, 0.0))),\n\t\t\t\t    angle),\n\t\t\t\tworldRotation)); //已验证\n\t\t\t}\n\t\t    else\n\t\t\t{\n\t    #ifdef SHAPE\n\t\t\t    center += u_SizeScale.xzy * (rotationByQuaternions(rotationByAxis(a_MeshPosition * size, vec3(0.0, -1.0, 0.0), angle), worldRotation));\n\t    #else\n\t\t\t    if (u_SimulationSpace == 0)\n\t\t\t\tcenter += rotationByAxis(u_SizeScale * a_MeshPosition * size,\n\t\t\t\t    vec3(0.0, 0.0, -1.0),\n\t\t\t\t    angle); //已验证\n\t\t\t    else if (u_SimulationSpace == 1)\n\t\t\t\tcenter += rotationByQuaternions(\n\t\t\t\t    u_SizeScale * rotationByAxis(a_MeshPosition * size, vec3(0.0, 0.0, -1.0), angle),\n\t\t\t\t    worldRotation); //已验证\n\t    #endif\n\t\t\t}\n\t#endif\n\t#ifdef ROTATIONOVERLIFETIMESEPERATE\n\t\t    // TODO:是否应合并if(u_ThreeDStartRotation)分支代码,待测试\n\t\t    vec3 angle = computeParticleRotationVec3(\n\t\t\tvec3(0.0, 0.0, -a_StartRotation0.x), age, normalizedAge);\n\t\t    center += (rotationByQuaternions(\n\t\t\trotationByEuler(u_SizeScale * a_MeshPosition * size,\n\t\t\t    vec3(angle.x, angle.y, angle.z)),\n\t\t\tworldRotation)); //已验证\n\t#endif\n\t\t}\n    #else\n\t    if (u_ThreeDStartRotation)\n\t\t{\n\t\t    center += rotationByQuaternions(\n\t\t\tu_SizeScale * rotationByEuler(a_MeshPosition * size, a_StartRotation0),\n\t\t\tworldRotation); //已验证\n\t\t}\n\t    else\n\t\t{\n\t\t    if (a_ShapePositionStartLifeTime.x != 0.0 || a_ShapePositionStartLifeTime.y != 0.0)\n\t\t\t{\n\t\t\t    if (u_SimulationSpace == 0)\n\t\t\t\tcenter += rotationByAxis(\n\t\t\t\t    u_SizeScale * a_MeshPosition * size,\n\t\t\t\t    normalize(cross(vec3(0.0, 0.0, 1.0),\n\t\t\t\t\tvec3(a_ShapePositionStartLifeTime.xy, 0.0))),\n\t\t\t\t    a_StartRotation0.x);\n\t\t\t    else if (u_SimulationSpace == 1)\n\t\t\t\tcenter += (rotationByQuaternions(\n\t\t\t\t    u_SizeScale * rotationByAxis(a_MeshPosition * size, normalize(cross(vec3(0.0, 0.0, 1.0), vec3(a_ShapePositionStartLifeTime.xy, 0.0))), a_StartRotation0.x),\n\t\t\t\t    worldRotation)); //已验证\n\t\t\t}\n\t\t    else\n\t\t\t{\n\t#ifdef SHAPE\n\t\t\t    if (u_SimulationSpace == 0)\n\t\t\t\tcenter += u_SizeScale * rotationByAxis(a_MeshPosition * size, vec3(0.0, -1.0, 0.0), a_StartRotation0.x);\n\t\t\t    else if (u_SimulationSpace == 1)\n\t\t\t\tcenter += rotationByQuaternions(\n\t\t\t\t    u_SizeScale * rotationByAxis(a_MeshPosition * size, vec3(0.0, -1.0, 0.0), a_StartRotation0.x),\n\t\t\t\t    worldRotation);\n\t#else\n\t\t\t    if (u_SimulationSpace == 0)\n\t\t\t\tcenter += rotationByAxis(u_SizeScale * a_MeshPosition * size,\n\t\t\t\t    vec3(0.0, 0.0, -1.0),\n\t\t\t\t    a_StartRotation0.x);\n\t\t\t    else if (u_SimulationSpace == 1)\n\t\t\t\tcenter += rotationByQuaternions(\n\t\t\t\t    u_SizeScale * rotationByAxis(a_MeshPosition * size, vec3(0.0, 0.0, -1.0), a_StartRotation0.x),\n\t\t\t\t    worldRotation); //已验证\n\t#endif\n\t\t\t}\n\t\t}\n    #endif\n\t    v_MeshColor = a_MeshColor;\n#endif\n\t    gl_Position = u_Projection * u_View * vec4(center, 1.0);\n\t\tvec4 startcolor = gammaToLinear(a_StartColor);\n\t    v_Color = computeParticleColor(startcolor, normalizedAge);\n#ifdef DIFFUSEMAP\n\t    vec2 simulateUV;\n    #if defined(SPHERHBILLBOARD) || defined(STRETCHEDBILLBOARD) || defined(HORIZONTALBILLBOARD) || defined(VERTICALBILLBOARD)\n\t    simulateUV = a_SimulationUV.xy + a_CornerTextureCoordinate.zw * a_SimulationUV.zw;\n\t    v_TextureCoordinate = computeParticleUV(simulateUV, normalizedAge);\n    #endif\n    #ifdef RENDERMODE_MESH\n\t    simulateUV = a_SimulationUV.xy + a_MeshTextureCoordinate * a_SimulationUV.zw;\n\t    v_TextureCoordinate = computeParticleUV(simulateUV, normalizedAge);\n    #endif\n\t    v_TextureCoordinate = TransformUV(v_TextureCoordinate, u_TilingOffset);\n#endif\n\t}\n    else\n\t{\n\t    gl_Position = vec4(2.0, 2.0, 2.0, 1.0); // Discard use out of X(-1,1),Y(-1,1),Z(0,1)\n\t}\n    gl_Position = remapPositionZ(gl_Position);\n}\n";
+    var ShurikenVS = "#define SHADER_NAME ParticleVS\r\n\r\n#include \"Camera.glsl\";\r\n#include \"particleShuriKenSpriteVS.glsl\";\r\n#include \"Math.glsl\";\r\n#include \"MathGradient.glsl\";\r\n#include \"Color.glsl\";\r\n#include \"Scene.glsl\"\r\n#include \"SceneFogInput.glsl\"\r\n\r\n\r\n#ifdef RENDERMODE_MESH\r\nvarying vec4 v_MeshColor;\r\n#endif\r\n\r\nvarying vec4 v_Color;\r\nvarying vec2 v_TextureCoordinate;\r\n\r\n//修改这里剔除没有用到的光照函数，增加粒子的编译速度\r\nvec2 TransformUV(vec2 texcoord, vec4 tilingOffset)\r\n{\r\n    vec2 transTexcoord = vec2(texcoord.x, texcoord.y - 1.0) * tilingOffset.xy + vec2(tilingOffset.z, -tilingOffset.w);\r\n    transTexcoord.y += 1.0;\r\n    return transTexcoord;\r\n}\r\n\r\n#if defined(VELOCITYOVERLIFETIMECONSTANT) || defined(VELOCITYOVERLIFETIMECURVE) || defined(VELOCITYOVERLIFETIMERANDOMCONSTANT) || defined(VELOCITYOVERLIFETIMERANDOMCURVE)\r\nvec3 computeParticleLifeVelocity(in float normalizedAge)\r\n{\r\n    vec3 outLifeVelocity;\r\n    #ifdef VELOCITYOVERLIFETIMECONSTANT\r\n    outLifeVelocity = u_VOLVelocityConst;\r\n    #endif\r\n    #ifdef VELOCITYOVERLIFETIMECURVE\r\n    outLifeVelocity = vec3(getCurValueFromGradientFloat(u_VOLVelocityGradientX, normalizedAge),\r\n\tgetCurValueFromGradientFloat(u_VOLVelocityGradientY, normalizedAge),\r\n\tgetCurValueFromGradientFloat(u_VOLVelocityGradientZ, normalizedAge));\r\n    #endif\r\n    #ifdef VELOCITYOVERLIFETIMERANDOMCONSTANT\r\n    outLifeVelocity = mix(u_VOLVelocityConst,\r\n\tu_VOLVelocityConstMax,\r\n\tvec3(a_Random1.y, a_Random1.z, a_Random1.w));\r\n    #endif\r\n    #ifdef VELOCITYOVERLIFETIMERANDOMCURVE\r\n    outLifeVelocity = vec3(\r\n\tmix(getCurValueFromGradientFloat(u_VOLVelocityGradientX, normalizedAge),\r\n\t    getCurValueFromGradientFloat(u_VOLVelocityGradientMaxX, normalizedAge),\r\n\t    a_Random1.y),\r\n\tmix(getCurValueFromGradientFloat(u_VOLVelocityGradientY, normalizedAge),\r\n\t    getCurValueFromGradientFloat(u_VOLVelocityGradientMaxY, normalizedAge),\r\n\t    a_Random1.z),\r\n\tmix(getCurValueFromGradientFloat(u_VOLVelocityGradientZ, normalizedAge),\r\n\t    getCurValueFromGradientFloat(u_VOLVelocityGradientMaxZ, normalizedAge),\r\n\t    a_Random1.w));\r\n    #endif\r\n\r\n    return outLifeVelocity;\r\n}\r\n#endif\r\n\r\n// drag\r\nvec3 getStartPosition(vec3 startVelocity, float age, vec3 dragData)\r\n{\r\n    vec3 startPosition;\r\n    float lasttime = min(startVelocity.x / dragData.x, age);\r\n    startPosition = lasttime * (startVelocity - 0.5 * dragData * lasttime);\r\n    return startPosition;\r\n}\r\n\r\nvec3 computeParticlePosition(in vec3 startVelocity, in vec3 lifeVelocity, in float age, in float normalizedAge, vec3 gravityVelocity, vec4 worldRotation, vec3 dragData)\r\n{\r\n    vec3 startPosition = getStartPosition(startVelocity, age, dragData);\r\n    vec3 lifePosition;\r\n#if defined(VELOCITYOVERLIFETIMECONSTANT) || defined(VELOCITYOVERLIFETIMECURVE) || defined(VELOCITYOVERLIFETIMERANDOMCONSTANT) || defined(VELOCITYOVERLIFETIMERANDOMCURVE)\r\n    #ifdef VELOCITYOVERLIFETIMECONSTANT\r\n    // startPosition = startVelocity * age;\r\n    lifePosition = lifeVelocity * age;\r\n    #endif\r\n    #ifdef VELOCITYOVERLIFETIMECURVE\r\n    // startPosition = startVelocity * age;\r\n    lifePosition = vec3(getTotalValueFromGradientFloat(u_VOLVelocityGradientX, normalizedAge),\r\n\tgetTotalValueFromGradientFloat(u_VOLVelocityGradientY, normalizedAge),\r\n\tgetTotalValueFromGradientFloat(u_VOLVelocityGradientZ, normalizedAge));\r\n    #endif\r\n    #ifdef VELOCITYOVERLIFETIMERANDOMCONSTANT\r\n    // startPosition = startVelocity * age;\r\n    lifePosition = lifeVelocity * age;\r\n    #endif\r\n    #ifdef VELOCITYOVERLIFETIMERANDOMCURVE\r\n    // startPosition = startVelocity * age;\r\n    lifePosition = vec3(\r\n\tmix(\r\n\t    getTotalValueFromGradientFloat(u_VOLVelocityGradientX, normalizedAge),\r\n\t    getTotalValueFromGradientFloat(u_VOLVelocityGradientMaxX, normalizedAge),\r\n\t    a_Random1.y),\r\n\tmix(\r\n\t    getTotalValueFromGradientFloat(u_VOLVelocityGradientY, normalizedAge),\r\n\t    getTotalValueFromGradientFloat(u_VOLVelocityGradientMaxY, normalizedAge),\r\n\t    a_Random1.z),\r\n\tmix(\r\n\t    getTotalValueFromGradientFloat(u_VOLVelocityGradientZ, normalizedAge),\r\n\t    getTotalValueFromGradientFloat(u_VOLVelocityGradientMaxZ, normalizedAge),\r\n\t    a_Random1.w));\r\n    #endif\r\n\r\n    vec3 finalPosition;\r\n    if (u_VOLSpaceType == 0)\r\n\t{\r\n\t    if (u_ScalingMode != 2)\r\n\t\tfinalPosition = rotationByQuaternions(\r\n\t\t    u_PositionScale * (a_ShapePositionStartLifeTime.xyz + startPosition + lifePosition),\r\n\t\t    worldRotation);\r\n\t    else\r\n\t\tfinalPosition = rotationByQuaternions(\r\n\t\t    u_PositionScale * a_ShapePositionStartLifeTime.xyz + startPosition + lifePosition,\r\n\t\t    worldRotation);\r\n\t}\r\n    else\r\n\t{\r\n\t    if (u_ScalingMode != 2)\r\n\t\tfinalPosition = rotationByQuaternions(\r\n\t\t\t\t    u_PositionScale * (a_ShapePositionStartLifeTime.xyz + startPosition),\r\n\t\t\t\t    worldRotation)\r\n\t\t    + lifePosition;\r\n\t    else\r\n\t\tfinalPosition = rotationByQuaternions(\r\n\t\t\t\t    u_PositionScale * a_ShapePositionStartLifeTime.xyz + startPosition,\r\n\t\t\t\t    worldRotation)\r\n\t\t    + lifePosition;\r\n\t}\r\n#else\r\n    // startPosition = startVelocity * age;\r\n    vec3 finalPosition;\r\n    if (u_ScalingMode != 2)\r\n\tfinalPosition = rotationByQuaternions(\r\n\t    u_PositionScale * (a_ShapePositionStartLifeTime.xyz + startPosition),\r\n\t    worldRotation);\r\n    else\r\n\tfinalPosition = rotationByQuaternions(\r\n\t    u_PositionScale * a_ShapePositionStartLifeTime.xyz + startPosition,\r\n\t    worldRotation);\r\n#endif\r\n\r\n    if (u_SimulationSpace == 0)\r\n\tfinalPosition = finalPosition + a_SimulationWorldPostion;\r\n    else if (u_SimulationSpace == 1)\r\n\tfinalPosition = finalPosition + u_WorldPosition;\r\n\r\n    finalPosition += 0.5 * gravityVelocity * age;\r\n\r\n    return finalPosition;\r\n}\r\n\r\nvec4 computeParticleColor(in vec4 color, in float normalizedAge)\r\n{\r\n#ifdef COLOROVERLIFETIME\r\n    color *= getColorFromGradient(u_ColorOverLifeGradientAlphas,\r\n\tu_ColorOverLifeGradientColors,\r\n\tnormalizedAge, u_ColorOverLifeGradientRanges);\r\n#endif\r\n\r\n#ifdef RANDOMCOLOROVERLIFETIME\r\n    color *= mix(getColorFromGradient(u_ColorOverLifeGradientAlphas,\r\n\t\t     u_ColorOverLifeGradientColors,\r\n\t\t     normalizedAge, u_ColorOverLifeGradientRanges),\r\n\tgetColorFromGradient(u_MaxColorOverLifeGradientAlphas,\r\n\t    u_MaxColorOverLifeGradientColors,\r\n\t    normalizedAge, u_MaxColorOverLifeGradientRanges),\r\n\ta_Random0.y);\r\n#endif\r\n\r\n    return color;\r\n}\r\n\r\nvec2 computeParticleSizeBillbard(in vec2 size, in float normalizedAge)\r\n{\r\n#ifdef SIZEOVERLIFETIMECURVE\r\n    size *= getCurValueFromGradientFloat(u_SOLSizeGradient, normalizedAge);\r\n#endif\r\n#ifdef SIZEOVERLIFETIMERANDOMCURVES\r\n    size *= mix(getCurValueFromGradientFloat(u_SOLSizeGradient, normalizedAge),\r\n\tgetCurValueFromGradientFloat(u_SOLSizeGradientMax, normalizedAge),\r\n\ta_Random0.z);\r\n#endif\r\n#ifdef SIZEOVERLIFETIMECURVESEPERATE\r\n    size *= vec2(getCurValueFromGradientFloat(u_SOLSizeGradientX, normalizedAge),\r\n\tgetCurValueFromGradientFloat(u_SOLSizeGradientY, normalizedAge));\r\n#endif\r\n#ifdef SIZEOVERLIFETIMERANDOMCURVESSEPERATE\r\n    size *= vec2(mix(getCurValueFromGradientFloat(u_SOLSizeGradientX, normalizedAge),\r\n\t\t     getCurValueFromGradientFloat(u_SOLSizeGradientMaxX, normalizedAge),\r\n\t\t     a_Random0.z),\r\n\tmix(getCurValueFromGradientFloat(u_SOLSizeGradientY, normalizedAge),\r\n\t    getCurValueFromGradientFloat(u_SOLSizeGradientMaxY, normalizedAge),\r\n\t    a_Random0.z));\r\n#endif\r\n    return size;\r\n}\r\n\r\n#ifdef RENDERMODE_MESH\r\nvec3 computeParticleSizeMesh(in vec3 size, in float normalizedAge)\r\n{\r\n    #ifdef SIZEOVERLIFETIMECURVE\r\n    size *= getCurValueFromGradientFloat(u_SOLSizeGradient, normalizedAge);\r\n    #endif\r\n    #ifdef SIZEOVERLIFETIMERANDOMCURVES\r\n    size *= mix(getCurValueFromGradientFloat(u_SOLSizeGradient, normalizedAge),\r\n\tgetCurValueFromGradientFloat(u_SOLSizeGradientMax, normalizedAge),\r\n\ta_Random0.z);\r\n    #endif\r\n    #ifdef SIZEOVERLIFETIMECURVESEPERATE\r\n    size *= vec3(getCurValueFromGradientFloat(u_SOLSizeGradientX, normalizedAge),\r\n\tgetCurValueFromGradientFloat(u_SOLSizeGradientY, normalizedAge),\r\n\tgetCurValueFromGradientFloat(u_SOLSizeGradientZ, normalizedAge));\r\n    #endif\r\n    #ifdef SIZEOVERLIFETIMERANDOMCURVESSEPERATE\r\n    size *= vec3(mix(getCurValueFromGradientFloat(u_SOLSizeGradientX, normalizedAge),\r\n\t\t     getCurValueFromGradientFloat(u_SOLSizeGradientMaxX, normalizedAge),\r\n\t\t     a_Random0.z),\r\n\tmix(getCurValueFromGradientFloat(u_SOLSizeGradientY, normalizedAge),\r\n\t    getCurValueFromGradientFloat(u_SOLSizeGradientMaxY, normalizedAge),\r\n\t    a_Random0.z),\r\n\tmix(getCurValueFromGradientFloat(u_SOLSizeGradientZ, normalizedAge),\r\n\t    getCurValueFromGradientFloat(u_SOLSizeGradientMaxZ, normalizedAge),\r\n\t    a_Random0.z));\r\n    #endif\r\n    return size;\r\n}\r\n#endif\r\n\r\nfloat computeParticleRotationFloat(in float rotation,\r\n    in float age,\r\n    in float normalizedAge)\r\n{\r\n#ifdef ROTATIONOVERLIFETIME\r\n    #ifdef ROTATIONOVERLIFETIMECONSTANT\r\n    float ageRot = u_ROLAngularVelocityConst * age;\r\n    rotation += ageRot;\r\n    #endif\r\n    #ifdef ROTATIONOVERLIFETIMECURVE\r\n    rotation += getTotalValueFromGradientFloat(u_ROLAngularVelocityGradient, normalizedAge);\r\n    #endif\r\n    #ifdef ROTATIONOVERLIFETIMERANDOMCONSTANTS\r\n    float ageRot = mix(u_ROLAngularVelocityConst, u_ROLAngularVelocityConstMax, a_Random0.w) * age;\r\n    rotation += ageRot;\r\n    #endif\r\n    #ifdef ROTATIONOVERLIFETIMERANDOMCURVES\r\n    rotation += mix(\r\n\tgetTotalValueFromGradientFloat(u_ROLAngularVelocityGradient, normalizedAge),\r\n\tgetTotalValueFromGradientFloat(u_ROLAngularVelocityGradientMax,\r\n\t    normalizedAge),\r\n\ta_Random0.w);\r\n    #endif\r\n#endif\r\n#ifdef ROTATIONOVERLIFETIMESEPERATE\r\n    #ifdef ROTATIONOVERLIFETIMECONSTANT\r\n    float ageRot = u_ROLAngularVelocityConstSeprarate.z * age;\r\n    rotation += ageRot;\r\n    #endif\r\n    #ifdef ROTATIONOVERLIFETIMECURVE\r\n    rotation += getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientZ,\r\n\tnormalizedAge);\r\n    #endif\r\n    #ifdef ROTATIONOVERLIFETIMERANDOMCONSTANTS\r\n    float ageRot = mix(u_ROLAngularVelocityConstSeprarate.z,\r\n\t\t       u_ROLAngularVelocityConstMaxSeprarate.z,\r\n\t\t       a_Random0.w)\r\n\t* age;\r\n    rotation += ageRot;\r\n    #endif\r\n    #ifdef ROTATIONOVERLIFETIMERANDOMCURVES\r\n    rotation += mix(getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientZ,\r\n\t\t\tnormalizedAge),\r\n\tgetTotalValueFromGradientFloat(\r\n\t    u_ROLAngularVelocityGradientMaxZ, normalizedAge),\r\n\ta_Random0.w);\r\n    #endif\r\n#endif\r\n    return rotation;\r\n}\r\n\r\n#if defined(RENDERMODE_MESH) && (defined(ROTATIONOVERLIFETIME) || defined(ROTATIONOVERLIFETIMESEPERATE))\r\nvec3 computeParticleRotationVec3(in vec3 rotation,\r\n    in float age,\r\n    in float normalizedAge)\r\n{\r\n    #ifdef ROTATIONOVERLIFETIME\r\n\t#ifdef ROTATIONOVERLIFETIMECONSTANT\r\n    float ageRot = u_ROLAngularVelocityConst * age;\r\n    rotation += ageRot;\r\n\t#endif\r\n\t#ifdef ROTATIONOVERLIFETIMECURVE\r\n    rotation += getTotalValueFromGradientFloat(u_ROLAngularVelocityGradient, normalizedAge);\r\n\t#endif\r\n\t#ifdef ROTATIONOVERLIFETIMERANDOMCONSTANTS\r\n    float ageRot = mix(u_ROLAngularVelocityConst, u_ROLAngularVelocityConstMax, a_Random0.w) * age;\r\n    rotation += ageRot;\r\n\t#endif\r\n\t#ifdef ROTATIONOVERLIFETIMERANDOMCURVES\r\n    rotation += mix(\r\n\tgetTotalValueFromGradientFloat(u_ROLAngularVelocityGradient, normalizedAge),\r\n\tgetTotalValueFromGradientFloat(u_ROLAngularVelocityGradientMax,\r\n\t    normalizedAge),\r\n\ta_Random0.w);\r\n\t#endif\r\n    #endif\r\n    #ifdef ROTATIONOVERLIFETIMESEPERATE\r\n\t#ifdef ROTATIONOVERLIFETIMECONSTANT\r\n    vec3 ageRot = u_ROLAngularVelocityConstSeprarate * age;\r\n    rotation += ageRot;\r\n\t#endif\r\n\t#ifdef ROTATIONOVERLIFETIMECURVE\r\n    rotation += vec3(getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientX,\r\n\t\t\t normalizedAge),\r\n\tgetTotalValueFromGradientFloat(u_ROLAngularVelocityGradientY,\r\n\t    normalizedAge),\r\n\tgetTotalValueFromGradientFloat(u_ROLAngularVelocityGradientZ,\r\n\t    normalizedAge));\r\n\t#endif\r\n\t#ifdef ROTATIONOVERLIFETIMERANDOMCONSTANTS\r\n    vec3 ageRot = mix(u_ROLAngularVelocityConstSeprarate,\r\n\t\t      u_ROLAngularVelocityConstMaxSeprarate,\r\n\t\t      a_Random0.w)\r\n\t* age;\r\n    rotation += ageRot;\r\n\t#endif\r\n\t#ifdef ROTATIONOVERLIFETIMERANDOMCURVES\r\n    rotation += vec3(mix(getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientX,\r\n\t\t\t     normalizedAge),\r\n\t\t\t getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientMaxX,\r\n\t\t\t     normalizedAge),\r\n\t\t\t a_Random0.w),\r\n\tmix(getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientY,\r\n\t\tnormalizedAge),\r\n\t    getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientMaxY,\r\n\t\tnormalizedAge),\r\n\t    a_Random0.w),\r\n\tmix(getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientZ,\r\n\t\tnormalizedAge),\r\n\t    getTotalValueFromGradientFloat(u_ROLAngularVelocityGradientMaxZ,\r\n\t\tnormalizedAge),\r\n\t    a_Random0.w));\r\n\t#endif\r\n    #endif\r\n    return rotation;\r\n}\r\n#endif\r\n\r\nvec2 computeParticleUV(in vec2 uv, in float normalizedAge)\r\n{\r\n#ifdef TEXTURESHEETANIMATIONCURVE\r\n    float cycleNormalizedAge = normalizedAge * u_TSACycles;\r\n    float frame = getFrameFromGradient(\r\n\tu_TSAGradientUVs, cycleNormalizedAge - floor(cycleNormalizedAge));\r\n    float totalULength = frame * u_TSASubUVLength.x;\r\n    float floorTotalULength = floor(totalULength);\r\n    uv.x += totalULength - floorTotalULength;\r\n    uv.y += floorTotalULength * u_TSASubUVLength.y;\r\n#endif\r\n#ifdef TEXTURESHEETANIMATIONRANDOMCURVE\r\n    float cycleNormalizedAge = normalizedAge * u_TSACycles;\r\n    float uvNormalizedAge = cycleNormalizedAge - floor(cycleNormalizedAge);\r\n    float frame = floor(mix(getFrameFromGradient(u_TSAGradientUVs, uvNormalizedAge),\r\n\tgetFrameFromGradient(u_TSAMaxGradientUVs, uvNormalizedAge),\r\n\ta_Random1.x));\r\n    float totalULength = frame * u_TSASubUVLength.x;\r\n    float floorTotalULength = floor(totalULength);\r\n    uv.x += totalULength - floorTotalULength;\r\n    uv.y += floorTotalULength * u_TSASubUVLength.y;\r\n#endif\r\n    return uv;\r\n}\r\n\r\nvoid main()\r\n{\r\n    float age = u_CurrentTime - a_DirectionTime.w;\r\n    float normalizedAge = age / a_ShapePositionStartLifeTime.w;\r\n    vec3 lifeVelocity;\r\n    if (normalizedAge < 1.0)\r\n\t{\r\n\t    vec3 startVelocity = a_DirectionTime.xyz * a_StartSpeed;\r\n#if defined(VELOCITYOVERLIFETIMECONSTANT) || defined(VELOCITYOVERLIFETIMECURVE) || defined(VELOCITYOVERLIFETIMERANDOMCONSTANT) || defined(VELOCITYOVERLIFETIMERANDOMCURVE)\r\n\t    lifeVelocity = computeParticleLifeVelocity(normalizedAge); //计算粒子生命周期速度\r\n#endif\r\n\t    vec3 gravityVelocity = u_Gravity * age;\r\n\r\n\t    vec4 worldRotation;\r\n\t    if (u_SimulationSpace == 0)\r\n\t\tworldRotation = a_SimulationWorldRotation;\r\n\t    else\r\n\t\tworldRotation = u_WorldRotation;\r\n\r\n\t    // drag\r\n\t    vec3 dragData = a_DirectionTime.xyz * mix(u_DragConstanct.x, u_DragConstanct.y, a_Random0.x);\r\n\t    vec3 center = computeParticlePosition(startVelocity, lifeVelocity, age, normalizedAge, gravityVelocity, worldRotation, dragData); //计算粒子位置\r\n\r\n#ifdef SPHERHBILLBOARD\r\n\t    vec2 corner = a_CornerTextureCoordinate.xy; // Billboard模式z轴无效\r\n\t    vec3 cameraUpVector = normalize(u_CameraUp); // TODO:是否外面归一化\r\n\t    vec3 sideVector = normalize(cross(u_CameraDirection, cameraUpVector));\r\n\t    vec3 upVector = normalize(cross(sideVector, u_CameraDirection));\r\n\t    corner *= computeParticleSizeBillbard(a_StartSize.xy, normalizedAge);\r\n    #if defined(ROTATIONOVERLIFETIME) || defined(ROTATIONOVERLIFETIMESEPERATE)\r\n\t    if (u_ThreeDStartRotation)\r\n\t\t{\r\n\t\t    vec3 rotation = vec3(\r\n\t\t\ta_StartRotation0.xy,\r\n\t\t\tcomputeParticleRotationFloat(a_StartRotation0.z, age, normalizedAge));\r\n\t\t    center += u_SizeScale.xzy * rotationByEuler(corner.x * sideVector + corner.y * upVector, rotation);\r\n\t\t}\r\n\t    else\r\n\t\t{\r\n\t\t    float rot = computeParticleRotationFloat(a_StartRotation0.x, age, normalizedAge);\r\n\t\t    float c = cos(rot);\r\n\t\t    float s = sin(rot);\r\n\t\t    mat2 rotation = mat2(c, -s, s, c);\r\n\t\t    corner = rotation * corner;\r\n\t\t    center += u_SizeScale.xzy * (corner.x * sideVector + corner.y * upVector);\r\n\t\t}\r\n    #else\r\n\t    if (u_ThreeDStartRotation)\r\n\t\t{\r\n\t\t    center += u_SizeScale.xzy * rotationByEuler(corner.x * sideVector + corner.y * upVector, a_StartRotation0);\r\n\t\t}\r\n\t    else\r\n\t\t{\r\n\t\t    float c = cos(a_StartRotation0.x);\r\n\t\t    float s = sin(a_StartRotation0.x);\r\n\t\t    mat2 rotation = mat2(c, -s, s, c);\r\n\t\t    corner = rotation * corner;\r\n\t\t    center += u_SizeScale.xzy * (corner.x * sideVector + corner.y * upVector);\r\n\t\t}\r\n    #endif\r\n#endif\r\n\r\n#ifdef STRETCHEDBILLBOARD\r\n\t    vec2 corner = a_CornerTextureCoordinate.xy; // Billboard模式z轴无效\r\n\t    vec3 velocity;\r\n    #if defined(VELOCITYOVERLIFETIMECONSTANT) || defined(VELOCITYOVERLIFETIMECURVE) || defined(VELOCITYOVERLIFETIMERANDOMCONSTANT) || defined(VELOCITYOVERLIFETIMERANDOMCURVE)\r\n\t    if (u_VOLSpaceType == 0)\r\n\t\tvelocity = rotationByQuaternions(u_SizeScale * (startVelocity + lifeVelocity),\r\n\t\t\t       worldRotation)\r\n\t\t    + gravityVelocity;\r\n\t    else\r\n\t\tvelocity = rotationByQuaternions(u_SizeScale * startVelocity, worldRotation) + lifeVelocity + gravityVelocity;\r\n    #else\r\n\t    velocity = rotationByQuaternions(u_SizeScale * startVelocity, worldRotation) + gravityVelocity;\r\n    #endif\r\n\t    vec3 cameraUpVector = normalize(velocity);\r\n\t    vec3 direction = normalize(center - u_CameraPos);\r\n\t    vec3 sideVector = normalize(cross(direction, normalize(velocity)));\r\n\r\n\t    sideVector = u_SizeScale.xzy * sideVector;\r\n\t    cameraUpVector = length(vec3(u_SizeScale.x, 0.0, 0.0)) * cameraUpVector;\r\n\r\n\t    vec2 size = computeParticleSizeBillbard(a_StartSize.xy, normalizedAge);\r\n\r\n\t    const mat2 rotaionZHalfPI = mat2(0.0, -1.0, 1.0, 0.0);\r\n\t    corner = rotaionZHalfPI * corner;\r\n\t    corner.y = corner.y - abs(corner.y);\r\n\r\n\t    float speed = length(velocity); // TODO:\r\n\t    center += sign(u_SizeScale.x) * (sign(u_StretchedBillboardLengthScale) * size.x * corner.x * sideVector + (speed * u_StretchedBillboardSpeedScale + size.y * u_StretchedBillboardLengthScale) * corner.y * cameraUpVector);\r\n#endif\r\n\r\n#ifdef HORIZONTALBILLBOARD\r\n\t    vec2 corner = a_CornerTextureCoordinate.xy; // Billboard模式z轴无效\r\n\t    const vec3 cameraUpVector = vec3(0.0, 0.0, 1.0);\r\n\t    const vec3 sideVector = vec3(-1.0, 0.0, 0.0);\r\n\r\n\t    float rot = computeParticleRotationFloat(a_StartRotation0.x, age, normalizedAge);\r\n\t    float c = cos(rot);\r\n\t    float s = sin(rot);\r\n\t    mat2 rotation = mat2(c, -s, s, c);\r\n\t    corner = rotation * corner * cos(0.78539816339744830961566084581988); // TODO:临时缩小cos45,不确定U3D原因\r\n\t    corner *= computeParticleSizeBillbard(a_StartSize.xy, normalizedAge);\r\n\t    center += u_SizeScale.xzy * (corner.x * sideVector + corner.y * cameraUpVector);\r\n#endif\r\n\r\n#ifdef VERTICALBILLBOARD\r\n\t    vec2 corner = a_CornerTextureCoordinate.xy; // Billboard模式z轴无效\r\n\t    const vec3 cameraUpVector = vec3(0.0, 1.0, 0.0);\r\n\t    vec3 sideVector = normalize(cross(u_CameraDirection, cameraUpVector));\r\n\r\n\t    float rot = computeParticleRotationFloat(a_StartRotation0.x, age, normalizedAge);\r\n\t    float c = cos(rot);\r\n\t    float s = sin(rot);\r\n\t    mat2 rotation = mat2(c, -s, s, c);\r\n\t    corner = rotation * corner * cos(0.78539816339744830961566084581988); // TODO:临时缩小cos45,不确定U3D原因\r\n\t    corner *= computeParticleSizeBillbard(a_StartSize.xy, normalizedAge);\r\n\t    center += u_SizeScale.xzy * (corner.x * sideVector + corner.y * cameraUpVector);\r\n#endif\r\n\r\n#ifdef RENDERMODE_MESH\r\n\t    vec3 size = computeParticleSizeMesh(a_StartSize, normalizedAge);\r\n    #if defined(ROTATIONOVERLIFETIME) || defined(ROTATIONOVERLIFETIMESEPERATE)\r\n\t    if (u_ThreeDStartRotation)\r\n\t\t{\r\n\t\t    vec3 rotation = vec3(\r\n\t\t\ta_StartRotation0.xy,\r\n\t\t\tcomputeParticleRotationFloat(a_StartRotation0.z, age, normalizedAge));\r\n\t\t    center += rotationByQuaternions(\r\n\t\t\tu_SizeScale * rotationByEuler(a_MeshPosition * size, rotation),\r\n\t\t\tworldRotation);\r\n\t\t}\r\n\t    else\r\n\t\t{\r\n\t#ifdef ROTATIONOVERLIFETIME\r\n\t\t    float angle = computeParticleRotationFloat(a_StartRotation0.x, age, normalizedAge);\r\n\t\t    if (a_ShapePositionStartLifeTime.x != 0.0 || a_ShapePositionStartLifeTime.y != 0.0)\r\n\t\t\t{\r\n\t\t\t    center += (rotationByQuaternions(\r\n\t\t\t\trotationByAxis(\r\n\t\t\t\t    u_SizeScale * a_MeshPosition * size,\r\n\t\t\t\t    normalize(cross(vec3(0.0, 0.0, 1.0),\r\n\t\t\t\t\tvec3(a_ShapePositionStartLifeTime.xy, 0.0))),\r\n\t\t\t\t    angle),\r\n\t\t\t\tworldRotation)); //已验证\r\n\t\t\t}\r\n\t\t    else\r\n\t\t\t{\r\n\t    #ifdef SHAPE\r\n\t\t\t    center += u_SizeScale.xzy * (rotationByQuaternions(rotationByAxis(a_MeshPosition * size, vec3(0.0, -1.0, 0.0), angle), worldRotation));\r\n\t    #else\r\n\t\t\t    if (u_SimulationSpace == 0)\r\n\t\t\t\tcenter += rotationByAxis(u_SizeScale * a_MeshPosition * size,\r\n\t\t\t\t    vec3(0.0, 0.0, -1.0),\r\n\t\t\t\t    angle); //已验证\r\n\t\t\t    else if (u_SimulationSpace == 1)\r\n\t\t\t\tcenter += rotationByQuaternions(\r\n\t\t\t\t    u_SizeScale * rotationByAxis(a_MeshPosition * size, vec3(0.0, 0.0, -1.0), angle),\r\n\t\t\t\t    worldRotation); //已验证\r\n\t    #endif\r\n\t\t\t}\r\n\t#endif\r\n\t#ifdef ROTATIONOVERLIFETIMESEPERATE\r\n\t\t    // TODO:是否应合并if(u_ThreeDStartRotation)分支代码,待测试\r\n\t\t    vec3 angle = computeParticleRotationVec3(\r\n\t\t\tvec3(0.0, 0.0, -a_StartRotation0.x), age, normalizedAge);\r\n\t\t    center += (rotationByQuaternions(\r\n\t\t\trotationByEuler(u_SizeScale * a_MeshPosition * size,\r\n\t\t\t    vec3(angle.x, angle.y, angle.z)),\r\n\t\t\tworldRotation)); //已验证\r\n\t#endif\r\n\t\t}\r\n    #else\r\n\t    if (u_ThreeDStartRotation)\r\n\t\t{\r\n\t\t    center += rotationByQuaternions(\r\n\t\t\tu_SizeScale * rotationByEuler(a_MeshPosition * size, a_StartRotation0),\r\n\t\t\tworldRotation); //已验证\r\n\t\t}\r\n\t    else\r\n\t\t{\r\n\t\t    if (a_ShapePositionStartLifeTime.x != 0.0 || a_ShapePositionStartLifeTime.y != 0.0)\r\n\t\t\t{\r\n\t\t\t    if (u_SimulationSpace == 0)\r\n\t\t\t\tcenter += rotationByAxis(\r\n\t\t\t\t    u_SizeScale * a_MeshPosition * size,\r\n\t\t\t\t    normalize(cross(vec3(0.0, 0.0, 1.0),\r\n\t\t\t\t\tvec3(a_ShapePositionStartLifeTime.xy, 0.0))),\r\n\t\t\t\t    a_StartRotation0.x);\r\n\t\t\t    else if (u_SimulationSpace == 1)\r\n\t\t\t\tcenter += (rotationByQuaternions(\r\n\t\t\t\t    u_SizeScale * rotationByAxis(a_MeshPosition * size, normalize(cross(vec3(0.0, 0.0, 1.0), vec3(a_ShapePositionStartLifeTime.xy, 0.0))), a_StartRotation0.x),\r\n\t\t\t\t    worldRotation)); //已验证\r\n\t\t\t}\r\n\t\t    else\r\n\t\t\t{\r\n\t#ifdef SHAPE\r\n\t\t\t    if (u_SimulationSpace == 0)\r\n\t\t\t\tcenter += u_SizeScale * rotationByAxis(a_MeshPosition * size, vec3(0.0, -1.0, 0.0), a_StartRotation0.x);\r\n\t\t\t    else if (u_SimulationSpace == 1)\r\n\t\t\t\tcenter += rotationByQuaternions(\r\n\t\t\t\t    u_SizeScale * rotationByAxis(a_MeshPosition * size, vec3(0.0, -1.0, 0.0), a_StartRotation0.x),\r\n\t\t\t\t    worldRotation);\r\n\t#else\r\n\t\t\t    if (u_SimulationSpace == 0)\r\n\t\t\t\tcenter += rotationByAxis(u_SizeScale * a_MeshPosition * size,\r\n\t\t\t\t    vec3(0.0, 0.0, -1.0),\r\n\t\t\t\t    a_StartRotation0.x);\r\n\t\t\t    else if (u_SimulationSpace == 1)\r\n\t\t\t\tcenter += rotationByQuaternions(\r\n\t\t\t\t    u_SizeScale * rotationByAxis(a_MeshPosition * size, vec3(0.0, 0.0, -1.0), a_StartRotation0.x),\r\n\t\t\t\t    worldRotation); //已验证\r\n\t#endif\r\n\t\t\t}\r\n\t\t}\r\n    #endif\r\n\t    v_MeshColor = a_MeshColor;\r\n#endif\r\n\t    gl_Position = u_Projection * u_View * vec4(center, 1.0);\r\n\t\tvec4 startcolor = gammaToLinear(a_StartColor);\r\n\t    v_Color = computeParticleColor(startcolor, normalizedAge);\r\n#ifdef DIFFUSEMAP\r\n\t    vec2 simulateUV;\r\n    #if defined(SPHERHBILLBOARD) || defined(STRETCHEDBILLBOARD) || defined(HORIZONTALBILLBOARD) || defined(VERTICALBILLBOARD)\r\n\t    simulateUV = a_SimulationUV.xy + a_CornerTextureCoordinate.zw * a_SimulationUV.zw;\r\n\t    v_TextureCoordinate = computeParticleUV(simulateUV, normalizedAge);\r\n    #endif\r\n    #ifdef RENDERMODE_MESH\r\n\t    simulateUV = a_SimulationUV.xy + a_MeshTextureCoordinate * a_SimulationUV.zw;\r\n\t    v_TextureCoordinate = computeParticleUV(simulateUV, normalizedAge);\r\n    #endif\r\n\t    v_TextureCoordinate = TransformUV(v_TextureCoordinate, u_TilingOffset);\r\n#endif\r\n\t}\r\n    else\r\n\t{\r\n\t    gl_Position = vec4(2.0, 2.0, 2.0, 1.0); // Discard use out of X(-1,1),Y(-1,1),Z(0,1)\r\n\t}\r\n    gl_Position = remapPositionZ(gl_Position);\r\n\t#ifdef FOG\r\n        FogHandle(gl_Position.z);\r\n    #endif\r\n}\r\n";
 
-    var ShurikenFS = "#define SHADER_NAME ParticleFS\n\n#include \"Scene.glsl\";\n#include \"SceneFog.glsl\";\n#include \"Color.glsl\";\n\nconst vec4 c_ColorSpace = vec4(4.59479380, 4.59479380, 4.59479380, 2.0);\n\nvarying vec4 v_Color;\nvarying vec2 v_TextureCoordinate;\n// uniform sampler2D u_texture;\n// uniform vec4 u_Tintcolor;\n\n#ifdef RENDERMODE_MESH\nvarying vec4 v_MeshColor;\n#endif\n\nvoid main()\n{\n    vec4 color;\n#ifdef RENDERMODE_MESH\n    color = v_MeshColor;\n#else\n    color = vec4(1.0);\n#endif\n\n#ifdef DIFFUSEMAP\n    vec4 colorT = texture2D(u_texture, v_TextureCoordinate);\n    #ifdef Gamma_u_texture\n        colorT = gammaToLinear(colorT);\n    #endif // Gamma_u_SpecularTexture\n    #ifdef TINTCOLOR\n    color *= colorT * u_Tintcolor * c_ColorSpace * v_Color;\n    #else\n    color *= colorT * v_Color;\n    #endif // TINTCOLORd\n#else\n    #ifdef TINTCOLOR\n    color *= u_Tintcolor * c_ColorSpace * v_Color;\n    #else\n    color *= v_Color;\n    #endif // TINTCOLOR\n#endif\n\n#ifdef FOG\n    color.rgb = scenUnlitFog(color.rgb);\n#endif // FOG\n    gl_FragColor = color;\n\n}";
+    var ShurikenFS = "#define SHADER_NAME ParticleFS\r\n\r\n#include \"Scene.glsl\";\r\n#include \"SceneFog.glsl\";\r\n#include \"Color.glsl\";\r\n\r\nconst vec4 c_ColorSpace = vec4(4.59479380, 4.59479380, 4.59479380, 2.0);\r\n\r\nvarying vec4 v_Color;\r\nvarying vec2 v_TextureCoordinate;\r\n// uniform sampler2D u_texture;\r\n// uniform vec4 u_Tintcolor;\r\n\r\n#ifdef RENDERMODE_MESH\r\nvarying vec4 v_MeshColor;\r\n#endif\r\n\r\nvoid main()\r\n{\r\n    vec4 color;\r\n#ifdef RENDERMODE_MESH\r\n    color = v_MeshColor;\r\n#else\r\n    color = vec4(1.0);\r\n#endif\r\n\r\n#ifdef DIFFUSEMAP\r\n    vec4 colorT = texture2D(u_texture, v_TextureCoordinate);\r\n    #ifdef Gamma_u_texture\r\n        colorT = gammaToLinear(colorT);\r\n    #endif // Gamma_u_SpecularTexture\r\n    #ifdef TINTCOLOR\r\n    color *= colorT * u_Tintcolor * c_ColorSpace * v_Color;\r\n    #else\r\n    color *= colorT * v_Color;\r\n    #endif // TINTCOLORd\r\n#else\r\n    #ifdef TINTCOLOR\r\n    color *= u_Tintcolor * c_ColorSpace * v_Color;\r\n    #else\r\n    color *= v_Color;\r\n    #endif // TINTCOLOR\r\n#endif\r\n\r\n#ifdef FOG\r\n    color.rgb = scenUnlitFog(color.rgb);\r\n#endif // FOG\r\n    gl_FragColor = color;\r\n\r\n}";
 
-    var MathGradient = "float getCurValueFromGradientFloat(in vec2 gradientNumbers[4], in float normalizedAge)\n{\n    float curValue;\n    for (int i = 1; i < 4; i++)\n\t{\n\t    vec2 gradientNumber = gradientNumbers[i];\n\t    float key = gradientNumber.x;\n\t    if (key >= normalizedAge)\n\t\t{\n\t\t    vec2 lastGradientNumber = gradientNumbers[i - 1];\n\t\t    float lastKey = lastGradientNumber.x;\n\t\t    float age = (normalizedAge - lastKey) / (key - lastKey);\n\t\t    curValue = mix(lastGradientNumber.y, gradientNumber.y, age);\n\t\t    break;\n\t\t}\n\t}\n    return curValue;\n}\n\nfloat getTotalValueFromGradientFloat(in vec2 gradientNumbers[4],\n    in float normalizedAge)\n{\n    float totalValue = 0.0;\n    for (int i = 1; i < 4; i++)\n\t{\n\t    vec2 gradientNumber = gradientNumbers[i];\n\t    float key = gradientNumber.x;\n\t    vec2 lastGradientNumber = gradientNumbers[i - 1];\n\t    float lastValue = lastGradientNumber.y;\n\n\t    if (key >= normalizedAge)\n\t\t{\n\t\t    float lastKey = lastGradientNumber.x;\n\t\t    float age = (normalizedAge - lastKey) / (key - lastKey);\n\t\t    totalValue += (lastValue + mix(lastValue, gradientNumber.y, age)) / 2.0 * a_ShapePositionStartLifeTime.w * (normalizedAge - lastKey);\n\t\t    break;\n\t\t}\n\t    else\n\t\t{\n\t\t    totalValue += (lastValue + gradientNumber.y) / 2.0 * a_ShapePositionStartLifeTime.w * (key - lastGradientNumber.x);\n\t\t}\n\t}\n    return totalValue;\n}\n\nvec4 getColorFromGradient(in vec2 gradientAlphas[COLORCOUNT],\n    in vec4 gradientColors[COLORCOUNT],\n    in float normalizedAge, in vec4 keyRanges)\n{\n    float alphaAge = clamp(normalizedAge, keyRanges.z, keyRanges.w);\n    vec4 overTimeColor;\n    for (int i = 1; i < COLORCOUNT; i++)\n\t{\n\t    vec2 gradientAlpha = gradientAlphas[i];\n\t    float alphaKey = gradientAlpha.x;\n\t    if (alphaKey >= alphaAge)\n\t\t{\n\t\t    vec2 lastGradientAlpha = gradientAlphas[i - 1];\n\t\t    float lastAlphaKey = lastGradientAlpha.x;\n\t\t    float age = (alphaAge - lastAlphaKey) / (alphaKey - lastAlphaKey);\n\t\t    overTimeColor.a = mix(lastGradientAlpha.y, gradientAlpha.y, age);\n\t\t    break;\n\t\t}\n\t}\n\n    float colorAge = clamp(normalizedAge, keyRanges.x, keyRanges.y);\n    for (int i = 1; i < COLORCOUNT; i++)\n\t{\n\t    vec4 gradientColor = gradientColors[i];\n\t    float colorKey = gradientColor.x;\n\t    if (colorKey >= colorAge)\n\t\t{\n\t\t    vec4 lastGradientColor = gradientColors[i - 1];\n\t\t    float lastColorKey = lastGradientColor.x;\n\t\t    float age = (colorAge - lastColorKey) / (colorKey - lastColorKey);\n\t\t    overTimeColor.rgb = mix(gradientColors[i - 1].yzw, gradientColor.yzw, age);\n\t\t    break;\n\t\t}\n\t}\n    return overTimeColor;\n}\n\nfloat getFrameFromGradient(in vec2 gradientFrames[4], in float normalizedAge)\n{\n    float overTimeFrame;\n    for (int i = 1; i < 4; i++)\n\t{\n\t    vec2 gradientFrame = gradientFrames[i];\n\t    float key = gradientFrame.x;\n\t    if (key >= normalizedAge)\n\t\t{\n\t\t    vec2 lastGradientFrame = gradientFrames[i - 1];\n\t\t    float lastKey = lastGradientFrame.x;\n\t\t    float age = (normalizedAge - lastKey) / (key - lastKey);\n\t\t    overTimeFrame = mix(lastGradientFrame.y, gradientFrame.y, age);\n\t\t    break;\n\t\t}\n\t}\n    return floor(overTimeFrame);\n}\n";
+    var MathGradient = "float getCurValueFromGradientFloat(in vec2 gradientNumbers[4], in float normalizedAge)\r\n{\r\n    float curValue;\r\n    for (int i = 1; i < 4; i++)\r\n\t{\r\n\t    vec2 gradientNumber = gradientNumbers[i];\r\n\t    float key = gradientNumber.x;\r\n\t    if (key >= normalizedAge)\r\n\t\t{\r\n\t\t    vec2 lastGradientNumber = gradientNumbers[i - 1];\r\n\t\t    float lastKey = lastGradientNumber.x;\r\n\t\t    float age = (normalizedAge - lastKey) / (key - lastKey);\r\n\t\t    curValue = mix(lastGradientNumber.y, gradientNumber.y, age);\r\n\t\t    break;\r\n\t\t}\r\n\t}\r\n    return curValue;\r\n}\r\n\r\nfloat getTotalValueFromGradientFloat(in vec2 gradientNumbers[4],\r\n    in float normalizedAge)\r\n{\r\n    float totalValue = 0.0;\r\n    for (int i = 1; i < 4; i++)\r\n\t{\r\n\t    vec2 gradientNumber = gradientNumbers[i];\r\n\t    float key = gradientNumber.x;\r\n\t    vec2 lastGradientNumber = gradientNumbers[i - 1];\r\n\t    float lastValue = lastGradientNumber.y;\r\n\r\n\t    if (key >= normalizedAge)\r\n\t\t{\r\n\t\t    float lastKey = lastGradientNumber.x;\r\n\t\t    float age = (normalizedAge - lastKey) / (key - lastKey);\r\n\t\t    totalValue += (lastValue + mix(lastValue, gradientNumber.y, age)) / 2.0 * a_ShapePositionStartLifeTime.w * (normalizedAge - lastKey);\r\n\t\t    break;\r\n\t\t}\r\n\t    else\r\n\t\t{\r\n\t\t    totalValue += (lastValue + gradientNumber.y) / 2.0 * a_ShapePositionStartLifeTime.w * (key - lastGradientNumber.x);\r\n\t\t}\r\n\t}\r\n    return totalValue;\r\n}\r\n\r\nvec4 getColorFromGradient(in vec2 gradientAlphas[COLORCOUNT],\r\n    in vec4 gradientColors[COLORCOUNT],\r\n    in float normalizedAge, in vec4 keyRanges)\r\n{\r\n    float alphaAge = clamp(normalizedAge, keyRanges.z, keyRanges.w);\r\n    vec4 overTimeColor;\r\n    for (int i = 1; i < COLORCOUNT; i++)\r\n\t{\r\n\t    vec2 gradientAlpha = gradientAlphas[i];\r\n\t    float alphaKey = gradientAlpha.x;\r\n\t    if (alphaKey >= alphaAge)\r\n\t\t{\r\n\t\t    vec2 lastGradientAlpha = gradientAlphas[i - 1];\r\n\t\t    float lastAlphaKey = lastGradientAlpha.x;\r\n\t\t    float age = (alphaAge - lastAlphaKey) / (alphaKey - lastAlphaKey);\r\n\t\t    overTimeColor.a = mix(lastGradientAlpha.y, gradientAlpha.y, age);\r\n\t\t    break;\r\n\t\t}\r\n\t}\r\n\r\n    float colorAge = clamp(normalizedAge, keyRanges.x, keyRanges.y);\r\n    for (int i = 1; i < COLORCOUNT; i++)\r\n\t{\r\n\t    vec4 gradientColor = gradientColors[i];\r\n\t    float colorKey = gradientColor.x;\r\n\t    if (colorKey >= colorAge)\r\n\t\t{\r\n\t\t    vec4 lastGradientColor = gradientColors[i - 1];\r\n\t\t    float lastColorKey = lastGradientColor.x;\r\n\t\t    float age = (colorAge - lastColorKey) / (colorKey - lastColorKey);\r\n\t\t    overTimeColor.rgb = mix(gradientColors[i - 1].yzw, gradientColor.yzw, age);\r\n\t\t    break;\r\n\t\t}\r\n\t}\r\n    return overTimeColor;\r\n}\r\n\r\nfloat getFrameFromGradient(in vec2 gradientFrames[4], in float normalizedAge)\r\n{\r\n    float overTimeFrame;\r\n    for (int i = 1; i < 4; i++)\r\n\t{\r\n\t    vec2 gradientFrame = gradientFrames[i];\r\n\t    float key = gradientFrame.x;\r\n\t    if (key >= normalizedAge)\r\n\t\t{\r\n\t\t    vec2 lastGradientFrame = gradientFrames[i - 1];\r\n\t\t    float lastKey = lastGradientFrame.x;\r\n\t\t    float age = (normalizedAge - lastKey) / (key - lastKey);\r\n\t\t    overTimeFrame = mix(lastGradientFrame.y, gradientFrame.y, age);\r\n\t\t    break;\r\n\t\t}\r\n\t}\r\n    return floor(overTimeFrame);\r\n}\r\n";
 
-    var ParticleSpriteVS = "// sprite Uniform\nuniform float u_CurrentTime;\nuniform vec3 u_Gravity;\nuniform vec2 u_DragConstanct;\nuniform vec3 u_WorldPosition;\nuniform vec4 u_WorldRotation;\nuniform bool u_ThreeDStartRotation;\nuniform int u_ScalingMode;\nuniform vec3 u_PositionScale;\nuniform vec3 u_SizeScale;\n\nuniform float u_StretchedBillboardLengthScale;\nuniform float u_StretchedBillboardSpeedScale;\nuniform int u_SimulationSpace;\n\n#if defined(VELOCITYOVERLIFETIMECONSTANT) || defined(VELOCITYOVERLIFETIMECURVE) || defined(VELOCITYOVERLIFETIMERANDOMCONSTANT) || defined(VELOCITYOVERLIFETIMERANDOMCURVE)\nuniform int u_VOLSpaceType;\n#endif\n#if defined(VELOCITYOVERLIFETIMECONSTANT) || defined(VELOCITYOVERLIFETIMERANDOMCONSTANT)\nuniform vec3 u_VOLVelocityConst;\n#endif\n#if defined(VELOCITYOVERLIFETIMECURVE) || defined(VELOCITYOVERLIFETIMERANDOMCURVE)\nuniform vec2 u_VOLVelocityGradientX[4]; // x为key,y为速度\nuniform vec2 u_VOLVelocityGradientY[4]; // x为key,y为速度\nuniform vec2 u_VOLVelocityGradientZ[4]; // x为key,y为速度\n#endif\n#ifdef VELOCITYOVERLIFETIMERANDOMCONSTANT\nuniform vec3 u_VOLVelocityConstMax;\n#endif\n#ifdef VELOCITYOVERLIFETIMERANDOMCURVE\nuniform vec2 u_VOLVelocityGradientMaxX[4]; // x为key,y为速度\nuniform vec2 u_VOLVelocityGradientMaxY[4]; // x为key,y为速度\nuniform vec2 u_VOLVelocityGradientMaxZ[4]; // x为key,y为速度\n#endif\n\n#ifdef COLORKEYCOUNT_8\n    #define COLORCOUNT 8\n#else\n    #define COLORCOUNT 4\n#endif\n\n#ifdef COLOROVERLIFETIME\nuniform vec4 u_ColorOverLifeGradientColors[COLORCOUNT]; // x为key,yzw为Color\nuniform vec2 u_ColorOverLifeGradientAlphas[COLORCOUNT]; // x为key,y为Alpha\nuniform vec4 u_ColorOverLifeGradientRanges;\n#endif\n#ifdef RANDOMCOLOROVERLIFETIME\nuniform vec4 u_ColorOverLifeGradientColors[COLORCOUNT]; // x为key,yzw为Color\nuniform vec2 u_ColorOverLifeGradientAlphas[COLORCOUNT]; // x为key,y为Alpha\nuniform vec4 u_ColorOverLifeGradientRanges;\nuniform vec4 u_MaxColorOverLifeGradientColors[COLORCOUNT]; // x为key,yzw为Color\nuniform vec2 u_MaxColorOverLifeGradientAlphas[COLORCOUNT]; // x为key,y为Alpha\nuniform vec4 u_MaxColorOverLifeGradientRanges;\n#endif\n\n#if defined(SIZEOVERLIFETIMECURVE) || defined(SIZEOVERLIFETIMERANDOMCURVES)\nuniform vec2 u_SOLSizeGradient[4]; // x为key,y为尺寸\n#endif\n#ifdef SIZEOVERLIFETIMERANDOMCURVES\nuniform vec2 u_SOLSizeGradientMax[4]; // x为key,y为尺寸\n#endif\n#if defined(SIZEOVERLIFETIMECURVESEPERATE) || defined(SIZEOVERLIFETIMERANDOMCURVESSEPERATE)\nuniform vec2 u_SOLSizeGradientX[4]; // x为key,y为尺寸\nuniform vec2 u_SOLSizeGradientY[4]; // x为key,y为尺寸\nuniform vec2 u_SOLSizeGradientZ[4]; // x为key,y为尺寸\n#endif\n#ifdef SIZEOVERLIFETIMERANDOMCURVESSEPERATE\nuniform vec2 u_SOLSizeGradientMaxX[4]; // x为key,y为尺寸\nuniform vec2 u_SOLSizeGradientMaxY[4]; // x为key,y为尺寸\nuniform vec2 u_SOLSizeGradientMaxZ[4]; // x为key,y为尺寸\n#endif\n\n#ifdef ROTATIONOVERLIFETIME\n    #if defined(ROTATIONOVERLIFETIMECONSTANT) || defined(ROTATIONOVERLIFETIMERANDOMCONSTANTS)\nuniform float u_ROLAngularVelocityConst;\n    #endif\n    #ifdef ROTATIONOVERLIFETIMERANDOMCONSTANTS\nuniform float u_ROLAngularVelocityConstMax;\n    #endif\n    #if defined(ROTATIONOVERLIFETIMECURVE) || defined(ROTATIONOVERLIFETIMERANDOMCURVES)\nuniform vec2 u_ROLAngularVelocityGradient[4]; // x为key,y为旋转\n    #endif\n    #ifdef ROTATIONOVERLIFETIMERANDOMCURVES\nuniform vec2 u_ROLAngularVelocityGradientMax[4]; // x为key,y为旋转\n    #endif\n#endif\n#ifdef ROTATIONOVERLIFETIMESEPERATE\n    #if defined(ROTATIONOVERLIFETIMECONSTANT) || defined(ROTATIONOVERLIFETIMERANDOMCONSTANTS)\nuniform vec3 u_ROLAngularVelocityConstSeprarate;\n    #endif\n    #ifdef ROTATIONOVERLIFETIMERANDOMCONSTANTS\nuniform vec3 u_ROLAngularVelocityConstMaxSeprarate;\n    #endif\n    #if defined(ROTATIONOVERLIFETIMECURVE) || defined(ROTATIONOVERLIFETIMERANDOMCURVES)\nuniform vec2 u_ROLAngularVelocityGradientX[4];\nuniform vec2 u_ROLAngularVelocityGradientY[4];\nuniform vec2 u_ROLAngularVelocityGradientZ[4];\n    #endif\n    #ifdef ROTATIONOVERLIFETIMERANDOMCURVES\nuniform vec2 u_ROLAngularVelocityGradientMaxX[4];\nuniform vec2 u_ROLAngularVelocityGradientMaxY[4];\nuniform vec2 u_ROLAngularVelocityGradientMaxZ[4];\nuniform vec2 u_ROLAngularVelocityGradientMaxW[4];\n    #endif\n#endif\n\n#if defined(TEXTURESHEETANIMATIONCURVE) || defined(TEXTURESHEETANIMATIONRANDOMCURVE)\nuniform float u_TSACycles;\nuniform vec2 u_TSASubUVLength;\nuniform vec2 u_TSAGradientUVs[4]; // x为key,y为frame\n#endif\n#ifdef TEXTURESHEETANIMATIONRANDOMCURVE\nuniform vec2 u_TSAMaxGradientUVs[4]; // x为key,y为frame\n#endif";
+    var ParticleSpriteVS = "// sprite Uniform\r\nuniform float u_CurrentTime;\r\nuniform vec3 u_Gravity;\r\nuniform vec2 u_DragConstanct;\r\nuniform vec3 u_WorldPosition;\r\nuniform vec4 u_WorldRotation;\r\nuniform bool u_ThreeDStartRotation;\r\nuniform int u_ScalingMode;\r\nuniform vec3 u_PositionScale;\r\nuniform vec3 u_SizeScale;\r\n\r\nuniform float u_StretchedBillboardLengthScale;\r\nuniform float u_StretchedBillboardSpeedScale;\r\nuniform int u_SimulationSpace;\r\n\r\n#if defined(VELOCITYOVERLIFETIMECONSTANT) || defined(VELOCITYOVERLIFETIMECURVE) || defined(VELOCITYOVERLIFETIMERANDOMCONSTANT) || defined(VELOCITYOVERLIFETIMERANDOMCURVE)\r\nuniform int u_VOLSpaceType;\r\n#endif\r\n#if defined(VELOCITYOVERLIFETIMECONSTANT) || defined(VELOCITYOVERLIFETIMERANDOMCONSTANT)\r\nuniform vec3 u_VOLVelocityConst;\r\n#endif\r\n#if defined(VELOCITYOVERLIFETIMECURVE) || defined(VELOCITYOVERLIFETIMERANDOMCURVE)\r\nuniform vec2 u_VOLVelocityGradientX[4]; // x为key,y为速度\r\nuniform vec2 u_VOLVelocityGradientY[4]; // x为key,y为速度\r\nuniform vec2 u_VOLVelocityGradientZ[4]; // x为key,y为速度\r\n#endif\r\n#ifdef VELOCITYOVERLIFETIMERANDOMCONSTANT\r\nuniform vec3 u_VOLVelocityConstMax;\r\n#endif\r\n#ifdef VELOCITYOVERLIFETIMERANDOMCURVE\r\nuniform vec2 u_VOLVelocityGradientMaxX[4]; // x为key,y为速度\r\nuniform vec2 u_VOLVelocityGradientMaxY[4]; // x为key,y为速度\r\nuniform vec2 u_VOLVelocityGradientMaxZ[4]; // x为key,y为速度\r\n#endif\r\n\r\n#ifdef COLORKEYCOUNT_8\r\n    #define COLORCOUNT 8\r\n#else\r\n    #define COLORCOUNT 4\r\n#endif\r\n\r\n#ifdef COLOROVERLIFETIME\r\nuniform vec4 u_ColorOverLifeGradientColors[COLORCOUNT]; // x为key,yzw为Color\r\nuniform vec2 u_ColorOverLifeGradientAlphas[COLORCOUNT]; // x为key,y为Alpha\r\nuniform vec4 u_ColorOverLifeGradientRanges;\r\n#endif\r\n#ifdef RANDOMCOLOROVERLIFETIME\r\nuniform vec4 u_ColorOverLifeGradientColors[COLORCOUNT]; // x为key,yzw为Color\r\nuniform vec2 u_ColorOverLifeGradientAlphas[COLORCOUNT]; // x为key,y为Alpha\r\nuniform vec4 u_ColorOverLifeGradientRanges;\r\nuniform vec4 u_MaxColorOverLifeGradientColors[COLORCOUNT]; // x为key,yzw为Color\r\nuniform vec2 u_MaxColorOverLifeGradientAlphas[COLORCOUNT]; // x为key,y为Alpha\r\nuniform vec4 u_MaxColorOverLifeGradientRanges;\r\n#endif\r\n\r\n#if defined(SIZEOVERLIFETIMECURVE) || defined(SIZEOVERLIFETIMERANDOMCURVES)\r\nuniform vec2 u_SOLSizeGradient[4]; // x为key,y为尺寸\r\n#endif\r\n#ifdef SIZEOVERLIFETIMERANDOMCURVES\r\nuniform vec2 u_SOLSizeGradientMax[4]; // x为key,y为尺寸\r\n#endif\r\n#if defined(SIZEOVERLIFETIMECURVESEPERATE) || defined(SIZEOVERLIFETIMERANDOMCURVESSEPERATE)\r\nuniform vec2 u_SOLSizeGradientX[4]; // x为key,y为尺寸\r\nuniform vec2 u_SOLSizeGradientY[4]; // x为key,y为尺寸\r\nuniform vec2 u_SOLSizeGradientZ[4]; // x为key,y为尺寸\r\n#endif\r\n#ifdef SIZEOVERLIFETIMERANDOMCURVESSEPERATE\r\nuniform vec2 u_SOLSizeGradientMaxX[4]; // x为key,y为尺寸\r\nuniform vec2 u_SOLSizeGradientMaxY[4]; // x为key,y为尺寸\r\nuniform vec2 u_SOLSizeGradientMaxZ[4]; // x为key,y为尺寸\r\n#endif\r\n\r\n#ifdef ROTATIONOVERLIFETIME\r\n    #if defined(ROTATIONOVERLIFETIMECONSTANT) || defined(ROTATIONOVERLIFETIMERANDOMCONSTANTS)\r\nuniform float u_ROLAngularVelocityConst;\r\n    #endif\r\n    #ifdef ROTATIONOVERLIFETIMERANDOMCONSTANTS\r\nuniform float u_ROLAngularVelocityConstMax;\r\n    #endif\r\n    #if defined(ROTATIONOVERLIFETIMECURVE) || defined(ROTATIONOVERLIFETIMERANDOMCURVES)\r\nuniform vec2 u_ROLAngularVelocityGradient[4]; // x为key,y为旋转\r\n    #endif\r\n    #ifdef ROTATIONOVERLIFETIMERANDOMCURVES\r\nuniform vec2 u_ROLAngularVelocityGradientMax[4]; // x为key,y为旋转\r\n    #endif\r\n#endif\r\n#ifdef ROTATIONOVERLIFETIMESEPERATE\r\n    #if defined(ROTATIONOVERLIFETIMECONSTANT) || defined(ROTATIONOVERLIFETIMERANDOMCONSTANTS)\r\nuniform vec3 u_ROLAngularVelocityConstSeprarate;\r\n    #endif\r\n    #ifdef ROTATIONOVERLIFETIMERANDOMCONSTANTS\r\nuniform vec3 u_ROLAngularVelocityConstMaxSeprarate;\r\n    #endif\r\n    #if defined(ROTATIONOVERLIFETIMECURVE) || defined(ROTATIONOVERLIFETIMERANDOMCURVES)\r\nuniform vec2 u_ROLAngularVelocityGradientX[4];\r\nuniform vec2 u_ROLAngularVelocityGradientY[4];\r\nuniform vec2 u_ROLAngularVelocityGradientZ[4];\r\n    #endif\r\n    #ifdef ROTATIONOVERLIFETIMERANDOMCURVES\r\nuniform vec2 u_ROLAngularVelocityGradientMaxX[4];\r\nuniform vec2 u_ROLAngularVelocityGradientMaxY[4];\r\nuniform vec2 u_ROLAngularVelocityGradientMaxZ[4];\r\nuniform vec2 u_ROLAngularVelocityGradientMaxW[4];\r\n    #endif\r\n#endif\r\n\r\n#if defined(TEXTURESHEETANIMATIONCURVE) || defined(TEXTURESHEETANIMATIONRANDOMCURVE)\r\nuniform float u_TSACycles;\r\nuniform vec2 u_TSASubUVLength;\r\nuniform vec2 u_TSAGradientUVs[4]; // x为key,y为frame\r\n#endif\r\n#ifdef TEXTURESHEETANIMATIONRANDOMCURVE\r\nuniform vec2 u_TSAMaxGradientUVs[4]; // x为key,y为frame\r\n#endif";
 
     class ParticleShuriKenShaderInit {
         static init() {
@@ -32010,9 +32081,9 @@
         }
     }
 
-    var SkyProceduralVS = "#define SHADER_NAME SkyProceduralVS\n\n#include \"Camera.glsl\";\n\nconst float c_deg2ang = 3.141593 / 180.0;\n\n#define OUTER_RADIUS 1.025\n#define RAYLEIGH (mix(0.0, 0.0025, pow(u_AtmosphereThickness,2.5)))// Rayleigh constant Rayleigh为夜空光和极光亮度单位\n#define MIE 0.0010             // Mie constant 米氏散射\n#define SUN_BRIGHTNESS 20.0    // Sun brightness\n#define MAX_SCATTER 50.0 // Maximum scattering value, to prevent math overflows on Adrenos\n\nconst float SKY_GROUND_THRESHOLD = 0.02;\nconst float outerRadius = OUTER_RADIUS;\nconst float outerRadius2 = OUTER_RADIUS*OUTER_RADIUS;\nconst float innerRadius = 1.0;\nconst float innerRadius2 = 1.0;\nconst float cameraHeight = 0.0001;\n\nconst float HDSundiskIntensityFactor = 15.0;\nconst float simpleSundiskIntensityFactor = 27.0;\n\nconst float sunScale = 400.0 * SUN_BRIGHTNESS;\nconst float kmESun = MIE * SUN_BRIGHTNESS;\nconst float km4PI = MIE * 4.0 * 3.14159265;\nconst float scale = 1.0 / (OUTER_RADIUS - 1.0);\nconst float scaleDepth = 0.25;\nconst float scaleOverScaleDepth = (1.0 / (OUTER_RADIUS - 1.0)) / 0.25;\nconst float samples = 2.0; // THIS IS UNROLLED MANUALLY, DON'T TOUCH\n\n// RGB wavelengths        .35 (.62=158), .43 (.68=174), .525 (.75=190)\nconst vec3 c_DefaultScatteringWavelength = vec3(0.65, 0.57, 0.475);//默认散射波长\nconst vec3 c_VariableRangeForScatteringWavelength = vec3(0.15, 0.15, 0.15);//散射播放的可变范围\n\n// uniform vec4 u_SkyTint;\n// uniform vec4 u_GroundTint;\n// uniform float u_Exposure;\n// uniform float u_AtmosphereThickness;\nvec4 skyRemapGLPositionZ(vec4 position){\n\tposition.z = position.w;\n\treturn position;\n}\n//sprite\nuniform vec3 u_SunLight_direction;\nuniform vec4 u_SunLight_color;\n\nvarying vec3 v_GroundColor;\nvarying vec3 v_SkyColor;\n\n#ifdef SUN_HIGH_QUALITY\n\tvarying vec3 v_Vertex;\n#elif defined(SUN_SIMPLE)\n\tvarying vec3 v_RayDir;\n#else\n\tvarying float v_SkyGroundFactor;\n#endif\n\n#if defined(SUN_HIGH_QUALITY)||defined(SUN_SIMPLE)\n\tvarying vec3 v_SunColor;\n#endif\n\n// Calculates the Rayleigh phase function\nfloat getRayleighPhase(vec3 light, vec3 ray) \n{\n\tfloat eyeCos = dot(light, ray);\n\treturn 0.75 + 0.75*eyeCos*eyeCos;\n}\n\nfloat scaleAngle(float inCos)\n{\n\tfloat x = 1.0 - inCos;\n\treturn 0.25 * exp(-0.00287 + x*(0.459 + x*(3.83 + x*(-6.80 + x*5.25))));\n}\n\n\nvoid main(){\n    gl_Position = u_ViewProjection*a_Position;\n\n    vec3 skyTintInGammaSpace = pow(u_SkyTint.xyz,vec3(0.45));//u_SkyTint.xyz;//支持非GAMMA空间后要调整\n\tvec3 scatteringWavelength = mix(c_DefaultScatteringWavelength-c_VariableRangeForScatteringWavelength,c_DefaultScatteringWavelength+c_VariableRangeForScatteringWavelength,vec3(1.0) - skyTintInGammaSpace); // using Tint in sRGB+ gamma allows for more visually linear interpolation and to keep (0.5) at (128, gray in sRGB) point\n\tvec3 invWavelength = 1.0 / pow(scatteringWavelength, vec3(4.0));\n\n\tfloat krESun = RAYLEIGH * SUN_BRIGHTNESS;\n\tfloat kr4PI = RAYLEIGH * 4.0 * 3.14159265;\n\n\tvec3 cameraPos = vec3(0.0,innerRadius + cameraHeight,0.0); // The camera's current position\n\n\t// Get the ray from the camera to the vertex and its length (which is the far point of the ray passing through the atmosphere)\n\tvec3 eyeRay = normalize(a_Position.xyz);\n\n\tfloat far = 0.0;\n\tvec3 cIn, cOut;\n\tif (eyeRay.y >= 0.0) {// Sky\n\t\t// Calculate the length of the \"atmosphere\"\n\t\tfar = sqrt(outerRadius2 + innerRadius2 * eyeRay.y * eyeRay.y - innerRadius2) - innerRadius * eyeRay.y;\n\n\t\t// Calculate the ray's starting position, then calculate its scattering offset\n\t\tfloat height = innerRadius + cameraHeight;\n\t\tfloat depth = exp(scaleOverScaleDepth * -cameraHeight);\n\t\tfloat startAngle = dot(eyeRay, cameraPos) / height;\n\t\tfloat startOffset = depth*scaleAngle(startAngle);\n\n\t\t// Initialize the scattering loop variables\n\t\tfloat sampleLength = far / samples;\n\t\tfloat scaledLength = sampleLength * scale;\n\t\tvec3 sampleRay = eyeRay * sampleLength;\n\t\tvec3 samplePoint = cameraPos + sampleRay * 0.5;\n\n\t\tvec3 frontColor = vec3(0.0);\n\t\t//unrolling this manually to avoid some platform for loop slow\n\t\t{\n\t\t\tfloat height = length(samplePoint);\n\t\t\tfloat depth = exp(scaleOverScaleDepth * (innerRadius - height));\n\t\t\tfloat lightAngle = dot(-u_SunLight_direction, samplePoint) / height;\n\t\t\tfloat cameraAngle = dot(eyeRay, samplePoint) / height;\n\t\t\tfloat scatter = (startOffset + depth*(scaleAngle(lightAngle) - scaleAngle(cameraAngle)));\n\t\t\tvec3 attenuate = exp(-clamp(scatter, 0.0, MAX_SCATTER) * (invWavelength * kr4PI + km4PI));\n\n\t\t\tfrontColor += attenuate * (depth * scaledLength);\n\t\t\tsamplePoint += sampleRay;\n\t\t}\n\t\t{\n\t\t\tfloat height = length(samplePoint);\n\t\t\tfloat depth = exp(scaleOverScaleDepth * (innerRadius - height));\n\t\t\tfloat lightAngle = dot(-u_SunLight_direction, samplePoint) / height;\n\t\t\tfloat cameraAngle = dot(eyeRay, samplePoint) / height;\n\t\t\tfloat scatter = (startOffset + depth*(scaleAngle(lightAngle) - scaleAngle(cameraAngle)));\n\t\t\tvec3 attenuate = exp(-clamp(scatter, 0.0, MAX_SCATTER) * (invWavelength * kr4PI + km4PI));\n\n\t\t\tfrontColor += attenuate * (depth * scaledLength);\n\t\t\tsamplePoint += sampleRay;\n\t\t}\n\n\t\t// Finally, scale the Mie and Rayleigh colors and set up the varying variables for the pixel shader\n\t\tcIn = frontColor * (invWavelength * krESun);\n\t\tcOut = frontColor * kmESun;\n\t} else {// Ground\n\t\tfar = (-cameraHeight) / (min(-0.001, eyeRay.y));\n\t\tvec3 pos = cameraPos + far * eyeRay;\n\n\t\t// Calculate the ray's starting position, then calculate its scattering offset\n\t\tfloat depth = exp((-cameraHeight) * (1.0/scaleDepth));\n\t\tfloat cameraAngle = dot(-eyeRay, pos);\n\t\tfloat lightAngle = dot(-u_SunLight_direction, pos);\n\t\tfloat cameraScale = scaleAngle(cameraAngle);\n\t\tfloat lightScale = scaleAngle(lightAngle);\n\t\tfloat cameraOffset = depth*cameraScale;\n\t\tfloat temp = lightScale + cameraScale;\n\n\t\t// Initialize the scattering loop variables\n\t\tfloat sampleLength = far / samples;\n\t\tfloat scaledLength = sampleLength * scale;\n\t\tvec3 sampleRay = eyeRay * sampleLength;\n\t\tvec3 samplePoint = cameraPos + sampleRay * 0.5;\n\n\t\t// Now loop through the sample rays\n\t\tvec3 frontColor = vec3(0.0, 0.0, 0.0);\n\t\tvec3 attenuate;\n\n\t\t// Loop removed because we kept hitting SM2.0 temp variable limits. Doesn't affect the image too much.\n\t\t{\n\t\t\tfloat height = length(samplePoint);\n\t\t\tfloat depth = exp(scaleOverScaleDepth * (innerRadius - height));\n\t\t\tfloat scatter = depth*temp - cameraOffset;\n\t\t\tattenuate = exp(-clamp(scatter, 0.0, MAX_SCATTER) * (invWavelength * kr4PI + km4PI));\n\t\t\tfrontColor += attenuate * (depth * scaledLength);\n\t\t\tsamplePoint += sampleRay;\n\t\t}\n\n\t\tcIn = frontColor * (invWavelength * krESun + kmESun);\n\t\tcOut = clamp(attenuate, 0.0, 1.0);\n\t}\n\n\t#ifdef SUN_HIGH_QUALITY\n\t\tv_Vertex = -a_Position.xyz;\n\t#elif defined(SUN_SIMPLE) \n\t\tv_RayDir = -eyeRay;\n\t#else\n\t\tv_SkyGroundFactor = -eyeRay.y / SKY_GROUND_THRESHOLD;\n\t#endif\n\n\t// if we want to calculate color in vprog:\n\t// in case of linear: multiply by _Exposure in here (even in case of lerp it will be common multiplier, so we can skip mul in fshader)\n\tv_GroundColor = u_Exposure * (cIn + u_GroundTint.xyz * cOut);//u_GroundColor*u_GroundColor is gamma space convert to linear space\n\tv_SkyColor    = u_Exposure * (cIn * getRayleighPhase(-u_SunLight_direction, -eyeRay));\n\n\t\n\t// The sun should have a stable intensity in its course in the sky. Moreover it should match the highlight of a purely specular material.\n\t// This matching was done using the Unity3D standard shader BRDF1 on the 5/31/2017\n\t// Finally we want the sun to be always bright even in LDR thus the normalization of the lightColor for low intensity.\n\tfloat lightColorIntensity = clamp(length(u_SunLight_color.xyz), 0.25, 1.0);\n\n\t#ifdef SUN_HIGH_QUALITY \n\t\tv_SunColor = HDSundiskIntensityFactor * clamp(cOut,0.0,1.0) * u_SunLight_color.xyz / lightColorIntensity;\n\t#elif defined(SUN_SIMPLE) \n\t\tv_SunColor = simpleSundiskIntensityFactor * clamp(cOut * sunScale,0.0,1.0) * u_SunLight_color.xyz / lightColorIntensity;\n\t#endif\n\tgl_Position=skyRemapGLPositionZ(gl_Position);\n}";
+    var SkyProceduralVS = "#define SHADER_NAME SkyProceduralVS\r\n\r\n#include \"Camera.glsl\";\r\n\r\nconst float c_deg2ang = 3.141593 / 180.0;\r\n\r\n#define OUTER_RADIUS 1.025\r\n#define RAYLEIGH (mix(0.0, 0.0025, pow(u_AtmosphereThickness,2.5)))// Rayleigh constant Rayleigh为夜空光和极光亮度单位\r\n#define MIE 0.0010             // Mie constant 米氏散射\r\n#define SUN_BRIGHTNESS 20.0    // Sun brightness\r\n#define MAX_SCATTER 50.0 // Maximum scattering value, to prevent math overflows on Adrenos\r\n\r\nconst float SKY_GROUND_THRESHOLD = 0.02;\r\nconst float outerRadius = OUTER_RADIUS;\r\nconst float outerRadius2 = OUTER_RADIUS*OUTER_RADIUS;\r\nconst float innerRadius = 1.0;\r\nconst float innerRadius2 = 1.0;\r\nconst float cameraHeight = 0.0001;\r\n\r\nconst float HDSundiskIntensityFactor = 15.0;\r\nconst float simpleSundiskIntensityFactor = 27.0;\r\n\r\nconst float sunScale = 400.0 * SUN_BRIGHTNESS;\r\nconst float kmESun = MIE * SUN_BRIGHTNESS;\r\nconst float km4PI = MIE * 4.0 * 3.14159265;\r\nconst float scale = 1.0 / (OUTER_RADIUS - 1.0);\r\nconst float scaleDepth = 0.25;\r\nconst float scaleOverScaleDepth = (1.0 / (OUTER_RADIUS - 1.0)) / 0.25;\r\nconst float samples = 2.0; // THIS IS UNROLLED MANUALLY, DON'T TOUCH\r\n\r\n// RGB wavelengths        .35 (.62=158), .43 (.68=174), .525 (.75=190)\r\nconst vec3 c_DefaultScatteringWavelength = vec3(0.65, 0.57, 0.475);//默认散射波长\r\nconst vec3 c_VariableRangeForScatteringWavelength = vec3(0.15, 0.15, 0.15);//散射播放的可变范围\r\n\r\n// uniform vec4 u_SkyTint;\r\n// uniform vec4 u_GroundTint;\r\n// uniform float u_Exposure;\r\n// uniform float u_AtmosphereThickness;\r\nvec4 skyRemapGLPositionZ(vec4 position){\r\n\tposition.z = position.w;\r\n\treturn position;\r\n}\r\n//sprite\r\nuniform vec3 u_SunLight_direction;\r\nuniform vec4 u_SunLight_color;\r\n\r\nvarying vec3 v_GroundColor;\r\nvarying vec3 v_SkyColor;\r\n\r\n#ifdef SUN_HIGH_QUALITY\r\n\tvarying vec3 v_Vertex;\r\n#elif defined(SUN_SIMPLE)\r\n\tvarying vec3 v_RayDir;\r\n#else\r\n\tvarying float v_SkyGroundFactor;\r\n#endif\r\n\r\n#if defined(SUN_HIGH_QUALITY)||defined(SUN_SIMPLE)\r\n\tvarying vec3 v_SunColor;\r\n#endif\r\n\r\n// Calculates the Rayleigh phase function\r\nfloat getRayleighPhase(vec3 light, vec3 ray) \r\n{\r\n\tfloat eyeCos = dot(light, ray);\r\n\treturn 0.75 + 0.75*eyeCos*eyeCos;\r\n}\r\n\r\nfloat scaleAngle(float inCos)\r\n{\r\n\tfloat x = 1.0 - inCos;\r\n\treturn 0.25 * exp(-0.00287 + x*(0.459 + x*(3.83 + x*(-6.80 + x*5.25))));\r\n}\r\n\r\n\r\nvoid main(){\r\n    gl_Position = u_ViewProjection*a_Position;\r\n\r\n    vec3 skyTintInGammaSpace = pow(u_SkyTint.xyz,vec3(0.45));//u_SkyTint.xyz;//支持非GAMMA空间后要调整\r\n\tvec3 scatteringWavelength = mix(c_DefaultScatteringWavelength-c_VariableRangeForScatteringWavelength,c_DefaultScatteringWavelength+c_VariableRangeForScatteringWavelength,vec3(1.0) - skyTintInGammaSpace); // using Tint in sRGB+ gamma allows for more visually linear interpolation and to keep (0.5) at (128, gray in sRGB) point\r\n\tvec3 invWavelength = 1.0 / pow(scatteringWavelength, vec3(4.0));\r\n\r\n\tfloat krESun = RAYLEIGH * SUN_BRIGHTNESS;\r\n\tfloat kr4PI = RAYLEIGH * 4.0 * 3.14159265;\r\n\r\n\tvec3 cameraPos = vec3(0.0,innerRadius + cameraHeight,0.0); // The camera's current position\r\n\r\n\t// Get the ray from the camera to the vertex and its length (which is the far point of the ray passing through the atmosphere)\r\n\tvec3 eyeRay = normalize(a_Position.xyz);\r\n\r\n\tfloat far = 0.0;\r\n\tvec3 cIn, cOut;\r\n\tif (eyeRay.y >= 0.0) {// Sky\r\n\t\t// Calculate the length of the \"atmosphere\"\r\n\t\tfar = sqrt(outerRadius2 + innerRadius2 * eyeRay.y * eyeRay.y - innerRadius2) - innerRadius * eyeRay.y;\r\n\r\n\t\t// Calculate the ray's starting position, then calculate its scattering offset\r\n\t\tfloat height = innerRadius + cameraHeight;\r\n\t\tfloat depth = exp(scaleOverScaleDepth * -cameraHeight);\r\n\t\tfloat startAngle = dot(eyeRay, cameraPos) / height;\r\n\t\tfloat startOffset = depth*scaleAngle(startAngle);\r\n\r\n\t\t// Initialize the scattering loop variables\r\n\t\tfloat sampleLength = far / samples;\r\n\t\tfloat scaledLength = sampleLength * scale;\r\n\t\tvec3 sampleRay = eyeRay * sampleLength;\r\n\t\tvec3 samplePoint = cameraPos + sampleRay * 0.5;\r\n\r\n\t\tvec3 frontColor = vec3(0.0);\r\n\t\t//unrolling this manually to avoid some platform for loop slow\r\n\t\t{\r\n\t\t\tfloat height = length(samplePoint);\r\n\t\t\tfloat depth = exp(scaleOverScaleDepth * (innerRadius - height));\r\n\t\t\tfloat lightAngle = dot(-u_SunLight_direction, samplePoint) / height;\r\n\t\t\tfloat cameraAngle = dot(eyeRay, samplePoint) / height;\r\n\t\t\tfloat scatter = (startOffset + depth*(scaleAngle(lightAngle) - scaleAngle(cameraAngle)));\r\n\t\t\tvec3 attenuate = exp(-clamp(scatter, 0.0, MAX_SCATTER) * (invWavelength * kr4PI + km4PI));\r\n\r\n\t\t\tfrontColor += attenuate * (depth * scaledLength);\r\n\t\t\tsamplePoint += sampleRay;\r\n\t\t}\r\n\t\t{\r\n\t\t\tfloat height = length(samplePoint);\r\n\t\t\tfloat depth = exp(scaleOverScaleDepth * (innerRadius - height));\r\n\t\t\tfloat lightAngle = dot(-u_SunLight_direction, samplePoint) / height;\r\n\t\t\tfloat cameraAngle = dot(eyeRay, samplePoint) / height;\r\n\t\t\tfloat scatter = (startOffset + depth*(scaleAngle(lightAngle) - scaleAngle(cameraAngle)));\r\n\t\t\tvec3 attenuate = exp(-clamp(scatter, 0.0, MAX_SCATTER) * (invWavelength * kr4PI + km4PI));\r\n\r\n\t\t\tfrontColor += attenuate * (depth * scaledLength);\r\n\t\t\tsamplePoint += sampleRay;\r\n\t\t}\r\n\r\n\t\t// Finally, scale the Mie and Rayleigh colors and set up the varying variables for the pixel shader\r\n\t\tcIn = frontColor * (invWavelength * krESun);\r\n\t\tcOut = frontColor * kmESun;\r\n\t} else {// Ground\r\n\t\tfar = (-cameraHeight) / (min(-0.001, eyeRay.y));\r\n\t\tvec3 pos = cameraPos + far * eyeRay;\r\n\r\n\t\t// Calculate the ray's starting position, then calculate its scattering offset\r\n\t\tfloat depth = exp((-cameraHeight) * (1.0/scaleDepth));\r\n\t\tfloat cameraAngle = dot(-eyeRay, pos);\r\n\t\tfloat lightAngle = dot(-u_SunLight_direction, pos);\r\n\t\tfloat cameraScale = scaleAngle(cameraAngle);\r\n\t\tfloat lightScale = scaleAngle(lightAngle);\r\n\t\tfloat cameraOffset = depth*cameraScale;\r\n\t\tfloat temp = lightScale + cameraScale;\r\n\r\n\t\t// Initialize the scattering loop variables\r\n\t\tfloat sampleLength = far / samples;\r\n\t\tfloat scaledLength = sampleLength * scale;\r\n\t\tvec3 sampleRay = eyeRay * sampleLength;\r\n\t\tvec3 samplePoint = cameraPos + sampleRay * 0.5;\r\n\r\n\t\t// Now loop through the sample rays\r\n\t\tvec3 frontColor = vec3(0.0, 0.0, 0.0);\r\n\t\tvec3 attenuate;\r\n\r\n\t\t// Loop removed because we kept hitting SM2.0 temp variable limits. Doesn't affect the image too much.\r\n\t\t{\r\n\t\t\tfloat height = length(samplePoint);\r\n\t\t\tfloat depth = exp(scaleOverScaleDepth * (innerRadius - height));\r\n\t\t\tfloat scatter = depth*temp - cameraOffset;\r\n\t\t\tattenuate = exp(-clamp(scatter, 0.0, MAX_SCATTER) * (invWavelength * kr4PI + km4PI));\r\n\t\t\tfrontColor += attenuate * (depth * scaledLength);\r\n\t\t\tsamplePoint += sampleRay;\r\n\t\t}\r\n\r\n\t\tcIn = frontColor * (invWavelength * krESun + kmESun);\r\n\t\tcOut = clamp(attenuate, 0.0, 1.0);\r\n\t}\r\n\r\n\t#ifdef SUN_HIGH_QUALITY\r\n\t\tv_Vertex = -a_Position.xyz;\r\n\t#elif defined(SUN_SIMPLE) \r\n\t\tv_RayDir = -eyeRay;\r\n\t#else\r\n\t\tv_SkyGroundFactor = -eyeRay.y / SKY_GROUND_THRESHOLD;\r\n\t#endif\r\n\r\n\t// if we want to calculate color in vprog:\r\n\t// in case of linear: multiply by _Exposure in here (even in case of lerp it will be common multiplier, so we can skip mul in fshader)\r\n\tv_GroundColor = u_Exposure * (cIn + u_GroundTint.xyz * cOut);//u_GroundColor*u_GroundColor is gamma space convert to linear space\r\n\tv_SkyColor    = u_Exposure * (cIn * getRayleighPhase(-u_SunLight_direction, -eyeRay));\r\n\r\n\t\r\n\t// The sun should have a stable intensity in its course in the sky. Moreover it should match the highlight of a purely specular material.\r\n\t// This matching was done using the Unity3D standard shader BRDF1 on the 5/31/2017\r\n\t// Finally we want the sun to be always bright even in LDR thus the normalization of the lightColor for low intensity.\r\n\tfloat lightColorIntensity = clamp(length(u_SunLight_color.xyz), 0.25, 1.0);\r\n\r\n\t#ifdef SUN_HIGH_QUALITY \r\n\t\tv_SunColor = HDSundiskIntensityFactor * clamp(cOut,0.0,1.0) * u_SunLight_color.xyz / lightColorIntensity;\r\n\t#elif defined(SUN_SIMPLE) \r\n\t\tv_SunColor = simpleSundiskIntensityFactor * clamp(cOut * sunScale,0.0,1.0) * u_SunLight_color.xyz / lightColorIntensity;\r\n\t#endif\r\n\tgl_Position=skyRemapGLPositionZ(gl_Position);\r\n}";
 
-    var SkyProceduralFS = "#define SHADER_NAME SkyProceduralFS\n\nconst float MIE_G = -0.990;\nconst float MIE_G2 = 0.9801;\nconst float SKY_GROUND_THRESHOLD = 0.02;\n\n// uniform float u_SunSize;\n// uniform float u_SunSizeConvergence;\n\nuniform vec3 u_SunLight_direction;\n\nvarying vec3 v_GroundColor;\nvarying vec3 v_SkyColor;\n\n\n#ifdef SUN_HIGH_QUALITY\n\tvarying vec3 v_Vertex;\n#elif defined(SUN_SIMPLE)\n\tvarying vec3 v_RayDir;\n#else\n\tvarying float v_SkyGroundFactor;\n#endif\n\n#if defined(SUN_HIGH_QUALITY)||defined(SUN_SIMPLE)\n\tvarying vec3 v_SunColor;\n#endif\n\n// Calculates the Mie phase function\nfloat getMiePhase(float eyeCos, float eyeCos2) {\n\tfloat temp = 1.0 + MIE_G2 - 2.0 * MIE_G * eyeCos;\n\ttemp = pow(temp, pow(u_SunSize,0.65) * 10.0);\n\ttemp = max(temp,1.0e-4); // prevent division by zero, esp. in half precision\n\ttemp = 1.5 * ((1.0 - MIE_G2) / (2.0 + MIE_G2)) * (1.0 + eyeCos2) / temp;\n\treturn temp;\n}\n\n// Calculates the sun shape\nfloat calcSunAttenuation(vec3 lightPos, vec3 ray) {\n\t#ifdef SUN_HIGH_QUALITY\n\t\tfloat focusedEyeCos = pow(clamp(dot(lightPos, ray),0.0,1.0), u_SunSizeConvergence);\n\t\treturn getMiePhase(-focusedEyeCos, focusedEyeCos * focusedEyeCos);\n\t#else //SUN_SIMPLE\n\t\tvec3 delta = lightPos - ray;\n\t\tfloat dist = length(delta);\n\t\tfloat spot = 1.0 - smoothstep(0.0, u_SunSize, dist);\n\t\treturn spot * spot;\n\t#endif\n}\n\nvoid main() {\n\t// if y > 1 [eyeRay.y < -SKY_GROUND_THRESHOLD] - ground\n\t// if y >= 0 and < 1 [eyeRay.y <= 0 and > -SKY_GROUND_THRESHOLD] - horizon\n\t// if y < 0 [eyeRay.y > 0] - sky\n\tvec3 col = vec3(0.0, 0.0, 0.0);\n\n\t#ifdef SUN_HIGH_QUALITY\n\t\tvec3 ray = normalize(v_Vertex);\n\t\tfloat y = ray.y / SKY_GROUND_THRESHOLD;\n\t#elif defined(SUN_SIMPLE) \n\t\tvec3 ray = v_RayDir;\n\t\tfloat y = ray.y / SKY_GROUND_THRESHOLD;\t\n\t#else\n\t\tfloat y = v_SkyGroundFactor;\n\t#endif\n\n\t// if we did precalculate color in vprog: just do lerp between them\n\tcol = mix(v_SkyColor, v_GroundColor, clamp(y,0.0,1.0));\n\n\t#if defined(SUN_HIGH_QUALITY)||defined(SUN_SIMPLE)\n\t\tif (y < 0.0)\n\t\t\tcol += v_SunColor * calcSunAttenuation(-u_SunLight_direction, -ray);\n\t#endif\n\n\t//col = sqrt(col);//linear space convert to gamma space\n\tgl_FragColor=vec4(col,1.0);\n}\n";
+    var SkyProceduralFS = "#define SHADER_NAME SkyProceduralFS\r\n\r\nconst float MIE_G = -0.990;\r\nconst float MIE_G2 = 0.9801;\r\nconst float SKY_GROUND_THRESHOLD = 0.02;\r\n\r\n// uniform float u_SunSize;\r\n// uniform float u_SunSizeConvergence;\r\n\r\nuniform vec3 u_SunLight_direction;\r\n\r\nvarying vec3 v_GroundColor;\r\nvarying vec3 v_SkyColor;\r\n\r\n\r\n#ifdef SUN_HIGH_QUALITY\r\n\tvarying vec3 v_Vertex;\r\n#elif defined(SUN_SIMPLE)\r\n\tvarying vec3 v_RayDir;\r\n#else\r\n\tvarying float v_SkyGroundFactor;\r\n#endif\r\n\r\n#if defined(SUN_HIGH_QUALITY)||defined(SUN_SIMPLE)\r\n\tvarying vec3 v_SunColor;\r\n#endif\r\n\r\n// Calculates the Mie phase function\r\nfloat getMiePhase(float eyeCos, float eyeCos2) {\r\n\tfloat temp = 1.0 + MIE_G2 - 2.0 * MIE_G * eyeCos;\r\n\ttemp = pow(temp, pow(u_SunSize,0.65) * 10.0);\r\n\ttemp = max(temp,1.0e-4); // prevent division by zero, esp. in half precision\r\n\ttemp = 1.5 * ((1.0 - MIE_G2) / (2.0 + MIE_G2)) * (1.0 + eyeCos2) / temp;\r\n\treturn temp;\r\n}\r\n\r\n// Calculates the sun shape\r\nfloat calcSunAttenuation(vec3 lightPos, vec3 ray) {\r\n\t#ifdef SUN_HIGH_QUALITY\r\n\t\tfloat focusedEyeCos = pow(clamp(dot(lightPos, ray),0.0,1.0), u_SunSizeConvergence);\r\n\t\treturn getMiePhase(-focusedEyeCos, focusedEyeCos * focusedEyeCos);\r\n\t#else //SUN_SIMPLE\r\n\t\tvec3 delta = lightPos - ray;\r\n\t\tfloat dist = length(delta);\r\n\t\tfloat spot = 1.0 - smoothstep(0.0, u_SunSize, dist);\r\n\t\treturn spot * spot;\r\n\t#endif\r\n}\r\n\r\nvoid main() {\r\n\t// if y > 1 [eyeRay.y < -SKY_GROUND_THRESHOLD] - ground\r\n\t// if y >= 0 and < 1 [eyeRay.y <= 0 and > -SKY_GROUND_THRESHOLD] - horizon\r\n\t// if y < 0 [eyeRay.y > 0] - sky\r\n\tvec3 col = vec3(0.0, 0.0, 0.0);\r\n\r\n\t#ifdef SUN_HIGH_QUALITY\r\n\t\tvec3 ray = normalize(v_Vertex);\r\n\t\tfloat y = ray.y / SKY_GROUND_THRESHOLD;\r\n\t#elif defined(SUN_SIMPLE) \r\n\t\tvec3 ray = v_RayDir;\r\n\t\tfloat y = ray.y / SKY_GROUND_THRESHOLD;\t\r\n\t#else\r\n\t\tfloat y = v_SkyGroundFactor;\r\n\t#endif\r\n\r\n\t// if we did precalculate color in vprog: just do lerp between them\r\n\tcol = mix(v_SkyColor, v_GroundColor, clamp(y,0.0,1.0));\r\n\r\n\t#if defined(SUN_HIGH_QUALITY)||defined(SUN_SIMPLE)\r\n\t\tif (y < 0.0)\r\n\t\t\tcol += v_SunColor * calcSunAttenuation(-u_SunLight_direction, -ray);\r\n\t#endif\r\n\r\n\t//col = sqrt(col);//linear space convert to gamma space\r\n\tgl_FragColor=vec4(col,1.0);\r\n}\r\n";
 
     class SkyProceduralShaderInit {
         static init() {
@@ -32044,9 +32115,9 @@
         }
     }
 
-    var SkyPanoramicVS = "#define SHADER_NAME SkyPanoramicVS\n\n#include \"Camera.glsl\";\n#define PI 3.14159265359\n\n//attribute vec4 a_Position;\n\n//uniform float u_Rotation;\n\nvarying vec3 v_Texcoord;\nvarying vec2 v_Image180ScaleAndCutoff;\nvarying vec4 v_Layout3DScaleAndOffset;\n\nvec4 skyRemapGLPositionZ(vec4 position){\n\tposition.z = position.w;\n\treturn position;\n}\n\nvec4 rotateAroundYInDegrees (vec4 vertex, float degrees)\n{\n\tfloat angle = degrees * PI / 180.0;\n\tfloat sina=sin(angle);\n\tfloat cosa=cos(angle);\n\tmat2 m = mat2(cosa, -sina, sina, cosa);\n\treturn vec4(m*vertex.xz, vertex.yw).xzyw;\n}\n\t\nvoid main()\n{\n\tvec4 position = rotateAroundYInDegrees(a_Position, u_Rotation);\n\t\n\n\tv_Texcoord=vec3(-a_Position.x,-a_Position.y,a_Position.z);// NOTE: -a_Position.x convert coords system\n\n\t// Calculate constant horizontal scale and cutoff for 180 (vs 360) image type\n\tv_Image180ScaleAndCutoff = vec2(1.0, 1.0);// 360 degree mode\n\n\t// Calculate constant scale and offset for 3D layouts\n\tv_Layout3DScaleAndOffset = vec4(0,0,1,1);\n\tgl_Position = u_ViewProjection*position;\n\tgl_Position=skyRemapGLPositionZ(gl_Position);\n\n}\n";
+    var SkyPanoramicVS = "#define SHADER_NAME SkyPanoramicVS\r\n\r\n#include \"Camera.glsl\";\r\n#define PI 3.14159265359\r\n\r\n//attribute vec4 a_Position;\r\n\r\n//uniform float u_Rotation;\r\n\r\nvarying vec3 v_Texcoord;\r\nvarying vec2 v_Image180ScaleAndCutoff;\r\nvarying vec4 v_Layout3DScaleAndOffset;\r\n\r\nvec4 skyRemapGLPositionZ(vec4 position){\r\n\tposition.z = position.w;\r\n\treturn position;\r\n}\r\n\r\nvec4 rotateAroundYInDegrees (vec4 vertex, float degrees)\r\n{\r\n\tfloat angle = degrees * PI / 180.0;\r\n\tfloat sina=sin(angle);\r\n\tfloat cosa=cos(angle);\r\n\tmat2 m = mat2(cosa, -sina, sina, cosa);\r\n\treturn vec4(m*vertex.xz, vertex.yw).xzyw;\r\n}\r\n\t\r\nvoid main()\r\n{\r\n\tvec4 position = rotateAroundYInDegrees(a_Position, u_Rotation);\r\n\t\r\n\r\n\tv_Texcoord=vec3(-a_Position.x,-a_Position.y,a_Position.z);// NOTE: -a_Position.x convert coords system\r\n\r\n\t// Calculate constant horizontal scale and cutoff for 180 (vs 360) image type\r\n\tv_Image180ScaleAndCutoff = vec2(1.0, 1.0);// 360 degree mode\r\n\r\n\t// Calculate constant scale and offset for 3D layouts\r\n\tv_Layout3DScaleAndOffset = vec4(0,0,1,1);\r\n\tgl_Position = u_ViewProjection*position;\r\n\tgl_Position=skyRemapGLPositionZ(gl_Position);\r\n\r\n}\r\n";
 
-    var SkyPanoramicFS = "#define SHADER_NAME SkyPanoramicVS\n\n#define PI 3.14159265359\n\nvarying vec3 v_Texcoord;\nvarying vec2 v_Image180ScaleAndCutoff;\nvarying vec4 v_Layout3DScaleAndOffset;\nconst vec4 c_ColorSpace = vec4(4.59479380, 4.59479380, 4.59479380, 2.0);\n\nvec2 ToRadialCoords(vec3 coords)\n{\n    vec3 normalizedCoords = normalize(coords);\n    float latitude = acos(normalizedCoords.y);\n    float longitude = atan(normalizedCoords.z, normalizedCoords.x);\n    vec2 sphereCoords = vec2(longitude, latitude) * vec2(0.5 / PI, 1.0 / PI);\n    return vec2(0.5, 1.0) - sphereCoords;\n}\n\nvoid main()\n{\n    vec2 tc = ToRadialCoords(v_Texcoord);\n    if (tc.x > v_Image180ScaleAndCutoff.y)\n\tgl_FragColor = vec4(0, 0, 0, 1);\n    tc.x = mod(tc.x * v_Image180ScaleAndCutoff.x, 1.0);\n    tc = (tc + v_Layout3DScaleAndOffset.xy) * v_Layout3DScaleAndOffset.zw;\n\n    mediump vec4 tex = texture2D(u_Texture, tc);\n    mediump vec3 c = tex.xyz;\n    c = c * u_TintColor.rgb * c_ColorSpace.rgb;\n    c *= u_Exposure;\n    gl_FragColor = vec4(c, 1.0);\n}\n";
+    var SkyPanoramicFS = "#define SHADER_NAME SkyPanoramicVS\r\n\r\n#define PI 3.14159265359\r\n\r\nvarying vec3 v_Texcoord;\r\nvarying vec2 v_Image180ScaleAndCutoff;\r\nvarying vec4 v_Layout3DScaleAndOffset;\r\nconst vec4 c_ColorSpace = vec4(4.59479380, 4.59479380, 4.59479380, 2.0);\r\n\r\nvec2 ToRadialCoords(vec3 coords)\r\n{\r\n    vec3 normalizedCoords = normalize(coords);\r\n    float latitude = acos(normalizedCoords.y);\r\n    float longitude = atan(normalizedCoords.z, normalizedCoords.x);\r\n    vec2 sphereCoords = vec2(longitude, latitude) * vec2(0.5 / PI, 1.0 / PI);\r\n    return vec2(0.5, 1.0) - sphereCoords;\r\n}\r\n\r\nvoid main()\r\n{\r\n    vec2 tc = ToRadialCoords(v_Texcoord);\r\n    if (tc.x > v_Image180ScaleAndCutoff.y)\r\n\tgl_FragColor = vec4(0, 0, 0, 1);\r\n    tc.x = mod(tc.x * v_Image180ScaleAndCutoff.x, 1.0);\r\n    tc = (tc + v_Layout3DScaleAndOffset.xy) * v_Layout3DScaleAndOffset.zw;\r\n\r\n    mediump vec4 tex = texture2D(u_Texture, tc);\r\n    mediump vec3 c = tex.xyz;\r\n    c = c * u_TintColor.rgb * c_ColorSpace.rgb;\r\n    c *= u_Exposure;\r\n    gl_FragColor = vec4(c, 1.0);\r\n}\r\n";
 
     class SkyPanoramicShaderInit {
         static init() {
@@ -32074,21 +32145,21 @@
         }
     }
 
-    var UtillitiesColorGLSL = "#if !defined(UtillitiesColor_lib)\n#define UtillitiesColor_lib\n\n// Transformations between CIE XYZ tristimulus values and CIE x,y\n// chromaticity coordinates\nvec3 XYZ_2_xyY(vec3 XYZ)\n{\n    vec3 xyY;\n    float divisor = max(XYZ.x + XYZ.y + XYZ.z, 1e-10);\n    xyY.x = XYZ.x / divisor;\n    xyY.y = XYZ.y / divisor;\n    xyY.z = XYZ.y;\n    return xyY;\n}\n\nvec3 xyY_2_XYZ(vec3 xyY)\n{\n    vec3 XYZ;\n    XYZ.x = xyY.x * xyY.z / max(xyY.y, 1e-10);\n    XYZ.y = xyY.z;\n    XYZ.z = (1.0 - xyY.x - xyY.y) * xyY.z / max(xyY.y, 1e-10);\n    return XYZ;\n}\n\nfloat rgb_2_yc(vec3 rgb, float ycRadiusWeight)\n{\n    float r = rgb.r;\n    float g = rgb.g;\n    float b = rgb.b;\n    float k = b * (b - g) + g * (g - r) + r * (r - b);\n    k = max(MEDIUMP_FLT_MIN, k);\n    float chroma = sqrt(k);\n    return (b + g + r + ycRadiusWeight * chroma) / 3.0;\n}\n\nfloat rgb_2_yc(vec3 rgb)\n{\n    return rgb_2_yc(rgb, 1.75);\n}\n\n// Transformations from RGB to other color representations\n\n// Returns a geometric hue angle in degrees (0-360) based on RGB values.\nfloat rgb_2_hue(vec3 rgb)\n{\n    float hue;\n    // For neutral colors, hue is undefined and the function will return a quiet NaN value.\n    // if (rgb.r == rgb.g && rgb.g == rgb.b) {\n    //     // hue = FLT_NAN;\n    //     // todo FLT_NAN\n    //     hue = 0.0;\n    // } else {\n    //     hue = (180.0 * INVERT_PI) * atan2(sqrt(3.0) * (rgb.g - rgb.b), 2.0 * rgb.r - rgb.g - rgb.b);\n    // }\n    if (rgb.x == rgb.y && rgb.y == rgb.z)\n        hue = 0.0; // RGB triplets where RGB are equal have an undefined hue\n    else\n        hue = (180.0 * INVERT_PI) * atan(sqrt(3.0) * (rgb.y - rgb.z), 2.0 * rgb.x - rgb.y - rgb.z);\n\n    if (hue < 0.0) {\n        hue = hue + 360.0;\n    }\n\n    return hue;\n}\n\n#endif // UtillitiesColor_lib";
+    var UtillitiesColorGLSL = "#if !defined(UtillitiesColor_lib)\r\n#define UtillitiesColor_lib\r\n\r\n// Transformations between CIE XYZ tristimulus values and CIE x,y\r\n// chromaticity coordinates\r\nvec3 XYZ_2_xyY(vec3 XYZ)\r\n{\r\n    vec3 xyY;\r\n    float divisor = max(XYZ.x + XYZ.y + XYZ.z, 1e-10);\r\n    xyY.x = XYZ.x / divisor;\r\n    xyY.y = XYZ.y / divisor;\r\n    xyY.z = XYZ.y;\r\n    return xyY;\r\n}\r\n\r\nvec3 xyY_2_XYZ(vec3 xyY)\r\n{\r\n    vec3 XYZ;\r\n    XYZ.x = xyY.x * xyY.z / max(xyY.y, 1e-10);\r\n    XYZ.y = xyY.z;\r\n    XYZ.z = (1.0 - xyY.x - xyY.y) * xyY.z / max(xyY.y, 1e-10);\r\n    return XYZ;\r\n}\r\n\r\nfloat rgb_2_yc(vec3 rgb, float ycRadiusWeight)\r\n{\r\n    float r = rgb.r;\r\n    float g = rgb.g;\r\n    float b = rgb.b;\r\n    float k = b * (b - g) + g * (g - r) + r * (r - b);\r\n    k = max(MEDIUMP_FLT_MIN, k);\r\n    float chroma = sqrt(k);\r\n    return (b + g + r + ycRadiusWeight * chroma) / 3.0;\r\n}\r\n\r\nfloat rgb_2_yc(vec3 rgb)\r\n{\r\n    return rgb_2_yc(rgb, 1.75);\r\n}\r\n\r\n// Transformations from RGB to other color representations\r\n\r\n// Returns a geometric hue angle in degrees (0-360) based on RGB values.\r\nfloat rgb_2_hue(vec3 rgb)\r\n{\r\n    float hue;\r\n    // For neutral colors, hue is undefined and the function will return a quiet NaN value.\r\n    // if (rgb.r == rgb.g && rgb.g == rgb.b) {\r\n    //     // hue = FLT_NAN;\r\n    //     // todo FLT_NAN\r\n    //     hue = 0.0;\r\n    // } else {\r\n    //     hue = (180.0 * INVERT_PI) * atan2(sqrt(3.0) * (rgb.g - rgb.b), 2.0 * rgb.r - rgb.g - rgb.b);\r\n    // }\r\n    if (rgb.x == rgb.y && rgb.y == rgb.z)\r\n        hue = 0.0; // RGB triplets where RGB are equal have an undefined hue\r\n    else\r\n        hue = (180.0 * INVERT_PI) * atan(sqrt(3.0) * (rgb.y - rgb.z), 2.0 * rgb.x - rgb.y - rgb.z);\r\n\r\n    if (hue < 0.0) {\r\n        hue = hue + 360.0;\r\n    }\r\n\r\n    return hue;\r\n}\r\n\r\n#endif // UtillitiesColor_lib";
 
-    var TransformCommonGLSL = "#if !defined(TransformCommon_lib)\n    #define TransformCommon_lib\n\nconst float TINY = 1e-10;\n\n// sRGB D65 to AP0 D60\n// https://www.colour-science.org:8010/apps/rgb_colourspace_transformation_matrix CAT 02\nconst mat3 sRGB_to_AP0_MAT = mat3(\n    vec3(0.4395856442, 0.0895395735, 0.0173871832),\n    vec3(0.3839294030, 0.8147498351, 0.1087391143),\n    vec3(0.1765327364, 0.0956836061, 0.8738205876));\n\n// sRGB D65 to AP1 D60\n// https://www.colour-science.org:8010/apps/rgb_colourspace_transformation_matrix CAT 02\nconst mat3 sRGB_to_AP1_MAT = mat3(\n    vec3(0.6131178129, 0.0699340823, 0.0204629926),\n    vec3(0.3411819959, 0.9181030375, 0.1067686634),\n    vec3(0.0457873443, 0.0119327755, 0.8727159106));\n\nconst mat3 AP1_to_XYZ_MAT = mat3(\n    vec3(0.6624541811, 0.2722287168, -0.0055746495),\n    vec3(0.1340042065, 0.6740817658, 0.0040607335),\n    vec3(0.1561876870, 0.0536895174, 1.0103391003));\n\nconst mat3 AP0_to_AP1_MAT = mat3(\n    vec3(1.4514393161, -0.0765537734, 0.0083161484),\n    vec3(-0.2365107469, 1.1762296998, -0.0060324498),\n    vec3(-0.2149285693, -0.0996759264, 0.9977163014));\n\nconst mat3 AP1_to_AP0_MAT = mat3(\n    vec3(0.6954522414, 0.0447945634, -0.0055258826),\n    vec3(0.1406786965, 0.8596711185, 0.0040252103),\n    vec3(0.1638690622, 0.0955343182, 1.0015006723));\n\nconst mat3 XYZ_to_AP1_MAT = mat3(\n    vec3(1.6410233797, -0.6636628587, 0.0117218943),\n    vec3(-0.3248032942, 1.6153315917, -0.0082844420),\n    vec3(-0.2364246952, 0.0167563477, 0.9883948585));\n\nconst vec3 AP1_RGB2Y = vec3(0.2722287168, 0.6740817658, 0.0536895174);\n\nfloat ACES_to_ACEScc(float x)\n{\n    // if (x <= 0.0)\n    // return -0.35828683;\n    // else if (x < pow(2.0, -15.0))\n    // return (log2(pow(2.0, -16.0) + x * 0.5) + 9.72) / 17.52;\n    // else\n    // return (log2(x) + 9.72) / 17.52;\n\n    return (x < 0.00003051757) ? (log2(0.00001525878 + x * 0.5) + 9.72) / 17.52 : (log2(x) + 9.72) / 17.52;\n}\n\nvec3 ACES_to_ACEScc(vec3 x)\n{\n    x = clamp(x, vec3(0.0), vec3(MEDIUMP_FLT_MAX));\n    x.x = ACES_to_ACEScc(x.x);\n    x.y = ACES_to_ACEScc(x.y);\n    x.z = ACES_to_ACEScc(x.z);\n\n    return x;\n}\n\nfloat ACEScc_to_ACES(float x)\n{\n    if (x < -0.3013698630)\n\treturn (pow(2.0, x * 17.52 - 9.72) - pow(2.0, -16.0)) * 2.0;\n    else if (x < (log2(MEDIUMP_FLT_MAX) + 9.72) / 17.52)\n\treturn pow(2.0, x * 17.52 - 9.72);\n    else\n\treturn MEDIUMP_FLT_MAX;\n}\n\nvec3 ACEScc_to_ACES(vec3 x)\n{\n    x.x = ACEScc_to_ACES(x.x);\n    x.y = ACEScc_to_ACES(x.y);\n    x.z = ACEScc_to_ACES(x.z);\n    return x;\n}\n\nfloat rgb_2_saturation(vec3 rgb)\n{\n    float rgbmax = vecmax(rgb);\n    float rgbmin = vecmin(rgb);\n    return (max(rgbmax, TINY) - max(rgbmin, TINY)) / max(rgbmax, 1e-2);\n}\n\n#endif // TransformCommon_lib";
+    var TransformCommonGLSL = "#if !defined(TransformCommon_lib)\r\n    #define TransformCommon_lib\r\n\r\nconst float TINY = 1e-10;\r\n\r\n// sRGB D65 to AP0 D60\r\n// https://www.colour-science.org:8010/apps/rgb_colourspace_transformation_matrix CAT 02\r\nconst mat3 sRGB_to_AP0_MAT = mat3(\r\n    vec3(0.4395856442, 0.0895395735, 0.0173871832),\r\n    vec3(0.3839294030, 0.8147498351, 0.1087391143),\r\n    vec3(0.1765327364, 0.0956836061, 0.8738205876));\r\n\r\n// sRGB D65 to AP1 D60\r\n// https://www.colour-science.org:8010/apps/rgb_colourspace_transformation_matrix CAT 02\r\nconst mat3 sRGB_to_AP1_MAT = mat3(\r\n    vec3(0.6131178129, 0.0699340823, 0.0204629926),\r\n    vec3(0.3411819959, 0.9181030375, 0.1067686634),\r\n    vec3(0.0457873443, 0.0119327755, 0.8727159106));\r\n\r\nconst mat3 AP1_to_XYZ_MAT = mat3(\r\n    vec3(0.6624541811, 0.2722287168, -0.0055746495),\r\n    vec3(0.1340042065, 0.6740817658, 0.0040607335),\r\n    vec3(0.1561876870, 0.0536895174, 1.0103391003));\r\n\r\nconst mat3 AP0_to_AP1_MAT = mat3(\r\n    vec3(1.4514393161, -0.0765537734, 0.0083161484),\r\n    vec3(-0.2365107469, 1.1762296998, -0.0060324498),\r\n    vec3(-0.2149285693, -0.0996759264, 0.9977163014));\r\n\r\nconst mat3 AP1_to_AP0_MAT = mat3(\r\n    vec3(0.6954522414, 0.0447945634, -0.0055258826),\r\n    vec3(0.1406786965, 0.8596711185, 0.0040252103),\r\n    vec3(0.1638690622, 0.0955343182, 1.0015006723));\r\n\r\nconst mat3 XYZ_to_AP1_MAT = mat3(\r\n    vec3(1.6410233797, -0.6636628587, 0.0117218943),\r\n    vec3(-0.3248032942, 1.6153315917, -0.0082844420),\r\n    vec3(-0.2364246952, 0.0167563477, 0.9883948585));\r\n\r\nconst vec3 AP1_RGB2Y = vec3(0.2722287168, 0.6740817658, 0.0536895174);\r\n\r\nfloat ACES_to_ACEScc(float x)\r\n{\r\n    // if (x <= 0.0)\r\n    // return -0.35828683;\r\n    // else if (x < pow(2.0, -15.0))\r\n    // return (log2(pow(2.0, -16.0) + x * 0.5) + 9.72) / 17.52;\r\n    // else\r\n    // return (log2(x) + 9.72) / 17.52;\r\n\r\n    return (x < 0.00003051757) ? (log2(0.00001525878 + x * 0.5) + 9.72) / 17.52 : (log2(x) + 9.72) / 17.52;\r\n}\r\n\r\nvec3 ACES_to_ACEScc(vec3 x)\r\n{\r\n    x = clamp(x, vec3(0.0), vec3(MEDIUMP_FLT_MAX));\r\n    x.x = ACES_to_ACEScc(x.x);\r\n    x.y = ACES_to_ACEScc(x.y);\r\n    x.z = ACES_to_ACEScc(x.z);\r\n\r\n    return x;\r\n}\r\n\r\nfloat ACEScc_to_ACES(float x)\r\n{\r\n    if (x < -0.3013698630)\r\n\treturn (pow(2.0, x * 17.52 - 9.72) - pow(2.0, -16.0)) * 2.0;\r\n    else if (x < (log2(MEDIUMP_FLT_MAX) + 9.72) / 17.52)\r\n\treturn pow(2.0, x * 17.52 - 9.72);\r\n    else\r\n\treturn MEDIUMP_FLT_MAX;\r\n}\r\n\r\nvec3 ACEScc_to_ACES(vec3 x)\r\n{\r\n    x.x = ACEScc_to_ACES(x.x);\r\n    x.y = ACEScc_to_ACES(x.y);\r\n    x.z = ACEScc_to_ACES(x.z);\r\n    return x;\r\n}\r\n\r\nfloat rgb_2_saturation(vec3 rgb)\r\n{\r\n    float rgbmax = vecmax(rgb);\r\n    float rgbmin = vecmin(rgb);\r\n    return (max(rgbmax, TINY) - max(rgbmin, TINY)) / max(rgbmax, 1e-2);\r\n}\r\n\r\n#endif // TransformCommon_lib";
 
-    var RRTCommonGLSL = "#if !defined(RRTCommon_lib)\n#define RRTCommon_lib\n\n// \"Glow\" module constants\nconst float RRT_GLOW_GAIN = 0.05;\nconst float RRT_GLOW_MID = 0.08;\n\n// Red modifier constants\nconst float RRT_RED_SCALE = 0.82;\nconst float RRT_RED_PIVOT = 0.03;\nconst float RRT_RED_HUE = 0.;\nconst float RRT_RED_WIDTH = 135.;\n\n// Desaturation contants\nconst float RRT_SAT_FACTOR = 0.96;\n\n// ------- Glow module functions\n\nfloat glow_fwd(float ycIn, float glowGainIn, float glowMid)\n{\n    float glowGainOut;\n    if (ycIn <= 2.0 / 3.0 * glowMid) {\n        glowGainOut = glowGainIn;\n    } else if (ycIn >= 2.0 * glowMid) {\n        glowGainOut = 0.0;\n    } else {\n        glowGainOut = glowGainIn * (glowMid / ycIn - 0.5);\n    }\n    return glowGainOut;\n}\n\n// Sigmoid function in the range 0 to 1 spanning -2 to +2.\nfloat sigmoid_shaper(float x)\n{\n    float t = max(1.0 - abs(x * 0.5), 0.0);\n    float y = 1.0 + sign(x) * (1.0 - t * t);\n\n    return y * 0.5;\n}\n\n// ------- Red modifier functions\nfloat center_hue(float hue, float centerH)\n{\n    float hueCentered = hue - centerH;\n    if (hueCentered < -180.0) {\n        hueCentered = hueCentered + 360.0;\n    } else if (hueCentered > 180.0) {\n        hueCentered -= 360.0;\n    }\n    return hueCentered;\n}\n\n#endif // RRTCommon_lib";
+    var RRTCommonGLSL = "#if !defined(RRTCommon_lib)\r\n#define RRTCommon_lib\r\n\r\n// \"Glow\" module constants\r\nconst float RRT_GLOW_GAIN = 0.05;\r\nconst float RRT_GLOW_MID = 0.08;\r\n\r\n// Red modifier constants\r\nconst float RRT_RED_SCALE = 0.82;\r\nconst float RRT_RED_PIVOT = 0.03;\r\nconst float RRT_RED_HUE = 0.;\r\nconst float RRT_RED_WIDTH = 135.;\r\n\r\n// Desaturation contants\r\nconst float RRT_SAT_FACTOR = 0.96;\r\n\r\n// ------- Glow module functions\r\n\r\nfloat glow_fwd(float ycIn, float glowGainIn, float glowMid)\r\n{\r\n    float glowGainOut;\r\n    if (ycIn <= 2.0 / 3.0 * glowMid) {\r\n        glowGainOut = glowGainIn;\r\n    } else if (ycIn >= 2.0 * glowMid) {\r\n        glowGainOut = 0.0;\r\n    } else {\r\n        glowGainOut = glowGainIn * (glowMid / ycIn - 0.5);\r\n    }\r\n    return glowGainOut;\r\n}\r\n\r\n// Sigmoid function in the range 0 to 1 spanning -2 to +2.\r\nfloat sigmoid_shaper(float x)\r\n{\r\n    float t = max(1.0 - abs(x * 0.5), 0.0);\r\n    float y = 1.0 + sign(x) * (1.0 - t * t);\r\n\r\n    return y * 0.5;\r\n}\r\n\r\n// ------- Red modifier functions\r\nfloat center_hue(float hue, float centerH)\r\n{\r\n    float hueCentered = hue - centerH;\r\n    if (hueCentered < -180.0) {\r\n        hueCentered = hueCentered + 360.0;\r\n    } else if (hueCentered > 180.0) {\r\n        hueCentered -= 360.0;\r\n    }\r\n    return hueCentered;\r\n}\r\n\r\n#endif // RRTCommon_lib";
 
-    var ODTCommonGLSL = "#if !defined(ODTCommon_lib)\n#define ODTCommon_lib\n\nconst float CINEMA_WHITE = 48.0;\nconst float CINEMA_BLACK = 0.02; // CINEMA_WHITE / 2400.\n\n// Gamma compensation factor\nconst float DIM_SURROUND_GAMMA = 0.9811;\n\n// Saturation compensation factor\nconst float ODT_SAT_FACTOR = 0.93;\n\n// white point D60 to D65\n// ACES white point D60\nconst mat3 D60_to_D65_MAT = mat3(\n    vec3(0.987224, -0.00759836, 0.00307257),\n    vec3(-0.00611327, 1.00186, -0.00509595),\n    vec3(0.0159533, 0.00533002, 1.08168));\n\nfloat Y_2_linCV(float Y, float Ymax, float Ymin)\n{\n    return (Y - Ymin) / (Ymax - Ymin);\n}\n\nvec3 darkSurround_to_dimSurround(vec3 linearCV)\n{\n    vec3 XYZ = linearCV * AP1_to_XYZ_MAT;\n    vec3 xyY = XYZ_2_xyY(XYZ);\n    xyY.z = clamp(xyY.z, 0.0, MEDIUMP_FLT_MAX);\n    xyY.z = pow(xyY.z, DIM_SURROUND_GAMMA);\n    XYZ = xyY_2_XYZ(xyY);\n\n    return XYZ * XYZ_to_AP1_MAT;\n}\n\n#endif // ODTCommon_lib";
+    var ODTCommonGLSL = "#if !defined(ODTCommon_lib)\r\n#define ODTCommon_lib\r\n\r\nconst float CINEMA_WHITE = 48.0;\r\nconst float CINEMA_BLACK = 0.02; // CINEMA_WHITE / 2400.\r\n\r\n// Gamma compensation factor\r\nconst float DIM_SURROUND_GAMMA = 0.9811;\r\n\r\n// Saturation compensation factor\r\nconst float ODT_SAT_FACTOR = 0.93;\r\n\r\n// white point D60 to D65\r\n// ACES white point D60\r\nconst mat3 D60_to_D65_MAT = mat3(\r\n    vec3(0.987224, -0.00759836, 0.00307257),\r\n    vec3(-0.00611327, 1.00186, -0.00509595),\r\n    vec3(0.0159533, 0.00533002, 1.08168));\r\n\r\nfloat Y_2_linCV(float Y, float Ymax, float Ymin)\r\n{\r\n    return (Y - Ymin) / (Ymax - Ymin);\r\n}\r\n\r\nvec3 darkSurround_to_dimSurround(vec3 linearCV)\r\n{\r\n    vec3 XYZ = linearCV * AP1_to_XYZ_MAT;\r\n    vec3 xyY = XYZ_2_xyY(XYZ);\r\n    xyY.z = clamp(xyY.z, 0.0, MEDIUMP_FLT_MAX);\r\n    xyY.z = pow(xyY.z, DIM_SURROUND_GAMMA);\r\n    XYZ = xyY_2_XYZ(xyY);\r\n\r\n    return XYZ * XYZ_to_AP1_MAT;\r\n}\r\n\r\n#endif // ODTCommon_lib";
 
-    var TonescalesGLSL = "#if !defined(Tonescales_lib)\n#define Tonescales_lib\n\nconst mat3 M = mat3(\n    vec3(0.5, -1.0, 0.5),\n    vec3(-1.0, 1.0, 0.5),\n    vec3(0.5, 0.0, 0.0));\n\nfloat segmented_spline_c5_fwd(float x)\n{\n#ifdef GRAPHICS_API_GLES3\n    const float coefsLow[6] = float[6](-4.0000000000, -4.0000000000, -3.1573765773, -0.4852499958, 1.8477324706, 1.8477324706);\n    const float coefsHigh[6] = float[6](-0.7185482425, 2.0810307172, 3.6681241237, 4.0000000000, 4.0000000000, 4.0000000000);\n#else\n    const float coefsLow_0 = -4.0000000000;\n    const float coefsLow_1 = -4.0000000000;\n    const float coefsLow_2 = -3.1573765773;\n    const float coefsLow_3 = -0.4852499958;\n    const float coefsLow_4 = 1.8477324706;\n    const float coefsLow_5 = 1.8477324706;\n\n    const float coefsHigh_0 = -0.7185482425;\n    const float coefsHigh_1 = 2.0810307172;\n    const float coefsHigh_2 = 3.6681241237;\n    const float coefsHigh_3 = 4.0000000000;\n    const float coefsHigh_4 = 4.0000000000;\n    const float coefsHigh_5 = 4.0000000000;\n#endif // GRAPHICS_API_GLES3\n\n    const vec2 minPoint = vec2(0.0000054931640625, 0.0001);\n    const vec2 midPoint = vec2(0.18, 4.8);\n    const vec2 maxPoint = vec2(47185.92, 10000.);\n    const float slopeLow = 0.0;\n    const float slopeHigh = 0.0;\n\n    const int N_KNOTS_LOW = 4;\n    const int N_KNOTS_HIGH = 4;\n\n    float logx = log10(max(x, MEDIUMP_FLT_MIN));\n    float logy;\n\n    if (logx <= log10(minPoint.x)) {\n        logy = logx * slopeLow + (log10(minPoint.y) - slopeLow * log10(minPoint.x));\n    } else if ((logx > log10(minPoint.x)) && (logx < log10(midPoint.x))) {\n        float knot_coord = float(N_KNOTS_LOW - 1) * (logx - log10(minPoint.x)) / (log10(midPoint.x) - log10(minPoint.x));\n        int j = int(knot_coord);\n        float t = knot_coord - float(j);\n        vec3 cf;\n#ifdef GRAPHICS_API_GLES3\n        cf = vec3(coefsLow[j], coefsLow[j + 1], coefsLow[j + 2]);\n#else\n        if (j <= 0) {\n            cf = vec3(coefsLow_0, coefsLow_1, coefsLow_2);\n        } else if (j == 1) {\n            cf = vec3(coefsLow_1, coefsLow_2, coefsLow_3);\n        } else if (j == 2) {\n            cf = vec3(coefsLow_2, coefsLow_3, coefsLow_4);\n        } else { // if (j == 3)\n            cf = vec3(coefsLow_3, coefsLow_4, coefsLow_5);\n        }\n#endif // GRAPHICS_API_GLES3\n\n        vec3 monomials = vec3(t * t, t, 1.);\n        logy = dot(monomials, M * cf);\n    } else if ((logx >= log10(midPoint.x)) && (logx < log10(maxPoint.x))) {\n        float knot_coord = float(N_KNOTS_HIGH - 1) * (logx - log10(midPoint.x)) / (log10(maxPoint.x) - log10(midPoint.x));\n        int j = int(knot_coord);\n        float t = knot_coord - float(j);\n        vec3 cf;\n#ifdef GRAPHICS_API_GLES3\n        cf = vec3(coefsHigh[j], coefsHigh[j + 1], coefsHigh[j + 2]);\n#else\n        if (j <= 0) {\n            cf = vec3(coefsHigh_0, coefsHigh_1, coefsHigh_2);\n        } else if (j == 1) {\n            cf = vec3(coefsHigh_1, coefsHigh_2, coefsHigh_3);\n        } else if (j == 2) {\n            cf = vec3(coefsHigh_2, coefsHigh_3, coefsHigh_4);\n        } else { // if (j == 3)\n            cf = vec3(coefsHigh_3, coefsHigh_4, coefsHigh_5);\n        }\n#endif // #ifdef GRAPHICS_API_GLES3\n        vec3 monomials = vec3(t * t, t, 1.);\n        logy = dot(monomials, M * cf);\n    } else {\n        logy = logx * slopeHigh + (log10(maxPoint.y) - slopeHigh * log10(maxPoint.x));\n    }\n    return pow(10.0, logy);\n}\n\nfloat segmented_spline_c9_fwd(float x)\n{\n// ODT_48nits\n#ifdef GRAPHICS_API_GLES3\n    const float coefsLow[10] = float[10](-1.6989700043, -1.6989700043, -1.4779000000, -1.2291000000, -0.8648000000, -0.4480000000, 0.0051800000, 0.4511080334, 0.9113744414, 0.9113744414);\n    const float coefsHigh[10] = float[10](0.5154386965, 0.8470437783, 1.1358000000, 1.3802000000, 1.5197000000, 1.5985000000, 1.6467000000, 1.6746091357, 1.6878733390, 1.6878733390);\n#else\n    const float coefsLow_0 = -1.6989700043;\n    const float coefsLow_1 = -1.6989700043;\n    const float coefsLow_2 = -1.4779000000;\n    const float coefsLow_3 = -1.2291000000;\n    const float coefsLow_4 = -0.8648000000;\n    const float coefsLow_5 = -0.4480000000;\n    const float coefsLow_6 = 0.0051800000;\n    const float coefsLow_7 = 0.4511080334;\n    const float coefsLow_8 = 0.9113744414;\n    const float coefsLow_9 = 0.9113744414;\n\n    const float coefsHigh_0 = 0.5154386965;\n    const float coefsHigh_1 = 0.8470437783;\n    const float coefsHigh_2 = 1.1358000000;\n    const float coefsHigh_3 = 1.3802000000;\n    const float coefsHigh_4 = 1.5197000000;\n    const float coefsHigh_5 = 1.5985000000;\n    const float coefsHigh_6 = 1.6467000000;\n    const float coefsHigh_7 = 1.6746091357;\n    const float coefsHigh_8 = 1.6878733390;\n    const float coefsHigh_9 = 1.6878733390;\n#endif // GRAPHICS_API_GLES3\n\n    // todo const\n    vec2 minPoint = vec2(segmented_spline_c5_fwd(0.18 * pow(2.0, -6.5)), 0.02);\n    vec2 midPoint = vec2(segmented_spline_c5_fwd(0.18), 4.8);\n    vec2 maxPoint = vec2(segmented_spline_c5_fwd(0.18 * pow(2., 6.5)), 48.0);\n\n    const float slopeLow = 0.0;\n    const float slopeHigh = 0.04;\n\n    const int N_KNOTS_LOW = 8;\n    const int N_KNOTS_HIGH = 8;\n\n    float logx = log10(max(x, MEDIUMP_FLT_MIN));\n    float logy;\n\n    if (logx <= log10(minPoint.x)) {\n        logy = logx * slopeLow + (log10(minPoint.y) - slopeLow * log10(minPoint.x));\n    } else if ((logx > log10(minPoint.x)) && (logx < log10(midPoint.x))) {\n        float knot_coord = float(N_KNOTS_LOW - 1) * (logx - log10(minPoint.x)) / (log10(midPoint.x) - log10(minPoint.x));\n        int j = int(knot_coord);\n        float t = knot_coord - float(j);\n        vec3 cf;\n#ifdef GRAPHICS_API_GLES3\n        cf = vec3(coefsLow[j], coefsLow[j + 1], coefsLow[j + 2]);\n#else\n        if (j <= 0) {\n            cf = vec3(coefsLow_0, coefsLow_1, coefsLow_2);\n        } else if (j == 1) {\n            cf = vec3(coefsLow_1, coefsLow_2, coefsLow_3);\n        } else if (j == 2) {\n            cf = vec3(coefsLow_2, coefsLow_3, coefsLow_4);\n        } else if (j == 3) {\n            cf = vec3(coefsLow_3, coefsLow_4, coefsLow_5);\n        } else if (j == 4) {\n            cf = vec3(coefsLow_4, coefsLow_5, coefsLow_6);\n        } else if (j == 5) {\n            cf = vec3(coefsLow_5, coefsLow_6, coefsLow_7);\n        } else if (j == 6) {\n            cf = vec3(coefsLow_6, coefsLow_7, coefsLow_8);\n        } else { // if (j == 7)\n            cf = vec3(coefsLow_7, coefsLow_8, coefsLow_9);\n        }\n#endif // GRAPHICS_API_GLES3\n        vec3 monomials = vec3(t * t, t, 1.0);\n        logy = dot(monomials, M * cf);\n    } else if ((logx >= log10(midPoint.x)) && (logx < log10(maxPoint.x))) {\n        float knot_coord = float(N_KNOTS_HIGH - 1) * (logx - log10(midPoint.x)) / (log10(maxPoint.x) - log10(midPoint.x));\n        int j = int(knot_coord);\n        float t = knot_coord - float(j);\n        vec3 cf;\n#ifdef GRAPHICS_API_GLES3\n        cf = vec3(coefsHigh[j], coefsHigh[j + 1], coefsHigh[j + 2]);\n#else\n        if (j <= 0) {\n            cf = vec3(coefsHigh_0, coefsHigh_1, coefsHigh_2);\n        } else if (j == 1) {\n            cf = vec3(coefsHigh_1, coefsHigh_2, coefsHigh_3);\n        } else if (j == 2) {\n            cf = vec3(coefsHigh_2, coefsHigh_3, coefsHigh_4);\n        } else if (j == 3) {\n            cf = vec3(coefsHigh_3, coefsHigh_4, coefsHigh_5);\n        } else if (j == 4) {\n            cf = vec3(coefsHigh_4, coefsHigh_5, coefsHigh_6);\n        } else if (j == 5) {\n            cf = vec3(coefsHigh_5, coefsHigh_6, coefsHigh_7);\n        } else if (j == 6) {\n            cf = vec3(coefsHigh_6, coefsHigh_7, coefsHigh_8);\n        } else { // if (j == 7)\n            cf = vec3(coefsHigh_7, coefsHigh_8, coefsHigh_9);\n        }\n#endif // GRAPHICS_API_GLES3\n        vec3 monomials = vec3(t * t, t, 1.0);\n        logy = dot(monomials, M * cf);\n    } else {\n        logy = logx * slopeHigh + (log10(maxPoint.y) - slopeHigh * log10(maxPoint.x));\n    }\n\n    return pow(10.0, logy);\n}\n\n#endif // Tonescales_lib";
+    var TonescalesGLSL = "#if !defined(Tonescales_lib)\r\n#define Tonescales_lib\r\n\r\nconst mat3 M = mat3(\r\n    vec3(0.5, -1.0, 0.5),\r\n    vec3(-1.0, 1.0, 0.5),\r\n    vec3(0.5, 0.0, 0.0));\r\n\r\nfloat segmented_spline_c5_fwd(float x)\r\n{\r\n#ifdef GRAPHICS_API_GLES3\r\n    const float coefsLow[6] = float[6](-4.0000000000, -4.0000000000, -3.1573765773, -0.4852499958, 1.8477324706, 1.8477324706);\r\n    const float coefsHigh[6] = float[6](-0.7185482425, 2.0810307172, 3.6681241237, 4.0000000000, 4.0000000000, 4.0000000000);\r\n#else\r\n    const float coefsLow_0 = -4.0000000000;\r\n    const float coefsLow_1 = -4.0000000000;\r\n    const float coefsLow_2 = -3.1573765773;\r\n    const float coefsLow_3 = -0.4852499958;\r\n    const float coefsLow_4 = 1.8477324706;\r\n    const float coefsLow_5 = 1.8477324706;\r\n\r\n    const float coefsHigh_0 = -0.7185482425;\r\n    const float coefsHigh_1 = 2.0810307172;\r\n    const float coefsHigh_2 = 3.6681241237;\r\n    const float coefsHigh_3 = 4.0000000000;\r\n    const float coefsHigh_4 = 4.0000000000;\r\n    const float coefsHigh_5 = 4.0000000000;\r\n#endif // GRAPHICS_API_GLES3\r\n\r\n    const vec2 minPoint = vec2(0.0000054931640625, 0.0001);\r\n    const vec2 midPoint = vec2(0.18, 4.8);\r\n    const vec2 maxPoint = vec2(47185.92, 10000.);\r\n    const float slopeLow = 0.0;\r\n    const float slopeHigh = 0.0;\r\n\r\n    const int N_KNOTS_LOW = 4;\r\n    const int N_KNOTS_HIGH = 4;\r\n\r\n    float logx = log10(max(x, MEDIUMP_FLT_MIN));\r\n    float logy;\r\n\r\n    if (logx <= log10(minPoint.x)) {\r\n        logy = logx * slopeLow + (log10(minPoint.y) - slopeLow * log10(minPoint.x));\r\n    } else if ((logx > log10(minPoint.x)) && (logx < log10(midPoint.x))) {\r\n        float knot_coord = float(N_KNOTS_LOW - 1) * (logx - log10(minPoint.x)) / (log10(midPoint.x) - log10(minPoint.x));\r\n        int j = int(knot_coord);\r\n        float t = knot_coord - float(j);\r\n        vec3 cf;\r\n#ifdef GRAPHICS_API_GLES3\r\n        cf = vec3(coefsLow[j], coefsLow[j + 1], coefsLow[j + 2]);\r\n#else\r\n        if (j <= 0) {\r\n            cf = vec3(coefsLow_0, coefsLow_1, coefsLow_2);\r\n        } else if (j == 1) {\r\n            cf = vec3(coefsLow_1, coefsLow_2, coefsLow_3);\r\n        } else if (j == 2) {\r\n            cf = vec3(coefsLow_2, coefsLow_3, coefsLow_4);\r\n        } else { // if (j == 3)\r\n            cf = vec3(coefsLow_3, coefsLow_4, coefsLow_5);\r\n        }\r\n#endif // GRAPHICS_API_GLES3\r\n\r\n        vec3 monomials = vec3(t * t, t, 1.);\r\n        logy = dot(monomials, M * cf);\r\n    } else if ((logx >= log10(midPoint.x)) && (logx < log10(maxPoint.x))) {\r\n        float knot_coord = float(N_KNOTS_HIGH - 1) * (logx - log10(midPoint.x)) / (log10(maxPoint.x) - log10(midPoint.x));\r\n        int j = int(knot_coord);\r\n        float t = knot_coord - float(j);\r\n        vec3 cf;\r\n#ifdef GRAPHICS_API_GLES3\r\n        cf = vec3(coefsHigh[j], coefsHigh[j + 1], coefsHigh[j + 2]);\r\n#else\r\n        if (j <= 0) {\r\n            cf = vec3(coefsHigh_0, coefsHigh_1, coefsHigh_2);\r\n        } else if (j == 1) {\r\n            cf = vec3(coefsHigh_1, coefsHigh_2, coefsHigh_3);\r\n        } else if (j == 2) {\r\n            cf = vec3(coefsHigh_2, coefsHigh_3, coefsHigh_4);\r\n        } else { // if (j == 3)\r\n            cf = vec3(coefsHigh_3, coefsHigh_4, coefsHigh_5);\r\n        }\r\n#endif // #ifdef GRAPHICS_API_GLES3\r\n        vec3 monomials = vec3(t * t, t, 1.);\r\n        logy = dot(monomials, M * cf);\r\n    } else {\r\n        logy = logx * slopeHigh + (log10(maxPoint.y) - slopeHigh * log10(maxPoint.x));\r\n    }\r\n    return pow(10.0, logy);\r\n}\r\n\r\nfloat segmented_spline_c9_fwd(float x)\r\n{\r\n// ODT_48nits\r\n#ifdef GRAPHICS_API_GLES3\r\n    const float coefsLow[10] = float[10](-1.6989700043, -1.6989700043, -1.4779000000, -1.2291000000, -0.8648000000, -0.4480000000, 0.0051800000, 0.4511080334, 0.9113744414, 0.9113744414);\r\n    const float coefsHigh[10] = float[10](0.5154386965, 0.8470437783, 1.1358000000, 1.3802000000, 1.5197000000, 1.5985000000, 1.6467000000, 1.6746091357, 1.6878733390, 1.6878733390);\r\n#else\r\n    const float coefsLow_0 = -1.6989700043;\r\n    const float coefsLow_1 = -1.6989700043;\r\n    const float coefsLow_2 = -1.4779000000;\r\n    const float coefsLow_3 = -1.2291000000;\r\n    const float coefsLow_4 = -0.8648000000;\r\n    const float coefsLow_5 = -0.4480000000;\r\n    const float coefsLow_6 = 0.0051800000;\r\n    const float coefsLow_7 = 0.4511080334;\r\n    const float coefsLow_8 = 0.9113744414;\r\n    const float coefsLow_9 = 0.9113744414;\r\n\r\n    const float coefsHigh_0 = 0.5154386965;\r\n    const float coefsHigh_1 = 0.8470437783;\r\n    const float coefsHigh_2 = 1.1358000000;\r\n    const float coefsHigh_3 = 1.3802000000;\r\n    const float coefsHigh_4 = 1.5197000000;\r\n    const float coefsHigh_5 = 1.5985000000;\r\n    const float coefsHigh_6 = 1.6467000000;\r\n    const float coefsHigh_7 = 1.6746091357;\r\n    const float coefsHigh_8 = 1.6878733390;\r\n    const float coefsHigh_9 = 1.6878733390;\r\n#endif // GRAPHICS_API_GLES3\r\n\r\n    // todo const\r\n    vec2 minPoint = vec2(segmented_spline_c5_fwd(0.18 * pow(2.0, -6.5)), 0.02);\r\n    vec2 midPoint = vec2(segmented_spline_c5_fwd(0.18), 4.8);\r\n    vec2 maxPoint = vec2(segmented_spline_c5_fwd(0.18 * pow(2., 6.5)), 48.0);\r\n\r\n    const float slopeLow = 0.0;\r\n    const float slopeHigh = 0.04;\r\n\r\n    const int N_KNOTS_LOW = 8;\r\n    const int N_KNOTS_HIGH = 8;\r\n\r\n    float logx = log10(max(x, MEDIUMP_FLT_MIN));\r\n    float logy;\r\n\r\n    if (logx <= log10(minPoint.x)) {\r\n        logy = logx * slopeLow + (log10(minPoint.y) - slopeLow * log10(minPoint.x));\r\n    } else if ((logx > log10(minPoint.x)) && (logx < log10(midPoint.x))) {\r\n        float knot_coord = float(N_KNOTS_LOW - 1) * (logx - log10(minPoint.x)) / (log10(midPoint.x) - log10(minPoint.x));\r\n        int j = int(knot_coord);\r\n        float t = knot_coord - float(j);\r\n        vec3 cf;\r\n#ifdef GRAPHICS_API_GLES3\r\n        cf = vec3(coefsLow[j], coefsLow[j + 1], coefsLow[j + 2]);\r\n#else\r\n        if (j <= 0) {\r\n            cf = vec3(coefsLow_0, coefsLow_1, coefsLow_2);\r\n        } else if (j == 1) {\r\n            cf = vec3(coefsLow_1, coefsLow_2, coefsLow_3);\r\n        } else if (j == 2) {\r\n            cf = vec3(coefsLow_2, coefsLow_3, coefsLow_4);\r\n        } else if (j == 3) {\r\n            cf = vec3(coefsLow_3, coefsLow_4, coefsLow_5);\r\n        } else if (j == 4) {\r\n            cf = vec3(coefsLow_4, coefsLow_5, coefsLow_6);\r\n        } else if (j == 5) {\r\n            cf = vec3(coefsLow_5, coefsLow_6, coefsLow_7);\r\n        } else if (j == 6) {\r\n            cf = vec3(coefsLow_6, coefsLow_7, coefsLow_8);\r\n        } else { // if (j == 7)\r\n            cf = vec3(coefsLow_7, coefsLow_8, coefsLow_9);\r\n        }\r\n#endif // GRAPHICS_API_GLES3\r\n        vec3 monomials = vec3(t * t, t, 1.0);\r\n        logy = dot(monomials, M * cf);\r\n    } else if ((logx >= log10(midPoint.x)) && (logx < log10(maxPoint.x))) {\r\n        float knot_coord = float(N_KNOTS_HIGH - 1) * (logx - log10(midPoint.x)) / (log10(maxPoint.x) - log10(midPoint.x));\r\n        int j = int(knot_coord);\r\n        float t = knot_coord - float(j);\r\n        vec3 cf;\r\n#ifdef GRAPHICS_API_GLES3\r\n        cf = vec3(coefsHigh[j], coefsHigh[j + 1], coefsHigh[j + 2]);\r\n#else\r\n        if (j <= 0) {\r\n            cf = vec3(coefsHigh_0, coefsHigh_1, coefsHigh_2);\r\n        } else if (j == 1) {\r\n            cf = vec3(coefsHigh_1, coefsHigh_2, coefsHigh_3);\r\n        } else if (j == 2) {\r\n            cf = vec3(coefsHigh_2, coefsHigh_3, coefsHigh_4);\r\n        } else if (j == 3) {\r\n            cf = vec3(coefsHigh_3, coefsHigh_4, coefsHigh_5);\r\n        } else if (j == 4) {\r\n            cf = vec3(coefsHigh_4, coefsHigh_5, coefsHigh_6);\r\n        } else if (j == 5) {\r\n            cf = vec3(coefsHigh_5, coefsHigh_6, coefsHigh_7);\r\n        } else if (j == 6) {\r\n            cf = vec3(coefsHigh_6, coefsHigh_7, coefsHigh_8);\r\n        } else { // if (j == 7)\r\n            cf = vec3(coefsHigh_7, coefsHigh_8, coefsHigh_9);\r\n        }\r\n#endif // GRAPHICS_API_GLES3\r\n        vec3 monomials = vec3(t * t, t, 1.0);\r\n        logy = dot(monomials, M * cf);\r\n    } else {\r\n        logy = logx * slopeHigh + (log10(maxPoint.y) - slopeHigh * log10(maxPoint.x));\r\n    }\r\n\r\n    return pow(10.0, logy);\r\n}\r\n\r\n#endif // Tonescales_lib";
 
-    var RRTGLSL = "#if !defined(RRT_lib)\n#define RRT_lib\n\n#include \"ACES_RRTCommon.glsl\";\n\n/**\n * @param ACES AP0\n * @returns OCES\n */\nvec3 RRT(vec3 aces)\n{\n    // --- Glow module --- //\n    float saturation = rgb_2_saturation(aces);\n    float ycIn = rgb_2_yc(aces);\n    float s = sigmoid_shaper((saturation - 0.4) / 0.2);\n    float addedGlow = 1.0 + glow_fwd(ycIn, RRT_GLOW_GAIN * s, RRT_GLOW_MID);\n\n    aces *= addedGlow;\n\n    // --- Red modifier --- //\n    float hue = rgb_2_hue(aces);\n    float centeredHue = center_hue(hue, RRT_RED_HUE);\n\n    float hueWeight = smoothstep(0.0, 1.0, 1.0 - abs(2.0 * centeredHue / RRT_RED_WIDTH));\n    hueWeight *= hueWeight;\n\n    aces.r += hueWeight * saturation * (RRT_RED_PIVOT - aces.r) * (1. - RRT_RED_SCALE);\n\n    // --- ACES to RGB rendering space --- //\n    vec3 rgbPre = AP0_to_AP1_MAT * aces;\n    rgbPre = clamp(rgbPre, 0.0, MEDIUMP_FLT_MAX);\n\n    // --- Global desaturation --- //\n    rgbPre = mix(vec3(dot(rgbPre, AP1_RGB2Y)), rgbPre, RRT_SAT_FACTOR);\n\n    // --- Apply the tonescale independently in rendering-space RGB --- //\n    vec3 rgbPost;\n    rgbPost.x = segmented_spline_c5_fwd(rgbPre.x);\n    rgbPost.y = segmented_spline_c5_fwd(rgbPre.y);\n    rgbPost.z = segmented_spline_c5_fwd(rgbPre.z);\n\n    // --- RGB rendering space to OCES --- //\n    vec3 rgbOces = AP1_to_AP0_MAT * rgbPost;\n\n    return rgbOces;\n}\n\n#endif // RRT_lib";
+    var RRTGLSL = "#if !defined(RRT_lib)\r\n#define RRT_lib\r\n\r\n#include \"ACES_RRTCommon.glsl\";\r\n\r\n/**\r\n * @param ACES AP0\r\n * @returns OCES\r\n */\r\nvec3 RRT(vec3 aces)\r\n{\r\n    // --- Glow module --- //\r\n    float saturation = rgb_2_saturation(aces);\r\n    float ycIn = rgb_2_yc(aces);\r\n    float s = sigmoid_shaper((saturation - 0.4) / 0.2);\r\n    float addedGlow = 1.0 + glow_fwd(ycIn, RRT_GLOW_GAIN * s, RRT_GLOW_MID);\r\n\r\n    aces *= addedGlow;\r\n\r\n    // --- Red modifier --- //\r\n    float hue = rgb_2_hue(aces);\r\n    float centeredHue = center_hue(hue, RRT_RED_HUE);\r\n\r\n    float hueWeight = smoothstep(0.0, 1.0, 1.0 - abs(2.0 * centeredHue / RRT_RED_WIDTH));\r\n    hueWeight *= hueWeight;\r\n\r\n    aces.r += hueWeight * saturation * (RRT_RED_PIVOT - aces.r) * (1. - RRT_RED_SCALE);\r\n\r\n    // --- ACES to RGB rendering space --- //\r\n    vec3 rgbPre = AP0_to_AP1_MAT * aces;\r\n    rgbPre = clamp(rgbPre, 0.0, MEDIUMP_FLT_MAX);\r\n\r\n    // --- Global desaturation --- //\r\n    rgbPre = mix(vec3(dot(rgbPre, AP1_RGB2Y)), rgbPre, RRT_SAT_FACTOR);\r\n\r\n    // --- Apply the tonescale independently in rendering-space RGB --- //\r\n    vec3 rgbPost;\r\n    rgbPost.x = segmented_spline_c5_fwd(rgbPre.x);\r\n    rgbPost.y = segmented_spline_c5_fwd(rgbPre.y);\r\n    rgbPost.z = segmented_spline_c5_fwd(rgbPre.z);\r\n\r\n    // --- RGB rendering space to OCES --- //\r\n    vec3 rgbOces = AP1_to_AP0_MAT * rgbPost;\r\n\r\n    return rgbOces;\r\n}\r\n\r\n#endif // RRT_lib";
 
-    var ODT_sRGB_100nits_GLSL = "#if !defined(ODT_sRGB_100nits_lib)\n#define ODT_sRGB_100nits_lib\n\n#include \"ACES_ODTCommon.glsl\";\n\n// CIE XYZ to REC.709\nconst mat3 XYZ_to_REC709_MAT = mat3(\n    vec3(3.2409699419, -0.9692436363, 0.0556300797),\n    vec3(-1.5373831776, 1.8759675015, -0.2039769589),\n    vec3(-0.498610760, 0.0415550574, 1.0569715142));\n\nconst float DISPGAMMA = 2.4;\nconst float OFFSET = 0.055;\n\nvec3 ODT_sRGB_100nits(vec3 oces)\n{\n    // OCES to RGB rendering space\n    vec3 rgbPre = AP0_to_AP1_MAT * oces;\n\n    // Apply the tonescale independently in rendering-space RGB\n    vec3 rgbPost;\n    rgbPost.r = segmented_spline_c9_fwd(rgbPre.r);\n    rgbPost.g = segmented_spline_c9_fwd(rgbPre.g);\n    rgbPost.b = segmented_spline_c9_fwd(rgbPre.b);\n\n    // Scale luminance to linear code value\n    vec3 linearCV;\n    linearCV.r = Y_2_linCV(rgbPost.r, CINEMA_WHITE, CINEMA_BLACK);\n    linearCV.g = Y_2_linCV(rgbPost.g, CINEMA_WHITE, CINEMA_BLACK);\n    linearCV.b = Y_2_linCV(rgbPost.b, CINEMA_WHITE, CINEMA_BLACK);\n\n    // Apply gamma adjustment to compensate for dim surround\n    linearCV = darkSurround_to_dimSurround(linearCV);\n\n    // Convert to display primary encoding\n    // Rendering space RGB to XYZ\n    vec3 XYZ = AP1_to_XYZ_MAT * linearCV;\n\n    // Apply CAT from ACES white point to assumed observer adapted white point\n    XYZ = D60_to_D65_MAT * XYZ;\n\n    // CIE XYZ to display primaries\n    linearCV = XYZ_to_REC709_MAT * XYZ;\n\n    linearCV = clamp(linearCV, vec3(0.0), vec3(1.0));\n    return linearCV;\n}\n\n#endif // ODT_sRGB_100nits_lib";
+    var ODT_sRGB_100nits_GLSL = "#if !defined(ODT_sRGB_100nits_lib)\r\n#define ODT_sRGB_100nits_lib\r\n\r\n#include \"ACES_ODTCommon.glsl\";\r\n\r\n// CIE XYZ to REC.709\r\nconst mat3 XYZ_to_REC709_MAT = mat3(\r\n    vec3(3.2409699419, -0.9692436363, 0.0556300797),\r\n    vec3(-1.5373831776, 1.8759675015, -0.2039769589),\r\n    vec3(-0.498610760, 0.0415550574, 1.0569715142));\r\n\r\nconst float DISPGAMMA = 2.4;\r\nconst float OFFSET = 0.055;\r\n\r\nvec3 ODT_sRGB_100nits(vec3 oces)\r\n{\r\n    // OCES to RGB rendering space\r\n    vec3 rgbPre = AP0_to_AP1_MAT * oces;\r\n\r\n    // Apply the tonescale independently in rendering-space RGB\r\n    vec3 rgbPost;\r\n    rgbPost.r = segmented_spline_c9_fwd(rgbPre.r);\r\n    rgbPost.g = segmented_spline_c9_fwd(rgbPre.g);\r\n    rgbPost.b = segmented_spline_c9_fwd(rgbPre.b);\r\n\r\n    // Scale luminance to linear code value\r\n    vec3 linearCV;\r\n    linearCV.r = Y_2_linCV(rgbPost.r, CINEMA_WHITE, CINEMA_BLACK);\r\n    linearCV.g = Y_2_linCV(rgbPost.g, CINEMA_WHITE, CINEMA_BLACK);\r\n    linearCV.b = Y_2_linCV(rgbPost.b, CINEMA_WHITE, CINEMA_BLACK);\r\n\r\n    // Apply gamma adjustment to compensate for dim surround\r\n    linearCV = darkSurround_to_dimSurround(linearCV);\r\n\r\n    // Convert to display primary encoding\r\n    // Rendering space RGB to XYZ\r\n    vec3 XYZ = AP1_to_XYZ_MAT * linearCV;\r\n\r\n    // Apply CAT from ACES white point to assumed observer adapted white point\r\n    XYZ = D60_to_D65_MAT * XYZ;\r\n\r\n    // CIE XYZ to display primaries\r\n    linearCV = XYZ_to_REC709_MAT * XYZ;\r\n\r\n    linearCV = clamp(linearCV, vec3(0.0), vec3(1.0));\r\n    return linearCV;\r\n}\r\n\r\n#endif // ODT_sRGB_100nits_lib";
 
-    var ACESGLSL = "// Academy Color Encoding System (ACES) software and tools are provided by the\n// Academy under the following terms and conditions: A worldwide, royalty-free,\n// non-exclusive right to copy, modify, create derivatives, and use, in source\n// and binary forms, is hereby granted, subject to acceptance of this license.\n\n// Copyright 2019 Academy of Motion Picture Arts and Sciences (A.M.P.A.S.).\n// Portions contributed by others as indicated. All rights reserved.\n\n// Performance of any of the aforementioned acts indicates acceptance to be\n// bound by the following terms and conditions:\n\n// Copies of source code, in whole or in part, must retain the above copyright\n// notice, this list of conditions and the Disclaimer of Warranty.\n\n// Use in binary form must retain the above copyright notice, this list of\n// conditions and the Disclaimer of Warranty in the documentation and/or other\n// materials provided with the distribution.\n\n// Nothing in this license shall be deemed to grant any rights to trademarks,\n// copyrights, patents, trade secrets or any other intellectual property of\n// A.M.P.A.S. or any contributors, except as expressly stated herein.\n\n// Neither the name \"A.M.P.A.S.\" nor the name of any other contributors to this\n// software may be used to endorse or promote products derivative of or based on\n// this software without express prior written permission of A.M.P.A.S. or the\n// contributors, as appropriate.\n\n// This license shall be construed pursuant to the laws of the State of\n// California, and any disputes related thereto shall be subject to the\n// jurisdiction of the courts therein.\n\n// Disclaimer of Warranty: THIS SOFTWARE IS PROVIDED BY A.M.P.A.S. AND\n// CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT\n// NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A\n// PARTICULAR PURPOSE, AND NON-INFRINGEMENT ARE DISCLAIMED. IN NO EVENT SHALL\n// A.M.P.A.S., OR ANY CONTRIBUTORS OR DISTRIBUTORS, BE LIABLE FOR ANY DIRECT,\n// INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, RESITUTIONARY, OR CONSEQUENTIAL\n// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR\n// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER\n// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,\n// OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\n// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\n// WITHOUT LIMITING THE GENERALITY OF THE FOREGOING, THE ACADEMY SPECIFICALLY\n// DISCLAIMS ANY REPRESENTATIONS OR WARRANTIES WHATSOEVER RELATED TO PATENT OR\n// OTHER INTELLECTUAL PROPERTY RIGHTS IN THE ACADEMY COLOR ENCODING SYSTEM, OR\n// APPLICATIONS THEREOF, HELD BY PARTIES OTHER THAN A.M.P.A.S.,WHETHER DISCLOSED\n// OR UNDISCLOSED.\n\n#if !defined(ACES_lib)\n#define ACES_lib\n\n#include \"ACES_TransformCommon.glsl\";\n#include \"ACES_UtillitiesColor.glsl\";\n#include \"ACES_Tonescales.glsl\";\n\n#include \"ACES_RRT.glsl\";\n#include \"ACES_ODT_sRGB_100nits.glsl\";\n\n// idt\n\n// linear D65 sRGB to D60 ACES AP0\nvec3 sRGB_to_AP0(vec3 sRGB)\n{\n    return sRGB_to_AP0_MAT * sRGB;\n}\n\n// linear D65 sRGB to D60 ACES AP1\nvec3 sRGB_to_AP1(vec3 sRGB)\n{\n    return sRGB_to_AP1_MAT * sRGB;\n}\n\n// lmt\n// todo\n\n#endif // ACES_lib";
+    var ACESGLSL = "// Academy Color Encoding System (ACES) software and tools are provided by the\r\n// Academy under the following terms and conditions: A worldwide, royalty-free,\r\n// non-exclusive right to copy, modify, create derivatives, and use, in source\r\n// and binary forms, is hereby granted, subject to acceptance of this license.\r\n\r\n// Copyright 2019 Academy of Motion Picture Arts and Sciences (A.M.P.A.S.).\r\n// Portions contributed by others as indicated. All rights reserved.\r\n\r\n// Performance of any of the aforementioned acts indicates acceptance to be\r\n// bound by the following terms and conditions:\r\n\r\n// Copies of source code, in whole or in part, must retain the above copyright\r\n// notice, this list of conditions and the Disclaimer of Warranty.\r\n\r\n// Use in binary form must retain the above copyright notice, this list of\r\n// conditions and the Disclaimer of Warranty in the documentation and/or other\r\n// materials provided with the distribution.\r\n\r\n// Nothing in this license shall be deemed to grant any rights to trademarks,\r\n// copyrights, patents, trade secrets or any other intellectual property of\r\n// A.M.P.A.S. or any contributors, except as expressly stated herein.\r\n\r\n// Neither the name \"A.M.P.A.S.\" nor the name of any other contributors to this\r\n// software may be used to endorse or promote products derivative of or based on\r\n// this software without express prior written permission of A.M.P.A.S. or the\r\n// contributors, as appropriate.\r\n\r\n// This license shall be construed pursuant to the laws of the State of\r\n// California, and any disputes related thereto shall be subject to the\r\n// jurisdiction of the courts therein.\r\n\r\n// Disclaimer of Warranty: THIS SOFTWARE IS PROVIDED BY A.M.P.A.S. AND\r\n// CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT\r\n// NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A\r\n// PARTICULAR PURPOSE, AND NON-INFRINGEMENT ARE DISCLAIMED. IN NO EVENT SHALL\r\n// A.M.P.A.S., OR ANY CONTRIBUTORS OR DISTRIBUTORS, BE LIABLE FOR ANY DIRECT,\r\n// INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, RESITUTIONARY, OR CONSEQUENTIAL\r\n// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR\r\n// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER\r\n// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,\r\n// OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\r\n// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\r\n\r\n// WITHOUT LIMITING THE GENERALITY OF THE FOREGOING, THE ACADEMY SPECIFICALLY\r\n// DISCLAIMS ANY REPRESENTATIONS OR WARRANTIES WHATSOEVER RELATED TO PATENT OR\r\n// OTHER INTELLECTUAL PROPERTY RIGHTS IN THE ACADEMY COLOR ENCODING SYSTEM, OR\r\n// APPLICATIONS THEREOF, HELD BY PARTIES OTHER THAN A.M.P.A.S.,WHETHER DISCLOSED\r\n// OR UNDISCLOSED.\r\n\r\n#if !defined(ACES_lib)\r\n#define ACES_lib\r\n\r\n#include \"ACES_TransformCommon.glsl\";\r\n#include \"ACES_UtillitiesColor.glsl\";\r\n#include \"ACES_Tonescales.glsl\";\r\n\r\n#include \"ACES_RRT.glsl\";\r\n#include \"ACES_ODT_sRGB_100nits.glsl\";\r\n\r\n// idt\r\n\r\n// linear D65 sRGB to D60 ACES AP0\r\nvec3 sRGB_to_AP0(vec3 sRGB)\r\n{\r\n    return sRGB_to_AP0_MAT * sRGB;\r\n}\r\n\r\n// linear D65 sRGB to D60 ACES AP1\r\nvec3 sRGB_to_AP1(vec3 sRGB)\r\n{\r\n    return sRGB_to_AP1_MAT * sRGB;\r\n}\r\n\r\n// lmt\r\n// todo\r\n\r\n#endif // ACES_lib";
 
     class ACESShaderLib {
         static init() {
@@ -32120,6 +32191,7 @@
             Laya.Shader3D.addInclude("DepthFrag.glsl", DepthFragGLSL);
             Laya.Shader3D.addInclude("DepthNormalUtil.glsl", DepthNormalUtilGLSL);
             Laya.Shader3D.addInclude("SceneFog.glsl", SceneFogGLSL);
+            Laya.Shader3D.addInclude("SceneFogInput.glsl", SceneFogInputGLSL);
             Laya.Shader3D.addInclude("ShadowSampleTent.glsl", ShadowSampleTentGLSL);
             Laya.Shader3D.addInclude("ShadowSampler.glsl", ShadowSamplerGLSL);
             Laya.Shader3D.addInclude("Lighting.glsl", LightingGLSL);
@@ -32145,18 +32217,6 @@
     }
 
     class IndexBuffer3D extends Laya.IndexBuffer {
-        get indexType() {
-            return this._indexType;
-        }
-        get indexTypeByteCount() {
-            return this._indexTypeByteCount;
-        }
-        get indexCount() {
-            return this._indexCount;
-        }
-        get canRead() {
-            return this._canRead;
-        }
         constructor(indexType, indexCount, bufferUsage = Laya.BufferUsage.Static, canRead = false) {
             super(Laya.BufferTargetType.ELEMENT_ARRAY_BUFFER, bufferUsage);
             this._indexType = indexType;
@@ -32191,6 +32251,18 @@
                         break;
                 }
             }
+        }
+        get indexType() {
+            return this._indexType;
+        }
+        get indexTypeByteCount() {
+            return this._indexTypeByteCount;
+        }
+        get indexCount() {
+            return this._indexCount;
+        }
+        get canRead() {
+            return this._canRead;
         }
         setData(data, bufferOffset = 0, dataStartIndex = 0, dataCount = 4294967295) {
             var byteCount = this._indexTypeByteCount;
@@ -32239,15 +32311,6 @@
     }
 
     class VertexBuffer3D extends Laya.VertexBuffer {
-        get vertexDeclaration() {
-            return this._vertexDeclaration;
-        }
-        set vertexDeclaration(value) {
-            this._vertexDeclaration = value;
-        }
-        get canRead() {
-            return this._canRead;
-        }
         constructor(byteLength, bufferUsage, canRead = false) {
             super(Laya.BufferTargetType.ARRAY_BUFFER, bufferUsage);
             this._float32Reader = null;
@@ -32259,6 +32322,15 @@
                 this._buffer = new Uint8Array(byteLength);
                 this._float32Reader = new Float32Array(this._buffer.buffer);
             }
+        }
+        get vertexDeclaration() {
+            return this._vertexDeclaration;
+        }
+        set vertexDeclaration(value) {
+            this._vertexDeclaration = value;
+        }
+        get canRead() {
+            return this._canRead;
         }
         orphanStorage() {
             this.bind();
@@ -32306,6 +32378,15 @@
     }
 
     class BoundsImpl {
+        constructor(min, max) {
+            this._updateFlag = 0;
+            this._center = new Laya.Vector3();
+            this._extent = new Laya.Vector3();
+            this._boundBox = new BoundBox(new Laya.Vector3(), new Laya.Vector3());
+            min && min.cloneTo(this._boundBox.min);
+            max && max.cloneTo(this._boundBox.max);
+            this._setUpdateFlag(BoundsImpl._UPDATE_CENTER | BoundsImpl._UPDATE_EXTENT, true);
+        }
         get min() {
             return this.getMin();
         }
@@ -32373,15 +32454,6 @@
                 this._setUpdateFlag(BoundsImpl._UPDATE_EXTENT, false);
             }
             return this._extent;
-        }
-        constructor(min, max) {
-            this._updateFlag = 0;
-            this._center = new Laya.Vector3();
-            this._extent = new Laya.Vector3();
-            this._boundBox = new BoundBox(new Laya.Vector3(), new Laya.Vector3());
-            min && min.cloneTo(this._boundBox.min);
-            max && max.cloneTo(this._boundBox.max);
-            this._setUpdateFlag(BoundsImpl._UPDATE_CENTER | BoundsImpl._UPDATE_EXTENT, true);
         }
         _getUpdateFlag(type) {
             return (this._updateFlag & type) != 0;
@@ -32561,14 +32633,14 @@
     }
 
     class BaseRenderQueue {
-        set sortPass(value) {
-            this._sortPass = value;
-        }
         constructor(isTransparent) {
             this._isTransparent = false;
             this.elements = new Laya.SingletonList();
             this._isTransparent = isTransparent;
             this._batch = RenderElementBatch.instance ? RenderElementBatch.instance : new RenderElementBatch();
+        }
+        set sortPass(value) {
+            this._sortPass = value;
         }
         set context(value) {
             this._context = value._contextOBJ;
@@ -32676,6 +32748,12 @@
     }
 
     class InstanceRenderElementOBJ extends RenderElementOBJ {
+        constructor() {
+            super();
+            this._vertexBuffer3D = [];
+            this._updateData = [];
+            this._updateDataNum = [];
+        }
         addUpdateBuffer(vb, length) {
             this._vertexBuffer3D[this.updateNums] = vb;
             this._updateDataNum[this.updateNums++] = length;
@@ -32686,12 +32764,6 @@
                 data = this._updateData[index] = new Float32Array(length);
             }
             return data;
-        }
-        constructor() {
-            super();
-            this._vertexBuffer3D = [];
-            this._updateData = [];
-            this._updateDataNum = [];
         }
         drawGeometry(shaderIns) {
             let data;
@@ -33031,15 +33103,15 @@
     }
 
     class NativeBaseRenderQueue {
-        set sortPass(value) {
-            this._nativeObj.sortPass = value;
-        }
         constructor(isTransparent) {
             this._isTransparent = false;
             this.elements = new Laya.SingletonList();
             this._isTransparent = isTransparent;
             this._nativeObj = new window.conchRenderQueue(isTransparent);
             this._batch = RenderElementBatch.instance ? RenderElementBatch.instance : new RenderElementBatch();
+        }
+        set sortPass(value) {
+            this._nativeObj.sortPass = value;
         }
         destroy() {
             this._nativeObj.destroy();
@@ -33077,6 +33149,17 @@
     }
 
     class NativeBounds {
+        constructor(min, max) {
+            this._center = new Laya.Vector3();
+            this._extent = new Laya.Vector3();
+            this._boundBox = new BoundBox(new Laya.Vector3(), new Laya.Vector3());
+            this.nativeMemory = new Laya.NativeMemory(NativeBounds.MemoryBlock_size, true);
+            this.float32Array = this.nativeMemory.float32Array;
+            this.float64Array = this.nativeMemory.float64Array;
+            this._nativeObj = new window.conchBounds(this.nativeMemory._buffer);
+            min && this.setMin(min);
+            max && this.setMax(max);
+        }
         get min() {
             return this.getMin();
         }
@@ -33144,17 +33227,6 @@
             extent.y = this.float64Array[1];
             extent.z = this.float64Array[2];
             return extent;
-        }
-        constructor(min, max) {
-            this._center = new Laya.Vector3();
-            this._extent = new Laya.Vector3();
-            this._boundBox = new BoundBox(new Laya.Vector3(), new Laya.Vector3());
-            this.nativeMemory = new Laya.NativeMemory(NativeBounds.MemoryBlock_size, true);
-            this.float32Array = this.nativeMemory.float32Array;
-            this.float64Array = this.nativeMemory.float64Array;
-            this._nativeObj = new window.conchBounds(this.nativeMemory._buffer);
-            min && this.setMin(min);
-            max && this.setMax(max);
         }
         _tranform(matrix, out) {
             this.float32Array.set(matrix.elements);
@@ -33275,14 +33347,14 @@
     }
 
     class NativeCullPassBase {
+        constructor() {
+            this._nativeObj = new window.conchCullPass();
+            this._tempRenderList = new Laya.SingletonList();
+        }
         get cullList() {
             this._tempRenderList.elements = this._nativeObj.cullList;
             this._tempRenderList.length = this._nativeObj.cullList.length;
             return this._tempRenderList;
-        }
-        constructor() {
-            this._nativeObj = new window.conchCullPass();
-            this._tempRenderList = new Laya.SingletonList();
         }
         cullByCameraCullInfo(cameraCullInfo, renderManager) {
             cameraCullInfo.serialize();
@@ -33355,6 +33427,10 @@
         RenderElementType[RenderElementType["Instance"] = 2] = "Instance";
     })(exports.RenderElementType || (exports.RenderElementType = {}));
     class NativeRenderElementOBJ {
+        constructor() {
+            this._shaderInstances = new Laya.SingletonList();
+            this.init();
+        }
         set _geometry(data) {
             this.geometry = data;
             this._nativeObj._geometry = data._nativeObj;
@@ -33395,10 +33471,6 @@
         set _invertFront(data) {
             this._nativeObj._invertFront = data;
         }
-        constructor() {
-            this._shaderInstances = new Laya.SingletonList();
-            this.init();
-        }
         init() {
             this._nativeObj = new window.conchRenderElement(exports.RenderElementType.Base, Laya.LayaGL.renderEngine._nativeObj);
         }
@@ -33421,6 +33493,11 @@
     }
 
     class NativeInstanceRenderElementOBJ extends NativeRenderElementOBJ {
+        constructor() {
+            super();
+            this._vertexBuffer3D = [];
+            this._updateData = [];
+        }
         addUpdateBuffer(vb, length) {
             this._vertexBuffer3D[this._updateNums++] = vb;
             this._nativeObj.addUpdateBuffer(vb._conchVertexBuffer3D, length);
@@ -33432,11 +33509,6 @@
                 this._nativeObj.getUpdateData(index, data);
             }
             return data;
-        }
-        constructor() {
-            super();
-            this._vertexBuffer3D = [];
-            this._updateData = [];
         }
         clear() {
             this._updateNums = 0;
@@ -33598,6 +33670,9 @@
     }
 
     class NativeRenderState {
+        constructor() {
+            this._nativeObj = new window.conchRenderState();
+        }
         set cull(value) {
             this._nativeObj.cull = value;
         }
@@ -33698,9 +33773,6 @@
             this._nativeObj.setStencilOp(value.x, value.y, value.z);
         }
         setNull() {
-        }
-        constructor() {
-            this._nativeObj = new window.conchRenderState();
         }
     }
 
@@ -34169,6 +34241,15 @@
     }
 
     class NativeTransform3D extends Transform3D {
+        constructor(owner) {
+            super(owner);
+            this.nativeMemory = new Laya.NativeMemory(NativeTransform3D.MemoryBlock_size, true);
+            this.float32Array = this.nativeMemory.float32Array;
+            this.float64Array = this.nativeMemory.float64Array;
+            this.int32Array = this.nativeMemory.int32Array;
+            this.eventDispatcher = new Laya.EventDispatcher();
+            this._nativeObj = new window.conchTransform(this.nativeMemory._buffer, this.eventDispatcher.event.bind(this.eventDispatcher));
+        }
         get _isFrontFaceInvert() {
             return this._nativeObj._isFrontFaceInvert;
         }
@@ -34403,15 +34484,6 @@
             this.float32Array.set(value.elements);
             this._nativeObj.setWorldMatrix();
         }
-        constructor(owner) {
-            super(owner);
-            this.nativeMemory = new Laya.NativeMemory(NativeTransform3D.MemoryBlock_size, true);
-            this.float32Array = this.nativeMemory.float32Array;
-            this.float64Array = this.nativeMemory.float64Array;
-            this.int32Array = this.nativeMemory.int32Array;
-            this.eventDispatcher = new Laya.EventDispatcher();
-            this._nativeObj = new window.conchTransform(this.nativeMemory._buffer, this.eventDispatcher.event.bind(this.eventDispatcher));
-        }
         _setTransformFlag(type, value) {
             this._nativeObj && this._nativeObj._setTransformFlag(type, value);
         }
@@ -34527,6 +34599,12 @@
     }
 
     class NativeVertexBuffer3D extends VertexBuffer3D {
+        constructor(byteLength, bufferUsage, canRead = false) {
+            super(byteLength, bufferUsage, canRead);
+            this._conchVertexBuffer3D = null;
+            this._conchVertexBuffer3D = new window.conchVertexBuffer3D(Laya.LayaGL.renderEngine._nativeObj, byteLength, bufferUsage, false);
+            this._conchVertexBuffer3D.setGLBuffer(this._glBuffer);
+        }
         get vertexDeclaration() {
             return this._vertexDeclaration;
         }
@@ -34552,12 +34630,6 @@
         }
         set instanceBuffer(value) {
             this._conchVertexBuffer3D._instanceBuffer = value;
-        }
-        constructor(byteLength, bufferUsage, canRead = false) {
-            super(byteLength, bufferUsage, canRead);
-            this._conchVertexBuffer3D = null;
-            this._conchVertexBuffer3D = new window.conchVertexBuffer3D(Laya.LayaGL.renderEngine._nativeObj, byteLength, bufferUsage, false);
-            this._conchVertexBuffer3D.setGLBuffer(this._glBuffer);
         }
     }
 
@@ -34834,6 +34906,8 @@
     RandX.defaultRand = new RandX([0, Date.now() / 65536, 0, Date.now() % 65536]);
 
     class TextMesh {
+        constructor() {
+        }
         get text() {
             return this._text;
         }
@@ -34852,11 +34926,15 @@
         set color(value) {
             this._color = value;
         }
-        constructor() {
-        }
     }
 
     class Size {
+        constructor(width, height) {
+            this._width = 0;
+            this._height = 0;
+            this._width = width;
+            this._height = height;
+        }
         static get fullScreen() {
             return new Size(-1, -1);
         }
@@ -34869,12 +34947,6 @@
             if (this._height === -1)
                 return RenderContext3D.clientHeight;
             return this._height;
-        }
-        constructor(width, height) {
-            this._width = 0;
-            this._height = 0;
-            this._width = width;
-            this._height = height;
         }
     }
 
@@ -35042,21 +35114,6 @@
     WebXRSessionManager.EVENT_FRAME_LOOP = "xrFrameLoop";
 
     class WebXRCameraManager {
-        get position() {
-            return this._position;
-        }
-        set position(newPosition) {
-            newPosition.cloneTo(this._position);
-        }
-        set rotationQuaternion(value) {
-            value.cloneTo(this._referenceQuaternion);
-        }
-        get rotationQuaternion() {
-            return this._referenceQuaternion;
-        }
-        get rigCameras() {
-            return this._rigCameras;
-        }
         constructor(camera, manager = null) {
             this._referenceQuaternion = new Laya.Quaternion();
             this._referencedPosition = new Laya.Vector3();
@@ -35073,6 +35130,21 @@
             this._webXRSessionManager.on(WebXRSessionManager.EVENT_FRAME_LOOP, this, this._updateFromXRSession);
             this._webXRSessionManager.on(WebXRSessionManager.EVENT_FRAME_LOOP, this, this._updateReferenceSpace);
             this._webXRSessionManager.on(WebXRSessionManager.EVENT_MANAGER_END, this, this.destroy);
+        }
+        get position() {
+            return this._position;
+        }
+        set position(newPosition) {
+            newPosition.cloneTo(this._position);
+        }
+        set rotationQuaternion(value) {
+            value.cloneTo(this._referenceQuaternion);
+        }
+        get rotationQuaternion() {
+            return this._referenceQuaternion;
+        }
+        get rigCameras() {
+            return this._rigCameras;
         }
         _updateFromXRSession() {
             let pose = this._webXRSessionManager.currentFrame && this._webXRSessionManager.currentFrame.getViewerPose(this._webXRSessionManager.referenceSpace);
@@ -35601,6 +35673,28 @@
     }
 
     class ConstraintComponent extends Laya.Component {
+        constructor(constraintType) {
+            super();
+            this._anchor = new Laya.Vector3();
+            this._connectAnchor = new Laya.Vector3();
+            this._feedbackEnabled = false;
+            this._getJointFeedBack = false;
+            this._currentForce = new Laya.Vector3();
+            this._currentTorque = new Laya.Vector3();
+            this.disableCollisionsBetweenLinkedBodies = true;
+            this._constraintType = constraintType;
+            var bt = Physics3D._bullet;
+            this._btframATrans = bt.btTransform_create();
+            this._btframBTrans = bt.btTransform_create();
+            bt.btTransform_setIdentity(this._btframATrans);
+            bt.btTransform_setIdentity(this._btframBTrans);
+            this._btframAPos = bt.btVector3_create(0, 0, 0);
+            this._btframBPos = bt.btVector3_create(0, 0, 0);
+            bt.btTransform_setOrigin(this._btframATrans, this._btframAPos);
+            bt.btTransform_setOrigin(this._btframBTrans, this._btframBPos);
+            this._breakForce = -1;
+            this._breakTorque = -1;
+        }
         get appliedImpulse() {
             if (!this._feedbackEnabled) {
                 this._btConstraint.EnableFeedback(true);
@@ -35655,28 +35749,6 @@
         }
         get connectAnchor() {
             return this._connectAnchor;
-        }
-        constructor(constraintType) {
-            super();
-            this._anchor = new Laya.Vector3();
-            this._connectAnchor = new Laya.Vector3();
-            this._feedbackEnabled = false;
-            this._getJointFeedBack = false;
-            this._currentForce = new Laya.Vector3();
-            this._currentTorque = new Laya.Vector3();
-            this.disableCollisionsBetweenLinkedBodies = true;
-            this._constraintType = constraintType;
-            var bt = Physics3D._bullet;
-            this._btframATrans = bt.btTransform_create();
-            this._btframBTrans = bt.btTransform_create();
-            bt.btTransform_setIdentity(this._btframATrans);
-            bt.btTransform_setIdentity(this._btframBTrans);
-            this._btframAPos = bt.btVector3_create(0, 0, 0);
-            this._btframBPos = bt.btVector3_create(0, 0, 0);
-            bt.btTransform_setOrigin(this._btframATrans, this._btframAPos);
-            bt.btTransform_setOrigin(this._btframBTrans, this._btframBPos);
-            this._breakForce = -1;
-            this._breakTorque = -1;
         }
         setOverrideNumSolverIterations(overideNumIterations) {
             var bt = Physics3D._bullet;
@@ -36404,6 +36476,11 @@
     const TriangleIndices = [0, 1, 2];
     const InvertTriangleIndices = [0, 2, 1];
     class StaticBatchMesh {
+        constructor() {
+            this._bufferState = new Laya.BufferState();
+            this._staticSubMeshes = new Map();
+            this.bounds = new Bounds();
+        }
         static create(info) {
             let staticMesh = new StaticBatchMesh();
             let vertexCount = info.vertexCount;
@@ -36500,11 +36577,6 @@
             staticMesh.setBuffer(vertexBuffer, indexBuffer);
             return staticMesh;
         }
-        constructor() {
-            this._bufferState = new Laya.BufferState();
-            this._staticSubMeshes = new Map();
-            this.bounds = new Bounds();
-        }
         setBuffer(vertex, index) {
             let bufferState = this._bufferState;
             this._vertexBuffer = vertex;
@@ -36531,6 +36603,10 @@
     }
 
     class StaticBatchMeshRender extends BaseRender {
+        constructor() {
+            super();
+            this._singleton = false;
+        }
         static create(info) {
             let render = new StaticBatchMeshRender();
             render.mergeInfo = info;
@@ -36569,10 +36645,6 @@
                 material._addReference();
             });
             staticMesh.bounds.cloneTo(this.bounds);
-        }
-        constructor() {
-            super();
-            this._singleton = false;
         }
         _calculateBoundingBox() {
         }
@@ -36648,6 +36720,11 @@
         return this._mesh;
     };
     class StaticMeshMergeInfo {
+        constructor() {
+            this._renders = [];
+            this.vertexCount = 0;
+            this.indexCount = 0;
+        }
         static create(render) {
             let mesh = render.getMesh();
             render.owner;
@@ -36659,11 +36736,6 @@
         }
         get renders() {
             return this._renders;
-        }
-        constructor() {
-            this._renders = [];
-            this.vertexCount = 0;
-            this.indexCount = 0;
         }
         match(render) {
             let mesh = render.getMesh();
@@ -36780,6 +36852,80 @@
     TransLargeUBOUtils.configStartLength = 1024;
     TransLargeUBOUtils.addStep = 512;
 
+    class PixelLineSprite3D extends RenderableSprite3D {
+        constructor(maxCount = 2, name = null) {
+            super(name);
+            this._isRenderActive = false;
+            this._isInRenders = false;
+            this._render = this.addComponent(PixelLineRenderer);
+            this._geometryFilter = this._render._pixelLineFilter;
+            this._render.maxLineCount = maxCount;
+            let material = this._render.material = new UnlitMaterial();
+            material.enableVertexColor = true;
+        }
+        get maxLineCount() {
+            return this._render.maxLineCount;
+        }
+        set maxLineCount(value) {
+            this._render.maxLineCount = value;
+        }
+        get lineCount() {
+            return this._render.lineCount;
+        }
+        get pixelLineRenderer() {
+            return this._render;
+        }
+        addLine(startPosition, endPosition, startColor, endColor) {
+            this._render.addLine(startPosition, endPosition, startColor, endColor);
+        }
+        addLines(lines) {
+            this._render.addLines(lines);
+        }
+        removeLine(index) {
+            this._render.removeLine(index);
+        }
+        setLine(index, startPosition, endPosition, startColor, endColor) {
+            this._render.setLine(index, startPosition, endPosition, startColor, endColor);
+        }
+        getLine(index, out) {
+            this._render.getLine(index, out);
+        }
+        clear() {
+            this._render.clear();
+        }
+        _create() {
+            return new Sprite3D();
+        }
+    }
+
+    const _vec2 = new Laya.Vector2();
+    const _ray = new Ray(new Laya.Vector3(), new Laya.Vector3());
+    const _hitResult = new HitResult();
+    Laya.InputManager.prototype.getSprite3DUnderPoint = function (x, y) {
+        _hitResult.succeeded = false;
+        _vec2.setValue(x, y);
+        for (let scene of this._stage._scene3Ds) {
+            let sim = scene._physicsSimulation;
+            if (!sim)
+                continue;
+            let cameras = scene._cameraPool;
+            for (let i = cameras.length - 1; i >= 0; i--) {
+                let camera = cameras[i];
+                let viewport = camera.viewport;
+                let ratio = Laya.Config3D.pixelRatio;
+                if (x >= viewport.x && y >= viewport.y && x <= viewport.width / ratio && y <= viewport.height / ratio) {
+                    camera.viewportPointToRay(_vec2, _ray);
+                    var sucess = sim.rayCast(_ray, _hitResult);
+                    if (sucess || (camera.clearFlag === exports.CameraClearFlags.SolidColor || camera.clearFlag === exports.CameraClearFlags.Sky))
+                        break;
+                }
+            }
+            if (_hitResult.succeeded)
+                return _hitResult.collider.owner;
+        }
+        return null;
+    };
+
     class UI3DGeometry extends GeometryElement {
         constructor(owner) {
             super(Laya.MeshTopology.TriangleStrip, Laya.DrawType.DrawArray);
@@ -36858,6 +37004,10 @@
     UI3DGeometry._type = GeometryElement._typeCounter++;
 
     class UI3D extends BaseRender {
+        constructor() {
+            super();
+            this._uiPlane = new Plane(new Laya.Vector3(), 0);
+        }
         set sprite(value) {
             this._uisprite = value;
             this._resizeRT(value.width, value.height);
@@ -36879,10 +37029,6 @@
         }
         get UIRender() {
             return this._rendertexure2D;
-        }
-        constructor() {
-            super();
-            this._uiPlane = new Plane(new Laya.Vector3(), 0);
         }
         _addRenderElement() {
             var elements = this._renderElements;
@@ -36945,87 +37091,13 @@
     UI3D.temp1 = new Laya.Vector3();
     UI3D.temp2 = new Laya.Vector3();
 
-    class PixelLineSprite3D extends RenderableSprite3D {
-        get maxLineCount() {
-            return this._render.maxLineCount;
-        }
-        set maxLineCount(value) {
-            this._render.maxLineCount = value;
-        }
-        get lineCount() {
-            return this._render.lineCount;
-        }
-        get pixelLineRenderer() {
-            return this._render;
-        }
-        constructor(maxCount = 2, name = null) {
-            super(name);
-            this._isRenderActive = false;
-            this._isInRenders = false;
-            this._render = this.addComponent(PixelLineRenderer);
-            this._geometryFilter = this._render._pixelLineFilter;
-            this._render.maxLineCount = maxCount;
-            let material = this._render.material = new UnlitMaterial();
-            material.enableVertexColor = true;
-        }
-        addLine(startPosition, endPosition, startColor, endColor) {
-            this._render.addLine(startPosition, endPosition, startColor, endColor);
-        }
-        addLines(lines) {
-            this._render.addLines(lines);
-        }
-        removeLine(index) {
-            this._render.removeLine(index);
-        }
-        setLine(index, startPosition, endPosition, startColor, endColor) {
-            this._render.setLine(index, startPosition, endPosition, startColor, endColor);
-        }
-        getLine(index, out) {
-            this._render.getLine(index, out);
-        }
-        clear() {
-            this._render.clear();
-        }
-        _create() {
-            return new Sprite3D();
-        }
-    }
-
-    const _vec2 = new Laya.Vector2();
-    const _ray = new Ray(new Laya.Vector3(), new Laya.Vector3());
-    const _hitResult = new HitResult();
-    Laya.InputManager.prototype.getSprite3DUnderPoint = function (x, y) {
-        _hitResult.succeeded = false;
-        _vec2.setValue(x, y);
-        for (let scene of this._stage._scene3Ds) {
-            let sim = scene._physicsSimulation;
-            if (!sim)
-                continue;
-            let cameras = scene._cameraPool;
-            for (let i = cameras.length - 1; i >= 0; i--) {
-                let camera = cameras[i];
-                let viewport = camera.viewport;
-                let ratio = Laya.Config3D.pixelRatio;
-                if (x >= viewport.x && y >= viewport.y && x <= viewport.width / ratio && y <= viewport.height / ratio) {
-                    camera.viewportPointToRay(_vec2, _ray);
-                    var sucess = sim.rayCast(_ray, _hitResult);
-                    if (sucess || (camera.clearFlag === exports.CameraClearFlags.SolidColor || camera.clearFlag === exports.CameraClearFlags.Sky))
-                        break;
-                }
-            }
-            if (_hitResult.succeeded)
-                return _hitResult.collider.owner;
-        }
-        return null;
-    };
-
     class GradientDataVector2 {
-        get gradientCount() {
-            return this._currentLength / 3;
-        }
         constructor() {
             this._currentLength = 0;
             this._elements = new Float32Array(12);
+        }
+        get gradientCount() {
+            return this._currentLength / 3;
         }
         add(key, value) {
             if (this._currentLength < 8) {

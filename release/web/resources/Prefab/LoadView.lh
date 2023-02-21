@@ -13,15 +13,13 @@
   "_$comp": [
     {
       "_$type": "9797e892-adab-4c82-8f5e-800b37f590f9",
-      "scriptPath": "../src/Game/Scene/LoadView.ts",
+      "scriptPath": "",
       "imgLoad": {
         "_$ref": "apjzjnk2"
       },
       "labelLoad": {
         "_$ref": "e1c3gd8j"
-      },
-      "depth": 2,
-      "isSingleton": true
+      }
     }
   ],
   "_$child": [

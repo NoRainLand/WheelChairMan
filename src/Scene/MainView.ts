@@ -20,7 +20,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-18 10:23:04
+ * @Last Modified time: 2023-02-21 11:09:44
  */
 const { regClass, property } = Laya;
 /**主界面 */
@@ -66,6 +66,10 @@ export default class MainView extends UIBase {
 
         this.imgLevelMask = this.imgLevel.mask as Image;
         this.imgMsMask = this.imgMs.mask as Image;
+
+
+
+
     }
     addEvent(): void {
         this.regEvent(EventEnum.GOLDCHANGE, this.changeGold, true);

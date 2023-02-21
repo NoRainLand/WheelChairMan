@@ -19,5 +19,5 @@ const { regClass, property } = Laya;
 /**用户信息界面 */
 @regClass()
 export default class MyInfoView extends UIBase {
-    
+
 }

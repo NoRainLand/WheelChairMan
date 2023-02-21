@@ -1640,11 +1640,11 @@
             this._globalSacle || (this._globalSacle = new Laya.Point());
             this._globalSacle.setTo(this.globalScaleX || 0.01, this.globalScaleY || 0.01);
             this._maxMove = this.isVertical ? (this.height - this._bar.height) : (this.width - this._bar.width);
-            this._tx = Laya$1.stage.mouseX;
-            this._ty = Laya$1.stage.mouseY;
-            Laya$1.stage.on(Laya.Event.MOUSE_MOVE, this, this.mouseMove);
-            Laya$1.stage.once(Laya.Event.MOUSE_UP, this, this.mouseUp);
-            Laya$1.stage.once(Laya.Event.MOUSE_OUT, this, this.mouseUp);
+            this._tx = exports.stage.mouseX;
+            this._ty = exports.stage.mouseY;
+            exports.stage.on(Laya.Event.MOUSE_MOVE, this, this.mouseMove);
+            exports.stage.once(Laya.Event.MOUSE_UP, this, this.mouseUp);
+            exports.stage.once(Laya.Event.MOUSE_OUT, this, this.mouseUp);
             this.showValueText();
         }
         showValueText() {
@@ -2504,6 +2504,7 @@
                 let scrollBar = new HScrollBar();
                 scrollBar.name = "scrollBar";
                 scrollBar.bottom = 0;
+                scrollBar._skinBaseUrl = this._skinBaseUrl;
                 scrollBar.skin = this._hScrollBarSkin;
                 scrollBar.elasticDistance = this._elasticEnabled ? 200 : 0;
                 scrollBar.hideFlags = Laya.HideFlags.HideAndDontSave;
@@ -2522,6 +2523,7 @@
                 let scrollBar = new VScrollBar();
                 scrollBar.name = "scrollBar";
                 scrollBar.right = 0;
+                scrollBar._skinBaseUrl = this._skinBaseUrl;
                 scrollBar.skin = this._vScrollBarSkin;
                 scrollBar.elasticDistance = this._elasticEnabled ? 200 : 0;
                 scrollBar.hideFlags = Laya.HideFlags.HideAndDontSave;
@@ -3667,12 +3669,6 @@
     }
 
     class Dialog extends View {
-        static get manager() {
-            return Dialog._manager = Dialog._manager || new DialogManager();
-        }
-        static set manager(value) {
-            Dialog._manager = value;
-        }
         constructor() {
             super();
             this.isShowEffect = true;
@@ -3681,6 +3677,12 @@
             this.closeEffect = Dialog.manager.closeEffectHandler;
             this._dealDragArea();
             this.on(Laya.Event.CLICK, this, this._onClick);
+        }
+        static get manager() {
+            return Dialog._manager = Dialog._manager || new DialogManager();
+        }
+        static set manager(value) {
+            Dialog._manager = value;
         }
         _dealDragArea() {
             var dragTarget = this.getChildByName("drag");
@@ -4248,6 +4250,7 @@
             scrollBar.target = this._content;
             scrollBar.elasticDistance = this._elasticEnabled ? 200 : 0;
             scrollBar.bottom = 0;
+            scrollBar._skinBaseUrl = this._skinBaseUrl;
             scrollBar.skin = this._hScrollBarSkin;
             super.addChild(scrollBar);
             this._setScrollChanged();
@@ -4259,6 +4262,7 @@
             scrollBar.target = this._content;
             scrollBar.elasticDistance = this._elasticEnabled ? 200 : 0;
             scrollBar.right = 0;
+            scrollBar._skinBaseUrl = this._skinBaseUrl;
             scrollBar.skin = this._vScrollBarSkin;
             super.addChild(scrollBar);
             this._setScrollChanged();
@@ -5108,6 +5112,7 @@
         createHScrollBar() {
             this._hScrollBar = new HScrollBar();
             this._hScrollBar.hideFlags = Laya.HideFlags.HideAndDontSave;
+            this._hScrollBar._skinBaseUrl = this._skinBaseUrl;
             this.addChild(this._hScrollBar);
             this._hScrollBar.on(Laya.Event.CHANGE, this, this.onHBarChanged);
             this._hScrollBar.mouseWheelEnable = false;
@@ -5117,6 +5122,7 @@
         createVScrollBar() {
             this._vScrollBar = new VScrollBar();
             this._vScrollBar.hideFlags = Laya.HideFlags.HideAndDontSave;
+            this._vScrollBar._skinBaseUrl = this._skinBaseUrl;
             this.addChild(this._vScrollBar);
             this._vScrollBar.on(Laya.Event.CHANGE, this, this.onVBarChanged);
             this._vScrollBar.target = this._tf;
@@ -5325,6 +5331,7 @@
             this._list.right = 0;
             this._list.top = 0;
             this._list.bottom = 0;
+            this._list._skinBaseUrl = this._skinBaseUrl;
             this.addChild(this._list);
             this._list.renderHandler = Laya.Handler.create(this, this.renderItem, null, false);
             this._list.repeatX = 1;

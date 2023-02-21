@@ -13,15 +13,15 @@
   "_$comp": [
     {
       "_$type": "6bc1bf6a-a993-4ac9-b9f4-4785e0d68c2b",
-      "scriptPath": "../src/Game/Scene/LanguageView.ts",
+      "scriptPath": "../src/Scene/LanguageView.ts",
+      "depth": 1,
+      "isSingleton": true,
       "$listLanguage": {
         "_$ref": "x83d9sq5"
       },
       "$imgClose": {
         "_$ref": "4y2yjav5"
-      },
-      "depth": 1,
-      "isSingleton": true
+      }
     }
   ],
   "_$child": [

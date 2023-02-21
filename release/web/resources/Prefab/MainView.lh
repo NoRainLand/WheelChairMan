@@ -5,8 +5,451 @@
   "name": "MainView",
   "width": 1920,
   "height": 1080,
+  "mouseEnabled": true,
   "left": 0,
   "right": 0,
   "top": 0,
-  "bottom": 0
+  "bottom": 0,
+  "_$comp": [
+    {
+      "_$type": "127f9431-d96d-491c-b782-2549a9c38d7b",
+      "scriptPath": "../src/Scene/MainView.ts",
+      "depth": 2,
+      "isSingleton": true,
+      "AniType": 0,
+      "txtGold": {
+        "_$ref": "iibb3hfk"
+      },
+      "imgPlusGold": {
+        "_$ref": "69hshsly"
+      },
+      "txtDiamond": {
+        "_$ref": "f8svjh7n"
+      },
+      "imgPlusDiamond": {
+        "_$ref": "07o9cep4"
+      },
+      "imgHead": {
+        "_$ref": "yj4rv54x"
+      },
+      "imgRing": {
+        "_$ref": "tk8tigio"
+      },
+      "imgLevel": {
+        "_$ref": "yf8icwto"
+      },
+      "imgMs": {
+        "_$ref": "uif75wl9"
+      },
+      "txtLevel": {
+        "_$ref": "puoav32y"
+      },
+      "labelName": {
+        "_$ref": "kxz8vj59"
+      },
+      "imgShop": {
+        "_$ref": "ulwkjjh1"
+      },
+      "imgRanking": {
+        "_$ref": "mu88130u"
+      },
+      "imgSettings": {
+        "_$ref": "d31imb56"
+      }
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "2nfh67lh",
+      "_$type": "Image",
+      "name": "Bg",
+      "width": 1920,
+      "height": 1080,
+      "visible": false,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "bottom": 0,
+      "skin": "resources/img/common/background.png"
+    },
+    {
+      "_$id": "y51d6oo0",
+      "_$type": "Image",
+      "name": "imgGold",
+      "x": 1057,
+      "y": 27,
+      "width": 410,
+      "height": 102,
+      "top": 27,
+      "skin": "resources/img/mainview/status_bg.png",
+      "sizeGrid": "0,31,0,25,0",
+      "_$child": [
+        {
+          "_$id": "8k1r93g3",
+          "_$type": "Image",
+          "name": "Image(1)",
+          "x": 14,
+          "y": 10.999999999999993,
+          "width": 97,
+          "height": 85,
+          "skin": "resources/img/common/icon_reward_coin.png"
+        },
+        {
+          "_$id": "iibb3hfk",
+          "_$type": "Text",
+          "name": "txtGold",
+          "x": 120,
+          "y": 29,
+          "width": 184,
+          "height": 48,
+          "fontSize": 40,
+          "color": "rgba(221, 198, 171, 1)",
+          "align": "right",
+          "valign": "middle",
+          "leading": 0
+        },
+        {
+          "_$id": "69hshsly",
+          "_$type": "Image",
+          "name": "imgPlusGold",
+          "x": 321,
+          "y": 13,
+          "width": 72,
+          "height": 72,
+          "skin": "resources/img/mainview/status_btn_add.png"
+        }
+      ]
+    },
+    {
+      "_$id": "cmgcvq3k",
+      "_$type": "Image",
+      "name": "imgDiamond",
+      "x": 1485,
+      "y": 27,
+      "width": 410,
+      "height": 102,
+      "top": 27,
+      "skin": "resources/img/mainview/status_bg.png",
+      "sizeGrid": "0,31,0,25,0",
+      "_$child": [
+        {
+          "_$id": "jpkj4yqo",
+          "_$type": "Image",
+          "name": "Image(1)",
+          "x": 14,
+          "y": 10.999999999999993,
+          "width": 97,
+          "height": 85,
+          "skin": "resources/img/common/icon_reward_gem.png"
+        },
+        {
+          "_$id": "f8svjh7n",
+          "_$type": "Text",
+          "name": "txtDiamond",
+          "x": 120,
+          "y": 29,
+          "width": 184,
+          "height": 48,
+          "fontSize": 40,
+          "color": "rgba(221, 198, 171, 1)",
+          "align": "right",
+          "valign": "middle",
+          "leading": 0
+        },
+        {
+          "_$id": "07o9cep4",
+          "_$type": "Image",
+          "name": "imgPlusDiamond",
+          "x": 321,
+          "y": 13,
+          "width": 72,
+          "height": 72,
+          "skin": "resources/img/mainview/status_btn_add.png"
+        }
+      ]
+    },
+    {
+      "_$id": "hkaes60x",
+      "_$type": "Image",
+      "name": "imgPlayer",
+      "x": 94,
+      "y": 27,
+      "width": 353,
+      "height": 98,
+      "mouseEnabled": true,
+      "top": 27,
+      "skin": "resources/img/mainview/user_info_slider_bg.png",
+      "sizeGrid": "0,78,0,89,0",
+      "_$child": [
+        {
+          "_$id": "q5ir1o97",
+          "_$type": "Image",
+          "name": "imgHeadgb",
+          "x": -51.999999999999936,
+          "y": 7.000000000000007,
+          "width": 120,
+          "height": 120,
+          "skin": "resources/img/mainview/user_info_profile_default.png"
+        },
+        {
+          "_$id": "yj4rv54x",
+          "_$type": "Image",
+          "name": "imgHead",
+          "x": -52,
+          "y": 7,
+          "width": 120,
+          "height": 120,
+          "skin": "resources/img/mainview/user_info_profile_default.png"
+        },
+        {
+          "_$id": "tk8tigio",
+          "_$type": "Image",
+          "name": "imgRing",
+          "x": -72,
+          "y": -9,
+          "width": 160,
+          "height": 160,
+          "mouseEnabled": true,
+          "skin": "resources/img/mainview/user_info_profile_bg.png"
+        },
+        {
+          "_$id": "yf8icwto",
+          "_$type": "Image",
+          "name": "imgLevel",
+          "x": 82,
+          "y": 60,
+          "width": 202,
+          "height": 14,
+          "mask": {
+            "_$ref": "boq4dyzx"
+          },
+          "skin": "resources/img/mainview/user_info_slider_fill_green.png",
+          "_$child": [
+            {
+              "_$id": "boq4dyzx",
+              "_$type": "Image",
+              "name": "Image",
+              "width": 202,
+              "height": 14,
+              "skin": "resources/img/mainview/user_info_slider_fill_green.png"
+            }
+          ]
+        },
+        {
+          "_$id": "uif75wl9",
+          "_$type": "Image",
+          "name": "imgMs",
+          "x": 76,
+          "y": 15,
+          "width": 251,
+          "height": 23,
+          "mask": {
+            "_$ref": "j8n8oz63"
+          },
+          "skin": "resources/img/mainview/user_info_slider_fill_orange.png",
+          "_$child": [
+            {
+              "_$id": "j8n8oz63",
+              "_$type": "Image",
+              "name": "Image",
+              "width": 251,
+              "height": 23,
+              "skin": "resources/img/mainview/user_info_slider_fill_orange.png"
+            }
+          ]
+        },
+        {
+          "_$id": "bgp5ftkc",
+          "_$type": "Image",
+          "name": "Image",
+          "x": 42,
+          "y": 77,
+          "width": 53,
+          "height": 62,
+          "skin": "resources/img/mainview/user_info_lv_bg.png",
+          "_$child": [
+            {
+              "_$id": "puoav32y",
+              "_$type": "Text",
+              "name": "txtLevel",
+              "x": 1,
+              "y": 12,
+              "width": 52,
+              "height": 33,
+              "text": "99\n",
+              "fontSize": 36,
+              "color": "#FFFFFF",
+              "align": "center",
+              "valign": "middle",
+              "leading": 0
+            }
+          ]
+        },
+        {
+          "_$id": "kxz8vj59",
+          "_$type": "Label",
+          "name": "labelName",
+          "x": 100,
+          "y": 95,
+          "width": 191,
+          "height": 33,
+          "text": "username",
+          "fontSize": 32,
+          "color": "rgba(221, 198, 171, 1)",
+          "leading": 0,
+          "padding": "0,0,0,0"
+        }
+      ]
+    },
+    {
+      "_$id": "ulwkjjh1",
+      "_$type": "Image",
+      "name": "imgShop",
+      "x": 69,
+      "y": 859,
+      "width": 160,
+      "height": 164,
+      "mouseEnabled": true,
+      "bottom": 57,
+      "skin": "resources/img/mainview/menu_btn_bg.png",
+      "sizeGrid": "0,37,0,32,0",
+      "_$child": [
+        {
+          "_$id": "2ri74rpl",
+          "_$type": "Image",
+          "name": "Image",
+          "x": 15,
+          "y": 28,
+          "width": 130,
+          "height": 108,
+          "centerX": 0,
+          "centerY": 0,
+          "skin": "resources/img/mainview/menu_btn_icon_shop.png"
+        },
+        {
+          "_$id": "tlo3z3z1",
+          "_$type": "Label",
+          "name": "Label",
+          "x": 7,
+          "y": 163,
+          "width": 145,
+          "height": 45,
+          "text": "Shop",
+          "fontSize": 36,
+          "color": "rgba(178, 155, 123, 1)",
+          "align": "center",
+          "valign": "middle",
+          "leading": 0,
+          "padding": "0,0,0,0",
+          "_$comp": [
+            {
+              "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+              "scriptPath": "../src/Localization/LocalizationText.ts",
+              "localizationKey": "SHOP"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_$id": "mu88130u",
+      "_$type": "Image",
+      "name": "imgRanking",
+      "x": 291,
+      "y": 859,
+      "width": 160,
+      "height": 164,
+      "mouseEnabled": true,
+      "bottom": 57,
+      "skin": "resources/img/mainview/menu_btn_bg.png",
+      "sizeGrid": "0,37,0,32,0",
+      "_$child": [
+        {
+          "_$id": "iv9rxr3m",
+          "_$type": "Image",
+          "name": "Image",
+          "x": 15,
+          "y": 28,
+          "width": 130,
+          "height": 108,
+          "centerX": 0,
+          "centerY": 0,
+          "skin": "resources/img/mainview/menu_btn_icon_ranking.png"
+        },
+        {
+          "_$id": "w9xrw8jj",
+          "_$type": "Label",
+          "name": "Label",
+          "x": 7,
+          "y": 163,
+          "width": 145,
+          "height": 45,
+          "text": "Ranking\n",
+          "fontSize": 36,
+          "color": "rgba(178, 155, 123, 1)",
+          "align": "center",
+          "valign": "middle",
+          "leading": 0,
+          "padding": "0,0,0,0",
+          "_$comp": [
+            {
+              "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+              "scriptPath": "../src/Localization/LocalizationText.ts",
+              "localizationKey": "RANKING"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_$id": "d31imb56",
+      "_$type": "Image",
+      "name": "imgSettings",
+      "x": 511,
+      "y": 859,
+      "width": 160,
+      "height": 164,
+      "mouseEnabled": true,
+      "bottom": 57,
+      "skin": "resources/img/mainview/menu_btn_bg.png",
+      "sizeGrid": "0,37,0,32,0",
+      "_$child": [
+        {
+          "_$id": "b5t7ztg9",
+          "_$type": "Image",
+          "name": "Image",
+          "x": 15,
+          "y": 28,
+          "width": 130,
+          "height": 108,
+          "centerX": 0,
+          "centerY": 0,
+          "skin": "resources/img/mainview/menu_btn_icon_setting.png"
+        },
+        {
+          "_$id": "4pgolo9p",
+          "_$type": "Label",
+          "name": "Label",
+          "x": 7,
+          "y": 163,
+          "width": 145,
+          "height": 45,
+          "text": "Settings",
+          "fontSize": 36,
+          "color": "rgba(178, 155, 123, 1)",
+          "align": "center",
+          "valign": "middle",
+          "leading": 0,
+          "padding": "0,0,0,0",
+          "_$comp": [
+            {
+              "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+              "scriptPath": "../src/Localization/LocalizationText.ts",
+              "localizationKey": "SETTING"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

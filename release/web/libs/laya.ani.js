@@ -233,6 +233,22 @@
     AnimationState.playing = 2;
 
     class AnimationPlayer extends Laya.EventDispatcher {
+        constructor() {
+            super();
+            this.isCache = true;
+            this.playbackRate = 1.0;
+            this._destroyed = false;
+            this._currentAnimationClipIndex = -1;
+            this._currentKeyframeIndex = -1;
+            this._currentTime = 0.0;
+            this._overallDuration = Number.MAX_VALUE;
+            this._stopWhenCircleFinish = false;
+            this._elapsedPlaybackTime = 0;
+            this._startUpdateLoopCount = -1;
+            this._cachePlayRate = 1.0;
+            this.cacheFrameRate = 60;
+            this.returnToZeroStopped = false;
+        }
         get templet() {
             return this._templet;
         }
@@ -319,22 +335,6 @@
         }
         get destroyed() {
             return this._destroyed;
-        }
-        constructor() {
-            super();
-            this.isCache = true;
-            this.playbackRate = 1.0;
-            this._destroyed = false;
-            this._currentAnimationClipIndex = -1;
-            this._currentKeyframeIndex = -1;
-            this._currentTime = 0.0;
-            this._overallDuration = Number.MAX_VALUE;
-            this._stopWhenCircleFinish = false;
-            this._elapsedPlaybackTime = 0;
-            this._startUpdateLoopCount = -1;
-            this._cachePlayRate = 1.0;
-            this.cacheFrameRate = 60;
-            this.returnToZeroStopped = false;
         }
         _onTempletLoadedComputeFullKeyframeIndices(cachePlayRate, cacheFrameRate, templet) {
             if (this._templet === templet && this._cachePlayRate === cachePlayRate && this._cacheFrameRate === cacheFrameRate)
@@ -497,6 +497,14 @@
     BezierLerp._bezierPointsCache = {};
 
     class AnimationTemplet extends Laya.Resource {
+        constructor() {
+            super();
+            this._anis = [];
+            this._aniMap = {};
+            this.unfixedLastAniIndex = -1;
+            this._fullFrames = null;
+            this._boneCurKeyFrm = [];
+        }
         static _LinearInterpolation_0(bone, index, out, outOfs, data, dt, dData, duration, nextData, interData = null) {
             out[outOfs] = data[index] + dt * dData[index];
             return 1;
@@ -528,14 +536,6 @@
         static _BezierInterpolation_7(bone, index, out, outOfs, data, dt, dData, duration, nextData, interData = null, offset = 0) {
             out[outOfs] = interData[offset + 4] + interData[offset + 5] * BezierLerp.getBezierRate((dt * 0.001 + interData[offset + 6]) / interData[offset + 7], interData[offset], interData[offset + 1], interData[offset + 2], interData[offset + 3]);
             return 9;
-        }
-        constructor() {
-            super();
-            this._anis = [];
-            this._aniMap = {};
-            this.unfixedLastAniIndex = -1;
-            this._fullFrames = null;
-            this._boneCurKeyFrm = [];
         }
         _calculateKeyFrame(node, keyframeCount, keyframeDataCount) {
             var keyFrames = node.keyFrame;
@@ -1719,7 +1719,7 @@
             if (Laya.LayaEnv.isPlaying && this._animationName)
                 this.play(this._animationName, this._loop, true);
         }
-        load(path, complete = null) {
+        load(path, complete) {
             Laya.ILaya.loader.load(path).then((templet) => {
                 if (templet == null)
                     return;
@@ -1727,7 +1727,7 @@
                     return;
                 this.init(templet);
                 this.play(0, true);
-                this._complete && this._complete.runWith(this);
+                complete && complete.runWith(this);
             });
         }
         _onPlay() {

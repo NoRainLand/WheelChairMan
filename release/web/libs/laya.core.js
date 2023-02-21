@@ -66,24 +66,6 @@ window.Laya = (function (exports) {
     HideFlags.DontSave = 0x4;
     HideFlags.HideAndDontSave = 0x7;
 
-    class ClassUtils {
-        static regClass(className, classDef) {
-            ClassUtils._classMap[className] = classDef;
-        }
-        static getClass(className) {
-            return ClassUtils._classMap[className];
-        }
-        static getInstance(className) {
-            var compClass = ClassUtils.getClass(className);
-            if (compClass)
-                return new compClass();
-            else
-                console.warn("[error] Undefined class:", className);
-            return null;
-        }
-    }
-    ClassUtils._classMap = {};
-
     class ILaya {
     }
     ILaya.Loader = null;
@@ -95,13 +77,6 @@ window.Laya = (function (exports) {
     ILaya.systemTimer = null;
     ILaya.physicsTimer = null;
     ILaya.stage = null;
-
-    class LayaEnv {
-    }
-    LayaEnv.version = "3.0.0rc";
-    LayaEnv.isPlaying = true;
-    LayaEnv.isPreview = false;
-    LayaEnv.isConch = window.conch != null;
 
     class Pool {
         static getPoolBySign(sign) {
@@ -166,286 +141,6 @@ window.Laya = (function (exports) {
     Pool._CLSID = 0;
     Pool.POOLSIGN = "__InPool";
     Pool._poolDic = {};
-
-    var _gid = 1;
-    const _pi = 180 / Math.PI;
-    const _pi2 = Math.PI / 180;
-    class Utils {
-        static toRadian(angle) {
-            return angle * _pi2;
-        }
-        static toAngle(radian) {
-            return radian * _pi;
-        }
-        static toHexColor(color) {
-            if (color < 0 || isNaN(color))
-                return null;
-            var str = color.toString(16);
-            while (str.length < 6)
-                str = "0" + str;
-            return "#" + str;
-        }
-        static fromStringColor(value) {
-            if (!value)
-                return 0;
-            if (value.indexOf("rgba(") >= 0 || value.indexOf("rgb(") >= 0) {
-                let p1 = value.indexOf("(");
-                let p2 = value.indexOf(")");
-                if (p1 == -1 || p2 == -1)
-                    return 0;
-                value = value.substring(p1 + 1, p2);
-                let arr = value.split(",");
-                let len = arr.length;
-                for (let i = 0; i < len; i++) {
-                    arr[i] = parseFloat(arr[i]);
-                    if (isNaN(arr[i]))
-                        arr[i] = 0;
-                }
-                if (arr.length == 4)
-                    return (arr[0] << 24) + (arr[1] << 16) + (arr[2] << 8) + Math.round(arr[3] * 255);
-                else
-                    return (arr[0] << 16) + (arr[1] << 8) + arr[2];
-            }
-            else {
-                value.charAt(0) === '#' && (value = value.substring(1));
-                let len = value.length;
-                if (len === 3 || len === 4) {
-                    let temp = "";
-                    for (let i = 0; i < len; i++) {
-                        temp += (value[i] + value[i]);
-                    }
-                    value = temp;
-                }
-                return parseInt(value, 16);
-            }
-        }
-        static getGID() {
-            return _gid++;
-        }
-        static copyArray(source, array) {
-            source || (source = []);
-            if (!array)
-                return source;
-            source.length = array.length;
-            var len = array.length;
-            for (let i = 0; i < len; i++) {
-                source[i] = array[i];
-            }
-            return source;
-        }
-        static transPointList(points, x, y) {
-            var i, len = points.length;
-            for (i = 0; i < len; i += 2) {
-                points[i] += x;
-                points[i + 1] += y;
-            }
-        }
-        static parseInt(str, radix = 0) {
-            var result = parseInt(str, radix);
-            if (isNaN(result))
-                return 0;
-            return result;
-        }
-        static getBaseName(path) {
-            let i = path.lastIndexOf("/");
-            if (i != -1)
-                path = path.substring(i + 1);
-            i = path.indexOf("?");
-            if (i != -1)
-                path = path.substring(0, i);
-            return path;
-        }
-        static getFileExtension(path) {
-            let i = path.lastIndexOf(".");
-            if (i != -1) {
-                let ext = path.substring(i + 1).toLowerCase();
-                let j = ext.indexOf("?");
-                if (j != -1)
-                    ext = ext.substring(0, j);
-                if (ext === "ls") {
-                    let k = path.lastIndexOf(".", i - 1);
-                    if (k != -1) {
-                        let ext2 = path.substring(k + 1, i + 1) + ext;
-                        if (ext2 === "lanit.ls" || ext2 === "ltcb.ls")
-                            return ext2;
-                    }
-                }
-                return ext;
-            }
-            else
-                return "";
-        }
-        static replaceFileExtension(path, newExt) {
-            if (!path)
-                return path;
-            let i = path.lastIndexOf(".");
-            if (newExt.length > 0)
-                newExt = "." + newExt;
-            if (i != -1) {
-                let j = path.indexOf("?", i);
-                if (j != -1)
-                    return path.substring(0, i) + newExt + path.substring(j);
-                else
-                    return path.substring(0, i) + newExt;
-            }
-            else
-                return path + newExt;
-        }
-    }
-    Utils.parseXMLFromString = function (value) {
-        var rst;
-        value = value.replace(/>\s+</g, '><');
-        rst = (new DOMParser()).parseFromString(value, 'text/xml');
-        if (rst.firstChild.textContent.indexOf("This page contains the following errors") > -1) {
-            throw new Error(rst.firstChild.firstChild.textContent);
-        }
-        return rst;
-    };
-
-    class Component {
-        get hideFlags() {
-            return this._hideFlags;
-        }
-        set hideFlags(value) {
-            this._hideFlags = value;
-        }
-        constructor() {
-            this._hideFlags = 0;
-            this._status = 0;
-            this._enabled = true;
-            this._singleton = true;
-            this._id = Utils.getGID();
-            this._initialize();
-        }
-        _initialize() {
-            this._extra = {};
-        }
-        hasHideFlag(flag) {
-            return (this._hideFlags & flag) != 0;
-        }
-        get id() {
-            return this._id;
-        }
-        get enabled() {
-            return this._enabled;
-        }
-        set enabled(value) {
-            if (this._enabled != value) {
-                this._enabled = value;
-                if (this.owner)
-                    this._setActive(value && this.owner.activeInHierarchy);
-            }
-        }
-        get awaked() {
-            return this._status > 0;
-        }
-        get destroyed() {
-            return this._status == 4;
-        }
-        _isScript() {
-            return false;
-        }
-        _resetComp() {
-            this._enabled = true;
-            this._status = 0;
-            this._enableState = false;
-            this.owner = null;
-        }
-        _setOwner(node) {
-            if (this._status != 0) {
-                throw 'reuse a destroyed component';
-            }
-            this.owner = node;
-            if (this._isScript())
-                node._setBit(NodeFlags.HAS_SCRIPT, true);
-            this._onAdded();
-            this.onAdded();
-        }
-        _onAdded() {
-        }
-        _onAwake() {
-        }
-        _onEnable() {
-            this.onEnable();
-        }
-        _onDisable() {
-            this.onDisable();
-        }
-        _onDestroy() {
-        }
-        _parse(data, interactMap = null) {
-        }
-        _parseInteractive(data = null, spriteMap = null) {
-        }
-        _cloneTo(dest) {
-        }
-        _setActive(value) {
-            var _a, _b;
-            if (value) {
-                if (this._status == 0) {
-                    this._status = 1;
-                    if (LayaEnv.isPlaying || this.runInEditor) {
-                        this._onAwake();
-                        this.onAwake();
-                    }
-                }
-                if (this._enabled && !this._enableState) {
-                    this._enableState = true;
-                    if (LayaEnv.isPlaying || this.runInEditor) {
-                        let driver = ((_a = (this.owner._is3D && this.owner._scene)) === null || _a === void 0 ? void 0 : _a._componentDriver) || ILaya.stage._componentDriver;
-                        driver.add(this);
-                        if (LayaEnv.isPlaying && this._isScript())
-                            this.setupScript();
-                        this._onEnable();
-                    }
-                }
-            }
-            else if (this._enableState) {
-                this._enableState = false;
-                if (LayaEnv.isPlaying || this.runInEditor) {
-                    let driver = ((_b = (this.owner._is3D && this.owner._scene)) === null || _b === void 0 ? void 0 : _b._componentDriver) || ILaya.stage._componentDriver;
-                    driver.remove(this);
-                    this.owner.offAllCaller(this);
-                    this._onDisable();
-                }
-            }
-        }
-        setupScript() {
-        }
-        destroy() {
-            if (this._status == 4)
-                return;
-            if (this.owner)
-                this.owner._destroyComponent(this);
-        }
-        _destroy(second) {
-            var _a;
-            if (second) {
-                this._onDestroy();
-                this.onDestroy();
-                if (this.onReset) {
-                    this.onReset();
-                    this._resetComp();
-                    Pool.recoverByClass(this);
-                }
-                return;
-            }
-            this._setActive(false);
-            this._status = 4;
-            let driver = ((_a = (this.owner._is3D && this.owner._scene)) === null || _a === void 0 ? void 0 : _a._componentDriver) || ILaya.stage._componentDriver;
-            driver._toDestroys.add(this);
-        }
-        onAdded() {
-        }
-        onAwake() {
-        }
-        onEnable() {
-        }
-        onDisable() {
-        }
-        onDestroy() {
-        }
-    }
 
     class Matrix {
         constructor(a = 1, b = 0, c = 0, d = 1, tx = 0, ty = 0, nums = 0) {
@@ -963,10 +658,8 @@ window.Laya = (function (exports) {
         clear() {
             let arr = this._items;
             if (this._flag != 0) {
-                arr.forEach((value, index, arr) => {
-                    if (index % ITEM_LAYOUT == 3)
-                        arr[index] = 0;
-                });
+                arr.forEach((value, index, arr) => { if (index % ITEM_LAYOUT == 3)
+                    arr[index] = 0; });
                 this._flag = 2;
             }
             else {
@@ -978,10 +671,8 @@ window.Laya = (function (exports) {
                 return;
             let arr = this._items;
             if (this._flag != 0) {
-                arr.forEach((value, index, arr) => {
-                    if ((index % ITEM_LAYOUT == 1) && arr[index] == target)
-                        arr[index + 2] = 0;
-                });
+                arr.forEach((value, index, arr) => { if ((index % ITEM_LAYOUT == 1) && arr[index] == target)
+                    arr[index + 2] = 0; });
                 this._flag = 2;
             }
             else {
@@ -1031,12 +722,12 @@ window.Laya = (function (exports) {
     }
 
     class Event {
-        static isMouseEvent(type) {
-            return MOUSE_EVENTS.has(type);
-        }
         constructor() {
             this.touchId = 0;
             this.touchPos = new Point();
+        }
+        static isMouseEvent(type) {
+            return MOUSE_EVENTS.has(type);
         }
         setTo(type, currentTarget, target) {
             this.type = type;
@@ -1252,7 +943,22 @@ window.Laya = (function (exports) {
 
     var _idCounter = 0;
     var _disposingCounter = 0;
+    var _clearRetry = 0;
     class Resource extends EventDispatcher {
+        constructor(managed) {
+            super();
+            this._cpuMemory = 0;
+            this._gpuMemory = 0;
+            this._id = 0;
+            this._referenceCount = 0;
+            this._id = ++_idCounter;
+            this._destroyed = false;
+            this._referenceCount = 0;
+            if (managed == null || managed)
+                Resource._idResourcesMap[this.id] = this;
+            this.lock = false;
+            this.destoryedImmediately = true;
+        }
         static get cpuMemory() {
             return Resource._cpuMemory;
         }
@@ -1271,39 +977,29 @@ window.Laya = (function (exports) {
         }
         static destroyUnusedResources() {
             _disposingCounter = 0;
+            _clearRetry = 0;
             if (!ILaya.loader.loading)
                 Resource._destroyUnusedResources(true);
             else
                 ILaya.timer.frameLoop(1, Resource, Resource._destroyUnusedResources);
         }
-        // static _destroyUnusedResources(force) {
-        //     if (!force && ILaya.loader.loading)
-        //         return;
-        //     ILaya.timer.clear(Resource, Resource._destroyUnusedResources);
-        //     let resourceChange = true;
-        //     resourceChange = false;
-        //     for (let k in Resource._idResourcesMap) {
-        //         let res = Resource._idResourcesMap[k];
-        //         if (!res.lock && res._referenceCount === 0) {
-        //             res.destroy();
-        //             resourceChange = true;
-        //         }
-        //     }
-        //     if (resourceChange)
-        //         ILaya.timer.frameLoop(1, Resource, Resource.destroyUnusedResources);
-        // }
         static _destroyUnusedResources(force) {
             if (!force && ILaya.loader.loading)
                 return;
             ILaya.timer.clear(Resource, Resource._destroyUnusedResources);
-            let resourceChange = true;
-            resourceChange = false;
+            let destroyCnt = 0;
             for (let k in Resource._idResourcesMap) {
                 let res = Resource._idResourcesMap[k];
                 if (!res.lock && res._referenceCount === 0) {
                     res.destroy();
-                    resourceChange = true;
+                    destroyCnt++;
                 }
+            }
+            if (Resource.DEBUG && destroyCnt > 0)
+                console.debug(`destroyUnusedResources(${destroyCnt})`);
+            if (destroyCnt > 0 && _clearRetry < 5) {
+                _clearRetry++;
+                ILaya.timer.frameLoop(1, Resource, Resource._destroyUnusedResources);
             }
         }
         get id() {
@@ -1326,20 +1022,6 @@ window.Laya = (function (exports) {
         }
         get referenceCount() {
             return this._referenceCount;
-        }
-        constructor(managed) {
-            super();
-            this._cpuMemory = 0;
-            this._gpuMemory = 0;
-            this._id = 0;
-            this._referenceCount = 0;
-            this._id = ++_idCounter;
-            this._destroyed = false;
-            this._referenceCount = 0;
-            if (managed == null || managed)
-                Resource._idResourcesMap[this.id] = this;
-            this.lock = false;
-            this.destoryedImmediately = true;
         }
         _setCPUMemory(value) {
             var offsetValue = value - this._cpuMemory;
@@ -1400,6 +1082,15 @@ window.Laya = (function (exports) {
     Resource.DEBUG = false;
 
     class BaseTexture extends Resource {
+        constructor(width, height, format) {
+            super();
+            this._gammaSpace = false;
+            this._width = width;
+            this._height = height;
+            this._format = format;
+            this.destoryedImmediately = false;
+            this.hdrEncodeFormat = exports.HDREncodeFormat.NONE;
+        }
         get width() {
             return this._width;
         }
@@ -1478,15 +1169,6 @@ window.Laya = (function (exports) {
         get gammaSpace() {
             return this._texture.useSRGBLoad || this._texture.gammaCorrection > 1;
         }
-        constructor(width, height, format) {
-            super();
-            this._gammaSpace = false;
-            this._width = width;
-            this._height = height;
-            this._format = format;
-            this.destoryedImmediately = false;
-            this.hdrEncodeFormat = exports.HDREncodeFormat.NONE;
-        }
         gpuCompressFormat() {
             let format = this._format;
             switch (format) {
@@ -1556,14 +1238,6 @@ window.Laya = (function (exports) {
     }
 
     class Byte {
-        static getSystemEndian() {
-            if (!Byte._sysEndian) {
-                var buffer = new ArrayBuffer(2);
-                new DataView(buffer).setInt16(0, 256, true);
-                Byte._sysEndian = (new Int16Array(buffer))[0] === 256 ? Byte.LITTLE_ENDIAN : Byte.BIG_ENDIAN;
-            }
-            return Byte._sysEndian;
-        }
         constructor(data = null) {
             this._xd_ = true;
             this._allocated_ = 8;
@@ -1577,6 +1251,14 @@ window.Laya = (function (exports) {
             else {
                 this._resizeBuffer(this._allocated_);
             }
+        }
+        static getSystemEndian() {
+            if (!Byte._sysEndian) {
+                var buffer = new ArrayBuffer(2);
+                new DataView(buffer).setInt16(0, 256, true);
+                Byte._sysEndian = (new Int16Array(buffer))[0] === 256 ? Byte.LITTLE_ENDIAN : Byte.BIG_ENDIAN;
+            }
+            return Byte._sysEndian;
         }
         get buffer() {
             var rstBuffer = this._d_.buffer;
@@ -2225,6 +1907,18 @@ window.Laya = (function (exports) {
     const GL_DATATYPE_FLOAT = 0x1406;
     const GL_DATATYPE_HALF_FLOAT = 0x140b;
     class KTXTextureInfo {
+        constructor(source, compress, sRGB, dimension, width, height, format, mipmapCount, bytesOfKeyValueData, headerOffset) {
+            this.source = source;
+            this.compress = compress;
+            this.sRGB = sRGB;
+            this.dimension = dimension;
+            this.width = width;
+            this.height = height;
+            this.format = format;
+            this.mipmapCount = mipmapCount;
+            this.bytesOfKeyValueData = bytesOfKeyValueData;
+            this.headerOffset = headerOffset;
+        }
         static getLayaFormat(glFormat, glInternalFormat, glType, glTypeSize) {
             if (glFormat == 0) {
                 switch (glInternalFormat) {
@@ -2337,21 +2031,25 @@ window.Laya = (function (exports) {
             let headerOffset = IdentifierByteSize + HeaderSize * 4;
             return new KTXTextureInfo(source, glFormat == 0, sRGBData, layaDemision, pixelWidth, pixelHeight, layaFormat, numberOfMipmapLevels || 1, bytesOfKeyValueData, headerOffset);
         }
-        constructor(source, compress, sRGB, dimension, width, height, format, mipmapCount, bytesOfKeyValueData, headerOffset) {
-            this.source = source;
-            this.compress = compress;
-            this.sRGB = sRGB;
-            this.dimension = dimension;
-            this.width = width;
-            this.height = height;
-            this.format = format;
-            this.mipmapCount = mipmapCount;
-            this.bytesOfKeyValueData = bytesOfKeyValueData;
-            this.headerOffset = headerOffset;
-        }
     }
 
+    class LayaEnv {
+    }
+    LayaEnv.version = "3.0.0rc";
+    LayaEnv.isPlaying = true;
+    LayaEnv.isPreview = false;
+    LayaEnv.isConch = window.conch != null;
+
     class Texture2D extends BaseTexture {
+        constructor(width, height, format, mipmap = true, canRead, sRGB = false) {
+            super(width, height, format);
+            this._canRead = false;
+            this._dimension = exports.TextureDimension.Tex2D;
+            this._gammaSpace = sRGB;
+            this._canRead = canRead;
+            this._texture = LayaGL.textureContext.createTextureInternal(this._dimension, width, height, format, mipmap, sRGB);
+            return;
+        }
         static __init__() {
             var pixels = new Uint8Array(3);
             pixels[0] = 128;
@@ -2388,6 +2086,19 @@ window.Laya = (function (exports) {
                 Texture2D.normalTexture.setPixelsData(pixels, false, false);
             }
             Texture2D.normalTexture.lock = true;
+            pixels = new Uint8Array(9);
+            pixels[0] = 255;
+            pixels[1] = 255;
+            pixels[2] = 255;
+            pixels[3] = 255;
+            pixels[4] = 255;
+            pixels[5] = 128;
+            pixels[6] = 128;
+            pixels[7] = 128;
+            pixels[8] = 0;
+            Texture2D.defalutUITexture = new Texture2D(1, 3, exports.TextureFormat.R8G8B8, false, false);
+            Texture2D.defalutUITexture.setPixelsData(pixels, false, false);
+            Texture2D.defalutUITexture.lock = true;
             Texture2D.erroTextur = Texture2D.whiteTexture;
         }
         static _SimpleAnimatorTextureParse(data, propertyParams = null, constructParams = null) {
@@ -2484,15 +2195,6 @@ window.Laya = (function (exports) {
         static load(url, complete) {
             ILaya.loader.load(url, complete, null, ILaya.Loader.TEXTURE2D);
         }
-        constructor(width, height, format, mipmap = true, canRead, sRGB = false) {
-            super(width, height, format);
-            this._canRead = false;
-            this._dimension = exports.TextureDimension.Tex2D;
-            this._gammaSpace = sRGB;
-            this._canRead = canRead;
-            this._texture = LayaGL.textureContext.createTextureInternal(this._dimension, width, height, format, mipmap, sRGB);
-            return;
-        }
         setImageData(source, premultiplyAlpha, invertY) {
             let texture = this._texture;
             LayaGL.textureContext.setTextureImageData(texture, source, premultiplyAlpha, invertY);
@@ -2547,6 +2249,7 @@ window.Laya = (function (exports) {
     Texture2D.blackTexture = null;
     Texture2D.normalTexture = null;
     Texture2D.erroTextur = null;
+    Texture2D.defalutUITexture = null;
 
     class BaseShader extends Resource {
         constructor() {
@@ -2625,6 +2328,12 @@ window.Laya = (function (exports) {
     })(exports.RenderClearFlag || (exports.RenderClearFlag = {}));
 
     class Color {
+        constructor(r = 1, g = 1, b = 1, a = 1) {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+            this.a = a;
+        }
         static gammaToLinearSpace(value) {
             if (value <= 0.04045)
                 return value / 12.92;
@@ -2642,12 +2351,6 @@ window.Laya = (function (exports) {
                 return 1.055 * Math.pow(value, 0.41666) - 0.055;
             else
                 return Math.pow(value, 0.41666);
-        }
-        constructor(r = 1, g = 1, b = 1, a = 1) {
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            this.a = a;
         }
         equal(c) {
             if (!c)
@@ -2716,6 +2419,16 @@ window.Laya = (function (exports) {
     Color.CLEAR = new Color(0, 0, 0, 0);
 
     class NativeRenderTexture2D extends BaseTexture {
+        constructor(width, height, format = exports.RenderTargetFormat.R8G8B8, depthStencilFormat = exports.RenderTargetFormat.DEPTH_16, create = true) {
+            super(width, height, format);
+            this._mgrKey = 0;
+            this._colorFormat = format;
+            this._depthStencilFormat = depthStencilFormat;
+            if (width != 0 && height != 0 && create) {
+                this._create();
+            }
+            this.lock = true;
+        }
         static get currentActive() {
             return NativeRenderTexture2D._currentActive;
         }
@@ -2739,16 +2452,6 @@ window.Laya = (function (exports) {
         }
         get offsetY() {
             return 0;
-        }
-        constructor(width, height, format = exports.RenderTargetFormat.R8G8B8, depthStencilFormat = exports.RenderTargetFormat.DEPTH_16, create = true) {
-            super(width, height, format);
-            this._mgrKey = 0;
-            this._colorFormat = format;
-            this._depthStencilFormat = depthStencilFormat;
-            if (width != 0 && height != 0 && create) {
-                this._create();
-            }
-            this.lock = true;
         }
         get isCube() {
             return this._nativeObj.isCube;
@@ -2802,6 +2505,16 @@ window.Laya = (function (exports) {
     NativeRenderTexture2D.flipyuv = [0, 1, 1, 1, 1, 0, 0, 0];
 
     class RenderTexture2D extends BaseTexture {
+        constructor(width, height, format = exports.RenderTargetFormat.R8G8B8, depthStencilFormat = exports.RenderTargetFormat.None) {
+            super(width, height, format);
+            this._mgrKey = 0;
+            this._colorFormat = format;
+            this._depthStencilFormat = depthStencilFormat;
+            if (width != 0 && height != 0) {
+                this._create();
+            }
+            this.lock = true;
+        }
         static get currentActive() {
             return RenderTexture2D._currentActive;
         }
@@ -2825,16 +2538,6 @@ window.Laya = (function (exports) {
         }
         get offsetY() {
             return 0;
-        }
-        constructor(width, height, format = exports.RenderTargetFormat.R8G8B8, depthStencilFormat = exports.RenderTargetFormat.None) {
-            super(width, height, format);
-            this._mgrKey = 0;
-            this._colorFormat = format;
-            this._depthStencilFormat = depthStencilFormat;
-            if (width != 0 && height != 0) {
-                this._create();
-            }
-            this.lock = true;
         }
         get isCube() {
             return this._renderTarget._isCube;
@@ -3267,6 +2970,9 @@ window.Laya = (function (exports) {
     }
 
     class ShaderDefines2D extends ShaderDefinesBase {
+        constructor() {
+            super(ShaderDefines2D.__name2int, ShaderDefines2D.__int2name, ShaderDefines2D.__int2nameMap);
+        }
         static __init__() {
             ShaderDefines2D.reg("TEXTURE2D", ShaderDefines2D.TEXTURE2D);
             ShaderDefines2D.reg("PRIMITIVE", ShaderDefines2D.PRIMITIVE);
@@ -3279,9 +2985,6 @@ window.Laya = (function (exports) {
             ShaderDefines2D.reg('MVP3D', ShaderDefines2D.MVP3D);
             ShaderDefines2D.reg('GAMMASPACE', ShaderDefines2D.GAMMASPACE);
             ShaderDefines2D.reg('INVERTY', ShaderDefines2D.INVERTY);
-        }
-        constructor() {
-            super(ShaderDefines2D.__name2int, ShaderDefines2D.__int2name, ShaderDefines2D.__int2nameMap);
         }
         static reg(name, value) {
             this._reg(name, value, ShaderDefines2D.__name2int, ShaderDefines2D.__int2name);
@@ -3313,6 +3016,19 @@ window.Laya = (function (exports) {
     const _rect1 = new Rectangle();
     const _rect2 = new Rectangle();
     class Texture extends Resource {
+        constructor(source = null, uv = null, sourceWidth = 0, sourceHeight = 0) {
+            super(false);
+            this.uvrect = [0, 0, 1, 1];
+            this._w = 0;
+            this._h = 0;
+            this.offsetX = 0;
+            this.offsetY = 0;
+            this.sourceWidth = 0;
+            this.sourceHeight = 0;
+            this.scaleRate = 1;
+            let bitmap = (source instanceof Texture) ? source.bitmap : source;
+            this.setTo(bitmap, uv, sourceWidth, sourceHeight);
+        }
         static create(source, x, y, width, height, offsetX = 0, offsetY = 0, sourceWidth = 0, sourceHeight = 0) {
             return Texture._create(source, x, y, width, height, offsetX, offsetY, sourceWidth, sourceHeight);
         }
@@ -3346,9 +3062,9 @@ window.Laya = (function (exports) {
             var inAltasUVWidth = (u2 - u1), inAltasUVHeight = (v2 - v1);
             var oriUV = moveUV(uv[0], uv[1], [x, y, x + width, y, x + width, y + height, x, y + height]);
             tex.uv = new Float32Array([u1 + oriUV[0] * inAltasUVWidth, v1 + oriUV[1] * inAltasUVHeight,
-            u2 - (1 - oriUV[2]) * inAltasUVWidth, v1 + oriUV[3] * inAltasUVHeight,
-            u2 - (1 - oriUV[4]) * inAltasUVWidth, v2 - (1 - oriUV[5]) * inAltasUVHeight,
-            u1 + oriUV[6] * inAltasUVWidth, v2 - (1 - oriUV[7]) * inAltasUVHeight]);
+                u2 - (1 - oriUV[2]) * inAltasUVWidth, v1 + oriUV[3] * inAltasUVHeight,
+                u2 - (1 - oriUV[4]) * inAltasUVWidth, v2 - (1 - oriUV[5]) * inAltasUVHeight,
+                u1 + oriUV[6] * inAltasUVWidth, v2 - (1 - oriUV[7]) * inAltasUVHeight]);
             var bitmapScale = bitmap.scaleRate;
             if (bitmapScale && bitmapScale != 1) {
                 tex.sourceWidth /= bitmapScale;
@@ -3421,19 +3137,6 @@ window.Laya = (function (exports) {
             this._bitmap && this._bitmap._removeReference(this._referenceCount);
             this._bitmap = value;
             value && (value._addReference(this._referenceCount));
-        }
-        constructor(source = null, uv = null, sourceWidth = 0, sourceHeight = 0) {
-            super(false);
-            this.uvrect = [0, 0, 1, 1];
-            this._w = 0;
-            this._h = 0;
-            this.offsetX = 0;
-            this.offsetY = 0;
-            this.sourceWidth = 0;
-            this.sourceHeight = 0;
-            this.scaleRate = 1;
-            let bitmap = (source instanceof Texture) ? source.bitmap : source;
-            this.setTo(bitmap, uv, sourceWidth, sourceHeight);
         }
         _addReference(count = 1) {
             super._addReference(count);
@@ -3538,9 +3241,9 @@ window.Laya = (function (exports) {
                 var uk = uvw / texw;
                 var vk = uvh / texh;
                 uv = [stu + rePosX * uk, stv + rePosY * vk,
-                stu + (rePosX + draww) * uk, stv + rePosY * vk,
-                stu + (rePosX + draww) * uk, stv + (rePosY + drawh) * vk,
-                stu + rePosX * uk, stv + (rePosY + drawh) * vk];
+                    stu + (rePosX + draww) * uk, stv + rePosY * vk,
+                    stu + (rePosX + draww) * uk, stv + (rePosY + drawh) * vk,
+                    stu + rePosX * uk, stv + (rePosY + drawh) * vk];
             }
             ctx._drawTextureM(this, marginL, marginT, draww, drawh, null, 1.0, uv);
             ctx._targets.start();
@@ -3639,6 +3342,141 @@ window.Laya = (function (exports) {
         }
     }
 
+    var _gid = 1;
+    const _pi = 180 / Math.PI;
+    const _pi2 = Math.PI / 180;
+    class Utils {
+        static toRadian(angle) {
+            return angle * _pi2;
+        }
+        static toAngle(radian) {
+            return radian * _pi;
+        }
+        static toHexColor(color) {
+            if (color < 0 || isNaN(color))
+                return null;
+            var str = color.toString(16);
+            while (str.length < 6)
+                str = "0" + str;
+            return "#" + str;
+        }
+        static fromStringColor(value) {
+            if (!value)
+                return 0;
+            if (value.indexOf("rgba(") >= 0 || value.indexOf("rgb(") >= 0) {
+                let p1 = value.indexOf("(");
+                let p2 = value.indexOf(")");
+                if (p1 == -1 || p2 == -1)
+                    return 0;
+                value = value.substring(p1 + 1, p2);
+                let arr = value.split(",");
+                let len = arr.length;
+                for (let i = 0; i < len; i++) {
+                    arr[i] = parseFloat(arr[i]);
+                    if (isNaN(arr[i]))
+                        arr[i] = 0;
+                }
+                if (arr.length == 4)
+                    return (arr[0] << 24) + (arr[1] << 16) + (arr[2] << 8) + Math.round(arr[3] * 255);
+                else
+                    return (arr[0] << 16) + (arr[1] << 8) + arr[2];
+            }
+            else {
+                value.charAt(0) === '#' && (value = value.substring(1));
+                let len = value.length;
+                if (len === 3 || len === 4) {
+                    let temp = "";
+                    for (let i = 0; i < len; i++) {
+                        temp += (value[i] + value[i]);
+                    }
+                    value = temp;
+                }
+                return parseInt(value, 16);
+            }
+        }
+        static getGID() {
+            return _gid++;
+        }
+        static copyArray(source, array) {
+            source || (source = []);
+            if (!array)
+                return source;
+            source.length = array.length;
+            var len = array.length;
+            for (let i = 0; i < len; i++) {
+                source[i] = array[i];
+            }
+            return source;
+        }
+        static transPointList(points, x, y) {
+            var i, len = points.length;
+            for (i = 0; i < len; i += 2) {
+                points[i] += x;
+                points[i + 1] += y;
+            }
+        }
+        static parseInt(str, radix = 0) {
+            var result = parseInt(str, radix);
+            if (isNaN(result))
+                return 0;
+            return result;
+        }
+        static getBaseName(path) {
+            let i = path.lastIndexOf("/");
+            if (i != -1)
+                path = path.substring(i + 1);
+            i = path.indexOf("?");
+            if (i != -1)
+                path = path.substring(0, i);
+            return path;
+        }
+        static getFileExtension(path) {
+            let i = path.lastIndexOf(".");
+            if (i != -1) {
+                let ext = path.substring(i + 1).toLowerCase();
+                let j = ext.indexOf("?");
+                if (j != -1)
+                    ext = ext.substring(0, j);
+                if (ext === "ls") {
+                    let k = path.lastIndexOf(".", i - 1);
+                    if (k != -1) {
+                        let ext2 = path.substring(k + 1, i + 1) + ext;
+                        if (ext2 === "lanit.ls" || ext2 === "ltcb.ls")
+                            return ext2;
+                    }
+                }
+                return ext;
+            }
+            else
+                return "";
+        }
+        static replaceFileExtension(path, newExt) {
+            if (!path)
+                return path;
+            let i = path.lastIndexOf(".");
+            if (newExt.length > 0)
+                newExt = "." + newExt;
+            if (i != -1) {
+                let j = path.indexOf("?", i);
+                if (j != -1)
+                    return path.substring(0, i) + newExt + path.substring(j);
+                else
+                    return path.substring(0, i) + newExt;
+            }
+            else
+                return path + newExt;
+        }
+    }
+    Utils.parseXMLFromString = function (value) {
+        var rst;
+        value = value.replace(/>\s+</g, '><');
+        rst = (new DOMParser()).parseFromString(value, 'text/xml');
+        if (rst.firstChild.textContent.indexOf("This page contains the following errors") > -1) {
+            throw new Error(rst.firstChild.firstChild.textContent);
+        }
+        return rst;
+    };
+
     class AssetDb {
         constructor() {
             this.uuidMap = {};
@@ -3688,25 +3526,31 @@ window.Laya = (function (exports) {
                 return null;
         }
         getSubAssetURL(url, uuid, subAssetName, subAssetExt) {
-            return `${Utils.replaceFileExtension(url, "")}@${subAssetName}.${subAssetExt}`;
+            if (subAssetName)
+                return `${Utils.replaceFileExtension(url, "")}@${subAssetName}.${subAssetExt}`;
+            else
+                return url;
         }
     }
     AssetDb.inst = new AssetDb();
 
     class URL {
-        static __init__() {
-            URL.rootPath = URL.basePath = (location && location.protocol != undefined && location.protocol != "") ? URL.getPath(location.protocol + "//" + location.host + location.pathname) : "";
-            if (LayaEnv.isPlaying && !LayaEnv.isPreview) {
-                this.overrideExtension(["rendertexture", "videotexture"], "rt.json");
-                this.overrideExtension(["controller"], "controller.json");
-                this.overrideExtension(["mc"], "mc.bin");
-                this.overrideExtension(["mcc"], "mcc.json");
-                this.overrideExtension(["shader"], "shader.json");
-            }
-        }
         constructor(url) {
             this._url = URL.formatURL(url);
             this._path = URL.getPath(url);
+        }
+        static __init__() {
+            URL.rootPath = URL.basePath = (location && location.protocol != undefined && location.protocol != "") ? URL.getPath(location.protocol + "//" + location.host + location.pathname) : "";
+        }
+        static initMiniGameExtensionOverrides() {
+            if (!LayaEnv.isPlaying || LayaEnv.isPreview)
+                return;
+            URL.overrideExtension(["rendertexture", "videotexture"], "rt.json");
+            URL.overrideExtension(["controller"], "controller.json");
+            URL.overrideExtension(["mc"], "mc.bin");
+            URL.overrideExtension(["mcc"], "mcc.json");
+            URL.overrideExtension(["shader"], "shader.json");
+            URL.overrideExtension(["scene3d", "scene", "taa", "prefab"], "json");
         }
         get url() {
             return this._url;
@@ -3809,10 +3653,6 @@ window.Laya = (function (exports) {
                 URL.overrideFileExts[ext] = targetExt;
             URL.hasExtOverrides = true;
         }
-        static set exportSceneToJson(value) {
-            if (value)
-                URL.overrideExtension(["scene3d", "scene", "taa", "prefab"], "json");
-        }
     }
     URL.version = {};
     URL.basePath = "";
@@ -3832,6 +3672,44 @@ window.Laya = (function (exports) {
     };
 
     class IncludeFile {
+        constructor(txt) {
+            this.codes = {};
+            this.funs = {};
+            this.curUseID = -1;
+            this.funnames = "";
+            this.script = txt;
+            var begin = 0, ofs, end;
+            while (true) {
+                begin = txt.indexOf("#begin", begin);
+                if (begin < 0)
+                    break;
+                end = begin + 5;
+                while (true) {
+                    end = txt.indexOf("#end", end);
+                    if (end < 0)
+                        break;
+                    if (txt.charAt(end + 4) === 'i')
+                        end += 5;
+                    else
+                        break;
+                }
+                if (end < 0) {
+                    throw "add include err,no #end:" + txt;
+                }
+                ofs = txt.indexOf('\n', begin);
+                var words = IncludeFile.splitToWords(txt.substr(begin, ofs - begin), null);
+                if (words[1] == 'code') {
+                    this.codes[words[2]] = txt.substr(ofs + 1, end - ofs - 1);
+                }
+                else if (words[1] == 'function') {
+                    ofs = txt.indexOf("function", begin);
+                    ofs += "function".length;
+                    this.funs[words[3]] = txt.substr(ofs + 1, end - ofs - 1);
+                    this.funnames += words[3] + ";";
+                }
+                begin = end + 1;
+            }
+        }
         static splitToWords(str, block) {
             var out = [];
             var c;
@@ -3870,44 +3748,6 @@ window.Laya = (function (exports) {
                 out.push(word);
             }
             return out;
-        }
-        constructor(txt) {
-            this.codes = {};
-            this.funs = {};
-            this.curUseID = -1;
-            this.funnames = "";
-            this.script = txt;
-            var begin = 0, ofs, end;
-            while (true) {
-                begin = txt.indexOf("#begin", begin);
-                if (begin < 0)
-                    break;
-                end = begin + 5;
-                while (true) {
-                    end = txt.indexOf("#end", end);
-                    if (end < 0)
-                        break;
-                    if (txt.charAt(end + 4) === 'i')
-                        end += 5;
-                    else
-                        break;
-                }
-                if (end < 0) {
-                    throw "add include err,no #end:" + txt;
-                }
-                ofs = txt.indexOf('\n', begin);
-                var words = IncludeFile.splitToWords(txt.substr(begin, ofs - begin), null);
-                if (words[1] == 'code') {
-                    this.codes[words[2]] = txt.substr(ofs + 1, end - ofs - 1);
-                }
-                else if (words[1] == 'function') {
-                    ofs = txt.indexOf("function", begin);
-                    ofs += "function".length;
-                    this.funs[words[3]] = txt.substr(ofs + 1, end - ofs - 1);
-                    this.funnames += words[3] + ";";
-                }
-                begin = end + 1;
-            }
         }
         getWith(name = null) {
             var r = name ? this.codes[name] : this.script;
@@ -4227,6 +4067,26 @@ window.Laya = (function (exports) {
     ShaderCompile.includes = {};
 
     class Shader extends BaseShader {
+        constructor(vs, ps, saveName = null, nameMap = null, bindAttrib = null) {
+            super();
+            this._attribInfo = null;
+            this._curActTexIndex = 0;
+            this.tag = {};
+            this._program = null;
+            this._params = null;
+            this._paramsMap = {};
+            if ((!vs) || (!ps))
+                throw "Shader Error";
+            this._attribInfo = bindAttrib;
+            this._id = ++Shader._count;
+            this._vs = vs;
+            this._ps = ps;
+            this._nameMap = nameMap ? nameMap : {};
+            saveName != null && (Shader.sharders[saveName] = this);
+            this.recreateResource();
+            this.lock = true;
+            this._render2DContext = LayaGL.render2DContext;
+        }
         static create(vs, ps, saveName = null, nameMap = null, bindAttrib = null) {
             return new Shader(vs, ps, saveName, nameMap, bindAttrib);
         }
@@ -4263,26 +4123,6 @@ window.Laya = (function (exports) {
             let obj = ShaderCompile.compile(vs, ps);
             obj.nameMap = nameMap;
             Shader._preCompileShader[id] = obj;
-        }
-        constructor(vs, ps, saveName = null, nameMap = null, bindAttrib = null) {
-            super();
-            this._attribInfo = null;
-            this._curActTexIndex = 0;
-            this.tag = {};
-            this._program = null;
-            this._params = null;
-            this._paramsMap = {};
-            if ((!vs) || (!ps))
-                throw "Shader Error";
-            this._attribInfo = bindAttrib;
-            this._id = ++Shader._count;
-            this._vs = vs;
-            this._ps = ps;
-            this._nameMap = nameMap ? nameMap : {};
-            saveName != null && (Shader.sharders[saveName] = this);
-            this.recreateResource();
-            this.lock = true;
-            this._render2DContext = LayaGL.render2DContext;
         }
         recreateResource() {
             this._compile();
@@ -4577,20 +4417,6 @@ window.Laya = (function (exports) {
     }
 
     class Value2D {
-        static _initone(type, classT) {
-            Value2D._typeClass[type] = classT;
-            Value2D._cache[type] = [];
-            Value2D._cache[type]._length = 0;
-        }
-        static create(mainType, subType) {
-            var types = Value2D._cache[mainType | subType];
-            if (types._length)
-                return types[--types._length];
-            else
-                return new Value2D._typeClass[mainType | subType](subType);
-        }
-        static __init__() {
-        }
         constructor(mainID, subID) {
             this.defines = new ShaderDefines2D();
             this.size = [0, 0];
@@ -4616,6 +4442,20 @@ window.Laya = (function (exports) {
                 this._inClassCache._length = 0;
             }
             this.clear();
+        }
+        static _initone(type, classT) {
+            Value2D._typeClass[type] = classT;
+            Value2D._cache[type] = [];
+            Value2D._cache[type]._length = 0;
+        }
+        static create(mainType, subType) {
+            var types = Value2D._cache[mainType | subType];
+            if (types._length)
+                return types[--types._length];
+            else
+                return new Value2D._typeClass[mainType | subType](subType);
+        }
+        static __init__() {
         }
         setValue(value) { }
         _ShaderWithCompile() {
@@ -5237,6 +5077,10 @@ window.Laya = (function (exports) {
             Stat._currentShowArray = views;
             Stat._StatRender.show(x, y, views);
         }
+        static showToggle(x = 0, y = 0, views = Stat.AllToggle) {
+            Stat._currentToggleArray = views;
+            Stat._StatRender.showToggle(x, y, views);
+        }
         static setStat(stat, value) {
             if (!Stat[stat])
                 Stat[stat] = 0;
@@ -5293,9 +5137,24 @@ window.Laya = (function (exports) {
     Stat.RenderTextureMemory = { title: "RenderTextureMemory", value: "renderTextureMemory", color: "white", units: "M", mode: "summit" };
     Stat.BufferMemory = { title: "BufferMemory", value: "bufferMemory", color: "white", units: "M", mode: "summit" };
     Stat.AllShow = [Stat.FPSStatUIParams, Stat.NodeStatUIParams, Stat.Sprite3DStatUIParams, Stat.DrawCall, Stat.TriangleFace, Stat.RenderNode, Stat.SkinRenderNode, Stat.ParticleRenderNode,
-    Stat.FrustumCulling, Stat.OpaqueDrawCall, Stat.TransDrawCall, Stat.DepthCastDrawCall, Stat.InstanceDrawCall, Stat.CMDDrawCall, Stat.BlitDrawCall, Stat.GPUMemory, Stat.TextureMemeory, Stat.RenderTextureMemory, Stat.BufferMemory];
+        Stat.FrustumCulling, Stat.OpaqueDrawCall, Stat.TransDrawCall, Stat.DepthCastDrawCall, Stat.InstanceDrawCall, Stat.CMDDrawCall, Stat.BlitDrawCall, Stat.GPUMemory, Stat.TextureMemeory, Stat.RenderTextureMemory, Stat.BufferMemory];
     Stat.memoryShow = [Stat.GPUMemory, Stat.TextureMemeory, Stat.RenderTextureMemory, Stat.BufferMemory];
-    Stat.renderShaow = [Stat.DrawCall, Stat.TriangleFace, Stat.OpaqueDrawCall, Stat.TransDrawCall, Stat.DepthCastDrawCall, Stat.InstanceDrawCall, Stat.CMDDrawCall, Stat.BlitDrawCall];
+    Stat.renderShow = [Stat.DrawCall, Stat.TriangleFace, Stat.OpaqueDrawCall, Stat.TransDrawCall, Stat.DepthCastDrawCall, Stat.InstanceDrawCall, Stat.CMDDrawCall, Stat.BlitDrawCall];
+    Stat.toogle_Shadow = { title: "Shadow", value: "enableShadow", color: "white" };
+    Stat.toogle_MulLight = { title: "MulLight", value: "enableMulLight", color: "white" };
+    Stat.toogle_Light = { title: "Light", value: "enableLight", color: "white" };
+    Stat.toogle_Postprocess = { title: "Postprocess", value: "enablePostprocess", color: "white" };
+    Stat.toogle_AnimatorUpdate = { title: "AnimatorUpdate", value: "enableAnimatorUpdate", color: "white" };
+    Stat.toogle_PhysicsUpdate = { title: "PhysicsUpdate", value: "enablePhysicsUpdate", color: "white" };
+    Stat.toogle_Skin = { title: "Skin", value: "enableSkin", color: "white" };
+    Stat.toogle_Transparent = { title: "Transparent", value: "enableTransparent", color: "white" };
+    Stat.toogle_Particle = { title: "Particle", value: "enableParticle", color: "white" };
+    Stat.toogle_msaa = { title: "MSAA", value: "enablemsaa", color: "white" };
+    Stat.toogle_CameraCMD = { title: "CameraCMD", value: "enableCameraCMD", color: "white" };
+    Stat.toogle_Opaque = { title: "Opaque", value: "enableOpaque", color: "white" };
+    Stat.AllToggle = [Stat.toogle_Shadow, Stat.toogle_Light, Stat.toogle_MulLight, Stat.toogle_Postprocess, Stat.toogle_AnimatorUpdate, Stat.toogle_PhysicsUpdate, Stat.toogle_Opaque, Stat.toogle_Transparent, Stat.toogle_CameraCMD, Stat.toogle_Skin, Stat.toogle_Particle, Stat.toogle_msaa];
+    Stat.RenderModeToggle = [Stat.toogle_Shadow, Stat.toogle_Light, Stat.toogle_MulLight, Stat.toogle_Postprocess, Stat.toogle_AnimatorUpdate, Stat.toogle_PhysicsUpdate];
+    Stat.RenderFuncToggle = [Stat.toogle_Opaque, Stat.toogle_Transparent, Stat.toogle_CameraCMD, Stat.toogle_Skin, Stat.toogle_Particle, Stat.toogle_msaa];
     Stat.FPS = 0;
     Stat.loopCount = 0;
     Stat.spriteRenderUseCacheCount = 0;
@@ -5325,14 +5184,21 @@ window.Laya = (function (exports) {
     Stat.textureMemory = 0;
     Stat.renderTextureMemory = 0;
     Stat.bufferMemory = 0;
+    Stat.enableShadow = true;
+    Stat.enableMulLight = true;
+    Stat.enableLight = true;
+    Stat.enableCameraCMD = true;
+    Stat.enablePostprocess = true;
+    Stat.enableSkin = true;
+    Stat.enableTransparent = true;
+    Stat.enableParticle = true;
+    Stat.enableAnimatorUpdate = true;
+    Stat.enablePhysicsUpdate = true;
+    Stat.enablemsaa = true;
+    Stat.enableOpaque = true;
+    window.Stat = Stat;
 
     class SubmitBase {
-        static __init__() {
-            var s = SubmitBase.RENDERBASE = new SubmitBase(-1);
-            s.shaderValue = new Value2D(0, 0);
-            s.shaderValue.ALPHA = 1;
-            s._ref = 0xFFFFFFFF;
-        }
         constructor(renderType = SubmitBase.TYPE_2D) {
             this.clipInfoID = -1;
             this._mesh = null;
@@ -5347,6 +5213,12 @@ window.Laya = (function (exports) {
             this.shaderValue = null;
             this._renderType = renderType;
             this._id = ++SubmitBase.ID;
+        }
+        static __init__() {
+            var s = SubmitBase.RENDERBASE = new SubmitBase(-1);
+            s.shaderValue = new Value2D(0, 0);
+            s.shaderValue.ALPHA = 1;
+            s._ref = 0xFFFFFFFF;
         }
         getID() {
             return this._id;
@@ -5445,15 +5317,6 @@ window.Laya = (function (exports) {
     VertexElementFormat.NorByte4 = "nbyte4";
 
     class VertexDeclaration {
-        get id() {
-            return this._id;
-        }
-        get vertexStride() {
-            return this._vertexStride;
-        }
-        get vertexElementCount() {
-            return this._vertexElements.length;
-        }
         constructor(vertexStride, vertexElements) {
             this._id = ++VertexDeclaration._uniqueIDCounter;
             this._vertexElementsDic = {};
@@ -5475,6 +5338,15 @@ window.Laya = (function (exports) {
                 this._shaderValues[name] = value;
             }
         }
+        get id() {
+            return this._id;
+        }
+        get vertexStride() {
+            return this._vertexStride;
+        }
+        get vertexElementCount() {
+            return this._vertexElements.length;
+        }
         getVertexElementByIndex(index) {
             return this._vertexElements[index];
         }
@@ -5485,6 +5357,11 @@ window.Laya = (function (exports) {
     VertexDeclaration._uniqueIDCounter = 1;
 
     class VertexElement {
+        constructor(offset, elementFormat, elementUsage) {
+            this._offset = offset;
+            this._elementFormat = elementFormat;
+            this._elementUsage = elementUsage;
+        }
         get offset() {
             return this._offset;
         }
@@ -5493,11 +5370,6 @@ window.Laya = (function (exports) {
         }
         get elementUsage() {
             return this._elementUsage;
-        }
-        constructor(offset, elementFormat, elementUsage) {
-            this._offset = offset;
-            this._elementFormat = elementFormat;
-            this._elementUsage = elementUsage;
         }
     }
 
@@ -5569,14 +5441,14 @@ window.Laya = (function (exports) {
     })(exports.IndexFormat || (exports.IndexFormat = {}));
 
     class Buffer {
-        get bufferUsage() {
-            return this._bufferUsage;
-        }
         constructor(targetType, bufferUsageType) {
             this._byteLength = 0;
             this._glBuffer = LayaGL.renderEngine.createBuffer(targetType, bufferUsageType);
             this._bufferType = targetType;
             this._bufferUsage = bufferUsageType;
+        }
+        get bufferUsage() {
+            return this._bufferUsage;
         }
         bind() {
             return this._glBuffer.bindBuffer();
@@ -5633,6 +5505,14 @@ window.Laya = (function (exports) {
     RenderInfo.loopCount = 0;
 
     class Buffer2D {
+        constructor(buffer) {
+            this._maxsize = 0;
+            this._upload = true;
+            this._uploadSize = 0;
+            this._bufferSize = 0;
+            this._u8Array = null;
+            this.constBuffer = buffer;
+        }
         get bufferLength() {
             return this.constBuffer._buffer.byteLength;
         }
@@ -5653,14 +5533,6 @@ window.Laya = (function (exports) {
                 this.constBuffer._byteLength = needsz;
             }
             return old;
-        }
-        constructor(buffer) {
-            this._maxsize = 0;
-            this._upload = true;
-            this._uploadSize = 0;
-            this._bufferSize = 0;
-            this._u8Array = null;
-            this.constBuffer = buffer;
         }
         getFloat32Array() {
             if (!this._floatArray32) {
@@ -5847,6 +5719,11 @@ window.Laya = (function (exports) {
     };
 
     class VertexBuffer extends Buffer {
+        constructor(targetType, bufferUsageType) {
+            super(targetType, bufferUsageType);
+            this._instanceBuffer = false;
+            this._vertexDeclaration = null;
+        }
         get vertexDeclaration() {
             return this._vertexDeclaration;
         }
@@ -5859,22 +5736,17 @@ window.Laya = (function (exports) {
         set instanceBuffer(value) {
             this._instanceBuffer = value;
         }
-        constructor(targetType, bufferUsageType) {
-            super(targetType, bufferUsageType);
-            this._instanceBuffer = false;
-            this._vertexDeclaration = null;
-        }
     }
 
     class VertexBuffer2D extends VertexBuffer {
-        get vertexStride() {
-            return this._vertexStride;
-        }
         constructor(vertexStride, bufferUsage) {
             super(exports.BufferTargetType.ARRAY_BUFFER, bufferUsage);
             this.buffer2D = new Buffer2D(this);
             this._vertexStride = vertexStride;
             this._bufferUsage = bufferUsage;
+        }
+        get vertexStride() {
+            return this._vertexStride;
         }
         getFloat32Array() {
             return this.buffer2D._floatArray32;
@@ -5964,7 +5836,7 @@ window.Laya = (function (exports) {
             this._vao.applyState([this._vb], this._ib);
         }
         useMesh() {
-            if (this._vao && !this._vao.isbind()) {
+            if ((this._vao && !this._vao.isbind()) || this._ib.buffer2D._upload || this._vb.buffer2D._upload) {
                 BufferState._curBindedBufferState && BufferState._curBindedBufferState.unBind();
             }
             this._applied || this.configVAO();
@@ -5982,11 +5854,6 @@ window.Laya = (function (exports) {
     Mesh2D._gvaoid = 0;
 
     class MeshQuadTexture extends Mesh2D {
-        static __int__() {
-            MeshQuadTexture._fixattriInfo = [5126, 4, 0,
-                5121, 4, 16,
-                5121, 4, 20];
-        }
         constructor() {
             super(MeshQuadTexture.const_stride, 4, 4);
             this.canReuse = true;
@@ -6006,6 +5873,11 @@ window.Laya = (function (exports) {
                     new VertexElement(20, VertexElementFormat.Byte4, 2),
                 ]);
             this._vb.vertexDeclaration = MeshQuadTexture.VertexDeclarition;
+        }
+        static __int__() {
+            MeshQuadTexture._fixattriInfo = [5126, 4, 0,
+                5121, 4, 16,
+                5121, 4, 20];
         }
         static getAMesh(mainctx) {
             var ret = null;
@@ -6067,11 +5939,6 @@ window.Laya = (function (exports) {
     MeshQuadTexture._POOL = [];
 
     class MeshTexture extends Mesh2D {
-        static __init__() {
-            MeshTexture._fixattriInfo = [5126, 4, 0,
-                5121, 4, 16,
-                5121, 4, 20];
-        }
         constructor() {
             super(MeshTexture.const_stride, 4, 4);
             this.canReuse = true;
@@ -6083,6 +5950,11 @@ window.Laya = (function (exports) {
                     new VertexElement(20, VertexElementFormat.Byte4, 2),
                 ]);
             this._vb.vertexDeclaration = MeshTexture.VertexDeclarition;
+        }
+        static __init__() {
+            MeshTexture._fixattriInfo = [5126, 4, 0,
+                5121, 4, 16,
+                5121, 4, 20];
         }
         static getAMesh(mainctx) {
             var ret;
@@ -6159,10 +6031,6 @@ window.Laya = (function (exports) {
     MeshTexture._POOL = [];
 
     class MeshVG extends Mesh2D {
-        static __init__() {
-            MeshVG._fixattriInfo = [5126, 2, 0,
-                5121, 4, 8];
-        }
         constructor() {
             super(MeshVG.const_stride, 4, 4);
             this.canReuse = true;
@@ -6173,6 +6041,10 @@ window.Laya = (function (exports) {
                     new VertexElement(8, VertexElementFormat.Byte4, 1),
                 ]);
             this._vb.vertexDeclaration = MeshVG.vertexDeclaration;
+        }
+        static __init__() {
+            MeshVG._fixattriInfo = [5126, 2, 0,
+                5121, 4, 8];
         }
         static getAMesh(mainctx) {
             var ret;
@@ -6663,33 +6535,6 @@ window.Laya = (function (exports) {
     };
 
     class RenderSprite {
-        static __init__() {
-            LayaGLQuickRunner.__init__();
-            var i, len;
-            var initRender;
-            initRender = new RenderSprite(RenderSprite.INIT, null);
-            len = RenderSprite.renders.length = SpriteConst.CHILDS * 2;
-            for (i = 0; i < len; i++)
-                RenderSprite.renders[i] = initRender;
-            RenderSprite.renders[0] = new RenderSprite(0, null);
-        }
-        static _initRenderFun(sprite, context, x, y) {
-            var type = sprite._renderType;
-            var r = RenderSprite.renders[type] = RenderSprite._getTypeRender(type);
-            r._fun(sprite, context, x, y);
-        }
-        static _getTypeRender(type) {
-            if (LayaGLQuickRunner.map[type])
-                return new RenderSprite(type, null);
-            var rst = null;
-            var tType = SpriteConst.CHILDS;
-            while (tType > 0) {
-                if (tType & type)
-                    rst = new RenderSprite(tType, rst);
-                tType = tType >> 1;
-            }
-            return rst;
-        }
         constructor(type, next) {
             if (LayaGLQuickRunner.map[type]) {
                 this._fun = LayaGLQuickRunner.map[type];
@@ -6755,6 +6600,33 @@ window.Laya = (function (exports) {
                     return;
             }
             this.onCreate(type);
+        }
+        static __init__() {
+            LayaGLQuickRunner.__init__();
+            var i, len;
+            var initRender;
+            initRender = new RenderSprite(RenderSprite.INIT, null);
+            len = RenderSprite.renders.length = SpriteConst.CHILDS * 2;
+            for (i = 0; i < len; i++)
+                RenderSprite.renders[i] = initRender;
+            RenderSprite.renders[0] = new RenderSprite(0, null);
+        }
+        static _initRenderFun(sprite, context, x, y) {
+            var type = sprite._renderType;
+            var r = RenderSprite.renders[type] = RenderSprite._getTypeRender(type);
+            r._fun(sprite, context, x, y);
+        }
+        static _getTypeRender(type) {
+            if (LayaGLQuickRunner.map[type])
+                return new RenderSprite(type, null);
+            var rst = null;
+            var tType = SpriteConst.CHILDS;
+            while (tType > 0) {
+                if (tType & type)
+                    rst = new RenderSprite(tType, rst);
+                tType = tType >> 1;
+            }
+            return rst;
         }
         onCreate(type) {
         }
@@ -7186,15 +7058,15 @@ window.Laya = (function (exports) {
     })(exports.CullMode || (exports.CullMode = {}));
 
     class DrawStyle {
+        constructor(value) {
+            this.setValue(value);
+        }
         static create(value) {
             if (value) {
                 var color = (value instanceof ColorUtils) ? value : ColorUtils.create(value);
                 return color._drawStyle || (color._drawStyle = new DrawStyle(value));
             }
             return DrawStyle.DEFAULT;
-        }
-        constructor(value) {
-            this.setValue(value);
         }
         setValue(value) {
             if (value) {
@@ -7270,6 +7142,8 @@ window.Laya = (function (exports) {
     }
 
     class SaveBase {
+        constructor() {
+        }
         static _createArray() {
             var value = [];
             value._length = 0;
@@ -7291,8 +7165,6 @@ window.Laya = (function (exports) {
             namemap[SaveBase.TYPE_FILTERS] = "filters";
             namemap[SaveBase.TYPE_COLORFILTER] = '_colorFiler';
             return namemap;
-        }
-        constructor() {
         }
         isSaveMark() { return false; }
         restore(context) {
@@ -7431,17 +7303,17 @@ window.Laya = (function (exports) {
     }
     SaveTranslate.POOL = SaveBase._createArray();
 
-    var texture_vs = "/*\n\ttexture和fillrect使用的。\n*/\nattribute vec4 posuv;\nattribute vec4 attribColor;\nattribute vec4 attribFlags;\n//attribute vec4 clipDir;\n//attribute vec2 clipRect;\nuniform vec4 clipMatDir;\nuniform vec2 clipMatPos;\t\t// 这个是全局的，不用再应用矩阵了。\nvarying vec2 cliped;\nuniform vec2 size;\nuniform vec2 clipOff;\t\t\t// 使用要把clip偏移。cacheas normal用. 只用了[0]\n#ifdef WORLDMAT\n\tuniform mat4 mmat;\n#endif\n#ifdef MVP3D\n\tuniform mat4 u_MvpMatrix;\n#endif\nvarying vec4 v_texcoordAlpha;\nvarying vec4 v_color;\nvarying float v_useTex;\n\nvoid main() {\n\n\tvec4 pos = vec4(posuv.xy,0.,1.);\n#ifdef WORLDMAT\n\tpos=mmat*pos;\n#endif\n\tvec4 pos1  =vec4((pos.x/size.x-0.5)*2.0,(0.5-pos.y/size.y)*2.0,0.,1.0);\n#ifdef MVP3D\n\tgl_Position=u_MvpMatrix*pos1;\n#else\n\tgl_Position=pos1;\n#endif\n\tv_texcoordAlpha.xy = posuv.zw;\n\t//v_texcoordAlpha.z = attribColor.a/255.0;\n\tv_color = attribColor/255.0;\n\tv_color.xyz*=v_color.w;//反正后面也要预乘\n\t\n\tv_useTex = attribFlags.r/255.0;\n\tfloat clipw = length(clipMatDir.xy);\n\tfloat cliph = length(clipMatDir.zw);\n\t\n\tvec2 clpos = clipMatPos.xy;\n\t#ifdef WORLDMAT\n\t\t// 如果有mmat，需要修改clipMatPos,因为 这是cacheas normal （如果不是就错了）， clipMatPos被去掉了偏移\n\t\tif(clipOff[0]>0.0){\n\t\t\tclpos.x+=mmat[3].x;\t//tx\t最简单处理\n\t\t\tclpos.y+=mmat[3].y;\t//ty\n\t\t}\n\t#endif\n\tvec2 clippos = pos.xy - clpos;\t//pos已经应用矩阵了，为了减的有意义，clip的位置也要缩放\n\tif(clipw>20000. && cliph>20000.)\n\t\tcliped = vec2(0.5,0.5);\n\telse {\n\t\t//转成0到1之间。/clipw/clipw 表示clippos与normalize之后的clip朝向点积之后，再除以clipw\n\t\tcliped=vec2( dot(clippos,clipMatDir.xy)/clipw/clipw, dot(clippos,clipMatDir.zw)/cliph/cliph);\n\t}\n\n\t#ifdef INVERTY\n\t\tgl_Position.y = -gl_Position.y;\n\t#endif\n\n}";
+    var texture_vs = "/*\r\n\ttexture和fillrect使用的。\r\n*/\r\nattribute vec4 posuv;\r\nattribute vec4 attribColor;\r\nattribute vec4 attribFlags;\r\n//attribute vec4 clipDir;\r\n//attribute vec2 clipRect;\r\nuniform vec4 clipMatDir;\r\nuniform vec2 clipMatPos;\t\t// 这个是全局的，不用再应用矩阵了。\r\nvarying vec2 cliped;\r\nuniform vec2 size;\r\nuniform vec2 clipOff;\t\t\t// 使用要把clip偏移。cacheas normal用. 只用了[0]\r\n#ifdef WORLDMAT\r\n\tuniform mat4 mmat;\r\n#endif\r\n#ifdef MVP3D\r\n\tuniform mat4 u_MvpMatrix;\r\n#endif\r\nvarying vec4 v_texcoordAlpha;\r\nvarying vec4 v_color;\r\nvarying float v_useTex;\r\n\r\nvoid main() {\r\n\r\n\tvec4 pos = vec4(posuv.xy,0.,1.);\r\n#ifdef WORLDMAT\r\n\tpos=mmat*pos;\r\n#endif\r\n\tvec4 pos1  =vec4((pos.x/size.x-0.5)*2.0,(0.5-pos.y/size.y)*2.0,0.,1.0);\r\n#ifdef MVP3D\r\n\tgl_Position=u_MvpMatrix*pos1;\r\n#else\r\n\tgl_Position=pos1;\r\n#endif\r\n\tv_texcoordAlpha.xy = posuv.zw;\r\n\t//v_texcoordAlpha.z = attribColor.a/255.0;\r\n\tv_color = attribColor/255.0;\r\n\tv_color.xyz*=v_color.w;//反正后面也要预乘\r\n\t\r\n\tv_useTex = attribFlags.r/255.0;\r\n\tfloat clipw = length(clipMatDir.xy);\r\n\tfloat cliph = length(clipMatDir.zw);\r\n\t\r\n\tvec2 clpos = clipMatPos.xy;\r\n\t#ifdef WORLDMAT\r\n\t\t// 如果有mmat，需要修改clipMatPos,因为 这是cacheas normal （如果不是就错了）， clipMatPos被去掉了偏移\r\n\t\tif(clipOff[0]>0.0){\r\n\t\t\tclpos.x+=mmat[3].x;\t//tx\t最简单处理\r\n\t\t\tclpos.y+=mmat[3].y;\t//ty\r\n\t\t}\r\n\t#endif\r\n\tvec2 clippos = pos.xy - clpos;\t//pos已经应用矩阵了，为了减的有意义，clip的位置也要缩放\r\n\tif(clipw>20000. && cliph>20000.)\r\n\t\tcliped = vec2(0.5,0.5);\r\n\telse {\r\n\t\t//转成0到1之间。/clipw/clipw 表示clippos与normalize之后的clip朝向点积之后，再除以clipw\r\n\t\tcliped=vec2( dot(clippos,clipMatDir.xy)/clipw/clipw, dot(clippos,clipMatDir.zw)/cliph/cliph);\r\n\t}\r\n\r\n\t#ifdef INVERTY\r\n\t\tgl_Position.y = -gl_Position.y;\r\n\t#endif\r\n\r\n}";
 
-    var texture_ps = "/*\n\ttexture和fillrect使用的。\n*/\n#if defined(GL_FRAGMENT_PRECISION_HIGH) // 原来的写法会被我们自己的解析流程处理，而我们的解析是不认内置宏的，导致被删掉，所以改成 if defined 了\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n\nvec3 linearToGamma(in vec3 value)\n{\n    return vec3(mix(pow(value.rgb, vec3(0.41666)) * 1.055 - vec3(0.055), value.rgb * 12.92, vec3(lessThanEqual(value.rgb, vec3(0.0031308)))));\n\n    // return pow(value, vec3(1.0 / 2.2));\n    // return pow(value, vec3(0.455));\n}\n\nvec4 linearToGamma(in vec4 value)\n{\n    return vec4(linearToGamma(value.rgb), value.a);\n}\n\n\nvarying vec4 v_texcoordAlpha;\nvarying vec4 v_color;\nvarying float v_useTex;\nuniform sampler2D texture;\nvarying vec2 cliped;\n\nvec4 sampleTexture(sampler2D texture, vec2 uv)\n{\n    vec4 color = texture2D(texture, uv);\n#ifdef GAMMASPACE\n    color.xyz = linearToGamma(color.xyz);\n#endif\n    return color;\n}\n\n#ifdef BLUR_FILTER\nuniform vec4 strength_sig2_2sig2_gauss1; // TODO模糊的过程中会导致变暗变亮\nuniform vec2 blurInfo;\n\n    #define PI 3.141593\n\nfloat getGaussian(float x, float y)\n{\n    return strength_sig2_2sig2_gauss1.w * exp(-(x * x + y * y) / strength_sig2_2sig2_gauss1.z);\n}\n\nvec4 blur()\n{\n    const float blurw = 9.0;\n    vec4 vec4Color = vec4(0.0, 0.0, 0.0, 0.0);\n    vec2 halfsz = vec2(blurw, blurw) / 2.0 / blurInfo;\n    vec2 startpos = v_texcoordAlpha.xy - halfsz;\n    vec2 ctexcoord = startpos;\n    vec2 step = 1.0 / blurInfo; //每个像素\n\n    for (float y = 0.0; y <= blurw; ++y)\n\t{\n\t    ctexcoord.x = startpos.x;\n\t    for (float x = 0.0; x <= blurw; ++x)\n\t\t{\n\t\t    // TODO 纹理坐标的固定偏移应该在vs中处理\n\t\t    vec4Color += sampleTexture(texture, ctexcoord) * getGaussian(x - blurw / 2.0, y - blurw / 2.0);\n\t\t    ctexcoord.x += step.x;\n\t\t}\n\t    ctexcoord.y += step.y;\n\t}\n    // vec4Color.w=1.0;  这个会导致丢失alpha。以后有时间再找模糊会导致透明的问题\n    return vec4Color;\n}\n#endif\n\n#ifdef COLOR_FILTER\nuniform vec4 colorAlpha;\nuniform mat4 colorMat;\n#endif\n\n#ifdef GLOW_FILTER\nuniform vec4 u_color;\nuniform vec4 u_blurInfo1;\nuniform vec4 u_blurInfo2;\n#endif\n\n#ifdef COLOR_ADD\nuniform vec4 colorAdd;\n#endif\n\n#ifdef FILLTEXTURE\nuniform vec4 u_TexRange; // startu,startv,urange, vrange\n#endif\n\nvoid main()\n{\n    if (cliped.x < 0.)\n\tdiscard;\n    if (cliped.x > 1.)\n\tdiscard;\n    if (cliped.y < 0.)\n\tdiscard;\n    if (cliped.y > 1.)\n\tdiscard;\n\n#ifdef FILLTEXTURE\n    vec4 color = sampleTexture(texture, fract(v_texcoordAlpha.xy) * u_TexRange.zw + u_TexRange.xy);\n#else\n    vec4 color = sampleTexture(texture, v_texcoordAlpha.xy);\n#endif\n\n    if (v_useTex <= 0.)\n\tcolor = vec4(1., 1., 1., 1.);\n    color.a *= v_color.w;\n    // color.rgb*=v_color.w;\n    color.rgb *= v_color.rgb;\n    gl_FragColor = color;\n\n#ifdef COLOR_ADD\n    gl_FragColor = vec4(colorAdd.rgb, colorAdd.a * gl_FragColor.a);\n    gl_FragColor.xyz *= colorAdd.a;\n#endif\n\n#ifdef BLUR_FILTER\n    gl_FragColor = blur();\n    gl_FragColor.w *= v_color.w;\n#endif\n\n#ifdef COLOR_FILTER\n    mat4 alphaMat = colorMat;\n\n    alphaMat[0][3] *= gl_FragColor.a;\n    alphaMat[1][3] *= gl_FragColor.a;\n    alphaMat[2][3] *= gl_FragColor.a;\n\n    gl_FragColor = gl_FragColor * alphaMat;\n    gl_FragColor += colorAlpha / 255.0 * gl_FragColor.a;\n#endif\n\n#ifdef GLOW_FILTER\n    const float c_IterationTime = 10.0;\n    float floatIterationTotalTime = c_IterationTime * c_IterationTime;\n    vec4 vec4Color = vec4(0.0, 0.0, 0.0, 0.0);\n    vec2 vec2FilterDir = vec2(-(u_blurInfo1.z) / u_blurInfo2.x, -(u_blurInfo1.w) / u_blurInfo2.y);\n    vec2 vec2FilterOff = vec2(u_blurInfo1.x / u_blurInfo2.x / c_IterationTime * 2.0, u_blurInfo1.y / u_blurInfo2.y / c_IterationTime * 2.0);\n    float maxNum = u_blurInfo1.x * u_blurInfo1.y;\n    vec2 vec2Off = vec2(0.0, 0.0);\n    float floatOff = c_IterationTime / 2.0;\n    for (float i = 0.0; i <= c_IterationTime; ++i)\n\t{\n\t    for (float j = 0.0; j <= c_IterationTime; ++j)\n\t\t{\n\t\t    vec2Off = vec2(vec2FilterOff.x * (i - floatOff), vec2FilterOff.y * (j - floatOff));\n\t\t    vec4Color += sampleTexture(texture, v_texcoordAlpha.xy + vec2FilterDir + vec2Off) / floatIterationTotalTime;\n\t\t}\n\t}\n    gl_FragColor = vec4(u_color.rgb, vec4Color.a * u_blurInfo2.z);\n    gl_FragColor.rgb *= gl_FragColor.a;\n#endif\n}";
+    var texture_ps = "/*\r\n\ttexture和fillrect使用的。\r\n*/\r\n#if defined(GL_FRAGMENT_PRECISION_HIGH) // 原来的写法会被我们自己的解析流程处理，而我们的解析是不认内置宏的，导致被删掉，所以改成 if defined 了\r\nprecision highp float;\r\n#else\r\nprecision mediump float;\r\n#endif\r\n\r\nvec3 linearToGamma(in vec3 value)\r\n{\r\n    return vec3(mix(pow(value.rgb, vec3(0.41666)) * 1.055 - vec3(0.055), value.rgb * 12.92, vec3(lessThanEqual(value.rgb, vec3(0.0031308)))));\r\n\r\n    // return pow(value, vec3(1.0 / 2.2));\r\n    // return pow(value, vec3(0.455));\r\n}\r\n\r\nvec4 linearToGamma(in vec4 value)\r\n{\r\n    return vec4(linearToGamma(value.rgb), value.a);\r\n}\r\n\r\n\r\nvarying vec4 v_texcoordAlpha;\r\nvarying vec4 v_color;\r\nvarying float v_useTex;\r\nuniform sampler2D texture;\r\nvarying vec2 cliped;\r\n\r\nvec4 sampleTexture(sampler2D texture, vec2 uv)\r\n{\r\n    vec4 color = texture2D(texture, uv);\r\n#ifdef GAMMASPACE\r\n    color.xyz = linearToGamma(color.xyz);\r\n#endif\r\n    return color;\r\n}\r\n\r\n#ifdef BLUR_FILTER\r\nuniform vec4 strength_sig2_2sig2_gauss1; // TODO模糊的过程中会导致变暗变亮\r\nuniform vec2 blurInfo;\r\n\r\n    #define PI 3.141593\r\n\r\nfloat getGaussian(float x, float y)\r\n{\r\n    return strength_sig2_2sig2_gauss1.w * exp(-(x * x + y * y) / strength_sig2_2sig2_gauss1.z);\r\n}\r\n\r\nvec4 blur()\r\n{\r\n    const float blurw = 9.0;\r\n    vec4 vec4Color = vec4(0.0, 0.0, 0.0, 0.0);\r\n    vec2 halfsz = vec2(blurw, blurw) / 2.0 / blurInfo;\r\n    vec2 startpos = v_texcoordAlpha.xy - halfsz;\r\n    vec2 ctexcoord = startpos;\r\n    vec2 step = 1.0 / blurInfo; //每个像素\r\n\r\n    for (float y = 0.0; y <= blurw; ++y)\r\n\t{\r\n\t    ctexcoord.x = startpos.x;\r\n\t    for (float x = 0.0; x <= blurw; ++x)\r\n\t\t{\r\n\t\t    // TODO 纹理坐标的固定偏移应该在vs中处理\r\n\t\t    vec4Color += sampleTexture(texture, ctexcoord) * getGaussian(x - blurw / 2.0, y - blurw / 2.0);\r\n\t\t    ctexcoord.x += step.x;\r\n\t\t}\r\n\t    ctexcoord.y += step.y;\r\n\t}\r\n    // vec4Color.w=1.0;  这个会导致丢失alpha。以后有时间再找模糊会导致透明的问题\r\n    return vec4Color;\r\n}\r\n#endif\r\n\r\n#ifdef COLOR_FILTER\r\nuniform vec4 colorAlpha;\r\nuniform mat4 colorMat;\r\n#endif\r\n\r\n#ifdef GLOW_FILTER\r\nuniform vec4 u_color;\r\nuniform vec4 u_blurInfo1;\r\nuniform vec4 u_blurInfo2;\r\n#endif\r\n\r\n#ifdef COLOR_ADD\r\nuniform vec4 colorAdd;\r\n#endif\r\n\r\n#ifdef FILLTEXTURE\r\nuniform vec4 u_TexRange; // startu,startv,urange, vrange\r\n#endif\r\n\r\nvoid main()\r\n{\r\n    if (cliped.x < 0.)\r\n\tdiscard;\r\n    if (cliped.x > 1.)\r\n\tdiscard;\r\n    if (cliped.y < 0.)\r\n\tdiscard;\r\n    if (cliped.y > 1.)\r\n\tdiscard;\r\n\r\n#ifdef FILLTEXTURE\r\n    vec4 color = sampleTexture(texture, fract(v_texcoordAlpha.xy) * u_TexRange.zw + u_TexRange.xy);\r\n#else\r\n    vec4 color = sampleTexture(texture, v_texcoordAlpha.xy);\r\n#endif\r\n\r\n    if (v_useTex <= 0.)\r\n\tcolor = vec4(1., 1., 1., 1.);\r\n    color.a *= v_color.w;\r\n    // color.rgb*=v_color.w;\r\n    color.rgb *= v_color.rgb;\r\n    gl_FragColor = color;\r\n\r\n#ifdef COLOR_ADD\r\n    gl_FragColor = vec4(colorAdd.rgb, colorAdd.a * gl_FragColor.a);\r\n    gl_FragColor.xyz *= colorAdd.a;\r\n#endif\r\n\r\n#ifdef BLUR_FILTER\r\n    gl_FragColor = blur();\r\n    gl_FragColor.w *= v_color.w;\r\n#endif\r\n\r\n#ifdef COLOR_FILTER\r\n    mat4 alphaMat = colorMat;\r\n\r\n    alphaMat[0][3] *= gl_FragColor.a;\r\n    alphaMat[1][3] *= gl_FragColor.a;\r\n    alphaMat[2][3] *= gl_FragColor.a;\r\n\r\n    gl_FragColor = gl_FragColor * alphaMat;\r\n    gl_FragColor += colorAlpha / 255.0 * gl_FragColor.a;\r\n#endif\r\n\r\n#ifdef GLOW_FILTER\r\n    const float c_IterationTime = 10.0;\r\n    float floatIterationTotalTime = c_IterationTime * c_IterationTime;\r\n    vec4 vec4Color = vec4(0.0, 0.0, 0.0, 0.0);\r\n    vec2 vec2FilterDir = vec2(-(u_blurInfo1.z) / u_blurInfo2.x, -(u_blurInfo1.w) / u_blurInfo2.y);\r\n    vec2 vec2FilterOff = vec2(u_blurInfo1.x / u_blurInfo2.x / c_IterationTime * 2.0, u_blurInfo1.y / u_blurInfo2.y / c_IterationTime * 2.0);\r\n    float maxNum = u_blurInfo1.x * u_blurInfo1.y;\r\n    vec2 vec2Off = vec2(0.0, 0.0);\r\n    float floatOff = c_IterationTime / 2.0;\r\n    for (float i = 0.0; i <= c_IterationTime; ++i)\r\n\t{\r\n\t    for (float j = 0.0; j <= c_IterationTime; ++j)\r\n\t\t{\r\n\t\t    vec2Off = vec2(vec2FilterOff.x * (i - floatOff), vec2FilterOff.y * (j - floatOff));\r\n\t\t    vec4Color += sampleTexture(texture, v_texcoordAlpha.xy + vec2FilterDir + vec2Off) / floatIterationTotalTime;\r\n\t\t}\r\n\t}\r\n    gl_FragColor = vec4(u_color.rgb, vec4Color.a * u_blurInfo2.z);\r\n    gl_FragColor.rgb *= gl_FragColor.a;\r\n#endif\r\n}";
 
-    var prime_vs = "attribute vec4 position;\nattribute vec4 attribColor;\n//attribute vec4 clipDir;\n//attribute vec2 clipRect;\nuniform vec4 clipMatDir;\nuniform vec2 clipMatPos;\n#ifdef WORLDMAT\n\tuniform mat4 mmat;\n#endif\nuniform mat4 u_mmat2;\n//uniform vec2 u_pos;\nuniform vec2 size;\nvarying vec4 color;\n//vec4 dirxy=vec4(0.9,0.1, -0.1,0.9);\n//vec4 clip=vec4(100.,30.,300.,600.);\nvarying vec2 cliped;\nvoid main(){\n\t\n#ifdef WORLDMAT\n\tvec4 pos=mmat*vec4(position.xy,0.,1.);\n\tgl_Position =vec4((pos.x/size.x-0.5)*2.0,(0.5-pos.y/size.y)*2.0,pos.z,1.0);\n#else\n\tgl_Position =vec4((position.x/size.x-0.5)*2.0,(0.5-position.y/size.y)*2.0,position.z,1.0);\n#endif\t\n\tfloat clipw = length(clipMatDir.xy);\n\tfloat cliph = length(clipMatDir.zw);\n\tvec2 clippos = position.xy - clipMatPos.xy;\t//pos已经应用矩阵了，为了减的有意义，clip的位置也要缩放\n\tif(clipw>20000. && cliph>20000.)\n\t\tcliped = vec2(0.5,0.5);\n\telse {\n\t\t//clipdir是带缩放的方向，由于上面clippos是在缩放后的空间计算的，所以需要把方向先normalize一下\n\t\tcliped=vec2( dot(clippos,clipMatDir.xy)/clipw/clipw, dot(clippos,clipMatDir.zw)/cliph/cliph);\n\t}\n  //pos2d.x = dot(clippos,dirx);\n  color=attribColor/255.;\n}";
+    var prime_vs = "attribute vec4 position;\r\nattribute vec4 attribColor;\r\n//attribute vec4 clipDir;\r\n//attribute vec2 clipRect;\r\nuniform vec4 clipMatDir;\r\nuniform vec2 clipMatPos;\r\n#ifdef WORLDMAT\r\n\tuniform mat4 mmat;\r\n#endif\r\nuniform mat4 u_mmat2;\r\n//uniform vec2 u_pos;\r\nuniform vec2 size;\r\nvarying vec4 color;\r\n//vec4 dirxy=vec4(0.9,0.1, -0.1,0.9);\r\n//vec4 clip=vec4(100.,30.,300.,600.);\r\nvarying vec2 cliped;\r\nvoid main(){\r\n\t\r\n#ifdef WORLDMAT\r\n\tvec4 pos=mmat*vec4(position.xy,0.,1.);\r\n\tgl_Position =vec4((pos.x/size.x-0.5)*2.0,(0.5-pos.y/size.y)*2.0,pos.z,1.0);\r\n#else\r\n\tgl_Position =vec4((position.x/size.x-0.5)*2.0,(0.5-position.y/size.y)*2.0,position.z,1.0);\r\n#endif\t\r\n\tfloat clipw = length(clipMatDir.xy);\r\n\tfloat cliph = length(clipMatDir.zw);\r\n\tvec2 clippos = position.xy - clipMatPos.xy;\t//pos已经应用矩阵了，为了减的有意义，clip的位置也要缩放\r\n\tif(clipw>20000. && cliph>20000.)\r\n\t\tcliped = vec2(0.5,0.5);\r\n\telse {\r\n\t\t//clipdir是带缩放的方向，由于上面clippos是在缩放后的空间计算的，所以需要把方向先normalize一下\r\n\t\tcliped=vec2( dot(clippos,clipMatDir.xy)/clipw/clipw, dot(clippos,clipMatDir.zw)/cliph/cliph);\r\n\t}\r\n  //pos2d.x = dot(clippos,dirx);\r\n  color=attribColor/255.;\r\n}";
 
-    var prime_ps = "precision mediump float;\n//precision mediump float;\nvarying vec4 color;\n//uniform float alpha;\nvarying vec2 cliped;\nvoid main(){\n\t//vec4 a=vec4(color.r, color.g, color.b, 1);\n\t//a.a*=alpha;\n    gl_FragColor= color;// vec4(color.r, color.g, color.b, alpha);\n\tgl_FragColor.rgb*=color.a;\n\tif(cliped.x<0.) discard;\n\tif(cliped.x>1.) discard;\n\tif(cliped.y<0.) discard;\n\tif(cliped.y>1.) discard;\n}";
+    var prime_ps = "precision mediump float;\r\n//precision mediump float;\r\nvarying vec4 color;\r\n//uniform float alpha;\r\nvarying vec2 cliped;\r\n\r\nvec3 gammaToLinear(in vec3 value)\r\n{\r\n    return pow((value + 0.055) / 1.055, vec3(2.4));\r\n}\r\n\r\nvec4 gammaToLinear(in vec4 value)\r\n{\r\n    return vec4(gammaToLinear(value.rgb), value.a);\r\n}\r\n\r\nvoid main(){\r\n\t//vec4 a=vec4(color.r, color.g, color.b, 1);\r\n\t//a.a*=alpha;\r\n\t#ifdef GAMMASPACE\r\n    \tgl_FragColor= color;// vec4(color.r, color.g, color.b, alpha);\r\n\t#else\r\n\t\tgl_FragColor= gammaToLinear(color);\r\n\t#endif\r\n\tgl_FragColor.rgb*=color.a;\r\n\tif(cliped.x<0.) discard;\r\n\tif(cliped.x>1.) discard;\r\n\tif(cliped.y<0.) discard;\r\n\tif(cliped.y>1.) discard;\r\n}";
 
-    var skin_vs = "attribute vec2 position;\nattribute vec2 texcoord;\nattribute vec4 color;\nuniform vec2 size;\nuniform float offsetX;\nuniform float offsetY;\nuniform mat4 mmat;\nuniform mat4 u_mmat2;\nvarying vec2 v_texcoord;\nvarying vec4 v_color;\nvoid main() {\n  vec4 pos=mmat*u_mmat2*vec4(offsetX+position.x,offsetY+position.y,0,1 );\n  gl_Position = vec4((pos.x/size.x-0.5)*2.0,(0.5-pos.y/size.y)*2.0,pos.z,1.0);\n  v_color = color;\n  v_color.rgb *= v_color.a;\n  v_texcoord = texcoord;  \n}";
+    var skin_vs = "attribute vec2 position;\r\nattribute vec2 texcoord;\r\nattribute vec4 color;\r\nuniform vec2 size;\r\nuniform float offsetX;\r\nuniform float offsetY;\r\nuniform mat4 mmat;\r\nuniform mat4 u_mmat2;\r\nvarying vec2 v_texcoord;\r\nvarying vec4 v_color;\r\nvoid main() {\r\n  vec4 pos=mmat*u_mmat2*vec4(offsetX+position.x,offsetY+position.y,0,1 );\r\n  gl_Position = vec4((pos.x/size.x-0.5)*2.0,(0.5-pos.y/size.y)*2.0,pos.z,1.0);\r\n  v_color = color;\r\n  v_color.rgb *= v_color.a;\r\n  v_texcoord = texcoord;  \r\n}";
 
-    var skin_ps = "precision mediump float;\nvarying vec2 v_texcoord;\nvarying vec4 v_color;\nuniform sampler2D texture;\nuniform float alpha;\n\nvec4 sampleTexture(sampler2D texture,vec2 uv){\n   vec4 color = texture2D(texture,uv);\n   #ifdef GAMMASPACE\n      color.xyz = color.xyz*color.xyz;\n   #endif\n   return color;\n}\n\nvoid main() {\n\tvec4 t_color = sampleTexture(texture, v_texcoord);\n\tgl_FragColor = t_color.rgba * v_color;\n\tgl_FragColor *= alpha;\n}";
+    var skin_ps = "precision mediump float;\r\nvarying vec2 v_texcoord;\r\nvarying vec4 v_color;\r\nuniform sampler2D texture;\r\nuniform float alpha;\r\n\r\nvec4 sampleTexture(sampler2D texture,vec2 uv){\r\n   vec4 color = texture2D(texture,uv);\r\n   #ifdef GAMMASPACE\r\n      color.xyz = color.xyz*color.xyz;\r\n   #endif\r\n   return color;\r\n}\r\n\r\nvoid main() {\r\n\tvec4 t_color = sampleTexture(texture, v_texcoord);\r\n\tgl_FragColor = t_color.rgba * v_color;\r\n\tgl_FragColor *= alpha;\r\n}";
 
     class Shader2D {
         constructor() {
@@ -8135,6 +8007,12 @@ window.Laya = (function (exports) {
     Submit.POOL = [];
 
     class SubmitCanvas extends SubmitBase {
+        constructor() {
+            super(SubmitBase.TYPE_2D);
+            this._matrix = new Matrix();
+            this._matrix4 = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+            this.shaderValue = new Value2D(0, 0);
+        }
         static create(canvas, alpha, filters) {
             var o = (!SubmitCanvas.POOL._length) ? (new SubmitCanvas()) : SubmitCanvas.POOL[--SubmitCanvas.POOL._length];
             o.canv = canvas;
@@ -8145,12 +8023,6 @@ window.Laya = (function (exports) {
             v.defines.setValue(0);
             filters && filters.length && v.setFilters(filters);
             return o;
-        }
-        constructor() {
-            super(SubmitBase.TYPE_2D);
-            this._matrix = new Matrix();
-            this._matrix4 = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-            this.shaderValue = new Value2D(0, 0);
         }
         renderSubmit() {
             var preAlpha = RenderState2D.worldAlpha;
@@ -8549,9 +8421,6 @@ window.Laya = (function (exports) {
     })(exports.WrapMode || (exports.WrapMode = {}));
 
     class TextTexture extends Resource {
-        get gammaCorrection() {
-            return this.bitmap._glTexture.gammaCorrection;
-        }
         constructor(textureW, textureH) {
             super();
             this._texW = 0;
@@ -8568,6 +8437,9 @@ window.Laya = (function (exports) {
             this.bitmap.id = this.id;
             this.lock = true;
             this._render2DContext = LayaGL.render2DContext;
+        }
+        get gammaCorrection() {
+            return this.bitmap._glTexture.gammaCorrection;
         }
         recreateResource() {
             if (this._source)
@@ -8731,6 +8603,15 @@ window.Laya = (function (exports) {
     TextAtlas.atlasGridW = 16;
 
     class FontInfo {
+        constructor(font) {
+            this._font = "14px Arial";
+            this._family = "Arial";
+            this._size = 14;
+            this._italic = false;
+            this._bold = false;
+            this._id = FontInfo._gfontID++;
+            this.setFont(font || this._font);
+        }
         static Parse(font) {
             if (font === FontInfo._lastFont) {
                 return FontInfo._lastFontInfo;
@@ -8742,15 +8623,6 @@ window.Laya = (function (exports) {
             FontInfo._lastFont = font;
             FontInfo._lastFontInfo = r;
             return r;
-        }
-        constructor(font) {
-            this._font = "14px Arial";
-            this._family = "Arial";
-            this._size = 14;
-            this._italic = false;
-            this._bold = false;
-            this._id = FontInfo._gfontID++;
-            this.setFont(font || this._font);
         }
         setFont(value) {
             this._font = value;
@@ -9096,7 +8968,7 @@ window.Laya = (function (exports) {
             return win;
         }
         static get _isMiniGame() {
-            return Browser.onMiniGame || Browser.onBDMiniGame || Browser.onQGMiniGame || Browser.onKGMiniGame || Browser.onVVMiniGame || Browser.onAlipayMiniGame || Browser.onQQMiniGame || Browser.onBLMiniGame || Browser.onTTMiniGame || Browser.onHWMiniGame || Browser.onTBMiniGame;
+            return Browser.onMiniGame || Browser.onBDMiniGame || Browser.onQGMiniGame || Browser.onKGMiniGame || Browser.onVVMiniGame || Browser.onAlipayMiniGame || Browser.onQQMiniGame || Browser.onBLMiniGame || Browser.onTTMiniGame || Browser.onHWMiniGame || Browser.onTBMiniGame || (Browser.window && Browser.window.isWXMiMi);
         }
         static createElement(type) {
             Browser.__init__();
@@ -9474,7 +9346,7 @@ window.Laya = (function (exports) {
                     state = 1;
                     i++;
                 }
-                else if (c === 0xfe0e || c === 0xfe0f);
+                else if (c === 0xfe0e || c === 0xfe0f) ;
                 else if (c == 0x200d) {
                     state = 2;
                 }
@@ -9483,7 +9355,7 @@ window.Laya = (function (exports) {
                         state = 1;
                     else if (state == 1)
                         break;
-                    else;
+                    else ;
                 }
             }
             this._curStrPos = i;
@@ -9598,7 +9470,7 @@ window.Laya = (function (exports) {
                         if (!ri) {
                             break;
                         }
-                        if (ri.isSpace);
+                        if (ri.isSpace) ;
                         else {
                             var add = sameTexData[ri.tex.id];
                             if (!add) {
@@ -10367,6 +10239,11 @@ window.Laya = (function (exports) {
     Vector4.tempVec4 = new Vector4(0.0, 0.0, 0.0, 0.0);
 
     class Vector3 {
+        constructor(x = 0, y = 0, z = 0) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
         static distanceSquared(value1, value2) {
             var x = value1.x - value2.x;
             var y = value1.y - value2.y;
@@ -10507,11 +10384,6 @@ window.Laya = (function (exports) {
         static equals(a, b) {
             return MathUtils3D.nearEqual(a.x, b.x) && MathUtils3D.nearEqual(a.y, b.y) && MathUtils3D.nearEqual(a.z, b.z);
         }
-        constructor(x = 0, y = 0, z = 0) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
         equal(value) {
             return Vector3.equals(this, value);
         }
@@ -10640,6 +10512,18 @@ window.Laya = (function (exports) {
     Config.isStencil = true;
 
     class RenderTexture extends BaseTexture {
+        constructor(width, height, colorFormat, depthFormat, generateMipmap = false, multiSamples = 1, generateDepthTexture = false, sRGB = false) {
+            super(width, height, colorFormat);
+            this._inPool = false;
+            this._isCameraTarget = false;
+            this._generateDepthTexture = false;
+            this._gammaSpace = sRGB;
+            this._depthStencilFormat = (depthFormat == null ? exports.RenderTargetFormat.None : depthFormat);
+            this._generateMipmap = generateMipmap;
+            this._multiSamples = multiSamples;
+            this._generateDepthTexture = generateDepthTexture;
+            this._createRenderTarget();
+        }
         static get currentActive() {
             return RenderTexture._currentActive;
         }
@@ -10720,18 +10604,6 @@ window.Laya = (function (exports) {
         }
         get generateMipmap() {
             return this._renderTarget._generateMipmap;
-        }
-        constructor(width, height, colorFormat, depthFormat, generateMipmap = false, multiSamples = 1, generateDepthTexture = false, sRGB = false) {
-            super(width, height, colorFormat);
-            this._inPool = false;
-            this._isCameraTarget = false;
-            this._generateDepthTexture = false;
-            this._gammaSpace = sRGB;
-            this._depthStencilFormat = (depthFormat == null ? exports.RenderTargetFormat.None : depthFormat);
-            this._generateMipmap = generateMipmap;
-            this._multiSamples = multiSamples;
-            this._generateDepthTexture = generateDepthTexture;
-            this._createRenderTarget();
         }
         _createRenderTarget() {
             this._dimension = exports.TextureDimension.Tex2D;
@@ -10825,8 +10697,6 @@ window.Laya = (function (exports) {
         CONTEXT2D_FUNCTION_ID[CONTEXT2D_FUNCTION_ID["FILL_WORDS"] = 35] = "FILL_WORDS";
     })(CONTEXT2D_FUNCTION_ID || (CONTEXT2D_FUNCTION_ID = {}));
     class NativeContext {
-        static __init__() {
-        }
         constructor() {
             this._byteLen = 0;
             this.sprite = null;
@@ -10836,6 +10706,8 @@ window.Laya = (function (exports) {
             this._byteLen = 1024 * 512;
             this._tempRenderTexture2D = new NativeRenderTexture2D(0, 0, exports.RenderTargetFormat.R8G8B8A8, exports.RenderTargetFormat.None, false);
             this._init(false);
+        }
+        static __init__() {
         }
         _init(isSyncToRenderThread) {
             this._buffer = new ArrayBuffer(this._byteLen);
@@ -11714,6 +11586,67 @@ window.Laya = (function (exports) {
 
     const defaultClipMatrix = new Matrix(Const.MAX_CLIP_SIZE, 0, 0, Const.MAX_CLIP_SIZE, 0, 0);
     class Context {
+        constructor() {
+            this._tmpMatrix = new Matrix();
+            this._drawTexToDrawTri_Vert = new Float32Array(8);
+            this._drawTexToDrawTri_Index = new Uint16Array([0, 1, 2, 0, 2, 3]);
+            this._tempUV = new Float32Array(8);
+            this._drawTriUseAbsMatrix = false;
+            this._id = ++Context._COUNT;
+            this._other = null;
+            this._renderNextSubmitIndex = 0;
+            this._path = null;
+            this._drawCount = 1;
+            this._width = Const.MAX_CLIP_SIZE;
+            this._height = Const.MAX_CLIP_SIZE;
+            this._renderCount = 0;
+            this._submits = null;
+            this._curSubmit = null;
+            this._submitKey = new SubmitKey();
+            this._pathMesh = null;
+            this._triangleMesh = null;
+            this.meshlist = [];
+            this._transedPoints = new Array(8);
+            this._temp4Points = new Array(8);
+            this._clipRect = Context.MAXCLIPRECT;
+            this._globalClipMatrix = defaultClipMatrix.clone();
+            this._clipInCache = false;
+            this._clipInfoID = 0;
+            this._clipID_Gen = 0;
+            this._lastMatScaleX = 1.0;
+            this._lastMatScaleY = 1.0;
+            this._lastMat_a = 1.0;
+            this._lastMat_b = 0.0;
+            this._lastMat_c = 0.0;
+            this._lastMat_d = 1.0;
+            this._nBlendType = 0;
+            this._save = null;
+            this._targets = null;
+            this._charSubmitCache = null;
+            this._saveMark = null;
+            this._shader2D = new Shader2D();
+            this.sprite = null;
+            this._italicDeg = 0;
+            this._lastTex = null;
+            this._fillColor = 0;
+            this._flushCnt = 0;
+            this.defTexture = null;
+            this._colorFiler = null;
+            this.drawTexAlign = false;
+            this._incache = false;
+            this.isMain = false;
+            this.clearColor = new Color();
+            Context._contextcount++;
+            Context._textRender = Context._textRender || new TextRender();
+            if (!this.defTexture) {
+                var defTex2d = new Texture2D(2, 2, exports.TextureFormat.R8G8B8A8, true, false, false);
+                defTex2d.setPixelsData(new Uint8Array(16), false, false);
+                defTex2d.lock = true;
+                this.defTexture = new Texture(defTex2d);
+            }
+            this._lastTex = this.defTexture;
+            this.clear();
+        }
         static __init__() {
             Context.MAXCLIPRECT = new Rectangle(0, 0, Const.MAX_CLIP_SIZE, Const.MAX_CLIP_SIZE);
             ContextParams.DEFAULT = new ContextParams();
@@ -11897,67 +11830,6 @@ window.Laya = (function (exports) {
             LayaGL.renderEngine.viewport(0, 0, RenderState2D.width, RenderState2D.height);
             LayaGL.renderEngine.scissorTest(true);
             LayaGL.renderEngine.scissor(0, 0, RenderState2D.width, RenderState2D.height);
-        }
-        constructor() {
-            this._tmpMatrix = new Matrix();
-            this._drawTexToDrawTri_Vert = new Float32Array(8);
-            this._drawTexToDrawTri_Index = new Uint16Array([0, 1, 2, 0, 2, 3]);
-            this._tempUV = new Float32Array(8);
-            this._drawTriUseAbsMatrix = false;
-            this._id = ++Context._COUNT;
-            this._other = null;
-            this._renderNextSubmitIndex = 0;
-            this._path = null;
-            this._drawCount = 1;
-            this._width = Const.MAX_CLIP_SIZE;
-            this._height = Const.MAX_CLIP_SIZE;
-            this._renderCount = 0;
-            this._submits = null;
-            this._curSubmit = null;
-            this._submitKey = new SubmitKey();
-            this._pathMesh = null;
-            this._triangleMesh = null;
-            this.meshlist = [];
-            this._transedPoints = new Array(8);
-            this._temp4Points = new Array(8);
-            this._clipRect = Context.MAXCLIPRECT;
-            this._globalClipMatrix = defaultClipMatrix.clone();
-            this._clipInCache = false;
-            this._clipInfoID = 0;
-            this._clipID_Gen = 0;
-            this._lastMatScaleX = 1.0;
-            this._lastMatScaleY = 1.0;
-            this._lastMat_a = 1.0;
-            this._lastMat_b = 0.0;
-            this._lastMat_c = 0.0;
-            this._lastMat_d = 1.0;
-            this._nBlendType = 0;
-            this._save = null;
-            this._targets = null;
-            this._charSubmitCache = null;
-            this._saveMark = null;
-            this._shader2D = new Shader2D();
-            this.sprite = null;
-            this._italicDeg = 0;
-            this._lastTex = null;
-            this._fillColor = 0;
-            this._flushCnt = 0;
-            this.defTexture = null;
-            this._colorFiler = null;
-            this.drawTexAlign = false;
-            this._incache = false;
-            this.isMain = false;
-            this.clearColor = new Color();
-            Context._contextcount++;
-            Context._textRender = Context._textRender || new TextRender();
-            if (!this.defTexture) {
-                var defTex2d = new Texture2D(2, 2, exports.TextureFormat.R8G8B8A8, true, false, false);
-                defTex2d.setPixelsData(new Uint8Array(16), false, false);
-                defTex2d.lock = true;
-                this.defTexture = new Texture(defTex2d);
-            }
-            this._lastTex = this.defTexture;
-            this.clear();
         }
         clearBG(r, g, b, a) {
             this.clearColor.r = r;
@@ -13536,6 +13408,15 @@ window.Laya = (function (exports) {
     }
 
     class HTMLCanvas extends Resource {
+        constructor(createCanvas = false) {
+            super();
+            if (createCanvas)
+                this._source = Browser.createElement("canvas");
+            else {
+                this._source = this;
+            }
+            this.lock = true;
+        }
         get source() {
             return this._source;
         }
@@ -13553,15 +13434,6 @@ window.Laya = (function (exports) {
         }
         _getSource() {
             return this._source;
-        }
-        constructor(createCanvas = false) {
-            super();
-            if (createCanvas)
-                this._source = Browser.createElement("canvas");
-            else {
-                this._source = this;
-            }
-            this.lock = true;
         }
         clear() {
             if (this._ctx) {
@@ -13826,6 +13698,24 @@ window.Laya = (function (exports) {
         }
     }
     AlphaCmd.ID = "Alpha";
+
+    class ClassUtils {
+        static regClass(className, classDef) {
+            ClassUtils._classMap[className] = classDef;
+        }
+        static getClass(className) {
+            return ClassUtils._classMap[className];
+        }
+        static getInstance(className) {
+            var compClass = ClassUtils.getClass(className);
+            if (compClass)
+                return new compClass();
+            else
+                console.warn("[error] Undefined class:", className);
+            return null;
+        }
+    }
+    ClassUtils._classMap = {};
 
     class DrawCircleCmd {
         static create(x, y, radius, fillColor, lineColor, lineWidth) {
@@ -15211,6 +15101,17 @@ window.Laya = (function (exports) {
 
     const ARRAY_EMPTY = [];
     class Node extends EventDispatcher {
+        constructor() {
+            super();
+            this._bits = 0;
+            this._hideFlags = 0;
+            this._children = ARRAY_EMPTY;
+            this._extUIChild = ARRAY_EMPTY;
+            this._parent = null;
+            this._destroyed = false;
+            this.name = "";
+            this._initialize();
+        }
         get url() {
             return this._url;
         }
@@ -15228,17 +15129,6 @@ window.Laya = (function (exports) {
         }
         get destroyed() {
             return this._destroyed;
-        }
-        constructor() {
-            super();
-            this._bits = 0;
-            this._hideFlags = 0;
-            this._children = ARRAY_EMPTY;
-            this._extUIChild = ARRAY_EMPTY;
-            this._parent = null;
-            this._destroyed = false;
-            this.name = "";
-            this._initialize();
         }
         _initialize() {
             this._extra = {};
@@ -16550,20 +16440,6 @@ window.Laya = (function (exports) {
     }
 
     class Sprite extends Node {
-        destroy(destroyChild = true) {
-            super.destroy(destroyChild);
-            this._style && this._style.recover();
-            this._cacheStyle && this._cacheStyle.recover();
-            this._boundStyle && this._boundStyle.recover();
-            this._transform && this._transform.recover();
-            this._style = null;
-            this._cacheStyle = null;
-            this._boundStyle = null;
-            this._transform = null;
-            this._graphics && this._ownGraphics && this._graphics.destroy();
-            this._graphics = null;
-            this.texture = null;
-        }
         constructor() {
             super();
             this._x = 0;
@@ -16586,6 +16462,21 @@ window.Laya = (function (exports) {
             this.mouseThrough = false;
             this.autoSize = false;
             this.hitTestPrior = false;
+        }
+        destroy(destroyChild = true) {
+            super.destroy(destroyChild);
+            this._style && this._style.recover();
+            this._cacheStyle && this._cacheStyle.recover();
+            this._boundStyle && this._boundStyle.recover();
+            this._transform && this._transform.recover();
+            this._style = null;
+            this._cacheStyle = null;
+            this._boundStyle = null;
+            this._transform = null;
+            this._texture && this._texture._removeReference();
+            this._texture = null;
+            this._graphics && this._ownGraphics && this._graphics.destroy();
+            this._graphics = null;
         }
         get scene() {
             return this._scene;
@@ -17236,6 +17127,7 @@ window.Laya = (function (exports) {
             else {
                 ctx.asBitmap = true;
             }
+            let texRT;
             if (ctx._targets) {
                 ctx._targets.start();
                 let color = RenderTexture2D._clearColor;
@@ -17246,10 +17138,12 @@ window.Laya = (function (exports) {
                 ctx.flush();
                 ctx._targets.end();
                 ctx._targets.restore();
+                if (!rt)
+                    texRT = ctx._targets;
                 ctx._targets = null;
             }
             if (!rt) {
-                var rtex = new Texture(ctx._targets, Texture.INV_UV);
+                var rtex = new Texture(ctx._targets ? ctx._targets : texRT, Texture.INV_UV);
                 ctx.destroy(true);
                 return rtex;
             }
@@ -17646,2427 +17540,6 @@ window.Laya = (function (exports) {
             }
         }
     }
-
-    class AnimationBase extends Sprite {
-        constructor() {
-            super();
-            this.wrapMode = 0;
-            this._interval = Config.animationInterval;
-            this._isReverse = false;
-            this._frameRateChanged = false;
-            this._setBitUp(NodeFlags.DISPLAY);
-        }
-        play(start = 0, loop = true, name = "") {
-            this._isPlaying = true;
-            this._actionName = name;
-            this.index = (typeof (start) == 'string') ? this._getFrameByLabel(start) : start;
-            this.loop = loop;
-            this._isReverse = this.wrapMode === AnimationBase.WRAP_REVERSE;
-            if (this.index == 0 && this._isReverse) {
-                this.index = this.count - 1;
-            }
-            if (this.interval > 0)
-                this.timerLoop(this.interval, this, this._frameLoop, null, true, true);
-        }
-        get interval() {
-            return this._interval;
-        }
-        set interval(value) {
-            if (this._interval != value) {
-                this._frameRateChanged = true;
-                this._interval = value;
-                if (this._isPlaying && value > 0) {
-                    this.timerLoop(value, this, this._frameLoop, null, true, true);
-                }
-            }
-        }
-        _getFrameByLabel(label) {
-            for (var i = 0; i < this._count; i++) {
-                var item = this._labels[i];
-                if (item && item.indexOf(label) > -1)
-                    return i;
-            }
-            return 0;
-        }
-        _frameLoop() {
-            if (!this._controlNode || this._controlNode._destroyed) {
-                this.clearTimer(this, this._frameLoop);
-                return;
-            }
-            if (this._isReverse) {
-                this._index--;
-                if (this._index < 0) {
-                    if (this.loop) {
-                        if (this.wrapMode == AnimationBase.WRAP_PINGPONG) {
-                            this._index = this._count > 0 ? 1 : 0;
-                            this._isReverse = false;
-                        }
-                        else {
-                            this._index = this._count - 1;
-                        }
-                        this.event(Event.COMPLETE);
-                    }
-                    else {
-                        this._index = 0;
-                        this.stop();
-                        this.event(Event.COMPLETE);
-                        return;
-                    }
-                }
-            }
-            else {
-                this._index++;
-                if (this._index >= this._count) {
-                    if (this.loop) {
-                        if (this.wrapMode == AnimationBase.WRAP_PINGPONG) {
-                            this._index = this._count - 2 >= 0 ? this._count - 2 : 0;
-                            this._isReverse = true;
-                        }
-                        else {
-                            this._index = 0;
-                        }
-                        this.event(Event.COMPLETE);
-                    }
-                    else {
-                        this._index--;
-                        this.stop();
-                        this.event(Event.COMPLETE);
-                        return;
-                    }
-                }
-            }
-            this.index = this._index;
-        }
-        _setControlNode(node) {
-            if (this._controlNode) {
-                this._controlNode.off(Event.DISPLAY, this, this._resumePlay);
-                this._controlNode.off(Event.UNDISPLAY, this, this._resumePlay);
-            }
-            this._controlNode = node;
-            if (node && node != this) {
-                node.on(Event.DISPLAY, this, this._resumePlay);
-                node.on(Event.UNDISPLAY, this, this._resumePlay);
-            }
-        }
-        _setDisplay(value) {
-            super._setDisplay(value);
-            this._resumePlay();
-        }
-        _resumePlay() {
-            if (this._isPlaying) {
-                if (this._controlNode.displayedInStage)
-                    this.play(this._index, this.loop, this._actionName);
-                else
-                    this.clearTimer(this, this._frameLoop);
-            }
-        }
-        stop() {
-            this._isPlaying = false;
-            this.clearTimer(this, this._frameLoop);
-        }
-        get isPlaying() {
-            return this._isPlaying;
-        }
-        addLabel(label, index) {
-            if (!this._labels)
-                this._labels = {};
-            if (!this._labels[index])
-                this._labels[index] = [];
-            this._labels[index].push(label);
-        }
-        removeLabel(label) {
-            if (!label)
-                this._labels = null;
-            else if (this._labels) {
-                for (var name in this._labels) {
-                    this._removeLabelFromList(this._labels[name], label);
-                }
-            }
-        }
-        _removeLabelFromList(list, label) {
-            if (!list)
-                return;
-            for (var i = list.length - 1; i >= 0; i--) {
-                if (list[i] == label) {
-                    list.splice(i, 1);
-                }
-            }
-        }
-        gotoAndStop(position) {
-            this.index = (typeof (position) == 'string') ? this._getFrameByLabel(position) : position;
-            this.stop();
-        }
-        get index() {
-            return this._index;
-        }
-        set index(value) {
-            this._index = value;
-            this._displayToIndex(value);
-            if (this._labels && this._labels[value]) {
-                var tArr = this._labels[value];
-                for (var i = 0, len = tArr.length; i < len; i++) {
-                    this.event(Event.LABEL, tArr[i]);
-                }
-            }
-        }
-        _displayToIndex(value) {
-        }
-        get count() {
-            return this._count;
-        }
-        clear() {
-            this.stop();
-            this._labels = null;
-            return this;
-        }
-    }
-    AnimationBase.WRAP_POSITIVE = 0;
-    AnimationBase.WRAP_REVERSE = 1;
-    AnimationBase.WRAP_PINGPONG = 2;
-
-    class AtlasInfoManager {
-        static enable(infoFile, callback = null) {
-            ILaya.loader.fetch(infoFile, "json").then(data => {
-                if (!data)
-                    return;
-                AtlasInfoManager.addToDict(data);
-                callback && callback.run();
-            });
-        }
-        static addToDict(data) {
-            for (let tKey in data) {
-                let tArr = data[tKey];
-                let tPrefix = URL.formatURL(tArr[0]);
-                tArr = tArr[1];
-                let len = tArr.length;
-                let entry = { url: tKey };
-                for (let i = 0; i < len; i++) {
-                    AtlasInfoManager._fileLoadDic[tPrefix + tArr[i]] = entry;
-                }
-            }
-        }
-        static getFileLoadPath(file) {
-            return AtlasInfoManager._fileLoadDic[file];
-        }
-    }
-    AtlasInfoManager._fileLoadDic = {};
-
-    class WorkerLoader extends EventDispatcher {
-        constructor() {
-            super();
-            this.worker = new Worker(WorkerLoader.workerPath);
-            this.worker.onmessage = (evt) => {
-                this.workerMessage(evt.data);
-            };
-        }
-        static __init__() {
-            if (WorkerLoader.I)
-                return;
-            if (!Worker)
-                return;
-            WorkerLoader.I = new WorkerLoader();
-        }
-        static workerSupported() {
-            return Worker ? true : false;
-        }
-        static enableWorkerLoader() {
-            WorkerLoader.enable = true;
-        }
-        static set enable(value) {
-            if (WorkerLoader._enable != value) {
-                WorkerLoader._enable = value;
-                if (value) {
-                    if (WorkerLoader.I == null)
-                        WorkerLoader.__init__();
-                    if (WorkerLoader.I.worker == null)
-                        WorkerLoader._enable = false;
-                }
-            }
-        }
-        static get enable() {
-            return WorkerLoader._enable;
-        }
-        workerMessage(data) {
-            if (data) {
-                switch (data.type) {
-                    case "Image":
-                        this.imageLoaded(data);
-                        break;
-                    case "Disable":
-                        WorkerLoader.enable = false;
-                        break;
-                }
-            }
-        }
-        imageLoaded(data) {
-            if (!data.dataType || data.dataType != "imageBitmap") {
-                this.event(data.url, null);
-                return;
-            }
-            var imageData = data.imageBitmap;
-            console.log("load:", data.url);
-            this.event(data.url, imageData);
-        }
-    }
-    WorkerLoader.workerPath = "libs/workerloader.js";
-    WorkerLoader._enable = false;
-
-    class AtlasResource extends Resource {
-        constructor(dir, textures, frames) {
-            super();
-            this.dir = dir;
-            this.textures = textures;
-            this.frames = frames;
-            this.lock = true;
-        }
-        _disposeResource() {
-            for (let tex of this.textures) {
-                if (tex)
-                    tex.destroy();
-            }
-            for (let tex of this.frames)
-                tex.destroy();
-            this.frames.length = 0;
-            this.textures.length = 0;
-        }
-    }
-
-    class BatchProgress {
-        constructor(callback) {
-            this._callback = callback;
-            this._items = [];
-            this._weights = [];
-            this._progress = 0;
-        }
-        get itemCount() {
-            return this._items.length;
-        }
-        reset() {
-            this._items.length = 0;
-            this._weights.length = 0;
-            this._progress = 0;
-        }
-        createCallback(weight) {
-            let index = this._items.length;
-            this._items.push(0);
-            if (weight == null)
-                this._weights.push(null);
-            else
-                this._weights.push(Math.max(0, Math.min(weight, 1)));
-            return (progress) => this.update(index, progress);
-        }
-        update(index, value) {
-            if (index != -1) {
-                this._items[index] = Math.max(0, Math.min(value, 1));
-                let np = 0;
-                let col = this._items;
-                let ws = this._weights;
-                let perc = 1 / col.length;
-                for (let i = 0; i < col.length; i++) {
-                    let p = col[i];
-                    let w = ws[i];
-                    if (p != null)
-                        np += p * (w != null ? w : perc);
-                }
-                value = np;
-            }
-            if (value > this._progress) {
-                this._progress = value;
-                this._callback(value);
-            }
-        }
-    }
-
-    class ImgUtils {
-        static compareVersion(curVersion, needVersion) {
-            let curVersionArr = curVersion.split('.');
-            let needVersionArr = needVersion.split('.');
-            const len = Math.max(curVersionArr.length, needVersionArr.length);
-            while (curVersionArr.length < len) {
-                curVersionArr.push('0');
-            }
-            while (needVersionArr.length < len) {
-                needVersionArr.push('0');
-            }
-            for (let i = 0; i < len; i++) {
-                const num1 = parseInt(curVersionArr[i]);
-                const num2 = parseInt(needVersionArr[i]);
-                if (num1 > num2) {
-                    return true;
-                }
-                else if (num1 < num2) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        static get isSupport() {
-            if (Browser.onMiniGame) {
-                var version = Browser.window.wx.getSystemInfoSync().SDKVersion;
-                return ImgUtils.compareVersion(version, '2.14.0');
-            }
-            else if (Browser.onLayaRuntime) {
-                return true;
-            }
-            else if (Browser.window.Blob)
-                return Browser.window.Blob ? true : false;
-            return false;
-        }
-        static arrayBufferToURL(url, arrayBuffer) {
-            if (!ImgUtils.isSupport)
-                return null;
-            if (ImgUtils.data[url])
-                return ImgUtils.data[url];
-            var newurl = "";
-            if (Browser.onMiniGame || Browser.onLayaRuntime) {
-                newurl = Browser.window.wx.createBufferURL(arrayBuffer);
-            }
-            else if (Browser.window.Blob) {
-                let blob = new Blob([arrayBuffer], { type: 'application/octet-binary' });
-                newurl = Browser.window.URL.createObjectURL(blob);
-            }
-            if (ImgUtils.isSavaData)
-                ImgUtils.data[url] = newurl;
-            return newurl;
-        }
-        static _arrayBufferToURL(arrayBuffer) {
-            if (!ImgUtils.isSupport)
-                return null;
-            var newurl = "";
-            if (Browser.onMiniGame || Browser.onLayaRuntime) {
-                newurl = Browser.window.wx.createBufferURL(arrayBuffer);
-            }
-            else if (Browser.window.Blob) {
-                let blob = new Blob([arrayBuffer], { type: 'application/octet-binary' });
-                newurl = Browser.window.URL.createObjectURL(blob);
-            }
-            return newurl;
-        }
-        static destroy(url) {
-            if (!ImgUtils.isSupport)
-                return;
-            var newurl = ImgUtils.data[url];
-            if (newurl) {
-                if (Browser.onMiniGame || Browser.onLayaRuntime)
-                    Browser.window.wx.revokeBufferURL(newurl);
-                else if (Browser.window.Blob)
-                    Browser.window.URL.revokeObjectURL(newurl);
-                delete ImgUtils.data[url];
-            }
-        }
-    }
-    ImgUtils.data = {};
-    ImgUtils.isSavaData = false;
-
-    class HttpRequest extends EventDispatcher {
-        constructor() {
-            super(...arguments);
-            this._http = new XMLHttpRequest();
-        }
-        send(url, data = null, method = "get", responseType = "text", headers = null) {
-            this._responseType = responseType;
-            this._data = null;
-            if (Browser.onVVMiniGame || Browser.onQGMiniGame || Browser.onQQMiniGame || Browser.onAlipayMiniGame || Browser.onBLMiniGame || Browser.onHWMiniGame || Browser.onTTMiniGame || Browser.onTBMiniGame) {
-                url = HttpRequest._urlEncode(url);
-            }
-            this._url = url;
-            let http = this._http;
-            http.open(method, url, true);
-            if (headers) {
-                for (let i = 0; i < headers.length; i++) {
-                    http.setRequestHeader(headers[i++], headers[i]);
-                }
-            }
-            if (data) {
-                if (typeof (data) == 'string') {
-                    http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                }
-                else {
-                    http.setRequestHeader("Content-Type", "application/json");
-                    if (!(data instanceof ArrayBuffer))
-                        data = JSON.stringify(data);
-                }
-            }
-            else if (Browser.onBLMiniGame && Browser.onAndroid)
-                data = {};
-            let restype = responseType !== "arraybuffer" ? "text" : "arraybuffer";
-            http.responseType = restype;
-            if (http.dataType) {
-                http.dataType = restype;
-            }
-            http.onerror = (e) => {
-                this._onError(e);
-            };
-            http.onabort = (e) => {
-                this._onAbort(e);
-            };
-            http.onprogress = (e) => {
-                this._onProgress(e);
-            };
-            http.onload = (e) => {
-                this._onLoad(e);
-            };
-            http.send(data);
-        }
-        _onProgress(e) {
-            if (e && e.lengthComputable)
-                this.event(Event.PROGRESS, e.loaded / e.total);
-        }
-        _onAbort(e) {
-            this.error("Request was aborted by user");
-        }
-        _onError(e) {
-            this.error("Request failed Status:" + this._http.status + " text:" + this._http.statusText);
-        }
-        _onLoad(e) {
-            var http = this._http;
-            var status = http.status !== undefined ? http.status : 200;
-            if (status === 200 || status === 204 || status === 0) {
-                this.complete();
-            }
-            else {
-                this.error("[" + http.status + "]" + http.statusText + ":" + http.responseURL);
-            }
-        }
-        error(message) {
-            this.clear();
-            this.event(Event.ERROR, message);
-        }
-        complete() {
-            this.clear();
-            var flag = true;
-            try {
-                if (this._responseType === "json") {
-                    this._data = JSON.parse(this._http.responseText);
-                }
-                else if (this._responseType === "xml") {
-                    this._data = Utils.parseXMLFromString(this._http.responseText);
-                }
-                else {
-                    this._data = this._http.response || this._http.responseText;
-                }
-            }
-            catch (e) {
-                flag = false;
-                this.error(e.message);
-            }
-            flag && this.event(Event.COMPLETE, this._data instanceof Array ? [this._data] : this._data);
-        }
-        clear() {
-            var http = this._http;
-            http.onerror = http.onabort = http.onprogress = http.onload = null;
-        }
-        get url() {
-            return this._url;
-        }
-        get data() {
-            return this._data;
-        }
-        get http() {
-            return this._http;
-        }
-        reset() {
-            this.offAll();
-            this._data = null;
-        }
-    }
-    HttpRequest._urlEncode = encodeURI;
-
-    class Downloader {
-        constructor() {
-            this.httpRequestPool = [];
-        }
-        common(owner, url, originalUrl, contentType, onProgress, onComplete) {
-            let http = this.getRequestInst();
-            http.on(Event.COMPLETE, () => {
-                let data = http.data;
-                this.returnRequestInst(http);
-                onComplete(data);
-            });
-            http.on(Event.ERROR, null, (error) => {
-                this.returnRequestInst(http);
-                onComplete(null, error);
-            });
-            if (onProgress)
-                http.on(Event.PROGRESS, onProgress);
-            http.send(url, null, "get", contentType);
-            owner.$ref = http;
-        }
-        image(owner, url, originalUrl, onProgress, onComplete) {
-            let image = new Browser.window.Image();
-            image.crossOrigin = "";
-            image.onload = () => {
-                image.onload = null;
-                image.onerror = null;
-                onComplete(image);
-            };
-            image.onerror = () => {
-                image.onload = null;
-                image.onerror = null;
-                onComplete(null, "");
-            };
-            image.src = url;
-            owner.$ref = image;
-        }
-        imageWithBlob(owner, blob, originalUrl, onProgress, onComplete) {
-            let url = ImgUtils.arrayBufferToURL(originalUrl, blob);
-            this.image(owner, url, originalUrl, onProgress, onComplete);
-        }
-        imageWithWorker(owner, url, originalUrl, onProgress, onComplete) {
-            WorkerLoader.enableWorkerLoader();
-            if (WorkerLoader.enable) {
-                let workerLoader = WorkerLoader.I;
-                workerLoader.once(url, null, (imageData) => {
-                    if (imageData)
-                        onComplete(imageData);
-                    else
-                        onComplete(null, "workerloader failed!");
-                });
-                workerLoader.worker.postMessage(url);
-            }
-            else
-                this.image(owner, url, originalUrl, onProgress, onComplete);
-        }
-        audio(owner, url, originalUrl, onProgress, onComplete) {
-            let audio = Browser.createElement("audio");
-            audio.crossOrigin = "";
-            audio.oncanplaythrough = () => {
-                audio.oncanplaythrough = null;
-                audio.onerror = null;
-                onComplete(audio);
-            };
-            audio.onerror = () => {
-                audio.oncanplaythrough = null;
-                audio.onerror = null;
-                onComplete(null, "");
-            };
-            audio.src = url;
-            owner.$ref = audio;
-        }
-        getRequestInst() {
-            if (this.httpRequestPool.length == 0
-                || Browser.onVVMiniGame || Browser.onHWMiniGame) {
-                return new HttpRequest();
-            }
-            else {
-                return this.httpRequestPool.pop();
-            }
-        }
-        returnRequestInst(inst) {
-            inst.reset();
-            if (this.httpRequestPool.length < 10)
-                this.httpRequestPool.push(inst);
-        }
-    }
-
-    var typeIdCounter = 0;
-    const NullURLInfo = { ext: null, typeId: null, main: false, loaderType: null };
-    class Loader extends EventDispatcher {
-        static registerLoader(exts, cls, type) {
-            let typeEntry;
-            if (type) {
-                typeEntry = Loader.typeMap[type];
-                if (!typeEntry)
-                    Loader.typeMap[type] = typeEntry = { typeId: typeIdCounter++, loaderType: cls };
-                else if (typeEntry.loaderType != cls)
-                    typeEntry = { typeId: typeEntry.typeId, loaderType: cls };
-            }
-            else
-                typeEntry = { typeId: typeIdCounter++, loaderType: cls };
-            for (let ext of exts) {
-                let entry = Loader.extMap[ext];
-                if (entry && type) {
-                    let i = entry.findIndex(e => e.typeId == typeEntry.typeId);
-                    if (i == -1)
-                        entry.push(typeEntry);
-                    else
-                        entry[i].loaderType = cls;
-                }
-                else {
-                    Loader.extMap[ext] = [typeEntry];
-                }
-            }
-        }
-        constructor() {
-            super();
-            this.retryNum = 1;
-            this.retryDelay = 0;
-            this.maxLoader = 5;
-            this._loadings = new Map();
-            this._queue = [];
-            this._downloadings = new Set();
-        }
-        get loading() {
-            return this._loadings.size > 0;
-        }
-        load(url, arg1, arg2, arg3, priority, cache, group, ignoreCache, useWorkerLoader) {
-            let complete;
-            let type;
-            let options = dummyOptions;
-            if (arg1 instanceof Handler) {
-                complete = arg1;
-                type = arg3;
-            }
-            else if (typeof (arg1) === "string")
-                type = arg1;
-            else if (arg1 != null) {
-                type = arg1.type;
-                options = arg1;
-            }
-            if (priority != null || cache != null || group != null || useWorkerLoader != null) {
-                if (options === dummyOptions)
-                    options = { priority, cache, group, useWorkerLoader };
-                else
-                    options = Object.assign(options, { priority, cache, group, useWorkerLoader });
-            }
-            let onProgress;
-            if (arg2 instanceof Handler)
-                onProgress = (value) => arg2.runWith(value);
-            else
-                onProgress = arg2;
-            let promise;
-            if (Array.isArray(url)) {
-                let pd;
-                if (onProgress)
-                    pd = new BatchProgress(onProgress);
-                let promises = [];
-                for (let i = 0; i < url.length; i++) {
-                    let url2 = url[i];
-                    if (!url2)
-                        continue;
-                    if (typeof (url2) === "string") {
-                        promises.push(this._load1(url2, type, options, pd === null || pd === void 0 ? void 0 : pd.createCallback()));
-                    }
-                    else {
-                        promises.push(this._load1(url2.url, url2.type || type, options !== dummyOptions ? Object.assign({}, options, url2) : url2, pd === null || pd === void 0 ? void 0 : pd.createCallback()));
-                    }
-                }
-                promise = Promise.all(promises);
-            }
-            else if (typeof (url) === "string")
-                promise = this._load1(url, type, options, onProgress);
-            else
-                promise = this._load1(url.url, url.type || type, options !== dummyOptions ? Object.assign({}, options, url) : url, onProgress);
-            if (complete)
-                return promise.then(result => {
-                    complete.runWith(result);
-                    return result;
-                });
-            else
-                return promise;
-        }
-        _load1(url, type, options, onProgress) {
-            let uuid = null;
-            if (url.startsWith("res://")) {
-                uuid = url.substring(6);
-                let url2 = AssetDb.inst.UUID_to_URL(uuid);
-                if (!url2) {
-                    let promise = AssetDb.inst.UUID_to_URL_async(uuid);
-                    if (!promise) {
-                        !options.silent && Loader.warn(url);
-                        return Promise.resolve(null);
-                    }
-                    return promise.then(url2 => {
-                        if (url2)
-                            return this._load2(url2, uuid, type, options, onProgress);
-                        else {
-                            !options.silent && Loader.warn(url);
-                            return null;
-                        }
-                    });
-                }
-                else
-                    url = url2;
-            }
-            else {
-                let promise = AssetDb.inst.URL_to_UUID_async(url);
-                if (promise) {
-                    return promise.then(uuid => {
-                        return this._load2(url, uuid, type, options, onProgress);
-                    });
-                }
-            }
-            return this._load2(url, uuid, type, options, onProgress);
-        }
-        _load2(url, uuid, type, options, onProgress) {
-            let { ext, typeId, main, loaderType } = Loader.getURLInfo(url, type);
-            if (!loaderType) {
-                !options.silent && Loader.warn(url);
-                return Promise.resolve(null);
-            }
-            let formattedUrl = URL.formatURL(url);
-            if (options.group) {
-                let set = Loader.groupMap[options.group];
-                if (!set)
-                    set = Loader.groupMap[options.group] = new Set();
-                set.add(formattedUrl);
-            }
-            let obsoluteRes;
-            if (options.cache == null || options.cache) {
-                let cacheRes = Loader._getRes(formattedUrl, type);
-                if (cacheRes !== undefined) {
-                    if (cacheRes == null)
-                        return Promise.resolve(null);
-                    else {
-                        if (!(cacheRes instanceof Resource))
-                            return Promise.resolve(cacheRes);
-                        if (cacheRes.obsolute)
-                            obsoluteRes = cacheRes;
-                        if (!obsoluteRes && (!cacheRes.uuid || !uuid || uuid == cacheRes.uuid))
-                            return Promise.resolve(cacheRes);
-                    }
-                }
-            }
-            let loadingKey = formattedUrl;
-            if (!main)
-                loadingKey += "@" + typeId;
-            let task = this._loadings.get(loadingKey);
-            if (task) {
-                if (onProgress)
-                    task.onProgress.add(onProgress);
-                return new Promise((resolve) => task.onComplete.add(resolve));
-            }
-            let atlasInfo = AtlasInfoManager.getFileLoadPath(formattedUrl);
-            if (atlasInfo) {
-                return this.load(atlasInfo.url, { type: Loader.ATLAS, baseUrl: atlasInfo.baseUrl }).then(() => {
-                    return Loader.getRes(url, type);
-                });
-            }
-            if (loadTaskPool.length > 0)
-                task = loadTaskPool.pop();
-            else
-                task = new LoadTask();
-            task.type = type;
-            task.url = url;
-            task.uuid = uuid;
-            task.ext = ext;
-            options = Object.assign(task.options, options);
-            delete options.type;
-            if (options.priority == null)
-                options.priority = 0;
-            if (options.useWorkerLoader == null)
-                options.useWorkerLoader = WorkerLoader.enable;
-            if (onProgress)
-                task.onProgress.add(onProgress);
-            task.loader = this;
-            task.obsoluteInst = obsoluteRes;
-            let assetLoader = new loaderType();
-            this._loadings.set(loadingKey, task);
-            let promise;
-            try {
-                promise = assetLoader.load(task);
-            }
-            catch (err) {
-                !options.silent && Loader.warn(url, err);
-                promise = Promise.resolve(null);
-            }
-            return promise.then(content => {
-                if (content instanceof Resource) {
-                    content._setCreateURL(url, uuid);
-                }
-                if (task.options.cache == null || task.options.cache)
-                    Loader._cacheRes(formattedUrl, content, typeId, main);
-                task.progress.update(-1, 1);
-                task.onComplete.invoke(content);
-                return content;
-            }).catch(error => {
-                !options.silent && Loader.warn(url, error);
-                if (task.options.cache == null || task.options.cache)
-                    Loader._cacheRes(formattedUrl, null, typeId, main);
-                task.onComplete.invoke(null);
-                return null;
-            }).then((result) => {
-                this._loadings.delete(loadingKey);
-                task.reset();
-                loadTaskPool.push(task);
-                if (this._loadings.size == 0)
-                    this.event(Event.COMPLETE);
-                return result;
-            });
-        }
-        fetch(url, contentType, onProgress, options) {
-            var _a;
-            options = options || dummyOptions;
-            let task = {
-                originalUrl: url,
-                url: url,
-                contentType: contentType,
-                priority: (_a = options.priority) !== null && _a !== void 0 ? _a : 1,
-                retryCnt: 0,
-                onProgress: onProgress,
-                onComplete: null,
-            };
-            if (options.useWorkerLoader)
-                task.useWorkerLoader = true;
-            if (options.blob)
-                task.blob = options.blob;
-            if (options.noRetry)
-                task.retryCnt = -1;
-            if (options.silent)
-                task.silent = true;
-            return new Promise((resolve) => {
-                AssetDb.inst.resolveURL(url, url => {
-                    task.url = URL.formatURL(url);
-                    task.onComplete = resolve;
-                    this.queueToDownload(task);
-                });
-            });
-        }
-        queueToDownload(item) {
-            if (this._downloadings.size < this.maxLoader) {
-                this.download(item);
-                return;
-            }
-            let priority = item.priority;
-            if (priority == 0)
-                this._queue.push(item);
-            else {
-                let i = this._queue.findIndex(e => e.priority < priority);
-                if (i != -1)
-                    this._queue.splice(i, 0, item);
-                else
-                    this._queue.push(item);
-            }
-        }
-        download(item) {
-            this._downloadings.add(item);
-            let url = URL.postFormatURL(item.url);
-            if (item.contentType == "image") {
-                let preloadedContent = Loader.preLoadedMap[item.url];
-                if (preloadedContent) {
-                    if (!(preloadedContent instanceof ArrayBuffer)) {
-                        this.completeItem(item, preloadedContent);
-                        return;
-                    }
-                    item.blob = preloadedContent;
-                }
-                if (item.blob) {
-                    Loader.downloader.imageWithBlob(item, item.blob, item.originalUrl, item.onProgress, (data, error) => {
-                        if (!data)
-                            item.retryCnt = -1;
-                        this.completeItem(item, data, error);
-                    });
-                }
-                else if (item.useWorkerLoader) {
-                    Loader.downloader.imageWithWorker(item, url, item.originalUrl, item.onProgress, (data, error) => {
-                        if (!data)
-                            item.useWorkerLoader = false;
-                        this.completeItem(item, data, error);
-                    });
-                }
-                else {
-                    Loader.downloader.image(item, url, item.originalUrl, item.onProgress, (data, error) => this.completeItem(item, data, error));
-                }
-            }
-            else if (item.contentType == "sound") {
-                Loader.downloader.audio(item, url, item.originalUrl, item.onProgress, (data, error) => this.completeItem(item, data, error));
-            }
-            else {
-                let preloadedContent = Loader.preLoadedMap[item.url];
-                if (preloadedContent) {
-                    this.completeItem(item, preloadedContent);
-                    return;
-                }
-                Loader.downloader.common(item, url, item.originalUrl, item.contentType, item.onProgress, (data, error) => this.completeItem(item, data, error));
-            }
-        }
-        completeItem(item, content, error) {
-            this._downloadings.delete(item);
-            if (content) {
-                if (this._downloadings.size < this.maxLoader && this._queue.length > 0)
-                    this.download(this._queue.shift());
-                if (item.onProgress)
-                    item.onProgress(1);
-                item.onComplete(content);
-            }
-            else if (item.retryCnt != -1 && item.retryCnt < this.retryNum) {
-                item.retryCnt++;
-                if (!item.silent)
-                    console.debug(`Retry to load ${item.url} (${item.retryCnt})`);
-                ILaya.systemTimer.once(this.retryDelay, this, this.queueToDownload, [item], false);
-            }
-            else {
-                !item.silent && Loader.warn(item.url);
-                if (item.onProgress)
-                    item.onProgress(1);
-                if (this._downloadings.size < this.maxLoader && this._queue.length > 0)
-                    this.download(this._queue.shift());
-                item.onComplete(null);
-            }
-        }
-        static getURLInfo(url, type) {
-            let ext = url.startsWith("data:") ? "png" : Utils.getFileExtension(url);
-            let extEntry;
-            if (ext.length > 0)
-                extEntry = Loader.extMap[ext];
-            let typeId;
-            let main;
-            let loaderType;
-            if (type) {
-                let typeEntry = Loader.typeMap[type];
-                if (!typeEntry) {
-                    console.warn(`not recognize type: '${type}'`);
-                    return NullURLInfo;
-                }
-                typeId = typeEntry.typeId;
-                let i = 0;
-                if (extEntry) {
-                    if (extEntry[0].typeId === typeId
-                        || (i = extEntry.findIndex(e => e.typeId === typeId)) != -1) {
-                        main = i == 0;
-                        loaderType = extEntry[i].loaderType;
-                    }
-                    else {
-                        main = false;
-                        loaderType = typeEntry.loaderType;
-                    }
-                }
-                else {
-                    main = type != Loader.TEXTURE2D;
-                    loaderType = typeEntry.loaderType;
-                }
-            }
-            else {
-                if (!extEntry) {
-                    console.warn(`not recognize the resource suffix: '${url}'`);
-                    return NullURLInfo;
-                }
-                main = true;
-                typeId = extEntry[0].typeId;
-                loaderType = extEntry[0].loaderType;
-            }
-            return { ext, main, typeId, loaderType };
-        }
-        static warn(url, err) {
-            console.warn(`Failed to load ${url}` + (err ? (":" + err) : ""));
-        }
-        static getRes(url, type) {
-            url = URL.formatURL(url);
-            let ret = Loader._getRes(url, type);
-            return ret || null;
-        }
-        static _getRes(url, type) {
-            let resArr = Loader.loadedMap[url];
-            if (!resArr)
-                return undefined;
-            let ret;
-            if (type) {
-                let typeEntry = Loader.typeMap[type];
-                if (!typeEntry)
-                    return undefined;
-                if (resArr.length == 2) {
-                    if (resArr[0] == typeEntry.typeId)
-                        ret = resArr[1];
-                }
-                else {
-                    let i = resArr.indexOf(typeEntry.typeId);
-                    if (i != -1)
-                        ret = resArr[i + 1];
-                }
-            }
-            else
-                ret = resArr[1];
-            if ((ret instanceof Resource) && ret.destroyed)
-                return undefined;
-            else
-                return ret;
-        }
-        static getTexture2D(url) {
-            return Loader.getRes(url, Loader.TEXTURE2D);
-        }
-        static getBaseTexture(url) {
-            return Loader.getRes(url, Loader.TEXTURE2D);
-        }
-        static getAtlas(url) {
-            return Loader.getRes(url, Loader.ATLAS);
-        }
-        getRes(url, type) {
-            return Loader.getRes(url, type);
-        }
-        static createNodes(url) {
-            var _a;
-            return (_a = Loader.getRes(url)) === null || _a === void 0 ? void 0 : _a.create();
-        }
-        static cacheRes(url, data, type) {
-            url = URL.formatURL(url);
-            let urlInfo = Loader.getURLInfo(url, type);
-            if (urlInfo.typeId != null)
-                Loader._cacheRes(url, data, urlInfo.typeId, urlInfo.main);
-        }
-        static _cacheRes(url, data, typeId, main) {
-            let entry = Loader.loadedMap[url];
-            if (main) {
-                if (entry) {
-                    entry[0] = typeId;
-                    entry[1] = data;
-                }
-                else
-                    entry = Loader.loadedMap[url] = [typeId, data];
-            }
-            else {
-                if (entry) {
-                    let i = entry.findIndex(e => e === typeId);
-                    if (i != -1)
-                        entry[i + 1] = data;
-                    else
-                        entry.push(typeId, data);
-                }
-                else
-                    entry = Loader.loadedMap[url] = [null, undefined, typeId, data];
-            }
-        }
-        cacheRes(url, data, type) {
-            Loader.cacheRes(url, data, type);
-        }
-        static clearRes(url, checkObj) {
-            url = URL.formatURL(url);
-            Loader._clearRes(url, checkObj);
-        }
-        clearRes(url, checkObj) {
-            url = URL.formatURL(url);
-            Loader._clearRes(url, checkObj);
-        }
-        static _clearRes(url, checkObj) {
-            let entry = Loader.loadedMap[url];
-            if (!entry)
-                return;
-            if (checkObj) {
-                if (entry[1] == checkObj) {
-                    if (entry.length == 2)
-                        delete Loader.loadedMap[url];
-                    else
-                        entry[1] = undefined;
-                }
-                else {
-                    let i = entry.indexOf(checkObj);
-                    if (i == -1)
-                        return;
-                    if (entry.length == 4 && entry[0] == null)
-                        delete Loader.loadedMap[url];
-                    else
-                        entry.splice(i - 1, 2);
-                }
-                if ((checkObj instanceof Resource) && !checkObj.destroyed) {
-                    checkObj.destroy();
-                }
-            }
-            else {
-                delete Loader.loadedMap[url];
-                if (entry.length > 2) {
-                    for (let i = 1; i < entry.length; i += 2) {
-                        let obj = entry[i];
-                        if ((obj instanceof Resource) && !obj.destroyed) {
-                            obj.destroy();
-                        }
-                    }
-                }
-                else {
-                    let obj = entry[1];
-                    if ((obj instanceof Resource) && !obj.destroyed) {
-                        obj.destroy();
-                    }
-                }
-            }
-        }
-        clearTextureRes(url) {
-            url = URL.formatURL(url);
-            let entry = Loader.loadedMap[url];
-            if (!entry)
-                return;
-            let res = entry[0];
-            if (res instanceof Texture) {
-                res.disposeBitmap();
-            }
-            else if (res instanceof AtlasResource) {
-                for (let tex of res.textures)
-                    tex.disposeBitmap();
-            }
-        }
-        static setGroup(url, group) {
-            url = URL.formatURL(url);
-            let set = Loader.groupMap[group];
-            if (!set)
-                set = Loader.groupMap[group] = new Set();
-            set.add(url);
-        }
-        static clearResByGroup(group) {
-            let set = Loader.groupMap[group];
-            if (set) {
-                for (let k of set)
-                    Loader._clearRes(k);
-            }
-        }
-        clearUnLoaded() {
-            if (this._queue.length == 0)
-                return;
-            let arr = this._queue.concat();
-            this._queue.length = 0;
-            for (let item of arr)
-                item.onComplete(null);
-        }
-        cancelLoadByUrls(urls) {
-            if (!urls)
-                return;
-            for (var i = 0, n = urls.length; i < n; i++) {
-                this.cancelLoadByUrl(urls[i]);
-            }
-        }
-        cancelLoadByUrl(url) {
-            url = URL.formatURL(url);
-            let i = this._queue.findIndex(item => item.url == url);
-            if (i != -1) {
-                let item = this._queue[i];
-                this._queue.splice(i, 1);
-                item.onComplete(null);
-            }
-        }
-    }
-    Loader.TEXT = "text";
-    Loader.JSON = "json";
-    Loader.XML = "xml";
-    Loader.BUFFER = "arraybuffer";
-    Loader.IMAGE = "image";
-    Loader.SOUND = "sound";
-    Loader.VIDEO = "video";
-    Loader.ATLAS = "atlas";
-    Loader.FONT = "font";
-    Loader.TTF = "ttf";
-    Loader.HIERARCHY = "HIERARCHY";
-    Loader.MESH = "MESH";
-    Loader.MATERIAL = "MATERIAL";
-    Loader.TEXTURE2D = "TEXTURE2D";
-    Loader.TEXTURECUBE = "TEXTURE2D";
-    Loader.ANIMATIONCLIP = "ANIMATIONCLIP";
-    Loader.TERRAINHEIGHTDATA = "TERRAINHEIGHTDATA";
-    Loader.TERRAINRES = "TERRAIN";
-    Loader.SPINE = "SPINE";
-    Loader.extMap = {};
-    Loader.typeMap = {};
-    Loader.downloader = new Downloader();
-    Loader.groupMap = {};
-    Loader.loadedMap = {};
-    Loader.preLoadedMap = {};
-    class LoadTask {
-        constructor() {
-            this.options = {};
-            this.onProgress = new Delegate();
-            this.onComplete = new Delegate();
-            this.progress = new BatchProgress((progress) => this.onProgress.invoke(progress));
-        }
-        reset() {
-            for (let k in this.options)
-                delete this.options[k];
-            this.onProgress.clear();
-            this.onComplete.clear();
-            this.progress.reset();
-            this.obsoluteInst = null;
-        }
-    }
-    const loadTaskPool = [];
-    const dummyOptions = {};
-
-    class MathUtil {
-        static subtractVector3(l, r, o) {
-            o[0] = l[0] - r[0];
-            o[1] = l[1] - r[1];
-            o[2] = l[2] - r[2];
-        }
-        static lerp(left, right, amount) {
-            return left * (1 - amount) + right * amount;
-        }
-        static scaleVector3(f, b, e) {
-            e[0] = f[0] * b;
-            e[1] = f[1] * b;
-            e[2] = f[2] * b;
-        }
-        static lerpVector3(l, r, t, o) {
-            var ax = l[0], ay = l[1], az = l[2];
-            o[0] = ax + t * (r[0] - ax);
-            o[1] = ay + t * (r[1] - ay);
-            o[2] = az + t * (r[2] - az);
-        }
-        static lerpVector4(l, r, t, o) {
-            var ax = l[0], ay = l[1], az = l[2], aw = l[3];
-            o[0] = ax + t * (r[0] - ax);
-            o[1] = ay + t * (r[1] - ay);
-            o[2] = az + t * (r[2] - az);
-            o[3] = aw + t * (r[3] - aw);
-        }
-        static slerpQuaternionArray(a, Offset1, b, Offset2, t, out, Offset3) {
-            var ax = a[Offset1 + 0], ay = a[Offset1 + 1], az = a[Offset1 + 2], aw = a[Offset1 + 3], bx = b[Offset2 + 0], by = b[Offset2 + 1], bz = b[Offset2 + 2], bw = b[Offset2 + 3];
-            var omega, cosom, sinom, scale0, scale1;
-            cosom = ax * bx + ay * by + az * bz + aw * bw;
-            if (cosom < 0.0) {
-                cosom = -cosom;
-                bx = -bx;
-                by = -by;
-                bz = -bz;
-                bw = -bw;
-            }
-            if ((1.0 - cosom) > 0.000001) {
-                omega = Math.acos(cosom);
-                sinom = Math.sin(omega);
-                scale0 = Math.sin((1.0 - t) * omega) / sinom;
-                scale1 = Math.sin(t * omega) / sinom;
-            }
-            else {
-                scale0 = 1.0 - t;
-                scale1 = t;
-            }
-            out[Offset3 + 0] = scale0 * ax + scale1 * bx;
-            out[Offset3 + 1] = scale0 * ay + scale1 * by;
-            out[Offset3 + 2] = scale0 * az + scale1 * bz;
-            out[Offset3 + 3] = scale0 * aw + scale1 * bw;
-            return out;
-        }
-        static getRotation(x0, y0, x1, y1) {
-            return Math.atan2(y1 - y0, x1 - x0) / Math.PI * 180;
-        }
-        static sortBigFirst(a, b) {
-            if (a == b)
-                return 0;
-            return b > a ? 1 : -1;
-        }
-        static sortSmallFirst(a, b) {
-            if (a == b)
-                return 0;
-            return b > a ? -1 : 1;
-        }
-        static sortNumBigFirst(a, b) {
-            return parseFloat(b) - parseFloat(a);
-        }
-        static sortNumSmallFirst(a, b) {
-            return parseFloat(a) - parseFloat(b);
-        }
-        static sortByKey(key, bigFirst = false, forceNum = true) {
-            var _sortFun;
-            if (bigFirst) {
-                _sortFun = forceNum ? MathUtil.sortNumBigFirst : MathUtil.sortBigFirst;
-            }
-            else {
-                _sortFun = forceNum ? MathUtil.sortNumSmallFirst : MathUtil.sortSmallFirst;
-            }
-            return function (a, b) {
-                return _sortFun(a[key], b[key]);
-            };
-        }
-    }
-
-    class FrameAnimation extends AnimationBase {
-        static _sortIndexFun(objpre, objnext) {
-            return objpre.index - objnext.index;
-        }
-        constructor() {
-            super();
-            if (FrameAnimation._sortIndexFun === undefined) {
-                FrameAnimation._sortIndexFun = MathUtil.sortByKey("index", false, true);
-            }
-        }
-        _setUp(targetDic, animationData) {
-            this._targetDic = targetDic;
-            this._animationData = animationData;
-            this.interval = 1000 / animationData.frameRate;
-            if (animationData.parsed) {
-                this._count = animationData.count;
-                this._labels = animationData.labels;
-                this._usedFrames = animationData.animationNewFrames;
-            }
-            else {
-                this._usedFrames = [];
-                this._calculateDatas();
-                animationData.parsed = true;
-                animationData.labels = this._labels;
-                animationData.count = this._count;
-                animationData.animationNewFrames = this._usedFrames;
-            }
-        }
-        clear() {
-            super.clear();
-            this._targetDic = null;
-            this._animationData = null;
-            return this;
-        }
-        _displayToIndex(value) {
-            if (!this._animationData)
-                return;
-            if (value < 0)
-                value = 0;
-            if (value > this._count)
-                value = this._count;
-            var nodes = this._animationData.nodes, i, len = nodes.length;
-            for (i = 0; i < len; i++) {
-                this._displayNodeToFrame(nodes[i], value);
-            }
-        }
-        _displayNodeToFrame(node, frame, targetDic = null) {
-            if (!targetDic)
-                targetDic = this._targetDic;
-            var target = targetDic[node.target];
-            if (!target) {
-                return;
-            }
-            var frames = node.frames, key, propFrames, value;
-            var keys = node.keys, i, len = keys.length;
-            for (i = 0; i < len; i++) {
-                key = keys[i];
-                propFrames = frames[key];
-                if (propFrames.length > frame) {
-                    value = propFrames[frame];
-                }
-                else {
-                    value = propFrames[propFrames.length - 1];
-                }
-                target[key] = value;
-            }
-            var funkeys = node.funkeys;
-            len = funkeys.length;
-            var funFrames;
-            if (len == 0)
-                return;
-            for (i = 0; i < len; i++) {
-                key = funkeys[i];
-                funFrames = frames[key];
-                if (funFrames[frame] !== undefined) {
-                    target[key] && target[key].apply(target, funFrames[frame]);
-                }
-            }
-        }
-        _calculateDatas() {
-            if (!this._animationData)
-                return;
-            var nodes = this._animationData.nodes, i, len = nodes.length, tNode;
-            this._count = 0;
-            for (i = 0; i < len; i++) {
-                tNode = nodes[i];
-                this._calculateKeyFrames(tNode);
-            }
-            this._count += 1;
-        }
-        _calculateKeyFrames(node) {
-            var keyFrames = node.keyframes, key, tKeyFrames, target = node.target;
-            if (!node.frames)
-                node.frames = {};
-            if (!node.keys)
-                node.keys = [];
-            else
-                node.keys.length = 0;
-            if (!node.funkeys)
-                node.funkeys = [];
-            else
-                node.funkeys.length = 0;
-            if (!node.initValues)
-                node.initValues = {};
-            for (key in keyFrames) {
-                var isFun = key.indexOf("()") != -1;
-                tKeyFrames = keyFrames[key];
-                if (isFun)
-                    key = key.substr(0, key.length - 2);
-                if (!node.frames[key]) {
-                    node.frames[key] = [];
-                }
-                if (!isFun) {
-                    if (this._targetDic && this._targetDic[target]) {
-                        node.initValues[key] = this._targetDic[target][key];
-                    }
-                    tKeyFrames.sort(FrameAnimation._sortIndexFun);
-                    node.keys.push(key);
-                    this._calculateNodePropFrames(tKeyFrames, node.frames[key], key, target);
-                }
-                else {
-                    node.funkeys.push(key);
-                    var map = node.frames[key];
-                    for (var i = 0; i < tKeyFrames.length; i++) {
-                        var temp = tKeyFrames[i];
-                        map[temp.index] = temp.value;
-                        if (temp.index > this._count)
-                            this._count = temp.index;
-                    }
-                }
-            }
-        }
-        resetNodes() {
-            if (!this._targetDic)
-                return;
-            if (!this._animationData)
-                return;
-            var nodes = this._animationData.nodes, i, len = nodes.length;
-            var tNode;
-            var initValues;
-            for (i = 0; i < len; i++) {
-                tNode = nodes[i];
-                initValues = tNode.initValues;
-                if (!initValues)
-                    continue;
-                var target = this._targetDic[tNode.target];
-                if (!target)
-                    continue;
-                var key;
-                for (key in initValues) {
-                    target[key] = initValues[key];
-                }
-            }
-        }
-        _calculateNodePropFrames(keyframes, frames, key, target) {
-            var i, len = keyframes.length - 1;
-            frames.length = keyframes[len].index + 1;
-            for (i = 0; i < len; i++) {
-                this._dealKeyFrame(keyframes[i]);
-                this._calculateFrameValues(keyframes[i], keyframes[i + 1], frames);
-            }
-            if (len == 0) {
-                frames[0] = keyframes[0].value;
-                if (this._usedFrames)
-                    this._usedFrames[keyframes[0].index] = true;
-            }
-            this._dealKeyFrame(keyframes[i]);
-        }
-        _dealKeyFrame(keyFrame) {
-            if (keyFrame.label && keyFrame.label != "")
-                this.addLabel(keyFrame.label, keyFrame.index);
-        }
-        _calculateFrameValues(startFrame, endFrame, result) {
-            var i, easeFun;
-            var start = startFrame.index, end = endFrame.index;
-            var startValue = startFrame.value;
-            var dValue = endFrame.value - startFrame.value;
-            var dLen = end - start;
-            var frames = this._usedFrames;
-            if (end > this._count)
-                this._count = end;
-            if (startFrame.tween) {
-                easeFun = Ease[startFrame.tweenMethod];
-                if (easeFun == null)
-                    easeFun = Ease.linearNone;
-                for (i = start; i < end; i++) {
-                    result[i] = easeFun(i - start, startValue, dValue, dLen);
-                    if (frames)
-                        frames[i] = true;
-                }
-            }
-            else {
-                for (i = start; i < end; i++) {
-                    result[i] = startValue;
-                }
-            }
-            if (frames) {
-                frames[startFrame.index] = true;
-                frames[endFrame.index] = true;
-            }
-            result[endFrame.index] = endFrame.value;
-        }
-    }
-
-    class GraphicAnimation extends FrameAnimation {
-        constructor() {
-            super(...arguments);
-            this._nodeIDAniDic = {};
-        }
-        _parseNodeList(uiView) {
-            if (!this._nodeList)
-                this._nodeList = [];
-            this._nodeDefaultProps[uiView.compId] = uiView.props;
-            if (uiView.compId)
-                this._nodeList.push(uiView.compId);
-            var childs = uiView.child;
-            if (childs) {
-                var i, len = childs.length;
-                for (i = 0; i < len; i++) {
-                    this._parseNodeList(childs[i]);
-                }
-            }
-        }
-        _calGraphicData(aniData) {
-            this._setUp(null, aniData);
-            this._createGraphicData();
-            if (this._nodeIDAniDic) {
-                var key;
-                for (key in this._nodeIDAniDic) {
-                    this._nodeIDAniDic[key] = null;
-                }
-            }
-        }
-        _createGraphicData() {
-            var gList = [];
-            var i, len = this.count;
-            var animationDataNew = this._usedFrames;
-            if (!animationDataNew)
-                animationDataNew = [];
-            var preGraphic;
-            for (i = 0; i < len; i++) {
-                if (animationDataNew[i] || !preGraphic) {
-                    preGraphic = this._createFrameGraphic(i);
-                }
-                gList.push(preGraphic);
-            }
-            this._gList = gList;
-        }
-        _createFrameGraphic(frame) {
-            var g = new Graphics();
-            if (!GraphicAnimation._rootMatrix)
-                GraphicAnimation._rootMatrix = new Matrix();
-            this._updateNodeGraphic(this._rootNode, frame, GraphicAnimation._rootMatrix, g);
-            return g;
-        }
-        _updateNodeGraphic(node, frame, parentTransfrom, g, alpha = 1) {
-            var tNodeG;
-            tNodeG = this._nodeGDic[node.compId] = this._getNodeGraphicData(node.compId, frame, this._nodeGDic[node.compId]);
-            if (!tNodeG.resultTransform)
-                tNodeG.resultTransform = new Matrix();
-            var tResultTransform;
-            tResultTransform = tNodeG.resultTransform;
-            Matrix.mul(tNodeG.transform, parentTransfrom, tResultTransform);
-            var tTex;
-            var tGraphicAlpha = tNodeG.alpha * alpha;
-            if (tGraphicAlpha < 0.01)
-                return;
-            if (tNodeG.skin) {
-                tTex = this._getTextureByUrl(tNodeG.skin);
-                if (tTex) {
-                    if (tResultTransform._checkTransform()) {
-                        g.drawTexture(tTex, 0, 0, tNodeG.width, tNodeG.height, tResultTransform, tGraphicAlpha);
-                        tNodeG.resultTransform = null;
-                    }
-                    else {
-                        g.drawTexture(tTex, tResultTransform.tx, tResultTransform.ty, tNodeG.width, tNodeG.height, null, tGraphicAlpha);
-                    }
-                }
-            }
-            var childs = node.child;
-            if (!childs)
-                return;
-            var i, len;
-            len = childs.length;
-            for (i = 0; i < len; i++) {
-                this._updateNodeGraphic(childs[i], frame, tResultTransform, g, tGraphicAlpha);
-            }
-        }
-        _updateNoChilds(tNodeG, g) {
-            if (!tNodeG.skin)
-                return;
-            var tTex = this._getTextureByUrl(tNodeG.skin);
-            if (!tTex)
-                return;
-            var tTransform = tNodeG.transform;
-            tTransform._checkTransform();
-            var onlyTranslate;
-            onlyTranslate = !tTransform._bTransform;
-            if (!onlyTranslate) {
-                g.drawTexture(tTex, 0, 0, tNodeG.width, tNodeG.height, tTransform.clone(), tNodeG.alpha);
-            }
-            else {
-                g.drawTexture(tTex, tTransform.tx, tTransform.ty, tNodeG.width, tNodeG.height, null, tNodeG.alpha);
-            }
-        }
-        _updateNodeGraphic2(node, frame, g) {
-            var tNodeG;
-            tNodeG = this._nodeGDic[node.compId] = this._getNodeGraphicData(node.compId, frame, this._nodeGDic[node.compId]);
-            if (!node.child) {
-                this._updateNoChilds(tNodeG, g);
-                return;
-            }
-            var tTransform = tNodeG.transform;
-            tTransform._checkTransform();
-            var onlyTranslate;
-            onlyTranslate = !tTransform._bTransform;
-            var hasTrans;
-            hasTrans = onlyTranslate && (tTransform.tx != 0 || tTransform.ty != 0);
-            var ifSave;
-            ifSave = (tTransform._bTransform) || tNodeG.alpha != 1;
-            if (ifSave)
-                g.save();
-            if (tNodeG.alpha != 1)
-                g.alpha(tNodeG.alpha);
-            if (!onlyTranslate)
-                g.transform(tTransform.clone());
-            else if (hasTrans)
-                g.translate(tTransform.tx, tTransform.ty);
-            var childs = node.child;
-            var tTex;
-            if (tNodeG.skin) {
-                tTex = this._getTextureByUrl(tNodeG.skin);
-                if (tTex) {
-                    g.drawImage(tTex, 0, 0, tNodeG.width, tNodeG.height);
-                }
-            }
-            if (childs) {
-                var i, len;
-                len = childs.length;
-                for (i = 0; i < len; i++) {
-                    this._updateNodeGraphic2(childs[i], frame, g);
-                }
-            }
-            if (ifSave) {
-                g.restore();
-            }
-            else {
-                if (!onlyTranslate) {
-                    g.transform(tTransform.clone().invert());
-                }
-                else if (hasTrans) {
-                    g.translate(-tTransform.tx, -tTransform.ty);
-                }
-            }
-        }
-        _calculateKeyFrames(node) {
-            super._calculateKeyFrames(node);
-            this._nodeIDAniDic[node.target] = node;
-        }
-        getNodeDataByID(nodeID) {
-            return this._nodeIDAniDic[nodeID];
-        }
-        _getParams(obj, params, frame, obj2) {
-            var rst = GraphicAnimation._temParam;
-            rst.length = params.length;
-            var i, len = params.length;
-            for (i = 0; i < len; i++) {
-                rst[i] = this._getObjVar(obj, params[i][0], frame, params[i][1], obj2);
-            }
-            return rst;
-        }
-        _getObjVar(obj, key, frame, noValue, obj2) {
-            if (key in obj) {
-                var vArr = obj[key];
-                if (frame >= vArr.length)
-                    frame = vArr.length - 1;
-                return obj[key][frame];
-            }
-            if (key in obj2) {
-                return obj2[key];
-            }
-            return noValue;
-        }
-        _getNodeGraphicData(nodeID, frame, rst) {
-            if (!rst)
-                rst = new GraphicNode();
-            if (!rst.transform) {
-                rst.transform = new Matrix();
-            }
-            else {
-                rst.transform.identity();
-            }
-            var node = this.getNodeDataByID(nodeID);
-            if (!node)
-                return rst;
-            var frameData = node.frames;
-            var params = this._getParams(frameData, GraphicAnimation._drawTextureCmd, frame, this._nodeDefaultProps[nodeID]);
-            var url = params[0];
-            var width, height;
-            var px = params[5], py = params[6];
-            var aX = params[13], aY = params[14];
-            var sx = params[7], sy = params[8];
-            var rotate = params[9];
-            var skewX = params[11], skewY = params[12];
-            width = params[3];
-            height = params[4];
-            if (width == 0 || height == 0)
-                url = null;
-            if (width == -1)
-                width = 0;
-            if (height == -1)
-                height = 0;
-            var tex;
-            rst.skin = url;
-            rst.width = width;
-            rst.height = height;
-            if (url) {
-                tex = this._getTextureByUrl(url);
-                if (tex) {
-                    if (!width)
-                        width = tex.sourceWidth;
-                    if (!height)
-                        height = tex.sourceHeight;
-                }
-                else {
-                    console.warn("lost skin:", url, ",you may load pics first");
-                }
-            }
-            rst.alpha = params[10];
-            var m = rst.transform;
-            if (aX != 0) {
-                px = aX * width;
-            }
-            if (aY != 0) {
-                py = aY * height;
-            }
-            if (px != 0 || py != 0) {
-                m.translate(-px, -py);
-            }
-            var tm = null;
-            if (rotate || sx !== 1 || sy !== 1 || skewX || skewY) {
-                tm = GraphicAnimation._tempMt;
-                tm.identity();
-                tm._bTransform = true;
-                var skx = (rotate - skewX) * 0.0174532922222222;
-                var sky = (rotate + skewY) * 0.0174532922222222;
-                var cx = Math.cos(sky);
-                var ssx = Math.sin(sky);
-                var cy = Math.sin(skx);
-                var ssy = Math.cos(skx);
-                tm.a = sx * cx;
-                tm.b = sx * ssx;
-                tm.c = -sy * cy;
-                tm.d = sy * ssy;
-                tm.tx = tm.ty = 0;
-            }
-            if (tm) {
-                m = Matrix.mul(m, tm, m);
-            }
-            m.translate(params[1], params[2]);
-            return rst;
-        }
-        _getTextureByUrl(url) {
-            return Loader.getRes(url);
-        }
-        setAniData(uiView, aniName = null) {
-            if (uiView.animations) {
-                this._nodeDefaultProps = {};
-                this._nodeGDic = {};
-                if (this._nodeList)
-                    this._nodeList.length = 0;
-                this._rootNode = uiView;
-                this._parseNodeList(uiView);
-                var aniDic = {};
-                var anilist = [];
-                var animations = uiView.animations;
-                var i, len = animations.length;
-                var tAniO;
-                for (i = 0; i < len; i++) {
-                    tAniO = animations[i];
-                    this._labels = null;
-                    if (aniName && aniName != tAniO.name) {
-                        continue;
-                    }
-                    if (!tAniO)
-                        continue;
-                    try {
-                        this._calGraphicData(tAniO);
-                    }
-                    catch (e) {
-                        console.warn("parse animation fail:" + tAniO.name + ",empty animation created");
-                        this._gList = [];
-                    }
-                    var frameO = {};
-                    frameO.interval = 1000 / tAniO["frameRate"];
-                    frameO.frames = this._gList;
-                    frameO.labels = this._labels;
-                    frameO.name = tAniO.name;
-                    anilist.push(frameO);
-                    aniDic[tAniO.name] = frameO;
-                }
-                this.animationList = anilist;
-                this.animationDic = aniDic;
-            }
-            GraphicAnimation._temParam.length = 0;
-        }
-        parseByData(aniData) {
-            var rootNode, aniO;
-            rootNode = aniData.nodeRoot;
-            aniO = aniData.aniO;
-            delete aniData.nodeRoot;
-            delete aniData.aniO;
-            this._nodeDefaultProps = {};
-            this._nodeGDic = {};
-            if (this._nodeList)
-                this._nodeList.length = 0;
-            this._rootNode = rootNode;
-            this._parseNodeList(rootNode);
-            this._labels = null;
-            try {
-                this._calGraphicData(aniO);
-            }
-            catch (e) {
-                console.warn("parse animation fail:" + aniO.name + ",empty animation created");
-                this._gList = [];
-            }
-            var frameO = aniData;
-            frameO.interval = 1000 / aniO["frameRate"];
-            frameO.frames = this._gList;
-            frameO.labels = this._labels;
-            frameO.name = aniO.name;
-            return frameO;
-        }
-        setUpAniData(uiView) {
-            if (uiView.animations) {
-                var aniDic = {};
-                var anilist = [];
-                var animations = uiView.animations;
-                var i, len = animations.length;
-                var tAniO;
-                for (i = 0; i < len; i++) {
-                    tAniO = animations[i];
-                    if (!tAniO)
-                        continue;
-                    var frameO = {};
-                    frameO.name = tAniO.name;
-                    frameO.aniO = tAniO;
-                    frameO.nodeRoot = uiView;
-                    anilist.push(frameO);
-                    aniDic[tAniO.name] = frameO;
-                }
-                this.animationList = anilist;
-                this.animationDic = aniDic;
-            }
-        }
-        _clear() {
-            this.animationList = null;
-            this.animationDic = null;
-            this._gList = null;
-            this._nodeGDic = null;
-        }
-        static parseAnimationByData(animationObject) {
-            if (!GraphicAnimation._I)
-                GraphicAnimation._I = new GraphicAnimation();
-            var rst;
-            rst = GraphicAnimation._I.parseByData(animationObject);
-            GraphicAnimation._I._clear();
-            return rst;
-        }
-        static parseAnimationData(aniData) {
-            if (!GraphicAnimation._I)
-                GraphicAnimation._I = new GraphicAnimation();
-            GraphicAnimation._I.setUpAniData(aniData);
-            var rst;
-            rst = {};
-            rst.animationList = GraphicAnimation._I.animationList;
-            rst.animationDic = GraphicAnimation._I.animationDic;
-            GraphicAnimation._I._clear();
-            return rst;
-        }
-    }
-    GraphicAnimation._drawTextureCmd = [["skin", null], ["x", 0], ["y", 0], ["width", -1], ["height", -1], ["pivotX", 0], ["pivotY", 0], ["scaleX", 1], ["scaleY", 1], ["rotation", 0], ["alpha", 1], ["skewX", 0], ["skewY", 0], ["anchorX", 0], ["anchorY", 0]];
-    GraphicAnimation._temParam = [];
-    GraphicAnimation._tempMt = new Matrix();
-    class GraphicNode {
-        constructor() {
-            this.alpha = 1;
-        }
-    }
-
-    class Animation extends AnimationBase {
-        constructor() {
-            super();
-            this._setControlNode(this);
-        }
-        destroy(destroyChild = true) {
-            this.stop();
-            super.destroy(destroyChild);
-            this._frames = null;
-            this._labels = null;
-        }
-        play(start = 0, loop = true, name = "") {
-            if (name)
-                this._setFramesFromCache(name, true);
-            super.play(start, loop, name);
-        }
-        _setFramesFromCache(name, showWarn = false) {
-            if (this._url)
-                name = this._url + "#" + name;
-            if (name && Animation.framesMap[name]) {
-                var tAniO = Animation.framesMap[name];
-                if (tAniO instanceof Array) {
-                    this._frames = Animation.framesMap[name];
-                    this._count = this._frames.length;
-                }
-                else {
-                    if (tAniO.nodeRoot) {
-                        Animation.framesMap[name] = GraphicAnimation.parseAnimationByData(tAniO);
-                        tAniO = Animation.framesMap[name];
-                    }
-                    this._frames = tAniO.frames;
-                    this._count = this._frames.length;
-                    if (!this._frameRateChanged)
-                        this._interval = tAniO.interval;
-                    this._labels = this._copyLabels(tAniO.labels);
-                }
-                return true;
-            }
-            else {
-                if (showWarn)
-                    console.log("ani not found:", name);
-            }
-            return false;
-        }
-        _copyLabels(labels) {
-            if (!labels)
-                return null;
-            var rst;
-            rst = {};
-            var key;
-            for (key in labels) {
-                rst[key] = Utils.copyArray([], labels[key]);
-            }
-            return rst;
-        }
-        _frameLoop() {
-            if (this._visible && this._style.alpha > 0.01 && this._frames) {
-                super._frameLoop();
-            }
-        }
-        _displayToIndex(value) {
-            if (this._frames)
-                this.graphics = this._frames[value];
-        }
-        get frames() {
-            return this._frames;
-        }
-        set frames(value) {
-            this._frames = value;
-            if (value) {
-                this._count = value.length;
-                if (this._actionName)
-                    this._setFramesFromCache(this._actionName, true);
-                this.index = this._index;
-            }
-        }
-        set source(value) {
-            if (value.indexOf(".ani") > -1)
-                this.loadAnimation(value);
-            else if (value.indexOf(".json") > -1 || value.indexOf("als") > -1 || value.indexOf("atlas") > -1)
-                this.loadAtlas(value);
-            else
-                this.loadImages(value.split(","));
-        }
-        set autoAnimation(value) {
-            this.play(0, true, value);
-        }
-        set autoPlay(value) {
-            if (value)
-                this.play();
-            else
-                this.stop();
-        }
-        clear() {
-            super.clear();
-            this.stop();
-            this.graphics = null;
-            this._frames = null;
-            this._labels = null;
-            return this;
-        }
-        loadImages(urls, cacheName = "") {
-            this._url = "";
-            if (!this._setFramesFromCache(cacheName)) {
-                this.frames = Animation.framesMap[cacheName] ? Animation.framesMap[cacheName] : Animation.createFrames(urls, cacheName);
-            }
-            return this;
-        }
-        loadAtlas(url, loaded = null, cacheName = "") {
-            this._url = "";
-            var _this = this;
-            if (!_this._setFramesFromCache(cacheName)) {
-                function onLoaded(loadUrl) {
-                    if (url === loadUrl) {
-                        _this.frames = Animation.framesMap[cacheName] ? Animation.framesMap[cacheName] : Animation.createFrames(url, cacheName);
-                        if (loaded)
-                            loaded.run();
-                    }
-                }
-                if (Loader.getAtlas(url))
-                    onLoaded(url);
-                else
-                    ILaya.loader.load(url, Handler.create(null, onLoaded, [url]), null, Loader.ATLAS);
-            }
-            return this;
-        }
-        loadAnimation(url, loaded = null, atlas = null) {
-            this._url = url;
-            var _this = this;
-            if (!this._actionName)
-                this._actionName = "";
-            if (!_this._setFramesFromCache(this._actionName)) {
-                if (!atlas || Loader.getAtlas(atlas)) {
-                    this._loadAnimationData(url, loaded, atlas);
-                }
-                else {
-                    ILaya.loader.load(atlas, Handler.create(this, this._loadAnimationData, [url, loaded, atlas]), null, Loader.ATLAS);
-                }
-            }
-            else {
-                _this._setFramesFromCache(this._actionName, true);
-                this.index = 0;
-                if (loaded)
-                    loaded.run();
-            }
-            return this;
-        }
-        _loadAnimationData(url, loaded = null, atlas = null) {
-            if (atlas && !Loader.getAtlas(atlas)) {
-                console.warn("atlas load fail:" + atlas);
-                return;
-            }
-            ILaya.loader.fetch(url, "json").then(data => {
-                if (this._url !== url)
-                    return;
-                if (!data) {
-                    if (Animation.framesMap[url + "#"]) {
-                        this._setFramesFromCache(this._actionName, true);
-                        this.index = 0;
-                        this._resumePlay();
-                        if (loaded)
-                            loaded.run();
-                    }
-                    return;
-                }
-                let tAniO;
-                if (!Animation.framesMap[url + "#"]) {
-                    let aniData = GraphicAnimation.parseAnimationData(data);
-                    if (!aniData)
-                        return;
-                    let aniList = aniData.animationList;
-                    let len = aniList.length;
-                    let defaultO;
-                    for (let i = 0; i < len; i++) {
-                        tAniO = aniList[i];
-                        Animation.framesMap[url + "#" + tAniO.name] = tAniO;
-                        if (!defaultO)
-                            defaultO = tAniO;
-                    }
-                    if (defaultO) {
-                        Animation.framesMap[url + "#"] = defaultO;
-                        this._setFramesFromCache(this._actionName, true);
-                        this.index = 0;
-                    }
-                    this._resumePlay();
-                }
-                else {
-                    this._setFramesFromCache(this._actionName, true);
-                    this.index = 0;
-                    this._resumePlay();
-                }
-                if (loaded)
-                    loaded.run();
-            });
-        }
-        static createFrames(url, name) {
-            var arr;
-            if (typeof (url) == 'string') {
-                var atlas = Loader.getAtlas(url);
-                if (atlas && atlas.frames.length) {
-                    let frames = atlas.frames;
-                    arr = [];
-                    for (var i = 0, n = frames.length; i < n; i++) {
-                        var g = new Graphics();
-                        g.drawImage(frames[i], 0, 0);
-                        arr.push(g);
-                    }
-                }
-            }
-            else if (url instanceof Array) {
-                arr = [];
-                for (i = 0, n = url.length; i < n; i++) {
-                    g = new Graphics();
-                    g.loadImage(url[i], 0, 0);
-                    arr.push(g);
-                }
-            }
-            if (name)
-                Animation.framesMap[name] = arr;
-            return arr;
-        }
-        static clearCache(key) {
-            var cache = Animation.framesMap;
-            var val;
-            var key2 = key + "#";
-            for (val in cache) {
-                if (val === key || val.indexOf(key2) === 0) {
-                    delete Animation.framesMap[val];
-                }
-            }
-        }
-    }
-    Animation.framesMap = {};
-
-    class BitmapFont {
-        constructor() {
-            this._fontCharDic = {};
-            this._fontWidthMap = {};
-            this._maxWidth = 0;
-            this._spaceWidth = 10;
-            this.fontSize = 12;
-            this.autoScaleSize = false;
-            this.letterSpacing = 0;
-        }
-        loadFont(path, complete) {
-            this._path = path;
-            if (!path || path.indexOf(".fnt") === -1) {
-                console.error('Bitmap font configuration information must be a ".fnt" file');
-                return;
-            }
-            ILaya.loader.load([path, path.replace(".fnt", ".png")]).then((contents) => {
-                this.parseFont(contents[0].data, contents[1]);
-                complete && complete.run();
-            });
-        }
-        parseFont(xml, texture) {
-            if (xml == null || texture == null)
-                return;
-            this._texture = texture;
-            texture._addReference();
-            let tScale = 1;
-            let tInfo = xml.getElementsByTagName("info");
-            if (!tInfo[0].getAttributeNode) {
-                return this.parseFont2(xml, texture);
-            }
-            this.fontSize = parseInt(tInfo[0].getAttributeNode("size").nodeValue);
-            let tPadding = tInfo[0].getAttributeNode("padding").nodeValue;
-            let tPaddingArray = tPadding.split(",");
-            this._padding = [parseInt(tPaddingArray[0]), parseInt(tPaddingArray[1]), parseInt(tPaddingArray[2]), parseInt(tPaddingArray[3])];
-            let chars = xml.getElementsByTagName("char");
-            for (let i = 0; i < chars.length; i++) {
-                let tAttribute = chars[i];
-                let tId = parseInt(tAttribute.getAttributeNode("id").nodeValue);
-                let xOffset = parseInt(tAttribute.getAttributeNode("xoffset").nodeValue) / tScale;
-                let yOffset = parseInt(tAttribute.getAttributeNode("yoffset").nodeValue) / tScale;
-                let xAdvance = parseInt(tAttribute.getAttributeNode("xadvance").nodeValue) / tScale;
-                let region = new Rectangle();
-                region.x = parseInt(tAttribute.getAttributeNode("x").nodeValue);
-                region.y = parseInt(tAttribute.getAttributeNode("y").nodeValue);
-                region.width = parseInt(tAttribute.getAttributeNode("width").nodeValue);
-                region.height = parseInt(tAttribute.getAttributeNode("height").nodeValue);
-                let tTexture = Texture.create(texture, region.x, region.y, region.width, region.height, xOffset, yOffset);
-                this._maxWidth = Math.max(this._maxWidth, xAdvance + this.letterSpacing);
-                this._fontCharDic[tId] = tTexture;
-                this._fontWidthMap[tId] = xAdvance;
-            }
-        }
-        parseFont2(xml, texture) {
-            if (xml == null || texture == null)
-                return;
-            this._texture = texture;
-            let tScale = 1;
-            let tInfo = xml.getElementsByTagName("info");
-            this.fontSize = parseInt(tInfo[0].attributes["size"].nodeValue);
-            let tPadding = tInfo[0].attributes["padding"].nodeValue;
-            let tPaddingArray = tPadding.split(",");
-            this._padding = [parseInt(tPaddingArray[0]), parseInt(tPaddingArray[1]), parseInt(tPaddingArray[2]), parseInt(tPaddingArray[3])];
-            let chars = xml.getElementsByTagName("char");
-            for (let i = 0; i < chars.length; i++) {
-                let tAttribute = chars[i].attributes;
-                let tId = parseInt(tAttribute["id"].nodeValue);
-                let xOffset = parseInt(tAttribute["xoffset"].nodeValue) / tScale;
-                let yOffset = parseInt(tAttribute["yoffset"].nodeValue) / tScale;
-                let xAdvance = parseInt(tAttribute["xadvance"].nodeValue) / tScale;
-                let region = new Rectangle();
-                region.x = parseInt(tAttribute["x"].nodeValue);
-                region.y = parseInt(tAttribute["y"].nodeValue);
-                region.width = parseInt(tAttribute["width"].nodeValue);
-                region.height = parseInt(tAttribute["height"].nodeValue);
-                let tTexture = Texture.create(texture, region.x, region.y, region.width, region.height, xOffset, yOffset);
-                this._maxWidth = Math.max(this._maxWidth, xAdvance + this.letterSpacing);
-                this._fontCharDic[tId] = tTexture;
-                this._fontWidthMap[tId] = xAdvance;
-            }
-        }
-        getCharTexture(char) {
-            return this._fontCharDic[char.charCodeAt(0)];
-        }
-        destroy() {
-            if (this._texture) {
-                for (let k in this._fontCharDic) {
-                    this._fontCharDic[k].destroy();
-                }
-                this._texture._removeReference();
-                this._fontCharDic = null;
-                this._fontWidthMap = null;
-                this._texture = null;
-                this._padding = null;
-            }
-        }
-        setSpaceWidth(spaceWidth) {
-            this._spaceWidth = spaceWidth;
-        }
-        getCharWidth(char) {
-            let code = char.charCodeAt(0);
-            if (this._fontWidthMap[code])
-                return this._fontWidthMap[code] + this.letterSpacing;
-            if (char === " ")
-                return this._spaceWidth + this.letterSpacing;
-            return 0;
-        }
-        getTextWidth(text) {
-            let tWidth = 0;
-            for (let i = 0, n = text.length; i < n; i++) {
-                tWidth += this.getCharWidth(text.charAt(i));
-            }
-            return tWidth;
-        }
-        getMaxWidth() {
-            return this._maxWidth;
-        }
-        getMaxHeight() {
-            return this.fontSize;
-        }
-        _drawText(text, sprite, drawX, drawY, align, width) {
-            let tWidth = this.getTextWidth(text);
-            let tTexture;
-            let dx = 0;
-            align === "center" && (dx = (width - tWidth) / 2);
-            align === "right" && (dx = (width - tWidth));
-            let tx = 0;
-            for (let i = 0, n = text.length; i < n; i++) {
-                tTexture = this.getCharTexture(text.charAt(i));
-                if (tTexture) {
-                    sprite.graphics.drawImage(tTexture, drawX + tx + dx, drawY);
-                    tx += this.getCharWidth(text.charAt(i));
-                }
-            }
-        }
-    }
-
-    class EffectAnimation extends FrameAnimation {
-        constructor() {
-            super(...arguments);
-            this._initData = {};
-        }
-        set target(v) {
-            if (this._target)
-                this._target.off(EffectAnimation.EFFECT_BEGIN, this, this._onOtherBegin);
-            this._target = v;
-            if (this._target)
-                this._target.on(EffectAnimation.EFFECT_BEGIN, this, this._onOtherBegin);
-            this._addEvent();
-        }
-        get target() {
-            return this._target;
-        }
-        _onOtherBegin(effect) {
-            if (effect === this)
-                return;
-            this.stop();
-        }
-        set playEvent(event) {
-            this._playEvent = event;
-            if (!event)
-                return;
-            this._addEvent();
-        }
-        _addEvent() {
-            if (!this._target || !this._playEvent)
-                return;
-            this._setControlNode(this._target);
-            this._target.on(this._playEvent, this, this._onPlayAction);
-        }
-        _onPlayAction() {
-            this.play(0, false);
-        }
-        play(start = 0, loop = true, name = "") {
-            if (!this._target)
-                return;
-            this._target.event(EffectAnimation.EFFECT_BEGIN, [this]);
-            this._recordInitData();
-            super.play(start, loop, name);
-        }
-        _recordInitData() {
-            if (!this._aniKeys)
-                return;
-            var i, len;
-            len = this._aniKeys.length;
-            var key;
-            for (i = 0; i < len; i++) {
-                key = this._aniKeys[i];
-                this._initData[key] = this._target[key];
-            }
-        }
-        set effectClass(classStr) {
-            this._effectClass = ClassUtils.getClass(classStr);
-            if (this._effectClass) {
-                var uiData = this._effectClass["uiView"];
-                if (uiData) {
-                    var aniData = uiData["animations"];
-                    if (aniData && aniData[0]) {
-                        var data = aniData[0];
-                        this._setUp({}, data);
-                        if (data.nodes && data.nodes[0]) {
-                            this._aniKeys = data.nodes[0].keys;
-                        }
-                    }
-                }
-            }
-        }
-        set effectData(uiData) {
-            if (uiData) {
-                var aniData = uiData["animations"];
-                if (aniData && aniData[0]) {
-                    var data = aniData[0];
-                    this._setUp({}, data);
-                    if (data.nodes && data.nodes[0]) {
-                        this._aniKeys = data.nodes[0].keys;
-                    }
-                }
-            }
-        }
-        _displayToIndex(value) {
-            if (!this._animationData)
-                return;
-            if (value < 0)
-                value = 0;
-            if (value > this._count)
-                value = this._count;
-            var nodes = this._animationData.nodes, i, len = nodes.length;
-            len = len > 1 ? 1 : len;
-            for (i = 0; i < len; i++) {
-                this._displayNodeToFrame(nodes[i], value);
-            }
-        }
-        _displayNodeToFrame(node, frame, targetDic = null) {
-            if (!this._target)
-                return;
-            var target = this._target;
-            var frames = node.frames, key, propFrames, value;
-            var keys = node.keys, i, len = keys.length;
-            var secondFrames = node.secondFrames;
-            var tSecondFrame;
-            var easeFun;
-            var tKeyFrames;
-            var startFrame;
-            var endFrame;
-            for (i = 0; i < len; i++) {
-                key = keys[i];
-                propFrames = frames[key];
-                tSecondFrame = secondFrames[key];
-                if (tSecondFrame == -1) {
-                    value = this._initData[key];
-                }
-                else {
-                    if (frame < tSecondFrame) {
-                        tKeyFrames = node.keyframes[key];
-                        startFrame = tKeyFrames[0];
-                        if (startFrame.tween) {
-                            easeFun = Ease[startFrame.tweenMethod];
-                            if (easeFun == null)
-                                easeFun = Ease.linearNone;
-                            endFrame = tKeyFrames[1];
-                            value = easeFun(frame, this._initData[key], endFrame.value - this._initData[key], endFrame.index);
-                        }
-                        else {
-                            value = this._initData[key];
-                        }
-                    }
-                    else {
-                        if (propFrames.length > frame)
-                            value = propFrames[frame];
-                        else
-                            value = propFrames[propFrames.length - 1];
-                    }
-                }
-                target[key] = value;
-            }
-        }
-        _calculateKeyFrames(node) {
-            super._calculateKeyFrames(node);
-            var keyFrames = node.keyframes, key, tKeyFrames; node.target;
-            var secondFrames = {};
-            node.secondFrames = secondFrames;
-            for (key in keyFrames) {
-                tKeyFrames = keyFrames[key];
-                if (tKeyFrames.length <= 1)
-                    secondFrames[key] = -1;
-                else
-                    secondFrames[key] = tKeyFrames[1].index;
-            }
-        }
-    }
-    EffectAnimation.EFFECT_BEGIN = "effectbegin";
 
     class TextStyle extends SpriteStyle {
         constructor() {
@@ -20585,7 +18058,7 @@ window.Laya = (function (exports) {
         changeText(text) {
             if (this._text !== text) {
                 this.lang(text + "");
-                if (this._graphics && this._graphics.replaceText(this._text));
+                if (this._graphics && this._graphics.replaceText(this._text)) ;
                 else {
                     this.typeset();
                 }
@@ -21446,20 +18919,6 @@ window.Laya = (function (exports) {
     }
 
     class WebGLInternalTex extends GLObject {
-        get mipmap() {
-            return this._mipmap;
-        }
-        get mipmapCount() {
-            return this._mipmapCount;
-        }
-        get gpuMemory() {
-            return this._gpuMemory;
-        }
-        set gpuMemory(value) {
-            this._gpuMemory = value;
-            this._engine._addStatisticsInfo(exports.RenderStatisticsInfo.GPUMemory, this._gpuMemory);
-            this._engine._addStatisticsInfo(exports.RenderStatisticsInfo.TextureMemeory, this._gpuMemory);
-        }
         constructor(engine, target, width, height, dimension, mipmap, useSRGBLoader, gammaCorrection) {
             super(engine);
             this._gpuMemory = 0;
@@ -21482,6 +18941,22 @@ window.Laya = (function (exports) {
             this.wrapV = exports.WrapMode.Repeat;
             this.wrapW = exports.WrapMode.Repeat;
             this.anisoLevel = 4;
+        }
+        get mipmap() {
+            return this._mipmap;
+        }
+        get mipmapCount() {
+            return this._mipmapCount;
+        }
+        get gpuMemory() {
+            return this._gpuMemory;
+        }
+        set gpuMemory(value) {
+            this._engine._addStatisticsInfo(exports.RenderStatisticsInfo.GPUMemory, -this._gpuMemory);
+            this._engine._addStatisticsInfo(exports.RenderStatisticsInfo.TextureMemeory, -this._gpuMemory);
+            this._gpuMemory = value;
+            this._engine._addStatisticsInfo(exports.RenderStatisticsInfo.GPUMemory, this._gpuMemory);
+            this._engine._addStatisticsInfo(exports.RenderStatisticsInfo.TextureMemeory, this._gpuMemory);
         }
         get filterMode() {
             return this._filterMode;
@@ -21633,14 +19108,6 @@ window.Laya = (function (exports) {
     }
 
     class WebGLInternalRT extends GLObject {
-        get gpuMemory() {
-            return this._gpuMemory;
-        }
-        set gpuMemory(value) {
-            this._gpuMemory = value;
-            this._engine._addStatisticsInfo(exports.RenderStatisticsInfo.GPUMemory, this._gpuMemory);
-            this._engine._addStatisticsInfo(exports.RenderStatisticsInfo.RenderTextureMemory, this._gpuMemory);
-        }
         constructor(engine, colorFormat, depthStencilFormat, isCube, generateMipmap, samples) {
             super(engine);
             this._gpuMemory = 0;
@@ -21655,6 +19122,14 @@ window.Laya = (function (exports) {
             if (samples > 1) {
                 this._msaaFramebuffer = this._gl.createFramebuffer();
             }
+        }
+        get gpuMemory() {
+            return this._gpuMemory;
+        }
+        set gpuMemory(value) {
+            this._gpuMemory = value;
+            this._engine._addStatisticsInfo(exports.RenderStatisticsInfo.GPUMemory, this._gpuMemory);
+            this._engine._addStatisticsInfo(exports.RenderStatisticsInfo.RenderTextureMemory, this._gpuMemory);
         }
         dispose() {
             this._textures.forEach(tex => {
@@ -24610,7 +22085,12 @@ window.Laya = (function (exports) {
             gl.shaderSource(shader, str);
             gl.compileShader(shader);
             if (this._engine._isShaderDebugMode && !gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-                console.warn(gl.getShaderInfoLog(shader));
+                if (!LayaEnv.isPlaying) {
+                    console.warn(gl.getShaderInfoLog(shader));
+                }
+                else {
+                    console.error(gl.getShaderInfoLog(shader));
+                }
             }
             return shader;
         }
@@ -25561,16 +23041,6 @@ window.Laya = (function (exports) {
     }
 
     class Render {
-        static customRequestAnimationFrame(value, loopFun) {
-            Render._customRequestAnimationFrame = value;
-            Render._loopFunction = loopFun;
-        }
-        static set customRenderEngine(engine) {
-            Render._customEngine = engine;
-        }
-        static get customRenderEngine() {
-            return Render._customEngine;
-        }
         constructor(width, height, mainCanv) {
             this._first = true;
             this._startTm = 0;
@@ -25610,6 +23080,16 @@ window.Laya = (function (exports) {
                     window.requestAnimationFrame(loop);
             }
             ILaya.stage.on("visibilitychange", this, this._onVisibilitychange);
+        }
+        static customRequestAnimationFrame(value, loopFun) {
+            Render._customRequestAnimationFrame = value;
+            Render._loopFunction = loopFun;
+        }
+        static set customRenderEngine(engine) {
+            Render._customEngine = engine;
+        }
+        static get customRenderEngine() {
+            return Render._customEngine;
         }
         _onVisibilitychange() {
             if (!ILaya.stage.isVisibility) {
@@ -26095,1360 +23575,6 @@ window.Laya = (function (exports) {
     Input.TYPE_SEARCH = "search";
     Input.IOS_IFRAME = false;
     Input.isAppUseNewInput = false;
-
-    class Widget extends Component {
-        constructor() {
-            super();
-            this._top = null;
-            this._bottom = null;
-            this._left = null;
-            this._right = null;
-            this._centerX = null;
-            this._centerY = null;
-            this.runInEditor = true;
-            this.hideFlags |= HideFlags.HideAndDontSave;
-        }
-        onReset() {
-            this._top = this._bottom = this._left = this._right = this._centerX = this._centerY = null;
-        }
-        _onEnable() {
-            if (this.owner.parent)
-                this._onAdded();
-            else
-                this.owner.once(Event.ADDED, this, this._onAdded);
-        }
-        _onDisable() {
-            this.owner.off(Event.ADDED, this, this._onAdded);
-            if (this.owner.parent)
-                this.owner.parent.off(Event.RESIZE, this, this._onParentResize);
-        }
-        _onAdded() {
-            if (this.owner.parent)
-                this.owner.parent.on(Event.RESIZE, this, this._onParentResize);
-            this.resetLayoutX();
-            this.resetLayoutY();
-        }
-        _onParentResize() {
-            var flagX = this.resetLayoutX();
-            var flagY = this.resetLayoutY();
-            if (flagX || flagY)
-                this.owner.event(Event.RESIZE);
-        }
-        resetLayoutX() {
-            var owner = this.owner;
-            if (!owner)
-                return false;
-            var parent = owner.parent;
-            if (parent) {
-                if (this._centerX != null) {
-                    owner.x = Math.round((parent.width - owner.displayWidth) * 0.5 + this._centerX + owner.pivotX * owner.scaleX);
-                }
-                else if (this._left != null) {
-                    owner.x = Math.round(this._left + owner.pivotX * owner.scaleX);
-                    if (this._right != null) {
-                        if (!parent._width)
-                            return false;
-                        var temp = (parent._width - this._left - this._right) / (owner.scaleX || 0.01);
-                        if (temp != owner._width) {
-                            owner.width = temp;
-                            return true;
-                        }
-                    }
-                }
-                else if (this._right != null) {
-                    owner.x = Math.round(parent.width - owner.displayWidth - this._right + owner.pivotX * owner.scaleX);
-                }
-            }
-            return false;
-        }
-        resetLayoutY() {
-            var owner = this.owner;
-            if (!owner)
-                return false;
-            var parent = owner.parent;
-            if (parent) {
-                if (this._centerY != null) {
-                    owner.y = Math.round((parent.height - owner.displayHeight) * 0.5 + this._centerY + owner.pivotY * owner.scaleY);
-                }
-                else if (this._top != null) {
-                    owner.y = Math.round(this._top + owner.pivotY * owner.scaleY);
-                    if (this._bottom != null) {
-                        if (!parent._height)
-                            return false;
-                        var temp = (parent._height - this._top - this._bottom) / (owner.scaleY || 0.01);
-                        if (temp != owner._height) {
-                            owner.height = temp;
-                            return true;
-                        }
-                    }
-                }
-                else if (this._bottom != null) {
-                    owner.y = Math.round(parent.height - owner.displayHeight - this._bottom + owner.pivotY * owner.scaleY);
-                }
-            }
-            return false;
-        }
-        resetLayout() {
-            if (this.owner) {
-                this.resetLayoutX();
-                this.resetLayoutY();
-            }
-        }
-        get top() {
-            return this._top;
-        }
-        set top(value) {
-            if (isNaN(value))
-                value = null;
-            if (this._top != value) {
-                this._top = value;
-                this.resetLayoutY();
-            }
-        }
-        get bottom() {
-            return this._bottom;
-        }
-        set bottom(value) {
-            if (isNaN(value))
-                value = null;
-            if (this._bottom != value) {
-                this._bottom = value;
-                this.resetLayoutY();
-            }
-        }
-        get left() {
-            return this._left;
-        }
-        set left(value) {
-            if (isNaN(value))
-                value = null;
-            if (this._left != value) {
-                this._left = value;
-                this.resetLayoutX();
-            }
-        }
-        get right() {
-            return this._right;
-        }
-        set right(value) {
-            if (isNaN(value))
-                value = null;
-            if (this._right != value) {
-                this._right = value;
-                this.resetLayoutX();
-            }
-        }
-        get centerX() {
-            return this._centerX;
-        }
-        set centerX(value) {
-            if (isNaN(value))
-                value = null;
-            if (this._centerX != value) {
-                this._centerX = value;
-                this.resetLayoutX();
-            }
-        }
-        get centerY() {
-            return this._centerY;
-        }
-        set centerY(value) {
-            if (isNaN(value))
-                value = null;
-            if (this._centerY != value) {
-                this._centerY = value;
-                this.resetLayoutY();
-            }
-        }
-    }
-    Widget.EMPTY = null;
-    Widget.EMPTY = new Widget();
-
-    const _rect = new Rectangle();
-    const _ptPoint = new Point();
-    class HitArea {
-        contains(x, y, sp) {
-            if (!HitArea._isHitGraphic(x, y, sp, this._hit))
-                return false;
-            return !HitArea._isHitGraphic(x, y, sp, this._unHit);
-        }
-        static _isHitGraphic(x, y, sp, graphic) {
-            if (!graphic)
-                return false;
-            let cmds = graphic.cmds;
-            if (cmds.length == 0)
-                return false;
-            let len = cmds.length;
-            for (let i = 0; i < len; i++) {
-                let cmd = cmds[i];
-                if (!cmd)
-                    continue;
-                switch (cmd.cmdID) {
-                    case "Translate":
-                        x -= cmd.tx;
-                        y -= cmd.ty;
-                }
-                if (HitArea._isHitCmd(x, y, sp, cmd))
-                    return true;
-            }
-            return false;
-        }
-        static _isHitCmd(x, y, sp, cmd) {
-            if (!cmd)
-                return false;
-            var rst = false;
-            switch (cmd.cmdID) {
-                case "DrawRect":
-                    if (cmd.percent)
-                        _rect.setTo(cmd.x * sp.width, cmd.y * sp.height, cmd.width * sp.width, cmd.height * sp.height);
-                    else
-                        _rect.setTo(cmd.x, cmd.y, cmd.width, cmd.height);
-                    rst = _rect.contains(x, y);
-                    break;
-                case "DrawCircle":
-                    let r = cmd.radius;
-                    var d;
-                    if (cmd.percent) {
-                        x -= cmd.x * sp.width;
-                        y -= cmd.y * sp.height;
-                        r *= sp.width;
-                    }
-                    else {
-                        x -= cmd.x;
-                        y -= cmd.y;
-                    }
-                    d = x * x + y * y;
-                    rst = d < r * r;
-                    break;
-                case "DrawPoly":
-                    x -= cmd.x;
-                    y -= cmd.y;
-                    rst = HitArea._ptInPolygon(x, y, cmd.points);
-                    break;
-            }
-            return rst;
-        }
-        static _ptInPolygon(x, y, areaPoints) {
-            var p = _ptPoint;
-            p.setTo(x, y);
-            var nCross = 0;
-            var p1x, p1y, p2x, p2y;
-            var len;
-            len = areaPoints.length;
-            for (var i = 0; i < len; i += 2) {
-                p1x = areaPoints[i];
-                p1y = areaPoints[i + 1];
-                p2x = areaPoints[(i + 2) % len];
-                p2y = areaPoints[(i + 3) % len];
-                if (p1y == p2y)
-                    continue;
-                if (p.y < Math.min(p1y, p2y))
-                    continue;
-                if (p.y >= Math.max(p1y, p2y))
-                    continue;
-                var tx = (p.y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x;
-                if (tx > p.x)
-                    nCross++;
-            }
-            return (nCross % 2 == 1);
-        }
-        get hit() {
-            if (!this._hit)
-                this._hit = new Graphics();
-            return this._hit;
-        }
-        set hit(value) {
-            this._hit = value;
-        }
-        get unHit() {
-            if (!this._unHit)
-                this._unHit = new Graphics();
-            return this._unHit;
-        }
-        set unHit(value) {
-            this._unHit = value;
-        }
-        onAfterDeserialize() {
-            if (LayaEnv.isPlaying) {
-                if (this._hitCmds) {
-                    this.hit.cmds = this._hitCmds;
-                    delete this._hitCmds;
-                }
-                if (this._unHitCmds) {
-                    this.unHit.cmds = this._unHitCmds;
-                    delete this._unHitCmds;
-                }
-            }
-        }
-    }
-    ClassUtils.regClass("HitArea", HitArea);
-
-    class WeakObject {
-        static __init__() {
-            WeakObject.I = new WeakObject();
-            if (!WeakObject.supportWeakMap)
-                ILaya.systemTimer.loop(WeakObject.delInterval, null, WeakObject.clearCache);
-        }
-        static clearCache() {
-            for (var i = 0, n = WeakObject._maps.length; i < n; i++) {
-                var obj = WeakObject._maps[i];
-                obj._obj = {};
-            }
-        }
-        constructor() {
-            this._obj = {};
-            WeakObject._maps.push(this);
-        }
-        set(key, value) {
-            if (key == null)
-                return;
-            if (WeakObject.supportWeakMap);
-            else {
-                if (typeof (key) == 'string' || typeof (key) == 'number') {
-                    this._obj[key] = value;
-                }
-                else {
-                    key.$_GID || (key.$_GID = Utils.getGID());
-                    this._obj[key.$_GID] = value;
-                }
-            }
-        }
-        get(key) {
-            if (key == null)
-                return null;
-            if (WeakObject.supportWeakMap);
-            else {
-                if (typeof (key) == 'string' || typeof (key) == 'number')
-                    return this._obj[key];
-                return this._obj[key.$_GID];
-            }
-        }
-        del(key) {
-            if (key == null)
-                return;
-            if (WeakObject.supportWeakMap);
-            else {
-                if (typeof (key) == 'string' || typeof (key) == 'number')
-                    delete this._obj[key];
-                else
-                    delete this._obj[this._obj.$_GID];
-            }
-        }
-        has(key) {
-            if (key == null)
-                return false;
-            if (WeakObject.supportWeakMap) {
-                return false;
-            }
-            else {
-                if (typeof (key) == 'string' || typeof (key) == 'number')
-                    return this._obj[key] != null;
-                return this._obj[this._obj.$_GID] != null;
-            }
-        }
-    }
-    WeakObject.supportWeakMap = false;
-    WeakObject.delInterval = 10 * 60 * 1000;
-    WeakObject._maps = [];
-
-    class Prefab extends Resource {
-        constructor(version) {
-            super();
-            this.version = version;
-            this._deps = [];
-        }
-        create(options, errors) {
-            if (this.json)
-                return LegacyUIParser.createByData(null, this.json);
-            else
-                return null;
-        }
-        get deps() {
-            return this._deps;
-        }
-        addDep(res) {
-            if (res instanceof Resource) {
-                res._addReference();
-                this._deps.push(res);
-                if (!LayaEnv.isPlaying && (res instanceof Prefab))
-                    res.on("obsolute", this, this.onDepObsolute);
-            }
-        }
-        addDeps(resArr) {
-            for (let res of resArr) {
-                if (res instanceof Resource) {
-                    res._addReference();
-                    this._deps.push(res);
-                    if (!LayaEnv.isPlaying && (res instanceof Prefab))
-                        res.on("obsolute", this, this.onDepObsolute);
-                }
-            }
-        }
-        _disposeResource() {
-            for (let res of this._deps) {
-                res._removeReference();
-                if (!LayaEnv.isPlaying && (res instanceof Prefab))
-                    res.off("obsolute", this, this.onDepObsolute);
-            }
-        }
-        get obsolute() {
-            return this._obsolute;
-        }
-        set obsolute(value) {
-            if (this._obsolute != value) {
-                this._obsolute = value;
-                if (value && !LayaEnv.isPlaying)
-                    this.event("obsolute");
-            }
-        }
-        onDepObsolute() {
-            this.obsolute = true;
-        }
-    }
-    var HierarchyResource = Prefab;
-
-    class PrefabImpl extends Prefab {
-        constructor(api, data, version) {
-            super(version);
-            this.api = api;
-            this.data = data;
-        }
-        create(options, errors) {
-            let ret = this.api.parse(this.data, options, errors);
-            if (Array.isArray(ret)) {
-                if (ret.length == 1) {
-                    ret[0].url = this.url;
-                }
-                return ret[0];
-            }
-            else {
-                ret.url = this.url;
-                return ret;
-            }
-        }
-    }
-
-    var _listClass;
-    var _viewClass;
-    class LegacyUIParser {
-        static parse(data, options) {
-            let root = options === null || options === void 0 ? void 0 : options.root;
-            if (!root) {
-                let runtime = (LayaEnv.isPlaying && data.props.runtime) ? data.props.runtime : data.type;
-                let clas = ClassUtils.getClass(runtime);
-                if (data.props.renderType == "instance")
-                    root = clas.instance || (clas.instance = new clas());
-                else
-                    root = new clas();
-            }
-            if (root && root._viewCreated)
-                return root;
-            return LegacyUIParser.createByData(root, data);
-        }
-        static getBindFun(value) {
-            let map = LegacyUIParser._funMap;
-            if (!map)
-                map = LegacyUIParser._funMap = new WeakObject();
-            var fun = LegacyUIParser._funMap.get(value);
-            if (fun == null) {
-                var temp = "\"" + value + "\"";
-                temp = temp.replace(/^"\${|}"$/g, "").replace(/\${/g, "\"+").replace(/}/g, "+\"");
-                var str = "(function(data){if(data==null)return;with(data){try{\nreturn " + temp + "\n}catch(e){}}})";
-                fun = window.Laya._runScript(str);
-                LegacyUIParser._funMap.set(value, fun);
-            }
-            return fun;
-        }
-        static createByData(root, uiView) {
-            var tInitTool = InitTool.create();
-            root = LegacyUIParser.createComp(uiView, root, root, null, tInitTool);
-            if ("_idMap" in root) {
-                root["_idMap"] = tInitTool._idMap;
-            }
-            if (uiView.animations) {
-                var anilist = [];
-                var animations = uiView.animations;
-                var i, len = animations.length;
-                var tAni;
-                var tAniO;
-                for (i = 0; i < len; i++) {
-                    tAni = new FrameAnimation();
-                    tAniO = animations[i];
-                    tAni._setUp(tInitTool._idMap, tAniO);
-                    root[tAniO.name] = tAni;
-                    tAni._setControlNode(root);
-                    switch (tAniO.action) {
-                        case 1:
-                            tAni.play(0, false);
-                            break;
-                        case 2:
-                            tAni.play(0, true);
-                            break;
-                    }
-                    anilist.push(tAni);
-                }
-                root._aniList = anilist;
-            }
-            if ((root instanceof Scene) && root._width > 0 && uiView.props.hitTestPrior == null && !root.mouseThrough)
-                root.hitTestPrior = true;
-            tInitTool.finish();
-            root._setBit(NodeFlags.NOT_READY, false);
-            if (root.parent && root.parent.activeInHierarchy && root.active)
-                root._processActive(true);
-            return root;
-        }
-        static createInitTool() {
-            return InitTool.create();
-        }
-        static createComp(uiView, comp = null, view = null, dataMap = null, initTool = null) {
-            comp = comp || LegacyUIParser.getCompInstance(uiView);
-            if (!comp) {
-                if (uiView.props && uiView.props.runtime)
-                    console.warn("runtime not found:" + uiView.props.runtime);
-                else
-                    console.warn("can not create:" + uiView.type);
-                return null;
-            }
-            var child = uiView.child;
-            if (child) {
-                var isList = comp instanceof (_listClass || (_listClass = ClassUtils.getClass("List")));
-                for (var i = 0, n = child.length; i < n; i++) {
-                    var node = child[i];
-                    if ('itemRender' in comp && (node.props.name == "render" || node.props.renderType === "render")) {
-                        comp["itemRender"] = node;
-                    }
-                    else if (node.type == "Graphic") {
-                        this._addGraphicsToSprite(node, comp);
-                    }
-                    else if (this._isDrawType(node.type)) {
-                        this._addGraphicToSprite(node, comp, true);
-                    }
-                    else {
-                        if (isList) {
-                            var arr = [];
-                            var tChild = LegacyUIParser.createComp(node, null, view, arr, initTool);
-                            if (arr.length)
-                                tChild["_$bindData"] = arr;
-                        }
-                        else {
-                            tChild = LegacyUIParser.createComp(node, null, view, dataMap, initTool);
-                        }
-                        if (node.type == "Script") {
-                            if (tChild instanceof Component) {
-                                comp.addComponentInstance(tChild);
-                            }
-                            else {
-                                if ("owner" in tChild) {
-                                    tChild["owner"] = comp;
-                                }
-                                else if ("target" in tChild) {
-                                    tChild["target"] = comp;
-                                }
-                            }
-                        }
-                        else if (node.props.renderType == "mask" || node.props.name == "mask") {
-                            comp.mask = tChild;
-                        }
-                        else {
-                            tChild instanceof Node && comp.addChild(tChild);
-                        }
-                    }
-                }
-            }
-            var props = uiView.props;
-            for (var prop in props) {
-                var value = props[prop];
-                if (typeof (value) == 'string' && (value.indexOf("@node:") >= 0 || value.indexOf("@Prefab:") >= 0)) {
-                    if (initTool) {
-                        initTool.addNodeRef(comp, prop, value);
-                    }
-                }
-                else
-                    LegacyUIParser.setCompValue(comp, prop, value, view, dataMap);
-            }
-            if (comp._afterInited) {
-                comp._afterInited();
-            }
-            if (uiView.compId && initTool && initTool._idMap) {
-                initTool._idMap[uiView.compId] = comp;
-            }
-            return comp;
-        }
-        static setCompValue(comp, prop, value, view = null, dataMap = null) {
-            if (typeof (value) == 'string' && value.indexOf("${") > -1) {
-                LegacyUIParser._sheet || (LegacyUIParser._sheet = ClassUtils.getClass("laya.data.Table"));
-                if (!LegacyUIParser._sheet) {
-                    console.warn("Can not find class Sheet");
-                    return;
-                }
-                if (dataMap) {
-                    dataMap.push(comp, prop, value);
-                }
-                else if (view) {
-                    if (value.indexOf("].") == -1) {
-                        value = value.replace(".", "[0].");
-                    }
-                    var watcher = new DataWatcher(comp, prop, value);
-                    watcher.exe(view);
-                    var one, temp;
-                    var str = value.replace(/\[.*?\]\./g, ".");
-                    while ((one = LegacyUIParser._parseWatchData.exec(str)) != null) {
-                        var key1 = one[1];
-                        while ((temp = LegacyUIParser._parseKeyWord.exec(key1)) != null) {
-                            var key2 = temp[0];
-                            var arr = (view._watchMap[key2] || (view._watchMap[key2] = []));
-                            arr.push(watcher);
-                            LegacyUIParser._sheet.I.notifer.on(key2, view, view.changeData, [key2]);
-                        }
-                        arr = (view._watchMap[key1] || (view._watchMap[key1] = []));
-                        arr.push(watcher);
-                        LegacyUIParser._sheet.I.notifer.on(key1, view, view.changeData, [key1]);
-                    }
-                }
-                return;
-            }
-            if (prop === "var" && view) {
-                view[value] = comp;
-            }
-            else {
-                comp[prop] = (value === "true" ? true : (value === "false" ? false : value));
-            }
-        }
-        static getCompInstance(json) {
-            if (json.type == "UIView") {
-                if (json.props && json.props.pageData) {
-                    return LegacyUIParser.createByData(null, json.props.pageData);
-                }
-            }
-            var runtime = LayaEnv.isPlaying ? ((json.props && json.props.runtime) || json.type) : json.type;
-            var compClass = ClassUtils.getClass(runtime);
-            if (!compClass)
-                throw "Can not find class " + runtime;
-            if (json.type === "Script" && compClass.prototype._doAwake) {
-                var comp = Pool.createByClass(compClass);
-                comp._destroyed = false;
-                return comp;
-            }
-            if (json.props && "renderType" in json.props && json.props["renderType"] == "instance") {
-                if (!compClass["instance"])
-                    compClass["instance"] = new compClass();
-                return compClass["instance"];
-            }
-            let ret = new compClass();
-            if (ret instanceof (_viewClass || (_viewClass = ClassUtils.getClass("View"))))
-                ret._scene = ret;
-            return ret;
-        }
-        static collectResourceLinks(uiView) {
-            let test = new Set();
-            let innerUrls = [];
-            function addInnerUrl(url) {
-                if (!test.has(url)) {
-                    test.add(url);
-                    innerUrls.push(url);
-                }
-            }
-            function check(uiView) {
-                let props = uiView.props;
-                for (let prop in props) {
-                    let value = props[prop];
-                    if (typeof (value) == 'string' && value.indexOf("@Prefab:") >= 0) {
-                        let url = value.replace("@Prefab:", "");
-                        addInnerUrl(url);
-                    }
-                }
-                let child = uiView.child;
-                if (child) {
-                    for (let i = 0, n = child.length; i < n; i++) {
-                        let node = child[i];
-                        check(node);
-                    }
-                }
-            }
-            if (uiView.loadList) {
-                for (let url of uiView.loadList)
-                    addInnerUrl(url);
-            }
-            if (uiView.loadList3D) {
-                for (let url of uiView.loadList3D)
-                    addInnerUrl(url);
-            }
-            check(uiView);
-            return innerUrls;
-        }
-        static createByJson(json, node = null, root = null, customHandler = null, instanceHandler = null) {
-            if (typeof (json) == 'string')
-                json = JSON.parse(json);
-            var props = json.props;
-            if (!node) {
-                node = instanceHandler ? instanceHandler.runWith(json) : ClassUtils.getInstance(LayaEnv.isPlaying ? (props.runtime || json.type) : json.type);
-                if (!node)
-                    return null;
-            }
-            var child = json.child;
-            if (child) {
-                for (var i = 0, n = child.length; i < n; i++) {
-                    var data = child[i];
-                    if ((data.props.name === "render" || data.props.renderType === "render") && node["_$set_itemRender"])
-                        node.itemRender = data;
-                    else {
-                        if (data.type == "Graphic") {
-                            this._addGraphicsToSprite(data, node);
-                        }
-                        else if (this._isDrawType(data.type)) {
-                            this._addGraphicToSprite(data, node, true);
-                        }
-                        else {
-                            var tChild = this.createByJson(data, null, root, customHandler, instanceHandler);
-                            if (data.type === "Script") {
-                                if ("owner" in tChild) {
-                                    tChild["owner"] = node;
-                                }
-                                else if ("target" in tChild) {
-                                    tChild["target"] = node;
-                                }
-                            }
-                            else if (data.props.renderType == "mask") {
-                                node.mask = tChild;
-                            }
-                            else {
-                                node.addChild(tChild);
-                            }
-                        }
-                    }
-                }
-            }
-            if (props) {
-                for (var prop in props) {
-                    var value = props[prop];
-                    if (prop === "var" && root) {
-                        root[value] = node;
-                    }
-                    else if (value instanceof Array && node[prop] instanceof Function) {
-                        node[prop].apply(node, value);
-                    }
-                    else {
-                        node[prop] = value;
-                    }
-                }
-            }
-            if (customHandler && json.customProps) {
-                customHandler.runWith([node, json]);
-            }
-            if (node["created"])
-                node.created();
-            return node;
-        }
-        static _addGraphicsToSprite(graphicO, sprite) {
-            var graphics = graphicO.child;
-            if (!graphics || graphics.length < 1)
-                return;
-            var g = this._getGraphicsFromSprite(graphicO, sprite);
-            var ox = 0;
-            var oy = 0;
-            if (graphicO.props) {
-                ox = this._getObjVar(graphicO.props, "x", 0);
-                oy = this._getObjVar(graphicO.props, "y", 0);
-            }
-            if (ox != 0 && oy != 0) {
-                g.translate(ox, oy);
-            }
-            var i, len;
-            len = graphics.length;
-            for (i = 0; i < len; i++) {
-                this._addGraphicToGraphics(graphics[i], g);
-            }
-            if (ox != 0 && oy != 0) {
-                g.translate(-ox, -oy);
-            }
-        }
-        static _addGraphicToSprite(graphicO, sprite, isChild = false) {
-            var g = isChild ? this._getGraphicsFromSprite(graphicO, sprite) : sprite.graphics;
-            this._addGraphicToGraphics(graphicO, g);
-        }
-        static _getGraphicsFromSprite(dataO, sprite) {
-            if (!dataO || !dataO.props)
-                return sprite.graphics;
-            var propsName = dataO.props.renderType;
-            if (propsName === "hit" || propsName === "unHit") {
-                var hitArea = sprite._style.hitArea || (sprite.hitArea = new HitArea());
-                if (!hitArea[propsName]) {
-                    hitArea[propsName] = new Graphics();
-                }
-                var g = hitArea[propsName];
-            }
-            if (!g)
-                g = sprite.graphics;
-            return g;
-        }
-        static _getTransformData(propsO) {
-            var m;
-            if ("pivotX" in propsO || "pivotY" in propsO) {
-                m = m || new Matrix();
-                m.translate(-this._getObjVar(propsO, "pivotX", 0), -this._getObjVar(propsO, "pivotY", 0));
-            }
-            var sx = this._getObjVar(propsO, "scaleX", 1), sy = this._getObjVar(propsO, "scaleY", 1);
-            var rotate = this._getObjVar(propsO, "rotation", 0);
-            this._getObjVar(propsO, "skewX", 0);
-            this._getObjVar(propsO, "skewY", 0);
-            if (sx != 1 || sy != 1 || rotate != 0) {
-                m = m || new Matrix();
-                m.scale(sx, sy);
-                m.rotate(rotate * 0.0174532922222222);
-            }
-            return m;
-        }
-        static _addGraphicToGraphics(graphicO, graphic) {
-            var propsO;
-            propsO = graphicO.props;
-            if (!propsO)
-                return;
-            var drawConfig;
-            drawConfig = this.DrawTypeDic[graphicO.type];
-            if (!drawConfig)
-                return;
-            var g = graphic;
-            var params = this._getParams(propsO, drawConfig[1], drawConfig[2], drawConfig[3]);
-            var m = this._tM;
-            if (m || this._alpha != 1) {
-                g.save();
-                if (m)
-                    g.transform(m);
-                if (this._alpha != 1)
-                    g.alpha(this._alpha);
-            }
-            g[drawConfig[0]].apply(g, params);
-            if (m || this._alpha != 1) {
-                g.restore();
-            }
-        }
-        static _adptLineData(params) {
-            params[2] = parseFloat(params[0]) + parseFloat(params[2]);
-            params[3] = parseFloat(params[1]) + parseFloat(params[3]);
-            return params;
-        }
-        static _adptTextureData(params) {
-            params[0] = ILaya.Loader.getRes(params[0]);
-            return params;
-        }
-        static _adptLinesData(params) {
-            params[2] = this._getPointListByStr(params[2]);
-            return params;
-        }
-        static _isDrawType(type) {
-            if (type === "Image")
-                return false;
-            return type in this.DrawTypeDic;
-        }
-        static _getParams(obj, params, xPos = 0, adptFun = null) {
-            var rst = this._temParam;
-            rst.length = params.length;
-            var i, len;
-            len = params.length;
-            for (i = 0; i < len; i++) {
-                rst[i] = this._getObjVar(obj, params[i][0], params[i][1]);
-            }
-            this._alpha = this._getObjVar(obj, "alpha", 1);
-            var m;
-            m = this._getTransformData(obj);
-            if (m) {
-                if (!xPos)
-                    xPos = 0;
-                m.translate(rst[xPos], rst[xPos + 1]);
-                rst[xPos] = rst[xPos + 1] = 0;
-                this._tM = m;
-            }
-            else {
-                this._tM = null;
-            }
-            if (adptFun && this[adptFun]) {
-                rst = this[adptFun](rst);
-            }
-            return rst;
-        }
-        static _getPointListByStr(str) {
-            var pointArr = str.split(",");
-            var i, len;
-            len = pointArr.length;
-            for (i = 0; i < len; i++) {
-                pointArr[i] = parseFloat(pointArr[i]);
-            }
-            return pointArr;
-        }
-        static _getObjVar(obj, key, noValue) {
-            if (key in obj) {
-                return obj[key];
-            }
-            return noValue;
-        }
-    }
-    LegacyUIParser._parseWatchData = /\${(.*?)}/g;
-    LegacyUIParser._parseKeyWord = /[a-zA-Z_][a-zA-Z0-9_]*(?:(?:\.[a-zA-Z_][a-zA-Z0-9_]*)+)/g;
-    LegacyUIParser.DrawTypeDic = { "Rect": ["drawRect", [["x", 0], ["y", 0], ["width", 0], ["height", 0], ["fillColor", null], ["lineColor", null], ["lineWidth", 1]]], "Circle": ["drawCircle", [["x", 0], ["y", 0], ["radius", 0], ["fillColor", null], ["lineColor", null], ["lineWidth", 1]]], "Pie": ["drawPie", [["x", 0], ["y", 0], ["radius", 0], ["startAngle", 0], ["endAngle", 0], ["fillColor", null], ["lineColor", null], ["lineWidth", 1]]], "Image": ["drawTexture", [["x", 0], ["y", 0], ["width", 0], ["height", 0]]], "Texture": ["drawTexture", [["skin", null], ["x", 0], ["y", 0], ["width", 0], ["height", 0]], 1, "_adptTextureData"], "FillTexture": ["fillTexture", [["skin", null], ["x", 0], ["y", 0], ["width", 0], ["height", 0], ["repeat", null]], 1, "_adptTextureData"], "FillText": ["fillText", [["text", ""], ["x", 0], ["y", 0], ["font", null], ["color", null], ["textAlign", null]], 1], "Line": ["drawLine", [["x", 0], ["y", 0], ["toX", 0], ["toY", 0], ["lineColor", null], ["lineWidth", 0]], 0, "_adptLineData"], "Lines": ["drawLines", [["x", 0], ["y", 0], ["points", ""], ["lineColor", null], ["lineWidth", 0]], 0, "_adptLinesData"], "Curves": ["drawCurves", [["x", 0], ["y", 0], ["points", ""], ["lineColor", null], ["lineWidth", 0]], 0, "_adptLinesData"], "Poly": ["drawPoly", [["x", 0], ["y", 0], ["points", ""], ["fillColor", null], ["lineColor", null], ["lineWidth", 1]], 0, "_adptLinesData"] };
-    LegacyUIParser._temParam = [];
-    class DataWatcher {
-        constructor(comp, prop, value) {
-            this.comp = comp;
-            this.prop = prop;
-            this.value = value;
-        }
-        exe(view) {
-            var fun = LegacyUIParser.getBindFun(this.value);
-            this.comp[this.prop] = fun.call(this, view);
-        }
-    }
-    class InitTool {
-        reset() {
-            this._nodeRefList = null;
-            this._initList = null;
-            this._idMap = null;
-        }
-        recover() {
-            this.reset();
-            Pool.recover("InitTool", this);
-        }
-        static create() {
-            var tool = Pool.getItemByClass("InitTool", InitTool);
-            tool._idMap = {};
-            return tool;
-        }
-        addNodeRef(node, prop, referStr) {
-            if (!this._nodeRefList)
-                this._nodeRefList = [];
-            this._nodeRefList.push([node, prop, referStr]);
-        }
-        setNodeRef() {
-            if (!this._nodeRefList)
-                return;
-            if (!this._idMap) {
-                this._nodeRefList = null;
-                return;
-            }
-            var i, len;
-            len = this._nodeRefList.length;
-            var tRefInfo;
-            for (i = 0; i < len; i++) {
-                tRefInfo = this._nodeRefList[i];
-                tRefInfo[0][tRefInfo[1]] = this.getReferData(tRefInfo[2]);
-            }
-            this._nodeRefList = null;
-        }
-        getReferData(referStr) {
-            if (referStr.indexOf("@Prefab:") >= 0) {
-                return new PrefabImpl(LegacyUIParser, Loader.getRes(referStr.replace("@Prefab:", "")), 2);
-            }
-            else if (referStr.indexOf("@arr:") >= 0) {
-                referStr = referStr.replace("@arr:", "");
-                var list;
-                list = referStr.split(",");
-                var i, len;
-                var tStr;
-                len = list.length;
-                var list2 = [];
-                for (i = 0; i < len; i++) {
-                    tStr = list[i];
-                    if (tStr) {
-                        list2.push(this._idMap[tStr.replace("@node:", "")]);
-                    }
-                    else {
-                        list2.push(null);
-                    }
-                }
-                return list2;
-            }
-            else {
-                return this._idMap[referStr.replace("@node:", "")];
-            }
-        }
-        addInitItem(item) {
-            if (!this._initList)
-                this._initList = [];
-            this._initList.push(item);
-        }
-        doInits() {
-            if (!this._initList)
-                return;
-            this._initList = null;
-        }
-        finish() {
-            this.setNodeRef();
-            this.doInits();
-            this.recover();
-        }
-    }
-
-    class Scene extends Sprite {
-        constructor(createChildren = true) {
-            super();
-            this.autoDestroyAtClosed = false;
-            this._anchorX = null;
-            this._anchorY = null;
-            this._viewCreated = false;
-            this._timer = ILaya.timer;
-            this._widget = Widget.EMPTY;
-            this._scene = this;
-            if (createChildren)
-                this.createChildren();
-        }
-        createChildren() {
-        }
-        static setUIMap(url) {
-            let uimap = ILaya.loader.getRes(url);
-            if (uimap) {
-                for (let key in uimap) {
-                    ILaya.Loader.loadedMap[key + ".scene"] = uimap[key];
-                }
-            }
-            else {
-                throw "请提前加载uimap的json，再使用该接口设置！";
-            }
-        }
-        loadScene(path) {
-            Scene.unDestroyedScenes.add(this);
-            let url = path.indexOf(".") > -1 ? path : path + ".scene";
-            let content = ILaya.loader.getRes(url);
-            if (content) {
-                if (!this._viewCreated) {
-                    content.create({ root: this });
-                    this._viewCreated = true;
-                    Scene.unDestroyedScenes.add(this);
-                }
-            }
-            else {
-                this._setBit(NodeFlags.NOT_READY, true);
-                ILaya.loader.load(url, null, value => {
-                    if (Scene._loadPage)
-                        Scene._loadPage.event("progress", value);
-                }).then((content) => {
-                    if (!content)
-                        throw "Can not find scene:" + path;
-                    if (!this._viewCreated) {
-                        this.url = url;
-                        Scene.hideLoadingPage();
-                        content.create({ root: this });
-                        this._viewCreated = true;
-                        Scene.unDestroyedScenes.add(this);
-                    }
-                    else
-                        this._setBit(NodeFlags.NOT_READY, false);
-                });
-            }
-        }
-        createView(view) {
-            if (view && !this._viewCreated) {
-                this._viewCreated = true;
-                LegacyUIParser.createByData(this, view);
-            }
-        }
-        getNodeByID(id) {
-            if (this._idMap)
-                return this._idMap[id];
-            return null;
-        }
-        open(closeOther = true, param = null) {
-            if (closeOther)
-                Scene.closeAll();
-            Scene.root.addChild(this);
-            if (this._scene3D)
-                ILaya.stage.addChildAt(this._scene3D, 0);
-            this.onOpened(param);
-        }
-        onOpened(param) {
-        }
-        close(type = null) {
-            this.onClosed(type);
-            if (this.autoDestroyAtClosed) {
-                this.destroy();
-                if (this._scene3D)
-                    this._scene3D.destroy();
-            }
-            else {
-                this.removeSelf();
-                if (this._scene3D)
-                    this._scene3D.removeSelf();
-            }
-        }
-        onClosed(type = null) {
-        }
-        destroy(destroyChild = true) {
-            super.destroy(destroyChild);
-            if (this._scene3D) {
-                this._scene3D.destroy();
-                this._scene3D = null;
-            }
-            this._idMap = null;
-            Scene.unDestroyedScenes.delete(this);
-        }
-        set scaleX(value) {
-            if (super.get_scaleX() == value)
-                return;
-            super.set_scaleX(value);
-            this.event(Event.RESIZE);
-        }
-        get scaleX() {
-            return super.scaleX;
-        }
-        set scaleY(value) {
-            if (super.get_scaleY() == value)
-                return;
-            super.set_scaleY(value);
-            this.event(Event.RESIZE);
-        }
-        get scaleY() {
-            return super.scaleY;
-        }
-        get width() {
-            if (this._width)
-                return this._width;
-            var max = 0;
-            for (var i = this.numChildren - 1; i > -1; i--) {
-                var comp = this.getChildAt(i);
-                if (comp._visible) {
-                    max = Math.max(comp._x + comp.width * comp.scaleX, max);
-                }
-            }
-            return max;
-        }
-        set width(value) {
-            if (super.get_width() == value)
-                return;
-            super.set_width(value);
-            this.callLater(this._sizeChanged);
-        }
-        get height() {
-            if (this._height)
-                return this._height;
-            var max = 0;
-            for (var i = this.numChildren - 1; i > -1; i--) {
-                var comp = this.getChildAt(i);
-                if (comp._visible) {
-                    max = Math.max(comp._y + comp.height * comp.scaleY, max);
-                }
-            }
-            return max;
-        }
-        set height(value) {
-            if (super.get_height() == value)
-                return;
-            super.set_height(value);
-            this.callLater(this._sizeChanged);
-        }
-        get timer() {
-            return this._timer;
-        }
-        set timer(value) {
-            this._timer = value;
-        }
-        get scene3D() {
-            return this._scene3D;
-        }
-        get top() {
-            return this._widget.top;
-        }
-        set top(value) {
-            if (value != this._widget.top) {
-                this._getWidget().top = value;
-            }
-        }
-        get bottom() {
-            return this._widget.bottom;
-        }
-        set bottom(value) {
-            if (value != this._widget.bottom) {
-                this._getWidget().bottom = value;
-            }
-        }
-        get left() {
-            return this._widget.left;
-        }
-        set left(value) {
-            if (value != this._widget.left) {
-                this._getWidget().left = value;
-            }
-        }
-        get right() {
-            return this._widget.right;
-        }
-        set right(value) {
-            if (value != this._widget.right) {
-                this._getWidget().right = value;
-            }
-        }
-        get centerX() {
-            return this._widget.centerX;
-        }
-        set centerX(value) {
-            if (value != this._widget.centerX) {
-                this._getWidget().centerX = value;
-            }
-        }
-        get centerY() {
-            return this._widget.centerY;
-        }
-        set centerY(value) {
-            if (value != this._widget.centerY) {
-                this._getWidget().centerY = value;
-            }
-        }
-        get anchorX() {
-            return this._anchorX;
-        }
-        set anchorX(value) {
-            if (this._anchorX != value) {
-                this._anchorX = value;
-                this.callLater(this._sizeChanged);
-            }
-        }
-        get anchorY() {
-            return this._anchorY;
-        }
-        set anchorY(value) {
-            if (this._anchorY != value) {
-                this._anchorY = value;
-                this.callLater(this._sizeChanged);
-            }
-        }
-        _sizeChanged() {
-            if (this._anchorX != null)
-                this.pivotX = this.anchorX * this.width;
-            if (this._anchorY != null)
-                this.pivotY = this.anchorY * this.height;
-            this.event(Event.RESIZE);
-            if (this._widget != Widget.EMPTY) {
-                this._widget.resetLayout();
-            }
-        }
-        freshLayout() {
-            if (this._widget != Widget.EMPTY) {
-                this._widget.resetLayout();
-            }
-        }
-        _getWidget() {
-            this._widget === Widget.EMPTY && (this._widget = this.addComponent(Widget));
-            return this._widget;
-        }
-        static get root() {
-            let root = Scene._root;
-            if (!root) {
-                root = Scene._root = ILaya.stage.addChild(new Sprite());
-                root.name = "root";
-                root.mouseThrough = true;
-                ILaya.stage.on("resize", null, () => {
-                    root.size(ILaya.stage.width, ILaya.stage.height);
-                    root.event(Event.RESIZE);
-                });
-                root.size(ILaya.stage.width, ILaya.stage.height);
-                root.event(Event.RESIZE);
-            }
-            return root;
-        }
-        static load(url, complete = null, progress = null) {
-            return ILaya.loader.load(url, null, value => {
-                if (Scene._loadPage)
-                    Scene._loadPage.event("progress", value);
-                progress && progress.runWith(value);
-            }).then((content) => {
-                if (!content)
-                    throw "Can not find scene:" + url;
-                let scene;
-                let errors = [];
-                let ret = content.create(null, errors);
-                if (errors.length > 0)
-                    console.warn(`Error loading ${url}: \n${errors}`);
-                if (ret instanceof Scene)
-                    scene = ret;
-                else if (ret._is3D) {
-                    scene = new Scene();
-                    scene.left = scene.right = scene.top = scene.bottom = 0;
-                    scene._scene3D = ret;
-                }
-                else
-                    throw "Not a scene:" + url;
-                scene._viewCreated = true;
-                Scene.hideLoadingPage();
-                complete && complete.runWith(scene);
-                return scene;
-            });
-        }
-        static open(url, closeOther = true, param = null, complete = null, progress = null) {
-            if (param instanceof Handler) {
-                var temp = complete;
-                complete = param;
-                param = temp;
-            }
-            Scene.showLoadingPage();
-            return Scene.load(url, Handler.create(null, this._onSceneLoaded, [closeOther, complete, param]), progress);
-        }
-        static _onSceneLoaded(closeOther, complete, param, scene) {
-            scene.open(closeOther, param);
-            if (complete)
-                complete.runWith(scene);
-        }
-        static close(url, name) {
-            let flag = false;
-            for (let scene of Scene.unDestroyedScenes) {
-                if (scene && scene.parent && scene.url === url && (name == null || scene.name == name)) {
-                    scene.close();
-                    flag = true;
-                    break;
-                }
-            }
-            return flag;
-        }
-        static closeAll() {
-            let root = Scene.root;
-            for (let i = 0, n = root.numChildren; i < n; i++) {
-                var scene = root.getChildAt(0);
-                if (scene instanceof Scene)
-                    scene.close();
-                else
-                    scene.removeSelf();
-            }
-        }
-        static destroy(url, name) {
-            let flag = false;
-            for (let scene of Scene.unDestroyedScenes) {
-                if (scene.url === url && (name == null || scene.name == name) && !scene._destroyed) {
-                    scene.destroy();
-                    flag = true;
-                    break;
-                }
-            }
-            return flag;
-        }
-        static gc() {
-            Resource.destroyUnusedResources();
-        }
-        static setLoadingPage(loadPage) {
-            Scene._loadPage = loadPage;
-        }
-        static showLoadingPage(param = null, delay = 500) {
-            if (Scene._loadPage) {
-                ILaya.systemTimer.clear(null, Scene._showLoading);
-                ILaya.systemTimer.clear(null, Scene._hideLoading);
-                ILaya.systemTimer.once(delay, null, Scene._showLoading, [param], false);
-            }
-        }
-        static _showLoading(param) {
-            ILaya.stage.addChild(Scene._loadPage);
-            if (Scene._loadPage instanceof Scene)
-                Scene._loadPage.onOpened(param);
-        }
-        static _hideLoading() {
-            if (Scene._loadPage instanceof Scene)
-                Scene._loadPage.close();
-            else
-                Scene._loadPage.removeSelf();
-        }
-        static hideLoadingPage(delay = 500) {
-            if (Scene._loadPage) {
-                ILaya.systemTimer.clear(null, Scene._showLoading);
-                ILaya.systemTimer.clear(null, Scene._hideLoading);
-                ILaya.systemTimer.once(delay, null, Scene._hideLoading);
-            }
-        }
-    }
-    Scene.unDestroyedScenes = new Set();
 
     class Timer {
         constructor(autoActive = true) {
@@ -28587,152 +24713,6 @@ window.Laya = (function (exports) {
         RenderState2D.clear();
     };
 
-    class BlurFilterGLRender {
-        render(rt, ctx, width, height, filter) {
-            var shaderValue = Value2D.create(ShaderDefines2D.TEXTURE2D, 0);
-            this.setShaderInfo(shaderValue, filter, rt.width, rt.height);
-            ctx.drawTarget(rt, 0, 0, width, height, Matrix.EMPTY.identity(), shaderValue);
-        }
-        setShaderInfo(shader, filter, w, h) {
-            shader.defines.add(Filter.BLUR);
-            var sv = shader;
-            BlurFilterGLRender.blurinfo[0] = w;
-            BlurFilterGLRender.blurinfo[1] = h;
-            sv.blurInfo = BlurFilterGLRender.blurinfo;
-            var sigma = filter.strength / 3.0;
-            var sigma2 = sigma * sigma;
-            filter.strength_sig2_2sig2_gauss1[0] = filter.strength;
-            filter.strength_sig2_2sig2_gauss1[1] = sigma2;
-            filter.strength_sig2_2sig2_gauss1[2] = 2.0 * sigma2;
-            filter.strength_sig2_2sig2_gauss1[3] = 1.0 / (2.0 * Math.PI * sigma2);
-            sv.strength_sig2_2sig2_gauss1 = filter.strength_sig2_2sig2_gauss1;
-        }
-    }
-    BlurFilterGLRender.blurinfo = new Array(2);
-
-    class BlurFilter extends Filter {
-        constructor(strength = 4) {
-            super();
-            this.strength_sig2_2sig2_gauss1 = [];
-            this.strength = strength;
-            this._glRender = new BlurFilterGLRender();
-        }
-        get type() {
-            return Filter.BLUR;
-        }
-        getStrenth_sig2_2sig2_native() {
-            if (!this.strength_sig2_native) {
-                this.strength_sig2_native = new Float32Array(4);
-            }
-            var sigma = this.strength / 3.0;
-            var sigma2 = sigma * sigma;
-            this.strength_sig2_native[0] = this.strength;
-            this.strength_sig2_native[1] = sigma2;
-            this.strength_sig2_native[2] = 2.0 * sigma2;
-            this.strength_sig2_native[3] = 1.0 / (2.0 * Math.PI * sigma2);
-            return this.strength_sig2_native;
-        }
-    }
-
-    class GlowFilterGLRender {
-        setShaderInfo(shader, w, h, data) {
-            shader.defines.add(data.type);
-            var sv = shader;
-            sv.u_blurInfo1 = data._sv_blurInfo1;
-            var info2 = data._sv_blurInfo2;
-            info2[0] = w;
-            info2[1] = h;
-            sv.u_blurInfo2 = info2;
-            sv.u_color = data.getColor();
-        }
-        render(rt, ctx, width, height, filter) {
-            var w = width, h = height;
-            var svBlur = Value2D.create(ShaderDefines2D.TEXTURE2D, 0);
-            this.setShaderInfo(svBlur, w, h, filter);
-            var svCP = Value2D.create(ShaderDefines2D.TEXTURE2D, 0);
-            var matI = Matrix.TEMP.identity();
-            ctx.drawTarget(rt, 0, 0, w, h, matI, svBlur);
-            ctx.drawTarget(rt, 0, 0, w, h, matI, svCP);
-        }
-    }
-
-    class GlowFilter extends Filter {
-        constructor(color, blur = 4, offX = 6, offY = 6) {
-            super();
-            this._elements = new Float32Array(9);
-            this._sv_blurInfo1 = new Array(4);
-            this._sv_blurInfo2 = [0, 0, 1, 0];
-            this._color = new ColorUtils(color || "#000");
-            this.blur = Math.min(blur, 20);
-            this.offX = offX;
-            this.offY = offY;
-            this._sv_blurInfo1[0] = this._sv_blurInfo1[1] = this.blur;
-            this._sv_blurInfo1[2] = offX;
-            this._sv_blurInfo1[3] = -offY;
-            this._glRender = new GlowFilterGLRender();
-        }
-        get type() {
-            return BlurFilter.GLOW;
-        }
-        get offY() {
-            return this._elements[6];
-        }
-        set offY(value) {
-            this._elements[6] = value;
-            this._sv_blurInfo1[3] = -value;
-        }
-        get offX() {
-            return this._elements[5];
-        }
-        set offX(value) {
-            this._elements[5] = value;
-            this._sv_blurInfo1[2] = value;
-        }
-        get color() {
-            return this._color.strColor;
-        }
-        set color(value) {
-            this._color = new ColorUtils(value);
-        }
-        getColor() {
-            return this._color.arrColor;
-        }
-        get blur() {
-            return this._elements[4];
-        }
-        set blur(value) {
-            this._elements[4] = value;
-            this._sv_blurInfo1[0] = this._sv_blurInfo1[1] = value;
-        }
-        getColorNative() {
-            if (!this._color_native) {
-                this._color_native = new Float32Array(4);
-            }
-            var color = this.getColor();
-            this._color_native[0] = color[0];
-            this._color_native[1] = color[1];
-            this._color_native[2] = color[2];
-            this._color_native[3] = color[3];
-            return this._color_native;
-        }
-        getBlurInfo1Native() {
-            if (!this._blurInof1_native) {
-                this._blurInof1_native = new Float32Array(4);
-            }
-            this._blurInof1_native[0] = this._blurInof1_native[1] = this.blur;
-            this._blurInof1_native[2] = this.offX;
-            this._blurInof1_native[3] = this.offY;
-            return this._blurInof1_native;
-        }
-        getBlurInfo2Native() {
-            if (!this._blurInof2_native) {
-                this._blurInof2_native = new Float32Array(4);
-            }
-            this._blurInof2_native[2] = 1;
-            return this._blurInof2_native;
-        }
-    }
-
     class SoundChannel extends EventDispatcher {
         constructor() {
             super(...arguments);
@@ -29190,6 +25170,1047 @@ window.Laya = (function (exports) {
     WebAudioSoundChannel._tryCleanFailed = false;
     WebAudioSoundChannel.SetTargetDelay = 0.001;
 
+    class AtlasInfoManager {
+        static enable(infoFile, callback = null) {
+            ILaya.loader.fetch(infoFile, "json").then(data => {
+                if (!data)
+                    return;
+                AtlasInfoManager.addToDict(data);
+                callback && callback.run();
+            });
+        }
+        static addToDict(data) {
+            for (let tKey in data) {
+                let tArr = data[tKey];
+                let tPrefix = URL.formatURL(tArr[0]);
+                tArr = tArr[1];
+                let len = tArr.length;
+                let entry = { url: tKey };
+                for (let i = 0; i < len; i++) {
+                    AtlasInfoManager._fileLoadDic[tPrefix + tArr[i]] = entry;
+                }
+            }
+        }
+        static getFileLoadPath(file) {
+            return AtlasInfoManager._fileLoadDic[file];
+        }
+    }
+    AtlasInfoManager._fileLoadDic = {};
+
+    class WorkerLoader extends EventDispatcher {
+        constructor() {
+            super();
+            this.worker = new Worker(WorkerLoader.workerPath);
+            this.worker.onmessage = (evt) => {
+                this.workerMessage(evt.data);
+            };
+        }
+        static __init__() {
+            if (WorkerLoader.I)
+                return;
+            if (!Worker)
+                return;
+            WorkerLoader.I = new WorkerLoader();
+        }
+        static workerSupported() {
+            return Worker ? true : false;
+        }
+        static enableWorkerLoader() {
+            WorkerLoader.enable = true;
+        }
+        static set enable(value) {
+            if (WorkerLoader._enable != value) {
+                WorkerLoader._enable = value;
+                if (value) {
+                    if (WorkerLoader.I == null)
+                        WorkerLoader.__init__();
+                    if (WorkerLoader.I.worker == null)
+                        WorkerLoader._enable = false;
+                }
+            }
+        }
+        static get enable() {
+            return WorkerLoader._enable;
+        }
+        workerMessage(data) {
+            if (data) {
+                switch (data.type) {
+                    case "Image":
+                        this.imageLoaded(data);
+                        break;
+                    case "Disable":
+                        WorkerLoader.enable = false;
+                        break;
+                }
+            }
+        }
+        imageLoaded(data) {
+            if (!data.dataType || data.dataType != "imageBitmap") {
+                this.event(data.url, null);
+                return;
+            }
+            var imageData = data.imageBitmap;
+            console.log("load:", data.url);
+            this.event(data.url, imageData);
+        }
+    }
+    WorkerLoader.workerPath = "libs/workerloader.js";
+    WorkerLoader._enable = false;
+
+    class AtlasResource extends Resource {
+        constructor(dir, textures, frames) {
+            super();
+            this.dir = dir;
+            this.textures = textures;
+            this.frames = frames;
+            this.lock = true;
+        }
+        _disposeResource() {
+            for (let tex of this.textures) {
+                if (tex)
+                    tex.destroy();
+            }
+            for (let tex of this.frames)
+                tex.destroy();
+            this.frames.length = 0;
+            this.textures.length = 0;
+        }
+    }
+
+    class BatchProgress {
+        constructor(callback) {
+            this._callback = callback;
+            this._items = [];
+            this._weights = [];
+            this._progress = 0;
+        }
+        get itemCount() {
+            return this._items.length;
+        }
+        reset() {
+            this._items.length = 0;
+            this._weights.length = 0;
+            this._progress = 0;
+        }
+        createCallback(weight) {
+            let index = this._items.length;
+            this._items.push(0);
+            if (weight == null)
+                this._weights.push(null);
+            else
+                this._weights.push(Math.max(0, Math.min(weight, 1)));
+            return (progress) => this.update(index, progress);
+        }
+        update(index, value) {
+            if (index != -1) {
+                this._items[index] = Math.max(0, Math.min(value, 1));
+                let np = 0;
+                let col = this._items;
+                let ws = this._weights;
+                let perc = 1 / col.length;
+                for (let i = 0; i < col.length; i++) {
+                    let p = col[i];
+                    let w = ws[i];
+                    if (p != null)
+                        np += p * (w != null ? w : perc);
+                }
+                value = np;
+            }
+            if (value > this._progress) {
+                this._progress = value;
+                this._callback(value);
+            }
+        }
+    }
+
+    class ImgUtils {
+        static compareVersion(curVersion, needVersion) {
+            let curVersionArr = curVersion.split('.');
+            let needVersionArr = needVersion.split('.');
+            const len = Math.max(curVersionArr.length, needVersionArr.length);
+            while (curVersionArr.length < len) {
+                curVersionArr.push('0');
+            }
+            while (needVersionArr.length < len) {
+                needVersionArr.push('0');
+            }
+            for (let i = 0; i < len; i++) {
+                const num1 = parseInt(curVersionArr[i]);
+                const num2 = parseInt(needVersionArr[i]);
+                if (num1 > num2) {
+                    return true;
+                }
+                else if (num1 < num2) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        static get isSupport() {
+            if (Browser.onMiniGame) {
+                var version = Browser.window.wx.getSystemInfoSync().SDKVersion;
+                return ImgUtils.compareVersion(version, '2.14.0');
+            }
+            else if (Browser.onLayaRuntime) {
+                return true;
+            }
+            else if (Browser.window.Blob)
+                return Browser.window.Blob ? true : false;
+            return false;
+        }
+        static arrayBufferToURL(url, arrayBuffer) {
+            if (!ImgUtils.isSupport)
+                return null;
+            if (ImgUtils.data[url])
+                return ImgUtils.data[url];
+            var newurl = "";
+            if (Browser.onMiniGame || Browser.onLayaRuntime) {
+                newurl = Browser.window.wx.createBufferURL(arrayBuffer);
+            }
+            else if (Browser.window.Blob) {
+                let blob = new Blob([arrayBuffer], { type: 'application/octet-binary' });
+                newurl = Browser.window.URL.createObjectURL(blob);
+            }
+            if (ImgUtils.isSavaData)
+                ImgUtils.data[url] = newurl;
+            return newurl;
+        }
+        static _arrayBufferToURL(arrayBuffer) {
+            if (!ImgUtils.isSupport)
+                return null;
+            var newurl = "";
+            if (Browser.onMiniGame || Browser.onLayaRuntime) {
+                newurl = Browser.window.wx.createBufferURL(arrayBuffer);
+            }
+            else if (Browser.window.Blob) {
+                let blob = new Blob([arrayBuffer], { type: 'application/octet-binary' });
+                newurl = Browser.window.URL.createObjectURL(blob);
+            }
+            return newurl;
+        }
+        static destroy(url) {
+            if (!ImgUtils.isSupport)
+                return;
+            var newurl = ImgUtils.data[url];
+            if (newurl) {
+                if (Browser.onMiniGame || Browser.onLayaRuntime)
+                    Browser.window.wx.revokeBufferURL(newurl);
+                else if (Browser.window.Blob)
+                    Browser.window.URL.revokeObjectURL(newurl);
+                delete ImgUtils.data[url];
+            }
+        }
+    }
+    ImgUtils.data = {};
+    ImgUtils.isSavaData = false;
+
+    class HttpRequest extends EventDispatcher {
+        constructor() {
+            super(...arguments);
+            this._http = new XMLHttpRequest();
+        }
+        send(url, data = null, method = "get", responseType = "text", headers = null) {
+            this._responseType = responseType;
+            this._data = null;
+            if (Browser.onVVMiniGame || Browser.onQGMiniGame || Browser.onQQMiniGame || Browser.onAlipayMiniGame || Browser.onBLMiniGame || Browser.onHWMiniGame || Browser.onTTMiniGame || Browser.onTBMiniGame) {
+                url = HttpRequest._urlEncode(url);
+            }
+            this._url = url;
+            let http = this._http;
+            http.open(method, url, true);
+            if (headers) {
+                for (let i = 0; i < headers.length; i++) {
+                    http.setRequestHeader(headers[i++], headers[i]);
+                }
+            }
+            if (data) {
+                if (typeof (data) == 'string') {
+                    http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                }
+                else {
+                    http.setRequestHeader("Content-Type", "application/json");
+                    if (!(data instanceof ArrayBuffer))
+                        data = JSON.stringify(data);
+                }
+            }
+            else if (Browser.onBLMiniGame && Browser.onAndroid)
+                data = {};
+            let restype = responseType !== "arraybuffer" ? "text" : "arraybuffer";
+            http.responseType = restype;
+            if (http.dataType) {
+                http.dataType = restype;
+            }
+            http.onerror = (e) => {
+                this._onError(e);
+            };
+            http.onabort = (e) => {
+                this._onAbort(e);
+            };
+            http.onprogress = (e) => {
+                this._onProgress(e);
+            };
+            http.onload = (e) => {
+                this._onLoad(e);
+            };
+            http.send(data);
+        }
+        _onProgress(e) {
+            if (e && e.lengthComputable)
+                this.event(Event.PROGRESS, e.loaded / e.total);
+        }
+        _onAbort(e) {
+            this.error("Request was aborted by user");
+        }
+        _onError(e) {
+            this.error("Request failed Status:" + this._http.status + " text:" + this._http.statusText);
+        }
+        _onLoad(e) {
+            var http = this._http;
+            var status = http.status !== undefined ? http.status : 200;
+            if (status === 200 || status === 204 || status === 0) {
+                this.complete();
+            }
+            else {
+                this.error("[" + http.status + "]" + http.statusText + ":" + http.responseURL);
+            }
+        }
+        error(message) {
+            this.clear();
+            this.event(Event.ERROR, message);
+        }
+        complete() {
+            this.clear();
+            var flag = true;
+            try {
+                if (this._responseType === "json") {
+                    this._data = JSON.parse(this._http.responseText);
+                }
+                else if (this._responseType === "xml") {
+                    this._data = Utils.parseXMLFromString(this._http.responseText);
+                }
+                else {
+                    this._data = this._http.response || this._http.responseText;
+                }
+            }
+            catch (e) {
+                flag = false;
+                this.error(e.message);
+            }
+            flag && this.event(Event.COMPLETE, this._data instanceof Array ? [this._data] : this._data);
+        }
+        clear() {
+            var http = this._http;
+            http.onerror = http.onabort = http.onprogress = http.onload = null;
+        }
+        get url() {
+            return this._url;
+        }
+        get data() {
+            return this._data;
+        }
+        get http() {
+            return this._http;
+        }
+        reset() {
+            this.offAll();
+            this._data = null;
+        }
+    }
+    HttpRequest._urlEncode = encodeURI;
+
+    class Downloader {
+        constructor() {
+            this.httpRequestPool = [];
+        }
+        common(owner, url, originalUrl, contentType, onProgress, onComplete) {
+            let http = this.getRequestInst();
+            http.on(Event.COMPLETE, () => {
+                let data = http.data;
+                this.returnRequestInst(http);
+                onComplete(data);
+            });
+            http.on(Event.ERROR, null, (error) => {
+                this.returnRequestInst(http);
+                onComplete(null, error);
+            });
+            if (onProgress)
+                http.on(Event.PROGRESS, onProgress);
+            http.send(url, null, "get", contentType);
+            owner.$ref = http;
+        }
+        image(owner, url, originalUrl, onProgress, onComplete) {
+            let image = new Browser.window.Image();
+            image.crossOrigin = "";
+            image.onload = () => {
+                image.onload = null;
+                image.onerror = null;
+                onComplete(image);
+            };
+            image.onerror = () => {
+                image.onload = null;
+                image.onerror = null;
+                onComplete(null, "");
+            };
+            image.src = url;
+            owner.$ref = image;
+        }
+        imageWithBlob(owner, blob, originalUrl, onProgress, onComplete) {
+            let url = ImgUtils.arrayBufferToURL(originalUrl, blob);
+            this.image(owner, url, originalUrl, onProgress, onComplete);
+        }
+        imageWithWorker(owner, url, originalUrl, onProgress, onComplete) {
+            WorkerLoader.enableWorkerLoader();
+            if (WorkerLoader.enable) {
+                let workerLoader = WorkerLoader.I;
+                workerLoader.once(url, null, (imageData) => {
+                    if (imageData)
+                        onComplete(imageData);
+                    else
+                        onComplete(null, "workerloader failed!");
+                });
+                workerLoader.worker.postMessage(url);
+            }
+            else
+                this.image(owner, url, originalUrl, onProgress, onComplete);
+        }
+        audio(owner, url, originalUrl, onProgress, onComplete) {
+            let audio = Browser.createElement("audio");
+            audio.crossOrigin = "";
+            audio.oncanplaythrough = () => {
+                audio.oncanplaythrough = null;
+                audio.onerror = null;
+                onComplete(audio);
+            };
+            audio.onerror = () => {
+                audio.oncanplaythrough = null;
+                audio.onerror = null;
+                onComplete(null, "");
+            };
+            audio.src = url;
+            owner.$ref = audio;
+        }
+        getRequestInst() {
+            if (this.httpRequestPool.length == 0
+                || Browser.onVVMiniGame || Browser.onHWMiniGame) {
+                return new HttpRequest();
+            }
+            else {
+                return this.httpRequestPool.pop();
+            }
+        }
+        returnRequestInst(inst) {
+            inst.reset();
+            if (this.httpRequestPool.length < 10)
+                this.httpRequestPool.push(inst);
+        }
+    }
+
+    var typeIdCounter = 0;
+    const NullURLInfo = { ext: null, typeId: null, main: false, loaderType: null };
+    class Loader extends EventDispatcher {
+        constructor() {
+            super();
+            this.retryNum = 1;
+            this.retryDelay = 0;
+            this.maxLoader = 5;
+            this._loadings = new Map();
+            this._queue = [];
+            this._downloadings = new Set();
+        }
+        static registerLoader(exts, cls, type) {
+            let typeEntry;
+            if (type) {
+                typeEntry = Loader.typeMap[type];
+                if (!typeEntry)
+                    Loader.typeMap[type] = typeEntry = { typeId: typeIdCounter++, loaderType: cls };
+                else if (typeEntry.loaderType != cls)
+                    typeEntry = { typeId: typeEntry.typeId, loaderType: cls };
+            }
+            else
+                typeEntry = { typeId: typeIdCounter++, loaderType: cls };
+            for (let ext of exts) {
+                let entry = Loader.extMap[ext];
+                if (entry && type) {
+                    let i = entry.findIndex(e => e.typeId == typeEntry.typeId);
+                    if (i == -1)
+                        entry.push(typeEntry);
+                    else
+                        entry[i].loaderType = cls;
+                }
+                else {
+                    Loader.extMap[ext] = [typeEntry];
+                }
+            }
+        }
+        get loading() {
+            return this._loadings.size > 0;
+        }
+        load(url, arg1, arg2, arg3, priority, cache, group, ignoreCache, useWorkerLoader) {
+            let complete;
+            let type;
+            let options = dummyOptions;
+            if (arg1 instanceof Handler) {
+                complete = arg1;
+                type = arg3;
+            }
+            else if (typeof (arg1) === "string")
+                type = arg1;
+            else if (arg1 != null) {
+                type = arg1.type;
+                options = arg1;
+            }
+            if (priority != null || cache != null || group != null || useWorkerLoader != null) {
+                if (options === dummyOptions)
+                    options = { priority, cache, group, useWorkerLoader };
+                else
+                    options = Object.assign(options, { priority, cache, group, useWorkerLoader });
+            }
+            let onProgress;
+            if (arg2 instanceof Handler)
+                onProgress = (value) => arg2.runWith(value);
+            else
+                onProgress = arg2;
+            let promise;
+            if (Array.isArray(url)) {
+                let pd;
+                if (onProgress)
+                    pd = new BatchProgress(onProgress);
+                let promises = [];
+                for (let i = 0; i < url.length; i++) {
+                    let url2 = url[i];
+                    if (!url2)
+                        continue;
+                    if (typeof (url2) === "string") {
+                        promises.push(this._load1(url2, type, options, pd === null || pd === void 0 ? void 0 : pd.createCallback()));
+                    }
+                    else {
+                        promises.push(this._load1(url2.url, url2.type || type, options !== dummyOptions ? Object.assign({}, options, url2) : url2, pd === null || pd === void 0 ? void 0 : pd.createCallback()));
+                    }
+                }
+                promise = Promise.all(promises);
+            }
+            else if (typeof (url) === "string")
+                promise = this._load1(url, type, options, onProgress);
+            else
+                promise = this._load1(url.url, url.type || type, options !== dummyOptions ? Object.assign({}, options, url) : url, onProgress);
+            if (complete)
+                return promise.then(result => {
+                    complete.runWith(result);
+                    return result;
+                });
+            else
+                return promise;
+        }
+        _load1(url, type, options, onProgress) {
+            let uuid = null;
+            if (url.startsWith("res://")) {
+                uuid = url.substring(6);
+                let url2 = AssetDb.inst.UUID_to_URL(uuid);
+                if (!url2) {
+                    let promise = AssetDb.inst.UUID_to_URL_async(uuid);
+                    if (!promise) {
+                        !options.silent && Loader.warn(url);
+                        return Promise.resolve(null);
+                    }
+                    return promise.then(url2 => {
+                        if (url2)
+                            return this._load2(url2, uuid, type, options, onProgress);
+                        else {
+                            !options.silent && Loader.warn(url);
+                            return null;
+                        }
+                    });
+                }
+                else
+                    url = url2;
+            }
+            else {
+                let promise = AssetDb.inst.URL_to_UUID_async(url);
+                if (promise) {
+                    return promise.then(uuid => {
+                        return this._load2(url, uuid, type, options, onProgress);
+                    });
+                }
+            }
+            return this._load2(url, uuid, type, options, onProgress);
+        }
+        _load2(url, uuid, type, options, onProgress) {
+            let { ext, typeId, main, loaderType } = Loader.getURLInfo(url, type);
+            if (!loaderType) {
+                !options.silent && Loader.warn(url);
+                return Promise.resolve(null);
+            }
+            let formattedUrl = URL.formatURL(url);
+            if (options.group) {
+                let set = Loader.groupMap[options.group];
+                if (!set)
+                    set = Loader.groupMap[options.group] = new Set();
+                set.add(formattedUrl);
+            }
+            let obsoluteRes;
+            if (options.cache == null || options.cache) {
+                let cacheRes = Loader._getRes(formattedUrl, type);
+                if (cacheRes !== undefined) {
+                    if (cacheRes == null)
+                        return Promise.resolve(null);
+                    else {
+                        if (!(cacheRes instanceof Resource))
+                            return Promise.resolve(cacheRes);
+                        if (cacheRes.obsolute)
+                            obsoluteRes = cacheRes;
+                        if (!obsoluteRes && (!cacheRes.uuid || !uuid || uuid == cacheRes.uuid))
+                            return Promise.resolve(cacheRes);
+                    }
+                }
+            }
+            let loadingKey = formattedUrl;
+            if (!main)
+                loadingKey += "@" + typeId;
+            let task = this._loadings.get(loadingKey);
+            if (task) {
+                if (onProgress)
+                    task.onProgress.add(onProgress);
+                return new Promise((resolve) => task.onComplete.add(resolve));
+            }
+            let atlasInfo = AtlasInfoManager.getFileLoadPath(formattedUrl);
+            if (atlasInfo) {
+                return this.load(atlasInfo.url, { type: Loader.ATLAS, baseUrl: atlasInfo.baseUrl }).then(() => {
+                    return Loader.getRes(url, type);
+                });
+            }
+            if (loadTaskPool.length > 0)
+                task = loadTaskPool.pop();
+            else
+                task = new LoadTask();
+            task.type = type;
+            task.url = url;
+            task.uuid = uuid;
+            task.ext = ext;
+            options = Object.assign(task.options, options);
+            delete options.type;
+            if (options.priority == null)
+                options.priority = 0;
+            if (options.useWorkerLoader == null)
+                options.useWorkerLoader = WorkerLoader.enable;
+            if (onProgress)
+                task.onProgress.add(onProgress);
+            task.loader = this;
+            task.obsoluteInst = obsoluteRes;
+            let assetLoader = new loaderType();
+            this._loadings.set(loadingKey, task);
+            let promise;
+            try {
+                promise = assetLoader.load(task);
+            }
+            catch (err) {
+                !options.silent && Loader.warn(url, err);
+                promise = Promise.resolve(null);
+            }
+            return promise.then(content => {
+                if (content instanceof Resource) {
+                    content._setCreateURL(url, uuid);
+                }
+                if (task.options.cache == null || task.options.cache)
+                    Loader._cacheRes(formattedUrl, content, typeId, main);
+                task.progress.update(-1, 1);
+                task.onComplete.invoke(content);
+                return content;
+            }).catch(error => {
+                !options.silent && Loader.warn(url, error);
+                if (task.options.cache == null || task.options.cache)
+                    Loader._cacheRes(formattedUrl, null, typeId, main);
+                task.onComplete.invoke(null);
+                return null;
+            }).then((result) => {
+                this._loadings.delete(loadingKey);
+                task.reset();
+                loadTaskPool.push(task);
+                if (this._loadings.size == 0)
+                    this.event(Event.COMPLETE);
+                return result;
+            });
+        }
+        fetch(url, contentType, onProgress, options) {
+            var _a;
+            options = options || dummyOptions;
+            let task = {
+                originalUrl: url,
+                url: url,
+                contentType: contentType,
+                priority: (_a = options.priority) !== null && _a !== void 0 ? _a : 1,
+                retryCnt: 0,
+                onProgress: onProgress,
+                onComplete: null,
+            };
+            if (options.useWorkerLoader)
+                task.useWorkerLoader = true;
+            if (options.blob)
+                task.blob = options.blob;
+            if (options.noRetry)
+                task.retryCnt = -1;
+            if (options.silent)
+                task.silent = true;
+            return new Promise((resolve) => {
+                AssetDb.inst.resolveURL(url, url => {
+                    task.url = URL.formatURL(url);
+                    task.onComplete = resolve;
+                    this.queueToDownload(task);
+                });
+            });
+        }
+        queueToDownload(item) {
+            if (this._downloadings.size < this.maxLoader) {
+                this.download(item);
+                return;
+            }
+            let priority = item.priority;
+            if (priority == 0)
+                this._queue.push(item);
+            else {
+                let i = this._queue.findIndex(e => e.priority < priority);
+                if (i != -1)
+                    this._queue.splice(i, 0, item);
+                else
+                    this._queue.push(item);
+            }
+        }
+        download(item) {
+            this._downloadings.add(item);
+            let url = URL.postFormatURL(item.url);
+            if (item.contentType == "image") {
+                let preloadedContent = Loader.preLoadedMap[item.url];
+                if (preloadedContent) {
+                    if (!(preloadedContent instanceof ArrayBuffer)) {
+                        this.completeItem(item, preloadedContent);
+                        return;
+                    }
+                    item.blob = preloadedContent;
+                }
+                if (item.blob) {
+                    Loader.downloader.imageWithBlob(item, item.blob, item.originalUrl, item.onProgress, (data, error) => {
+                        if (!data)
+                            item.retryCnt = -1;
+                        this.completeItem(item, data, error);
+                    });
+                }
+                else if (item.useWorkerLoader) {
+                    Loader.downloader.imageWithWorker(item, url, item.originalUrl, item.onProgress, (data, error) => {
+                        if (!data)
+                            item.useWorkerLoader = false;
+                        this.completeItem(item, data, error);
+                    });
+                }
+                else {
+                    Loader.downloader.image(item, url, item.originalUrl, item.onProgress, (data, error) => this.completeItem(item, data, error));
+                }
+            }
+            else if (item.contentType == "sound") {
+                Loader.downloader.audio(item, url, item.originalUrl, item.onProgress, (data, error) => this.completeItem(item, data, error));
+            }
+            else {
+                let preloadedContent = Loader.preLoadedMap[item.url];
+                if (preloadedContent) {
+                    this.completeItem(item, preloadedContent);
+                    return;
+                }
+                Loader.downloader.common(item, url, item.originalUrl, item.contentType, item.onProgress, (data, error) => this.completeItem(item, data, error));
+            }
+        }
+        completeItem(item, content, error) {
+            this._downloadings.delete(item);
+            if (content) {
+                if (this._downloadings.size < this.maxLoader && this._queue.length > 0)
+                    this.download(this._queue.shift());
+                if (item.onProgress)
+                    item.onProgress(1);
+                item.onComplete(content);
+            }
+            else if (item.retryCnt != -1 && item.retryCnt < this.retryNum) {
+                item.retryCnt++;
+                if (!item.silent)
+                    console.debug(`Retry to load ${item.url} (${item.retryCnt})`);
+                ILaya.systemTimer.once(this.retryDelay, this, this.queueToDownload, [item], false);
+            }
+            else {
+                !item.silent && Loader.warn(item.url);
+                if (item.onProgress)
+                    item.onProgress(1);
+                if (this._downloadings.size < this.maxLoader && this._queue.length > 0)
+                    this.download(this._queue.shift());
+                item.onComplete(null);
+            }
+        }
+        static getURLInfo(url, type) {
+            let ext = url.startsWith("data:") ? "png" : Utils.getFileExtension(url);
+            let extEntry;
+            if (ext.length > 0)
+                extEntry = Loader.extMap[ext];
+            let typeId;
+            let main;
+            let loaderType;
+            if (type) {
+                let typeEntry = Loader.typeMap[type];
+                if (!typeEntry) {
+                    console.warn(`not recognize type: '${type}'`);
+                    return NullURLInfo;
+                }
+                typeId = typeEntry.typeId;
+                let i = 0;
+                if (extEntry) {
+                    if (extEntry[0].typeId === typeId
+                        || (i = extEntry.findIndex(e => e.typeId === typeId)) != -1) {
+                        main = i == 0;
+                        loaderType = extEntry[i].loaderType;
+                    }
+                    else {
+                        main = false;
+                        loaderType = typeEntry.loaderType;
+                    }
+                }
+                else {
+                    main = type != Loader.TEXTURE2D;
+                    loaderType = typeEntry.loaderType;
+                }
+            }
+            else {
+                if (!extEntry) {
+                    console.warn(`not recognize the resource suffix: '${url}'`);
+                    return NullURLInfo;
+                }
+                main = true;
+                typeId = extEntry[0].typeId;
+                loaderType = extEntry[0].loaderType;
+            }
+            return { ext, main, typeId, loaderType };
+        }
+        static warn(url, err) {
+            console.warn(`Failed to load ${url}` + (err ? (":" + err) : ""));
+        }
+        static getRes(url, type) {
+            url = URL.formatURL(url);
+            let ret = Loader._getRes(url, type);
+            return ret || null;
+        }
+        static _getRes(url, type) {
+            let resArr = Loader.loadedMap[url];
+            if (!resArr)
+                return undefined;
+            let ret;
+            if (type) {
+                let typeEntry = Loader.typeMap[type];
+                if (!typeEntry)
+                    return undefined;
+                if (resArr.length == 2) {
+                    if (resArr[0] == typeEntry.typeId)
+                        ret = resArr[1];
+                }
+                else {
+                    let i = resArr.indexOf(typeEntry.typeId);
+                    if (i != -1)
+                        ret = resArr[i + 1];
+                }
+            }
+            else
+                ret = resArr[1];
+            if ((ret instanceof Resource) && ret.destroyed)
+                return undefined;
+            else
+                return ret;
+        }
+        static getTexture2D(url) {
+            return Loader.getRes(url, Loader.TEXTURE2D);
+        }
+        static getBaseTexture(url) {
+            return Loader.getRes(url, Loader.TEXTURE2D);
+        }
+        static getAtlas(url) {
+            return Loader.getRes(url, Loader.ATLAS);
+        }
+        getRes(url, type) {
+            return Loader.getRes(url, type);
+        }
+        static createNodes(url) {
+            var _a;
+            return (_a = Loader.getRes(url)) === null || _a === void 0 ? void 0 : _a.create();
+        }
+        static cacheRes(url, data, type) {
+            url = URL.formatURL(url);
+            let urlInfo = Loader.getURLInfo(url, type);
+            if (urlInfo.typeId != null)
+                Loader._cacheRes(url, data, urlInfo.typeId, urlInfo.main);
+        }
+        static _cacheRes(url, data, typeId, main) {
+            let entry = Loader.loadedMap[url];
+            if (main) {
+                if (entry) {
+                    entry[0] = typeId;
+                    entry[1] = data;
+                }
+                else
+                    entry = Loader.loadedMap[url] = [typeId, data];
+            }
+            else {
+                if (entry) {
+                    let i = entry.findIndex(e => e === typeId);
+                    if (i != -1)
+                        entry[i + 1] = data;
+                    else
+                        entry.push(typeId, data);
+                }
+                else
+                    entry = Loader.loadedMap[url] = [null, undefined, typeId, data];
+            }
+        }
+        cacheRes(url, data, type) {
+            Loader.cacheRes(url, data, type);
+        }
+        static clearRes(url, checkObj) {
+            url = URL.formatURL(url);
+            Loader._clearRes(url, checkObj);
+        }
+        clearRes(url, checkObj) {
+            url = URL.formatURL(url);
+            Loader._clearRes(url, checkObj);
+        }
+        static _clearRes(url, checkObj) {
+            let entry = Loader.loadedMap[url];
+            if (!entry)
+                return;
+            if (checkObj) {
+                if (entry[1] == checkObj) {
+                    if (entry.length == 2)
+                        delete Loader.loadedMap[url];
+                    else
+                        entry[1] = undefined;
+                }
+                else {
+                    let i = entry.indexOf(checkObj);
+                    if (i == -1)
+                        return;
+                    if (entry.length == 4 && entry[0] == null)
+                        delete Loader.loadedMap[url];
+                    else
+                        entry.splice(i - 1, 2);
+                }
+                if ((checkObj instanceof Resource) && !checkObj.destroyed) {
+                    checkObj.destroy();
+                }
+            }
+            else {
+                delete Loader.loadedMap[url];
+                if (entry.length > 2) {
+                    for (let i = 1; i < entry.length; i += 2) {
+                        let obj = entry[i];
+                        if ((obj instanceof Resource) && !obj.destroyed) {
+                            obj.destroy();
+                        }
+                    }
+                }
+                else {
+                    let obj = entry[1];
+                    if ((obj instanceof Resource) && !obj.destroyed) {
+                        obj.destroy();
+                    }
+                }
+            }
+        }
+        clearTextureRes(url) {
+            url = URL.formatURL(url);
+            let entry = Loader.loadedMap[url];
+            if (!entry)
+                return;
+            let res = entry[0];
+            if (res instanceof Texture) {
+                res.disposeBitmap();
+            }
+            else if (res instanceof AtlasResource) {
+                for (let tex of res.textures)
+                    tex.disposeBitmap();
+            }
+        }
+        static setGroup(url, group) {
+            url = URL.formatURL(url);
+            let set = Loader.groupMap[group];
+            if (!set)
+                set = Loader.groupMap[group] = new Set();
+            set.add(url);
+        }
+        static clearResByGroup(group) {
+            let set = Loader.groupMap[group];
+            if (set) {
+                for (let k of set)
+                    Loader._clearRes(k);
+            }
+        }
+        clearUnLoaded() {
+            if (this._queue.length == 0)
+                return;
+            let arr = this._queue.concat();
+            this._queue.length = 0;
+            for (let item of arr)
+                item.onComplete(null);
+        }
+        cancelLoadByUrls(urls) {
+            if (!urls)
+                return;
+            for (var i = 0, n = urls.length; i < n; i++) {
+                this.cancelLoadByUrl(urls[i]);
+            }
+        }
+        cancelLoadByUrl(url) {
+            url = URL.formatURL(url);
+            let i = this._queue.findIndex(item => item.url == url);
+            if (i != -1) {
+                let item = this._queue[i];
+                this._queue.splice(i, 1);
+                item.onComplete(null);
+            }
+        }
+    }
+    Loader.TEXT = "text";
+    Loader.JSON = "json";
+    Loader.XML = "xml";
+    Loader.BUFFER = "arraybuffer";
+    Loader.IMAGE = "image";
+    Loader.SOUND = "sound";
+    Loader.VIDEO = "video";
+    Loader.ATLAS = "atlas";
+    Loader.FONT = "font";
+    Loader.TTF = "ttf";
+    Loader.HIERARCHY = "HIERARCHY";
+    Loader.MESH = "MESH";
+    Loader.MATERIAL = "MATERIAL";
+    Loader.TEXTURE2D = "TEXTURE2D";
+    Loader.TEXTURECUBE = "TEXTURE2D";
+    Loader.ANIMATIONCLIP = "ANIMATIONCLIP";
+    Loader.TERRAINHEIGHTDATA = "TERRAINHEIGHTDATA";
+    Loader.TERRAINRES = "TERRAIN";
+    Loader.SPINE = "SPINE";
+    Loader.extMap = {};
+    Loader.typeMap = {};
+    Loader.downloader = new Downloader();
+    Loader.groupMap = {};
+    Loader.loadedMap = {};
+    Loader.preLoadedMap = {};
+    class LoadTask {
+        constructor() {
+            this.options = {};
+            this.onProgress = new Delegate();
+            this.onComplete = new Delegate();
+            this.progress = new BatchProgress((progress) => this.onProgress.invoke(progress));
+        }
+        reset() {
+            for (let k in this.options)
+                delete this.options[k];
+            this.onProgress.clear();
+            this.onComplete.clear();
+            this.progress.reset();
+            this.obsoluteInst = null;
+        }
+    }
+    const loadTaskPool = [];
+    const dummyOptions = {};
+
     class WebAudioSound extends EventDispatcher {
         constructor() {
             super(...arguments);
@@ -29592,6 +26613,6663 @@ window.Laya = (function (exports) {
     SoundManager._isCheckingDispose = false;
     SoundManager._soundCache = {};
     SoundManager.autoReleaseSound = true;
+
+    class LocalStorage {
+        static __init__() {
+            if (!LocalStorage._baseClass) {
+                LocalStorage._baseClass = Storage;
+                Storage.init();
+            }
+            LocalStorage.items = LocalStorage._baseClass.items;
+            LocalStorage.support = LocalStorage._baseClass.support;
+            return LocalStorage.support;
+        }
+        static setItem(key, value) {
+            LocalStorage._baseClass.setItem(key, value);
+        }
+        static getItem(key) {
+            return LocalStorage._baseClass.getItem(key);
+        }
+        static setJSON(key, value) {
+            LocalStorage._baseClass.setJSON(key, value);
+        }
+        static getJSON(key) {
+            return LocalStorage._baseClass.getJSON(key);
+        }
+        static removeItem(key) {
+            LocalStorage._baseClass.removeItem(key);
+        }
+        static clear() {
+            LocalStorage._baseClass.clear();
+        }
+    }
+    LocalStorage.support = false;
+    class Storage {
+        static init() {
+            try {
+                Storage.support = true;
+                Storage.items = window.localStorage;
+                Storage.setItem('laya', '1');
+                Storage.removeItem('laya');
+            }
+            catch (e) {
+                Storage.support = false;
+            }
+            if (!Storage.support)
+                console.log('LocalStorage is not supprot or browser is private mode.');
+        }
+        static setItem(key, value) {
+            try {
+                Storage.support && Storage.items.setItem(key, value);
+            }
+            catch (e) {
+                console.warn("set localStorage failed", e);
+            }
+        }
+        static getItem(key) {
+            return Storage.support ? Storage.items.getItem(key) : null;
+        }
+        static setJSON(key, value) {
+            try {
+                Storage.support && Storage.items.setItem(key, JSON.stringify(value));
+            }
+            catch (e) {
+                console.warn("set localStorage failed", e);
+            }
+        }
+        static getJSON(key) {
+            try {
+                let obj = JSON.parse(Storage.support ? Storage.items.getItem(key) : null);
+                return obj;
+            }
+            catch (err) {
+                return Storage.items.getItem(key);
+            }
+        }
+        static removeItem(key) {
+            Storage.support && Storage.items.removeItem(key);
+        }
+        static clear() {
+            Storage.support && Storage.items.clear();
+        }
+    }
+    Storage.support = false;
+
+    class IStatRender {
+        show(x = 0, y = 0, views) {
+        }
+        showToggle(x = 0, y = 0, views) {
+        }
+        enable() {
+        }
+        hide() {
+        }
+        set_onclick(fn) {
+        }
+        isCanvasRender() {
+            return true;
+        }
+        renderNotCanvas(ctx, x, y) { }
+    }
+
+    class StatUI extends IStatRender {
+        constructor() {
+            super(...arguments);
+            this._show = false;
+            this._showToggle = false;
+            this._height = 100;
+            this._view = [];
+            this._toggleView = [];
+            this._checkBoxArray = [];
+        }
+        show(x = 0, y = 0, views) {
+            this._view.length = views.length;
+            for (let i = 0, n = this._view.length; i < n; i++) {
+                this._view[i] = views[i];
+            }
+            if (!this._show) {
+                this.createUI(x, y);
+                this.enable();
+            }
+            this._show = true;
+        }
+        showToggle(x = 0, y = 0, views) {
+            ILaya.Loader.cacheRes("defaultCheckBox", Texture2D.defalutUITexture, "TEXTURE2D");
+            this._toggleView.length = views.length;
+            for (let i = 0, n = this._toggleView.length; i < n; i++) {
+                this._toggleView[i] = views[i];
+            }
+            if (!this._showToggle) {
+                this.createToggleUI(x, y);
+                this.enable();
+            }
+            this._showToggle = true;
+        }
+        createToggleUI(x, y) {
+            var stat = this._toggleSprite;
+            var pixel = Browser.pixelRatio;
+            if (!stat) {
+                stat = new Sprite();
+                this._toggleleftText = new Text();
+                this._toggleleftText.pos(5, 5);
+                this._toggleleftText.color = "#ffffff";
+                stat.addChild(this._toggleleftText);
+                this._toggletxt = new Sprite();
+                this._toggletxt.pos(170 * pixel, 5);
+                stat.addChild(this._toggletxt);
+                this._toggleSprite = stat;
+                this._checkBoxArray.length = 0;
+            }
+            stat.pos(x, y);
+            var text = "";
+            for (var i = 0; i < this._toggleView.length; i++) {
+                var one = this._toggleView[i];
+                text += one.title + "\n";
+                let checkBox = new exports.CheckBox("defaultCheckBox");
+                checkBox.selected = Stat[one.value];
+                this._checkBoxArray.push(checkBox);
+                checkBox.scale(StatUI._toggleSize, StatUI._toggleSize);
+                this._toggletxt.addChild(checkBox);
+                checkBox.pos(0, i * (StatUI._toggleSize + 5));
+            }
+            this._toggleleftText.text = text;
+            var width = pixel * 138;
+            var height = pixel * (this._toggleView.length * (StatUI._toggleSize + 5)) + 4;
+            this._toggleleftText.fontSize = (StatUI._toggleSize + 5) * pixel;
+            stat.size(width, height);
+            stat.graphics.clear();
+            stat.graphics.alpha(0.5);
+            stat.graphics.drawRect(0, 0, width + 110, height + 10, "#999999");
+            stat.graphics.alpha(2);
+            Laya.stage.addChild(stat);
+            this.loop();
+        }
+        createUI(x, y) {
+            var stat = this._sp;
+            var pixel = Browser.pixelRatio;
+            if (!stat) {
+                stat = new Sprite();
+                this._leftText = new Text();
+                this._leftText.pos(5, 5);
+                this._leftText.color = "#ffffff";
+                stat.addChild(this._leftText);
+                this._txt = new Text();
+                this._txt.pos(171 * pixel, 5);
+                this._txt.color = "#ffffff";
+                stat.addChild(this._txt);
+                this._sp = stat;
+            }
+            stat.pos(x, y);
+            var text = "";
+            for (var i = 0; i < this._view.length; i++) {
+                var one = this._view[i];
+                text += one.title + "\n";
+            }
+            this._leftText.text = text;
+            var width = pixel * 138;
+            var height = pixel * (this._view.length * StatUI._fontSize) + 4;
+            this._txt.fontSize = StatUI._fontSize * pixel;
+            this._leftText.fontSize = StatUI._fontSize * pixel;
+            stat.size(width, height);
+            stat.graphics.clear();
+            stat.graphics.alpha(0.5);
+            stat.graphics.drawRect(0, 0, width + 110, height + 10, "#999999");
+            stat.graphics.alpha(2);
+            this.loop();
+        }
+        enable() {
+            ILaya.systemTimer.frameLoop(1, this, this.loop);
+        }
+        hide() {
+            this._show = false;
+            this._showToggle = false;
+            ILaya.systemTimer.clear(this, this.loop);
+            if (this._canvas) {
+                Browser.removeElement(this._canvas.source);
+            }
+        }
+        set_onclick(fn) {
+            if (this._sp) {
+                this._sp.on("click", this._sp, fn);
+            }
+            if (this._canvas) {
+                this._canvas.source.onclick = fn;
+                this._canvas.source.style.pointerEvents = '';
+            }
+        }
+        loop() {
+            Stat._count++;
+            var timer = Browser.now();
+            if (timer - Stat._timer < 1000)
+                return;
+            var count = Stat._count;
+            Stat.FPS = Math.round((count * 1000) / (timer - Stat._timer));
+            if (this._show) {
+                Stat.updateEngineData();
+                var delay = Stat.FPS > 0 ? Math.floor(1000 / Stat.FPS).toString() : " ";
+                Stat._fpsStr = Stat.FPS + (Stat.renderSlow ? " slow" : "") + " " + delay;
+                this.renderInfo(count);
+                Stat.clear();
+            }
+            if (this._showToggle) {
+                for (var i = 0; i < this._toggleView.length; i++) {
+                    let one = this._toggleView[i];
+                    Stat[one.value] = this._checkBoxArray[i].selected;
+                }
+            }
+            Stat._count = 0;
+            Stat._timer = timer;
+        }
+        renderInfo(count) {
+            var text = "";
+            for (var i = 0; i < this._view.length; i++) {
+                let vieparam = this._view[i];
+                let isAverage = vieparam.mode == "average";
+                var value = Stat[vieparam.value];
+                (vieparam.units == "M") && (value = Math.floor(value / (1024 * 1024) * 100) / 100);
+                (vieparam.units == "K") && (value = Math.floor(value / (1024) * 100) / 100);
+                if (isAverage) {
+                    value /= count;
+                    value = Math.floor(value);
+                }
+                (vieparam.units == "M") && (value += "M");
+                (vieparam.units == "K") && (value += "K");
+                text += value + "\n";
+            }
+            this._txt.text = text;
+        }
+        renderNotCanvas(ctx, x, y) {
+            this._show && this._sp && this._sp.render(ctx, 0, 0);
+        }
+    }
+    StatUI._fontSize = 14;
+    StatUI._toggleSize = 16;
+
+    class SkinSV extends Value2D {
+        constructor(type) {
+            super(ShaderDefines2D.SKINMESH, 0);
+            this.offsetX = 300;
+            this.offsetY = 0;
+            var _vlen = 8 * Const.BYTES_PE;
+            const glfloat = LayaGL.renderEngine.getParams(exports.RenderParams.FLOAT);
+            this.position = [2, glfloat, false, _vlen, 0];
+            this.texcoord = [2, glfloat, false, _vlen, 2 * Const.BYTES_PE];
+            this.color = [4, glfloat, false, _vlen, 4 * Const.BYTES_PE];
+        }
+    }
+
+    class PrimitiveSV extends Value2D {
+        constructor(args) {
+            super(ShaderDefines2D.PRIMITIVE, 0);
+            this._attribLocation = ['position', 0, 'attribColor', 1];
+        }
+    }
+
+    class TextureSV extends Value2D {
+        constructor(subID = 0) {
+            super(ShaderDefines2D.TEXTURE2D, subID);
+            this.strength = 0;
+            this.blurInfo = null;
+            this.colorMat = null;
+            this.colorAlpha = null;
+            this._attribLocation = ['posuv', 0, 'attribColor', 1, 'attribFlags', 2];
+        }
+        clear() {
+            this.texture = null;
+            this.shader = null;
+            this.defines._value = this.subID;
+        }
+    }
+
+    class Mouse {
+        static set cursor(cursorStr) {
+            Mouse._style.cursor = cursorStr;
+        }
+        static get cursor() {
+            return Mouse._style.cursor;
+        }
+        static __init__() {
+            Mouse._style = Browser.document.body.style;
+        }
+        static hide() {
+            if (Mouse.cursor != "none") {
+                Mouse._preCursor = Mouse.cursor;
+                Mouse.cursor = "none";
+            }
+        }
+        static show() {
+            if (Mouse.cursor == "none") {
+                if (Mouse._preCursor) {
+                    Mouse.cursor = Mouse._preCursor;
+                }
+                else {
+                    Mouse.cursor = "auto";
+                }
+            }
+        }
+    }
+
+    class MeshParticle2D extends Mesh2D {
+        constructor(maxNum) {
+            super(MeshParticle2D.const_stride, maxNum * 4 * MeshParticle2D.const_stride, 4);
+            this.canReuse = true;
+            this.setAttributes(MeshParticle2D._fixattriInfo);
+            this.createQuadIB(maxNum);
+            this._quadNum = maxNum;
+            if (!MeshParticle2D.vertexDeclaration) {
+                MeshParticle2D.vertexDeclaration = new VertexDeclaration(116, [
+                    new VertexElement(0, VertexElementFormat.Vector4, 0),
+                    new VertexElement(16, VertexElementFormat.Vector3, 1),
+                    new VertexElement(28, VertexElementFormat.Vector3, 2),
+                    new VertexElement(40, VertexElementFormat.Vector4, 3),
+                    new VertexElement(56, VertexElementFormat.Vector4, 4),
+                    new VertexElement(72, VertexElementFormat.Vector3, 5),
+                    new VertexElement(84, VertexElementFormat.Vector2, 6),
+                    new VertexElement(92, VertexElementFormat.Vector4, 7),
+                    new VertexElement(108, VertexElementFormat.Single, 8),
+                    new VertexElement(112, VertexElementFormat.Single, 9)
+                ]);
+            }
+            this._vb.vertexDeclaration = MeshParticle2D.vertexDeclaration;
+        }
+        static __init__() {
+            const glfloat = LayaGL.renderEngine.getParams(exports.RenderParams.FLOAT);
+            MeshParticle2D._fixattriInfo = [
+                glfloat, 4, 0,
+                glfloat, 3, 16,
+                glfloat, 3, 28,
+                glfloat, 4, 40,
+                glfloat, 4, 56,
+                glfloat, 3, 72,
+                glfloat, 2, 84,
+                glfloat, 4, 92,
+                glfloat, 1, 108,
+                glfloat, 1, 112
+            ];
+        }
+        setMaxParticleNum(maxNum) {
+            this._vb.buffer2D._resizeBuffer(maxNum * 4 * MeshParticle2D.const_stride, false);
+            this.createQuadIB(maxNum);
+        }
+        static getAMesh(maxNum) {
+            if (MeshParticle2D._POOL.length) {
+                var ret = MeshParticle2D._POOL.pop();
+                ret.setMaxParticleNum(maxNum);
+                return ret;
+            }
+            return new MeshParticle2D(maxNum);
+        }
+        releaseMesh() {
+            this._vb.buffer2D.setByteLength(0);
+            this.vertNum = 0;
+            this.indexNum = 0;
+            MeshParticle2D._POOL.push(this);
+        }
+        destroy() {
+            this._ib.destroy();
+            this._vb.destroy();
+            this._vb.deleteBuffer();
+        }
+    }
+    MeshParticle2D.const_stride = 116;
+    MeshParticle2D._POOL = [];
+    MeshParticle2D.vertexDeclaration = null;
+
+    class WeakObject {
+        constructor() {
+            this._obj = {};
+            WeakObject._maps.push(this);
+        }
+        static __init__() {
+            WeakObject.I = new WeakObject();
+            if (!WeakObject.supportWeakMap)
+                ILaya.systemTimer.loop(WeakObject.delInterval, null, WeakObject.clearCache);
+        }
+        static clearCache() {
+            for (var i = 0, n = WeakObject._maps.length; i < n; i++) {
+                var obj = WeakObject._maps[i];
+                obj._obj = {};
+            }
+        }
+        set(key, value) {
+            if (key == null)
+                return;
+            if (WeakObject.supportWeakMap) ;
+            else {
+                if (typeof (key) == 'string' || typeof (key) == 'number') {
+                    this._obj[key] = value;
+                }
+                else {
+                    key.$_GID || (key.$_GID = Utils.getGID());
+                    this._obj[key.$_GID] = value;
+                }
+            }
+        }
+        get(key) {
+            if (key == null)
+                return null;
+            if (WeakObject.supportWeakMap) ;
+            else {
+                if (typeof (key) == 'string' || typeof (key) == 'number')
+                    return this._obj[key];
+                return this._obj[key.$_GID];
+            }
+        }
+        del(key) {
+            if (key == null)
+                return;
+            if (WeakObject.supportWeakMap) ;
+            else {
+                if (typeof (key) == 'string' || typeof (key) == 'number')
+                    delete this._obj[key];
+                else
+                    delete this._obj[this._obj.$_GID];
+            }
+        }
+        has(key) {
+            if (key == null)
+                return false;
+            if (WeakObject.supportWeakMap) {
+                return false;
+            }
+            else {
+                if (typeof (key) == 'string' || typeof (key) == 'number')
+                    return this._obj[key] != null;
+                return this._obj[this._obj.$_GID] != null;
+            }
+        }
+    }
+    WeakObject.supportWeakMap = false;
+    WeakObject.delInterval = 10 * 60 * 1000;
+    WeakObject._maps = [];
+
+    class DefineDatas {
+        constructor() {
+            this._mask = [];
+            this._length = 0;
+        }
+        _intersectionDefineDatas(define) {
+            var unionMask = define._mask;
+            var mask = this._mask;
+            for (var i = this._length - 1; i >= 0; i--) {
+                var value = mask[i] & unionMask[i];
+                if (value == 0 && i == this._length - 1)
+                    this._length--;
+                else
+                    mask[i] = value;
+            }
+        }
+        add(define) {
+            var index = define._index;
+            var size = index + 1;
+            var mask = this._mask;
+            var maskStart = this._length;
+            if (maskStart < size) {
+                (mask.length < size) && (mask.length = size);
+                for (; maskStart < index; maskStart++)
+                    mask[maskStart] = 0;
+                mask[index] = define._value;
+                this._length = size;
+            }
+            else {
+                mask[index] |= define._value;
+            }
+        }
+        remove(define) {
+            var index = define._index;
+            var mask = this._mask;
+            var endIndex = this._length - 1;
+            if (index > endIndex)
+                return;
+            var newValue = mask[index] & ~define._value;
+            if (index == endIndex && newValue === 0)
+                this._length--;
+            else
+                mask[index] = newValue;
+        }
+        addDefineDatas(define) {
+            var addMask = define._mask;
+            var size = define._length;
+            var mask = this._mask;
+            var maskStart = this._length;
+            if (maskStart < size) {
+                mask.length = size;
+                for (var i = 0; i < maskStart; i++)
+                    mask[i] |= addMask[i];
+                for (; i < size; i++)
+                    mask[i] = addMask[i];
+                this._length = size;
+            }
+            else {
+                for (var i = 0; i < size; i++) {
+                    mask[i] |= addMask[i];
+                }
+            }
+        }
+        removeDefineDatas(define) {
+            var removeMask = define._mask;
+            var mask = this._mask;
+            var endIndex = this._length - 1;
+            var i = Math.min(define._length, endIndex);
+            for (; i >= 0; i--) {
+                var newValue = mask[i] & ~removeMask[i];
+                if (i == endIndex && newValue === 0) {
+                    endIndex--;
+                    this._length--;
+                }
+                else {
+                    mask[i] = newValue;
+                }
+            }
+        }
+        has(define) {
+            var index = define._index;
+            if (index >= this._length)
+                return false;
+            return (this._mask[index] & define._value) !== 0;
+        }
+        clear() {
+            this._length = 0;
+        }
+        cloneTo(destObject) {
+            var destDefineData = destObject;
+            var destMask = destDefineData._mask;
+            var mask = this._mask;
+            var count = this._length;
+            destMask.length = count;
+            for (var i = 0; i < count; i++)
+                destMask[i] = mask[i];
+            destDefineData._length = count;
+        }
+        clone() {
+            var dest = new DefineDatas();
+            this.cloneTo(dest);
+            return dest;
+        }
+        destroy() {
+            delete this._mask;
+        }
+    }
+
+    class ShaderDefine {
+        constructor(index, value) {
+            this._index = index;
+            this._value = value;
+        }
+    }
+    ShaderDefine._texGammaDefine = {};
+
+    class ShaderVariant {
+        constructor(shader, subShaderIndex, passIndex, defines) {
+            this._subShaderIndex = 0;
+            this._passIndex = 0;
+            this.setValue(shader, subShaderIndex, passIndex, defines);
+        }
+        get shader() {
+            return this._shader;
+        }
+        get subShaderIndex() {
+            return this._subShaderIndex;
+        }
+        get passIndex() {
+            return this._passIndex;
+        }
+        get defineNames() {
+            return this._defineNames;
+        }
+        setValue(shader, subShaderIndex, passIndex, defineNames) {
+            if (shader) {
+                var subShader = shader.getSubShaderAt(subShaderIndex);
+                if (subShader) {
+                    var pass = subShader._passes[passIndex];
+                    if (pass) {
+                        var validDefine = pass._validDefine;
+                        for (var i = 0, n = defineNames.length; i < n; i++) {
+                            var defname = defineNames[i];
+                            if (!validDefine.has(Shader3D.getDefineByName(defname)))
+                                throw `ShaderVariantInfo:Invalid defineName ${defname} in ${shader._name} subShaderIndex of ${subShaderIndex} passIndex of ${passIndex}.`;
+                        }
+                    }
+                    else {
+                        throw `ShaderVariantInfo:Shader don't have passIndex of ${passIndex}.`;
+                    }
+                }
+                else {
+                    throw `ShaderVariantInfo:Shader don't have subShaderIndex of ${subShaderIndex}.`;
+                }
+            }
+            else {
+                throw `ShaderVariantInfo:Shader can't be null.`;
+            }
+            this._shader = shader;
+            this._subShaderIndex = subShaderIndex;
+            this._passIndex = passIndex;
+            this._defineNames = defineNames;
+        }
+        equal(other) {
+            if (this._shader !== other._shader || this._subShaderIndex !== other._subShaderIndex || this._passIndex !== other._passIndex)
+                return false;
+            var defines = this._defineNames;
+            var otherDefines = other._defineNames;
+            if (defines.length !== otherDefines.length)
+                return false;
+            for (var i = 0, n = this._defineNames.length; i < n; i++) {
+                if (defines[i] !== otherDefines[i])
+                    return false;
+            }
+            return true;
+        }
+        clone() {
+            var dest = new ShaderVariant(this._shader, this._subShaderIndex, this._passIndex, this._defineNames.slice());
+            return dest;
+        }
+    }
+    class ShaderVariantCollection {
+        constructor() {
+            this._allCompiled = false;
+            this._variants = [];
+        }
+        get allCompiled() {
+            return this._allCompiled;
+        }
+        get variantCount() {
+            return this._variants.length;
+        }
+        add(variant) {
+            for (var i = 0, n = this._variants.length; i < n; i++) {
+                if (this._variants[i].equal(variant))
+                    return false;
+            }
+            this._variants.push(variant.clone());
+            this._allCompiled = false;
+            return true;
+        }
+        remove(variant) {
+            for (var i = 0, n = this._variants.length; i < n; i++) {
+                if (this._variants[i].equal(variant)) {
+                    this._variants.splice(i, 1);
+                    return true;
+                }
+            }
+            return false;
+        }
+        contatins(variant) {
+            for (var i = 0, n = this._variants.length; i < n; i++) {
+                if (this._variants[i].equal(variant))
+                    return true;
+            }
+            return false;
+        }
+        getByIndex(index) {
+            return this._variants[index];
+        }
+        clear() {
+            this._variants.length = 0;
+        }
+        compile() {
+            if (!this._allCompiled) {
+                var variants = this._variants;
+                for (var i = 0, n = variants.length; i < n; i++) {
+                    var variant = variants[i];
+                    Shader3D.compileShaderByDefineNames(variant._shader._name, variant._subShaderIndex, variant._passIndex, variant._defineNames);
+                }
+                this._allCompiled = true;
+            }
+        }
+    }
+
+    const _DEFAULTELEMENTS = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+    const _tempV30 = new Vector3();
+    const _tempV31 = new Vector3();
+    const _tempV32 = new Vector3();
+    class Matrix3x3 {
+        constructor(createElement = true) {
+            createElement && (this.elements = _DEFAULTELEMENTS.slice());
+        }
+        static createRotationQuaternion(rotation, out) {
+            var rotX = rotation.x;
+            var rotY = rotation.y;
+            var rotZ = rotation.z;
+            var rotW = rotation.w;
+            var xx = rotX * rotX;
+            var yy = rotY * rotY;
+            var zz = rotZ * rotZ;
+            var xy = rotX * rotY;
+            var zw = rotZ * rotW;
+            var zx = rotZ * rotX;
+            var yw = rotY * rotW;
+            var yz = rotY * rotZ;
+            var xw = rotX * rotW;
+            var resultE = out.elements;
+            resultE[0] = 1.0 - (2.0 * (yy + zz));
+            resultE[1] = 2.0 * (xy + zw);
+            resultE[2] = 2.0 * (zx - yw);
+            resultE[3] = 2.0 * (xy - zw);
+            resultE[4] = 1.0 - (2.0 * (zz + xx));
+            resultE[5] = 2.0 * (yz + xw);
+            resultE[6] = 2.0 * (zx + yw);
+            resultE[7] = 2.0 * (yz - xw);
+            resultE[8] = 1.0 - (2.0 * (yy + xx));
+        }
+        static createFromTranslation(trans, out) {
+            var e = out.elements;
+            e[0] = 1;
+            e[1] = 0;
+            e[2] = 0;
+            e[3] = 0;
+            e[4] = 1;
+            e[5] = 0;
+            e[6] = trans.x;
+            e[7] = trans.y;
+            e[8] = 1;
+        }
+        static createFromRotation(rad, out) {
+            var e = out.elements;
+            var s = Math.sin(rad), c = Math.cos(rad);
+            e[0] = c;
+            e[1] = s;
+            e[2] = 0;
+            e[3] = -s;
+            e[4] = c;
+            e[5] = 0;
+            e[6] = 0;
+            e[7] = 0;
+            e[8] = 1;
+        }
+        static createFromScaling(scale, out) {
+            var e = out.elements;
+            e[0] = scale.x;
+            e[1] = 0;
+            e[2] = 0;
+            e[3] = 0;
+            e[4] = scale.y;
+            e[5] = 0;
+            e[6] = 0;
+            e[7] = 0;
+            e[8] = scale.z;
+        }
+        static createFromMatrix4x4(sou, out) {
+            var souE = sou.elements;
+            var outE = out.elements;
+            outE[0] = souE[0];
+            outE[1] = souE[1];
+            outE[2] = souE[2];
+            outE[3] = souE[4];
+            outE[4] = souE[5];
+            outE[5] = souE[6];
+            outE[6] = souE[8];
+            outE[7] = souE[9];
+            outE[8] = souE[10];
+        }
+        static multiply(left, right, out) {
+            var l = left.elements;
+            var r = right.elements;
+            var e = out.elements;
+            var l11 = l[0], l12 = l[1], l13 = l[2];
+            var l21 = l[3], l22 = l[4], l23 = l[5];
+            var l31 = l[6], l32 = l[7], l33 = l[8];
+            var r11 = r[0], r12 = r[1], r13 = r[2];
+            var r21 = r[3], r22 = r[4], r23 = r[5];
+            var r31 = r[6], r32 = r[7], r33 = r[8];
+            e[0] = r11 * l11 + r12 * l21 + r13 * l31;
+            e[1] = r11 * l12 + r12 * l22 + r13 * r32;
+            e[2] = r11 * l13 + r12 * l23 + r13 * l33;
+            e[3] = r21 * l11 + r22 * l21 + r23 * l31;
+            e[4] = r21 * l12 + r22 * l22 + r23 * l32;
+            e[5] = r21 * l13 + r22 * l23 + r23 * l33;
+            e[6] = r31 * l11 + r32 * l21 + r33 * l31;
+            e[7] = r31 * l12 + r32 * l22 + r33 * l32;
+            e[8] = r31 * l13 + r32 * l23 + r33 * l33;
+        }
+        determinant() {
+            var f = this.elements;
+            var a00 = f[0], a01 = f[1], a02 = f[2];
+            var a10 = f[3], a11 = f[4], a12 = f[5];
+            var a20 = f[6], a21 = f[7], a22 = f[8];
+            return a00 * (a22 * a11 - a12 * a21) + a01 * (-a22 * a10 + a12 * a20) + a02 * (a21 * a10 - a11 * a20);
+        }
+        translate(trans, out) {
+            var e = out.elements;
+            var f = this.elements;
+            var a00 = f[0], a01 = f[1], a02 = f[2];
+            var a10 = f[3], a11 = f[4], a12 = f[5];
+            var a20 = f[6], a21 = f[7], a22 = f[8];
+            var x = trans.x, y = trans.y;
+            e[0] = a00;
+            e[1] = a01;
+            e[2] = a02;
+            e[3] = a10;
+            e[4] = a11;
+            e[5] = a12;
+            e[6] = x * a00 + y * a10 + a20;
+            e[7] = x * a01 + y * a11 + a21;
+            e[8] = x * a02 + y * a12 + a22;
+        }
+        rotate(rad, out) {
+            var e = out.elements;
+            var f = this.elements;
+            var a00 = f[0], a01 = f[1], a02 = f[2];
+            var a10 = f[3], a11 = f[4], a12 = f[5];
+            var a20 = f[6], a21 = f[7], a22 = f[8];
+            var s = Math.sin(rad);
+            var c = Math.cos(rad);
+            e[0] = c * a00 + s * a10;
+            e[1] = c * a01 + s * a11;
+            e[2] = c * a02 + s * a12;
+            e[3] = c * a10 - s * a00;
+            e[4] = c * a11 - s * a01;
+            e[5] = c * a12 - s * a02;
+            e[6] = a20;
+            e[7] = a21;
+            e[8] = a22;
+        }
+        scale(scale, out) {
+            var e = out.elements;
+            var f = this.elements;
+            var x = scale.x, y = scale.y;
+            e[0] = x * f[0];
+            e[1] = x * f[1];
+            e[2] = x * f[2];
+            e[3] = y * f[3];
+            e[4] = y * f[4];
+            e[5] = y * f[5];
+            e[6] = f[6];
+            e[7] = f[7];
+            e[8] = f[8];
+        }
+        invert(out) {
+            var e = out.elements;
+            var f = this.elements;
+            var a00 = f[0], a01 = f[1], a02 = f[2];
+            var a10 = f[3], a11 = f[4], a12 = f[5];
+            var a20 = f[6], a21 = f[7], a22 = f[8];
+            var b01 = a22 * a11 - a12 * a21;
+            var b11 = -a22 * a10 + a12 * a20;
+            var b21 = a21 * a10 - a11 * a20;
+            var det = a00 * b01 + a01 * b11 + a02 * b21;
+            if (!det) {
+                return;
+            }
+            det = 1.0 / det;
+            e[0] = b01 * det;
+            e[1] = (-a22 * a01 + a02 * a21) * det;
+            e[2] = (a12 * a01 - a02 * a11) * det;
+            e[3] = b11 * det;
+            e[4] = (a22 * a00 - a02 * a20) * det;
+            e[5] = (-a12 * a00 + a02 * a10) * det;
+            e[6] = b21 * det;
+            e[7] = (-a21 * a00 + a01 * a20) * det;
+            e[8] = (a11 * a00 - a01 * a10) * det;
+        }
+        transpose(out) {
+            var e = out.elements;
+            var f = this.elements;
+            if (out === this) {
+                var a01 = f[1], a02 = f[2], a12 = f[5];
+                e[1] = f[3];
+                e[2] = f[6];
+                e[3] = a01;
+                e[5] = f[7];
+                e[6] = a02;
+                e[7] = a12;
+            }
+            else {
+                e[0] = f[0];
+                e[1] = f[3];
+                e[2] = f[6];
+                e[3] = f[1];
+                e[4] = f[4];
+                e[5] = f[7];
+                e[6] = f[2];
+                e[7] = f[5];
+                e[8] = f[8];
+            }
+        }
+        identity() {
+            this.elements.set(_DEFAULTELEMENTS);
+        }
+        cloneTo(destObject) {
+            var s, d;
+            s = this.elements;
+            d = destObject.elements;
+            if (s === d) {
+                return;
+            }
+            s.set(d);
+        }
+        clone() {
+            var dest = new Matrix3x3(false);
+            dest.elements = this.elements.slice();
+            return dest;
+        }
+        static lookAt(eye, target, up, out) {
+            Vector3.subtract(eye, target, _tempV30);
+            Vector3.normalize(_tempV30, _tempV30);
+            Vector3.cross(up, _tempV30, _tempV31);
+            Vector3.normalize(_tempV31, _tempV31);
+            Vector3.cross(_tempV30, _tempV31, _tempV32);
+            var v0 = _tempV30;
+            var v1 = _tempV31;
+            var v2 = _tempV32;
+            var me = out.elements;
+            me[0] = v1.x;
+            me[3] = v1.y;
+            me[6] = v1.z;
+            me[1] = v2.x;
+            me[4] = v2.y;
+            me[7] = v2.z;
+            me[2] = v0.x;
+            me[5] = v0.y;
+            me[8] = v0.z;
+        }
+        static forwardLookAt(eye, target, up, out) {
+            var vx = _tempV31;
+            var vy = _tempV32;
+            var vz = _tempV30;
+            target.vsub(eye, vz).normalize();
+            up.cross(vz, vx).normalize();
+            vz.cross(vx, vy);
+            var m = out.elements;
+            m[0] = vx.x;
+            m[1] = vx.y;
+            m[2] = vx.z;
+            m[3] = vy.x;
+            m[4] = vy.y;
+            m[5] = vy.z;
+            m[6] = vz.x;
+            m[7] = vz.y;
+            m[8] = vz.z;
+        }
+    }
+    Matrix3x3.DEFAULT = new Matrix3x3();
+
+    const TEMPVector30 = new Vector3();
+    const TEMPVector31 = new Vector3();
+    const TEMPVector32 = new Vector3();
+    const TEMPVector33 = new Vector3();
+    const _tempMatrix3x3 = new Matrix3x3();
+    class Quaternion {
+        constructor(x = 0, y = 0, z = 0, w = 1) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.w = w;
+        }
+        static createFromYawPitchRoll(yaw, pitch, roll, out) {
+            var halfRoll = roll * 0.5;
+            var halfPitch = pitch * 0.5;
+            var halfYaw = yaw * 0.5;
+            var sinRoll = Math.sin(halfRoll);
+            var cosRoll = Math.cos(halfRoll);
+            var sinPitch = Math.sin(halfPitch);
+            var cosPitch = Math.cos(halfPitch);
+            var sinYaw = Math.sin(halfYaw);
+            var cosYaw = Math.cos(halfYaw);
+            out.x = (cosYaw * sinPitch * cosRoll) + (sinYaw * cosPitch * sinRoll);
+            out.y = (sinYaw * cosPitch * cosRoll) - (cosYaw * sinPitch * sinRoll);
+            out.z = (cosYaw * cosPitch * sinRoll) - (sinYaw * sinPitch * cosRoll);
+            out.w = (cosYaw * cosPitch * cosRoll) + (sinYaw * sinPitch * sinRoll);
+        }
+        static multiply(left, right, out) {
+            var lx = left.x;
+            var ly = left.y;
+            var lz = left.z;
+            var lw = left.w;
+            var rx = right.x;
+            var ry = right.y;
+            var rz = right.z;
+            var rw = right.w;
+            var a = (ly * rz - lz * ry);
+            var b = (lz * rx - lx * rz);
+            var c = (lx * ry - ly * rx);
+            var d = (lx * rx + ly * ry + lz * rz);
+            out.x = (lx * rw + rx * lw) + a;
+            out.y = (ly * rw + ry * lw) + b;
+            out.z = (lz * rw + rz * lw) + c;
+            out.w = lw * rw - d;
+        }
+        static arcTanAngle(x, y) {
+            if (x == 0) {
+                if (y == 1)
+                    return Math.PI / 2;
+                return -Math.PI / 2;
+            }
+            if (x > 0)
+                return Math.atan(y / x);
+            if (x < 0) {
+                if (y > 0)
+                    return Math.atan(y / x) + Math.PI;
+                return Math.atan(y / x) - Math.PI;
+            }
+            return 0;
+        }
+        static angleTo(from, location, angle) {
+            Vector3.subtract(location, from, TEMPVector30);
+            Vector3.normalize(TEMPVector30, TEMPVector30);
+            angle.x = Math.asin(TEMPVector30.y);
+            angle.y = Quaternion.arcTanAngle(-TEMPVector30.z, -TEMPVector30.x);
+        }
+        static createFromAxisAngle(axis, rad, out) {
+            rad = rad * 0.5;
+            var s = Math.sin(rad);
+            out.x = s * axis.x;
+            out.y = s * axis.y;
+            out.z = s * axis.z;
+            out.w = Math.cos(rad);
+        }
+        static createFromMatrix4x4(mat, out) {
+            var me = mat.elements;
+            var sqrt;
+            var half;
+            var scale = me[0] + me[5] + me[10];
+            if (scale > 0.0) {
+                sqrt = Math.sqrt(scale + 1.0);
+                out.w = sqrt * 0.5;
+                sqrt = 0.5 / sqrt;
+                out.x = (me[6] - me[9]) * sqrt;
+                out.y = (me[8] - me[2]) * sqrt;
+                out.z = (me[1] - me[4]) * sqrt;
+            }
+            else if ((me[0] >= me[5]) && (me[0] >= me[10])) {
+                sqrt = Math.sqrt(1.0 + me[0] - me[5] - me[10]);
+                half = 0.5 / sqrt;
+                out.x = 0.5 * sqrt;
+                out.y = (me[1] + me[4]) * half;
+                out.z = (me[2] + me[8]) * half;
+                out.w = (me[6] - me[9]) * half;
+            }
+            else if (me[5] > me[10]) {
+                sqrt = Math.sqrt(1.0 + me[5] - me[0] - me[10]);
+                half = 0.5 / sqrt;
+                out.x = (me[4] + me[1]) * half;
+                out.y = 0.5 * sqrt;
+                out.z = (me[9] + me[6]) * half;
+                out.w = (me[8] - me[2]) * half;
+            }
+            else {
+                sqrt = Math.sqrt(1.0 + me[10] - me[0] - me[5]);
+                half = 0.5 / sqrt;
+                out.x = (me[8] + me[2]) * half;
+                out.y = (me[9] + me[6]) * half;
+                out.z = 0.5 * sqrt;
+                out.w = (me[1] - me[4]) * half;
+            }
+        }
+        static slerp(left, right, t, out) {
+            var ax = left.x, ay = left.y, az = left.z, aw = left.w, bx = right.x, by = right.y, bz = right.z, bw = right.w;
+            var omega, cosom, sinom, scale0, scale1;
+            cosom = ax * bx + ay * by + az * bz + aw * bw;
+            if (cosom < 0.0) {
+                cosom = -cosom;
+                bx = -bx;
+                by = -by;
+                bz = -bz;
+                bw = -bw;
+            }
+            if ((1.0 - cosom) > 0.000001) {
+                omega = Math.acos(cosom);
+                sinom = Math.sin(omega);
+                scale0 = Math.sin((1.0 - t) * omega) / sinom;
+                scale1 = Math.sin(t * omega) / sinom;
+            }
+            else {
+                scale0 = 1.0 - t;
+                scale1 = t;
+            }
+            out.x = scale0 * ax + scale1 * bx;
+            out.y = scale0 * ay + scale1 * by;
+            out.z = scale0 * az + scale1 * bz;
+            out.w = scale0 * aw + scale1 * bw;
+            return out;
+        }
+        static lerp(left, right, amount, out) {
+            var inverse = 1.0 - amount;
+            if (Quaternion.dot(left, right) >= 0) {
+                out.x = (inverse * left.x) + (amount * right.x);
+                out.y = (inverse * left.y) + (amount * right.y);
+                out.z = (inverse * left.z) + (amount * right.z);
+                out.w = (inverse * left.w) + (amount * right.w);
+            }
+            else {
+                out.x = (inverse * left.x) - (amount * right.x);
+                out.y = (inverse * left.y) - (amount * right.y);
+                out.z = (inverse * left.z) - (amount * right.z);
+                out.w = (inverse * left.w) - (amount * right.w);
+            }
+            out.normalize(out);
+        }
+        static add(left, right, out) {
+            out.x = left.x + right.x;
+            out.y = left.y + right.y;
+            out.z = left.z + right.z;
+            out.w = left.w + right.w;
+        }
+        static dot(left, right) {
+            return left.x * right.x + left.y * right.y + left.z * right.z + left.w * right.w;
+        }
+        setValue(x, y, z, w) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.w = w;
+        }
+        set(x, y, z, w) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.w = w;
+            return this;
+        }
+        scaling(scaling, out) {
+            out.x = this.x * scaling;
+            out.y = this.y * scaling;
+            out.z = this.z * scaling;
+            out.w = this.w * scaling;
+        }
+        normalize(out) {
+            var len = this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w;
+            if (len > 0) {
+                len = 1 / Math.sqrt(len);
+                out.x = this.x * len;
+                out.y = this.y * len;
+                out.z = this.z * len;
+                out.w = this.w * len;
+            }
+        }
+        length() {
+            return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
+        }
+        rotateX(rad, out) {
+            rad *= 0.5;
+            var bx = Math.sin(rad), bw = Math.cos(rad);
+            out.x = this.x * bw + this.w * bx;
+            out.y = this.y * bw + this.z * bx;
+            out.z = this.z * bw - this.y * bx;
+            out.w = this.w * bw - this.x * bx;
+        }
+        rotateY(rad, out) {
+            rad *= 0.5;
+            var by = Math.sin(rad), bw = Math.cos(rad);
+            out.x = this.x * bw - this.z * by;
+            out.y = this.y * bw + this.w * by;
+            out.z = this.z * bw + this.x * by;
+            out.w = this.w * bw - this.y * by;
+        }
+        rotateZ(rad, out) {
+            rad *= 0.5;
+            var bz = Math.sin(rad), bw = Math.cos(rad);
+            out.x = this.x * bw + this.y * bz;
+            out.y = this.y * bw - this.x * bz;
+            out.z = this.z * bw + this.w * bz;
+            out.w = this.w * bw - this.z * bz;
+        }
+        getYawPitchRoll(out) {
+            Vector3.transformQuat(Vector3.ForwardRH, this, TEMPVector31);
+            Vector3.transformQuat(Vector3.Up, this, TEMPVector32);
+            var upe = TEMPVector32;
+            Quaternion.angleTo(Vector3.ZERO, TEMPVector31, TEMPVector33);
+            var angle = TEMPVector33;
+            if (angle.x == Math.PI / 2) {
+                angle.y = Quaternion.arcTanAngle(upe.z, upe.x);
+                angle.z = 0;
+            }
+            else if (angle.x == -Math.PI / 2) {
+                angle.y = Quaternion.arcTanAngle(-upe.z, -upe.x);
+                angle.z = 0;
+            }
+            else {
+                Matrix4x4.createRotationY(-angle.y, Matrix4x4.TEMPMatrix0);
+                Matrix4x4.createRotationX(-angle.x, Matrix4x4.TEMPMatrix1);
+                Vector3.transformCoordinate(TEMPVector32, Matrix4x4.TEMPMatrix0, TEMPVector32);
+                Vector3.transformCoordinate(TEMPVector32, Matrix4x4.TEMPMatrix1, TEMPVector32);
+                angle.z = Quaternion.arcTanAngle(upe.y, -upe.x);
+            }
+            if (angle.y <= -Math.PI)
+                angle.y = Math.PI;
+            if (angle.z <= -Math.PI)
+                angle.z = Math.PI;
+            if (angle.y >= Math.PI && angle.z >= Math.PI) {
+                angle.y = 0;
+                angle.z = 0;
+                angle.x = Math.PI - angle.x;
+            }
+            var oe = out;
+            oe.x = angle.y;
+            oe.y = angle.x;
+            oe.z = angle.z;
+        }
+        invert(out) {
+            var a0 = this.x, a1 = this.y, a2 = this.z, a3 = this.w;
+            var dot = a0 * a0 + a1 * a1 + a2 * a2 + a3 * a3;
+            var invDot = dot ? 1.0 / dot : 0;
+            out.x = -a0 * invDot;
+            out.y = -a1 * invDot;
+            out.z = -a2 * invDot;
+            out.w = a3 * invDot;
+        }
+        identity() {
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+            this.w = 1;
+        }
+        fromArray(array, offset = 0) {
+            this.x = array[offset + 0];
+            this.y = array[offset + 1];
+            this.z = array[offset + 2];
+            this.w = array[offset + 3];
+        }
+        cloneTo(destObject) {
+            if (this === destObject) {
+                return;
+            }
+            destObject.x = this.x;
+            destObject.y = this.y;
+            destObject.z = this.z;
+            destObject.w = this.w;
+        }
+        clone() {
+            var dest = new Quaternion();
+            this.cloneTo(dest);
+            return dest;
+        }
+        equals(b) {
+            return MathUtils3D.nearEqual(this.x, b.x) && MathUtils3D.nearEqual(this.y, b.y) && MathUtils3D.nearEqual(this.z, b.z) && MathUtils3D.nearEqual(this.w, b.w);
+        }
+        static rotationLookAt(forward, up, out) {
+            Quaternion.lookAt(Vector3.ZERO, forward, up, out);
+        }
+        static lookAt(eye, target, up, out) {
+            Matrix3x3.lookAt(eye, target, up, _tempMatrix3x3);
+            Quaternion.rotationMatrix(_tempMatrix3x3, out);
+        }
+        static forwardLookAt(eye, target, up, out) {
+            Matrix3x3.forwardLookAt(eye, target, up, _tempMatrix3x3);
+            Quaternion.rotationMatrix(_tempMatrix3x3, out);
+        }
+        lengthSquared() {
+            return (this.x * this.x) + (this.y * this.y) + (this.z * this.z) + (this.w * this.w);
+        }
+        static invert(value, out) {
+            var lengthSq = value.lengthSquared();
+            if (!MathUtils3D.isZero(lengthSq)) {
+                lengthSq = 1.0 / lengthSq;
+                out.x = -value.x * lengthSq;
+                out.y = -value.y * lengthSq;
+                out.z = -value.z * lengthSq;
+                out.w = value.w * lengthSq;
+            }
+        }
+        static rotationMatrix(matrix3x3, out) {
+            var me = matrix3x3.elements;
+            var m11 = me[0];
+            var m12 = me[1];
+            var m13 = me[2];
+            var m21 = me[3];
+            var m22 = me[4];
+            var m23 = me[5];
+            var m31 = me[6];
+            var m32 = me[7];
+            var m33 = me[8];
+            var sqrt, half;
+            var scale = m11 + m22 + m33;
+            if (scale > 0) {
+                sqrt = Math.sqrt(scale + 1);
+                out.w = sqrt * 0.5;
+                sqrt = 0.5 / sqrt;
+                out.x = (m23 - m32) * sqrt;
+                out.y = (m31 - m13) * sqrt;
+                out.z = (m12 - m21) * sqrt;
+            }
+            else if ((m11 >= m22) && (m11 >= m33)) {
+                sqrt = Math.sqrt(1 + m11 - m22 - m33);
+                half = 0.5 / sqrt;
+                out.x = 0.5 * sqrt;
+                out.y = (m12 + m21) * half;
+                out.z = (m13 + m31) * half;
+                out.w = (m23 - m32) * half;
+            }
+            else if (m22 > m33) {
+                sqrt = Math.sqrt(1 + m22 - m11 - m33);
+                half = 0.5 / sqrt;
+                out.x = (m21 + m12) * half;
+                out.y = 0.5 * sqrt;
+                out.z = (m32 + m23) * half;
+                out.w = (m31 - m13) * half;
+            }
+            else {
+                sqrt = Math.sqrt(1 + m33 - m11 - m22);
+                half = 0.5 / sqrt;
+                out.x = (m31 + m13) * half;
+                out.y = (m32 + m23) * half;
+                out.z = 0.5 * sqrt;
+                out.w = (m12 - m21) * half;
+            }
+        }
+        forNativeElement(nativeElements = null) {
+            if (nativeElements) {
+                this.elements = nativeElements;
+                this.elements[0] = this.x;
+                this.elements[1] = this.y;
+                this.elements[2] = this.z;
+                this.elements[3] = this.w;
+            }
+            else {
+                this.elements = new Float32Array([this.x, this.y, this.z, this.w]);
+            }
+            Vector2.rewriteNumProperty(this, "x", 0);
+            Vector2.rewriteNumProperty(this, "y", 1);
+            Vector2.rewriteNumProperty(this, "z", 2);
+            Vector2.rewriteNumProperty(this, "w", 3);
+        }
+    }
+    Quaternion.TEMP = new Quaternion();
+    Quaternion.DEFAULT = new Quaternion();
+    Quaternion.NAN = new Quaternion(NaN, NaN, NaN, NaN);
+
+    const _tempVector0 = new Vector3();
+    const _tempVector1 = new Vector3();
+    const _tempVector2 = new Vector3();
+    const _tempVector3 = new Vector3();
+    const DEFAULTARRAY = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+    class Matrix4x4 {
+        constructor(m11 = 1, m12 = 0, m13 = 0, m14 = 0, m21 = 0, m22 = 1, m23 = 0, m24 = 0, m31 = 0, m32 = 0, m33 = 1, m34 = 0, m41 = 0, m42 = 0, m43 = 0, m44 = 1, elements = null) {
+            if (arguments.length == 0) {
+                this.elements = DEFAULTARRAY.slice();
+                return;
+            }
+            if (arguments.length === 1 && arguments[0] === null)
+                return;
+            var e = elements ? this.elements = elements : this.elements = new Float32Array(16);
+            e[0] = m11;
+            e[1] = m12;
+            e[2] = m13;
+            e[3] = m14;
+            e[4] = m21;
+            e[5] = m22;
+            e[6] = m23;
+            e[7] = m24;
+            e[8] = m31;
+            e[9] = m32;
+            e[10] = m33;
+            e[11] = m34;
+            e[12] = m41;
+            e[13] = m42;
+            e[14] = m43;
+            e[15] = m44;
+        }
+        static createRotationX(rad, out) {
+            var oe = out.elements;
+            var s = Math.sin(rad), c = Math.cos(rad);
+            oe[1] = oe[2] = oe[3] = oe[4] = oe[7] = oe[8] = oe[11] = oe[12] = oe[13] = oe[14] = 0;
+            oe[0] = oe[15] = 1;
+            oe[5] = oe[10] = c;
+            oe[6] = s;
+            oe[9] = -s;
+        }
+        static createRotationY(rad, out) {
+            var oe = out.elements;
+            var s = Math.sin(rad), c = Math.cos(rad);
+            oe[1] = oe[3] = oe[4] = oe[6] = oe[7] = oe[9] = oe[11] = oe[12] = oe[13] = oe[14] = 0;
+            oe[5] = oe[15] = 1;
+            oe[0] = oe[10] = c;
+            oe[2] = -s;
+            oe[8] = s;
+        }
+        static createRotationZ(rad, out) {
+            var oe = out.elements;
+            var s = Math.sin(rad), c = Math.cos(rad);
+            oe[2] = oe[3] = oe[6] = oe[7] = oe[8] = oe[9] = oe[11] = oe[12] = oe[13] = oe[14] = 0;
+            oe[10] = oe[15] = 1;
+            oe[0] = oe[5] = c;
+            oe[1] = s;
+            oe[4] = -s;
+        }
+        static createRotationYawPitchRoll(yaw, pitch, roll, result) {
+            Quaternion.createFromYawPitchRoll(yaw, pitch, roll, Quaternion.TEMP);
+            Matrix4x4.createRotationQuaternion(Quaternion.TEMP, result);
+        }
+        static createRotationAxis(axis, angle, result) {
+            var x = axis.x;
+            var y = axis.y;
+            var z = axis.z;
+            var cos = Math.cos(angle);
+            var sin = Math.sin(angle);
+            var xx = x * x;
+            var yy = y * y;
+            var zz = z * z;
+            var xy = x * y;
+            var xz = x * z;
+            var yz = y * z;
+            var resultE = result.elements;
+            resultE[3] = resultE[7] = resultE[11] = resultE[12] = resultE[13] = resultE[14] = 0;
+            resultE[15] = 1.0;
+            resultE[0] = xx + (cos * (1.0 - xx));
+            resultE[1] = (xy - (cos * xy)) + (sin * z);
+            resultE[2] = (xz - (cos * xz)) - (sin * y);
+            resultE[4] = (xy - (cos * xy)) - (sin * z);
+            resultE[5] = yy + (cos * (1.0 - yy));
+            resultE[6] = (yz - (cos * yz)) + (sin * x);
+            resultE[8] = (xz - (cos * xz)) + (sin * y);
+            resultE[9] = (yz - (cos * yz)) - (sin * x);
+            resultE[10] = zz + (cos * (1.0 - zz));
+        }
+        static createRotationQuaternion(rotation, result) {
+            var resultE = result.elements;
+            var rotationX = rotation.x;
+            var rotationY = rotation.y;
+            var rotationZ = rotation.z;
+            var rotationW = rotation.w;
+            var xx = rotationX * rotationX;
+            var yy = rotationY * rotationY;
+            var zz = rotationZ * rotationZ;
+            var xy = rotationX * rotationY;
+            var zw = rotationZ * rotationW;
+            var zx = rotationZ * rotationX;
+            var yw = rotationY * rotationW;
+            var yz = rotationY * rotationZ;
+            var xw = rotationX * rotationW;
+            resultE[3] = resultE[7] = resultE[11] = resultE[12] = resultE[13] = resultE[14] = 0;
+            resultE[15] = 1.0;
+            resultE[0] = 1.0 - (2.0 * (yy + zz));
+            resultE[1] = 2.0 * (xy + zw);
+            resultE[2] = 2.0 * (zx - yw);
+            resultE[4] = 2.0 * (xy - zw);
+            resultE[5] = 1.0 - (2.0 * (zz + xx));
+            resultE[6] = 2.0 * (yz + xw);
+            resultE[8] = 2.0 * (zx + yw);
+            resultE[9] = 2.0 * (yz - xw);
+            resultE[10] = 1.0 - (2.0 * (yy + xx));
+        }
+        static createTranslate(trans, out) {
+            var oe = out.elements;
+            oe[4] = oe[8] = oe[1] = oe[9] = oe[2] = oe[6] = oe[3] = oe[7] = oe[11] = 0;
+            oe[0] = oe[5] = oe[10] = oe[15] = 1;
+            oe[12] = trans.x;
+            oe[13] = trans.y;
+            oe[14] = trans.z;
+        }
+        static createScaling(scale, out) {
+            var oe = out.elements;
+            oe[0] = scale.x;
+            oe[5] = scale.y;
+            oe[10] = scale.z;
+            oe[1] = oe[4] = oe[8] = oe[12] = oe[9] = oe[13] = oe[2] = oe[6] = oe[14] = oe[3] = oe[7] = oe[11] = 0;
+            oe[15] = 1;
+        }
+        static multiply(left, right, out) {
+            var l = right.elements;
+            var r = left.elements;
+            var e = out.elements;
+            var l11 = l[0], l12 = l[1], l13 = l[2], l14 = l[3];
+            var l21 = l[4], l22 = l[5], l23 = l[6], l24 = l[7];
+            var l31 = l[8], l32 = l[9], l33 = l[10], l34 = l[11];
+            var l41 = l[12], l42 = l[13], l43 = l[14], l44 = l[15];
+            var r11 = r[0], r12 = r[1], r13 = r[2], r14 = r[3];
+            var r21 = r[4], r22 = r[5], r23 = r[6], r24 = r[7];
+            var r31 = r[8], r32 = r[9], r33 = r[10], r34 = r[11];
+            var r41 = r[12], r42 = r[13], r43 = r[14], r44 = r[15];
+            e[0] = (l11 * r11) + (l12 * r21) + (l13 * r31) + (l14 * r41);
+            e[1] = (l11 * r12) + (l12 * r22) + (l13 * r32) + (l14 * r42);
+            e[2] = (l11 * r13) + (l12 * r23) + (l13 * r33) + (l14 * r43);
+            e[3] = (l11 * r14) + (l12 * r24) + (l13 * r34) + (l14 * r44);
+            e[4] = (l21 * r11) + (l22 * r21) + (l23 * r31) + (l24 * r41);
+            e[5] = (l21 * r12) + (l22 * r22) + (l23 * r32) + (l24 * r42);
+            e[6] = (l21 * r13) + (l22 * r23) + (l23 * r33) + (l24 * r43);
+            e[7] = (l21 * r14) + (l22 * r24) + (l23 * r34) + (l24 * r44);
+            e[8] = (l31 * r11) + (l32 * r21) + (l33 * r31) + (l34 * r41);
+            e[9] = (l31 * r12) + (l32 * r22) + (l33 * r32) + (l34 * r42);
+            e[10] = (l31 * r13) + (l32 * r23) + (l33 * r33) + (l34 * r43);
+            e[11] = (l31 * r14) + (l32 * r24) + (l33 * r34) + (l34 * r44);
+            e[12] = (l41 * r11) + (l42 * r21) + (l43 * r31) + (l44 * r41);
+            e[13] = (l41 * r12) + (l42 * r22) + (l43 * r32) + (l44 * r42);
+            e[14] = (l41 * r13) + (l42 * r23) + (l43 * r33) + (l44 * r43);
+            e[15] = (l41 * r14) + (l42 * r24) + (l43 * r34) + (l44 * r44);
+        }
+        static createFromQuaternion(rotation, out) {
+            var e = out.elements;
+            var x = rotation.x, y = rotation.y, z = rotation.z, w = rotation.w;
+            var x2 = x + x;
+            var y2 = y + y;
+            var z2 = z + z;
+            var xx = x * x2;
+            var yx = y * x2;
+            var yy = y * y2;
+            var zx = z * x2;
+            var zy = z * y2;
+            var zz = z * z2;
+            var wx = w * x2;
+            var wy = w * y2;
+            var wz = w * z2;
+            e[0] = 1 - yy - zz;
+            e[1] = yx + wz;
+            e[2] = zx - wy;
+            e[3] = 0;
+            e[4] = yx - wz;
+            e[5] = 1 - xx - zz;
+            e[6] = zy + wx;
+            e[7] = 0;
+            e[8] = zx + wy;
+            e[9] = zy - wx;
+            e[10] = 1 - xx - yy;
+            e[11] = 0;
+            e[12] = 0;
+            e[13] = 0;
+            e[14] = 0;
+            e[15] = 1;
+        }
+        static createAffineTransformation(trans, rot, scale, out) {
+            var oe = out.elements;
+            var x = rot.x, y = rot.y, z = rot.z, w = rot.w, x2 = x + x, y2 = y + y, z2 = z + z;
+            var xx = x * x2, xy = x * y2, xz = x * z2, yy = y * y2, yz = y * z2, zz = z * z2;
+            var wx = w * x2, wy = w * y2, wz = w * z2, sx = scale.x, sy = scale.y, sz = scale.z;
+            oe[0] = (1 - (yy + zz)) * sx;
+            oe[1] = (xy + wz) * sx;
+            oe[2] = (xz - wy) * sx;
+            oe[3] = 0;
+            oe[4] = (xy - wz) * sy;
+            oe[5] = (1 - (xx + zz)) * sy;
+            oe[6] = (yz + wx) * sy;
+            oe[7] = 0;
+            oe[8] = (xz + wy) * sz;
+            oe[9] = (yz - wx) * sz;
+            oe[10] = (1 - (xx + yy)) * sz;
+            oe[11] = 0;
+            oe[12] = trans.x;
+            oe[13] = trans.y;
+            oe[14] = trans.z;
+            oe[15] = 1;
+        }
+        static createLookAt(eye, target, up, out) {
+            var oE = out.elements;
+            var xaxis = _tempVector0;
+            var yaxis = _tempVector1;
+            var zaxis = _tempVector2;
+            Vector3.subtract(eye, target, zaxis);
+            Vector3.normalize(zaxis, zaxis);
+            Vector3.cross(up, zaxis, xaxis);
+            Vector3.normalize(xaxis, xaxis);
+            Vector3.cross(zaxis, xaxis, yaxis);
+            oE[3] = oE[7] = oE[11] = 0;
+            oE[15] = 1;
+            oE[0] = xaxis.x;
+            oE[4] = xaxis.y;
+            oE[8] = xaxis.z;
+            oE[1] = yaxis.x;
+            oE[5] = yaxis.y;
+            oE[9] = yaxis.z;
+            oE[2] = zaxis.x;
+            oE[6] = zaxis.y;
+            oE[10] = zaxis.z;
+            oE[12] = -Vector3.dot(xaxis, eye);
+            oE[13] = -Vector3.dot(yaxis, eye);
+            oE[14] = -Vector3.dot(zaxis, eye);
+        }
+        static createPerspective(fov, aspect, znear, zfar, out) {
+            var yScale = 1.0 / Math.tan(fov * 0.5);
+            var xScale = yScale / aspect;
+            var halfWidth = znear / xScale;
+            var halfHeight = znear / yScale;
+            Matrix4x4.createPerspectiveOffCenter(-halfWidth, halfWidth, -halfHeight, halfHeight, znear, zfar, out);
+        }
+        static createPerspectiveOffCenter(left, right, bottom, top, znear, zfar, out) {
+            var oe = out.elements;
+            var zRange = zfar / (zfar - znear);
+            oe[1] = oe[2] = oe[3] = oe[4] = oe[6] = oe[7] = oe[12] = oe[13] = oe[15] = 0;
+            oe[0] = 2.0 * znear / (right - left);
+            oe[5] = 2.0 * znear / (top - bottom);
+            oe[8] = (left + right) / (right - left);
+            oe[9] = (top + bottom) / (top - bottom);
+            oe[10] = -zRange;
+            oe[11] = -1.0;
+            oe[14] = -znear * zRange;
+        }
+        static createOrthoOffCenter(left, right, bottom, top, znear, zfar, out) {
+            var oe = out.elements;
+            var zRange = 1.0 / (zfar - znear);
+            oe[1] = oe[2] = oe[3] = oe[4] = oe[6] = oe[8] = oe[7] = oe[9] = oe[11] = 0;
+            oe[15] = 1;
+            oe[0] = 2.0 / (right - left);
+            oe[5] = 2.0 / (top - bottom);
+            oe[10] = -zRange;
+            oe[12] = (left + right) / (left - right);
+            oe[13] = (top + bottom) / (bottom - top);
+            oe[14] = -znear * zRange;
+        }
+        getElementByRowColumn(row, column) {
+            if (row < 0 || row > 3)
+                throw new Error("row Rows and columns for matrices run from 0 to 3, inclusive.");
+            if (column < 0 || column > 3)
+                throw new Error("column Rows and columns for matrices run from 0 to 3, inclusive.");
+            return this.elements[(row * 4) + column];
+        }
+        setElementByRowColumn(row, column, value) {
+            if (row < 0 || row > 3)
+                throw new Error("row Rows and columns for matrices run from 0 to 3, inclusive.");
+            if (column < 0 || column > 3)
+                throw new Error("column Rows and columns for matrices run from 0 to 3, inclusive.");
+            this.elements[(row * 4) + column] = value;
+        }
+        setRotation(rotation) {
+            var rotationX = rotation.x;
+            var rotationY = rotation.y;
+            var rotationZ = rotation.z;
+            var rotationW = rotation.w;
+            var xx = rotationX * rotationX;
+            var yy = rotationY * rotationY;
+            var zz = rotationZ * rotationZ;
+            var xy = rotationX * rotationY;
+            var zw = rotationZ * rotationW;
+            var zx = rotationZ * rotationX;
+            var yw = rotationY * rotationW;
+            var yz = rotationY * rotationZ;
+            var xw = rotationX * rotationW;
+            var e = this.elements;
+            e[0] = 1.0 - (2.0 * (yy + zz));
+            e[1] = 2.0 * (xy + zw);
+            e[2] = 2.0 * (zx - yw);
+            e[4] = 2.0 * (xy - zw);
+            e[5] = 1.0 - (2.0 * (zz + xx));
+            e[6] = 2.0 * (yz + xw);
+            e[8] = 2.0 * (zx + yw);
+            e[9] = 2.0 * (yz - xw);
+            e[10] = 1.0 - (2.0 * (yy + xx));
+        }
+        setPosition(position) {
+            var e = this.elements;
+            e[12] = position.x;
+            e[13] = position.y;
+            e[14] = position.z;
+        }
+        equalsOtherMatrix(other) {
+            var e = this.elements;
+            var oe = other.elements;
+            return (MathUtils3D.nearEqual(e[0], oe[0]) && MathUtils3D.nearEqual(e[1], oe[1]) && MathUtils3D.nearEqual(e[2], oe[2]) && MathUtils3D.nearEqual(e[3], oe[3]) && MathUtils3D.nearEqual(e[4], oe[4]) && MathUtils3D.nearEqual(e[5], oe[5]) && MathUtils3D.nearEqual(e[6], oe[6]) && MathUtils3D.nearEqual(e[7], oe[7]) && MathUtils3D.nearEqual(e[8], oe[8]) && MathUtils3D.nearEqual(e[9], oe[9]) && MathUtils3D.nearEqual(e[10], oe[10]) && MathUtils3D.nearEqual(e[11], oe[11]) && MathUtils3D.nearEqual(e[12], oe[12]) && MathUtils3D.nearEqual(e[13], oe[13]) && MathUtils3D.nearEqual(e[14], oe[14]) && MathUtils3D.nearEqual(e[15], oe[15]));
+        }
+        decomposeTransRotScale(translation, rotation, scale) {
+            var rotationMatrix = _tempMatrix4x4;
+            if (this.decomposeTransRotMatScale(translation, rotationMatrix, scale)) {
+                Quaternion.createFromMatrix4x4(rotationMatrix, rotation);
+                return true;
+            }
+            else {
+                rotation.identity();
+                return false;
+            }
+        }
+        decomposeTransRotMatScale(translation, rotationMatrix, scale) {
+            var e = this.elements;
+            var te = translation;
+            var re = rotationMatrix.elements;
+            var se = scale;
+            te.x = e[12];
+            te.y = e[13];
+            te.z = e[14];
+            var m11 = e[0], m12 = e[1], m13 = e[2];
+            var m21 = e[4], m22 = e[5], m23 = e[6];
+            var m31 = e[8], m32 = e[9], m33 = e[10];
+            var sX = se.x = Math.sqrt((m11 * m11) + (m12 * m12) + (m13 * m13));
+            var sY = se.y = Math.sqrt((m21 * m21) + (m22 * m22) + (m23 * m23));
+            var sZ = se.z = Math.sqrt((m31 * m31) + (m32 * m32) + (m33 * m33));
+            if (MathUtils3D.isZero(sX) || MathUtils3D.isZero(sY) || MathUtils3D.isZero(sZ)) {
+                re[1] = re[2] = re[3] = re[4] = re[6] = re[7] = re[8] = re[9] = re[11] = re[12] = re[13] = re[14] = 0;
+                re[0] = re[5] = re[10] = re[15] = 1;
+                return false;
+            }
+            var at = _tempVector0;
+            at.x = m31 / sZ;
+            at.y = m32 / sZ;
+            at.z = m33 / sZ;
+            var tempRight = _tempVector1;
+            tempRight.x = m11 / sX;
+            tempRight.y = m12 / sX;
+            tempRight.z = m13 / sX;
+            var up = _tempVector2;
+            Vector3.cross(at, tempRight, up);
+            var right = _tempVector1;
+            Vector3.cross(up, at, right);
+            re[3] = re[7] = re[11] = re[12] = re[13] = re[14] = 0;
+            re[15] = 1;
+            re[0] = right.x;
+            re[1] = right.y;
+            re[2] = right.z;
+            re[4] = up.x;
+            re[5] = up.y;
+            re[6] = up.z;
+            re[8] = at.x;
+            re[9] = at.y;
+            re[10] = at.z;
+            ((re[0] * m11 + re[1] * m12 + re[2] * m13) < 0.0) && (se.x = -sX);
+            ((re[4] * m21 + re[5] * m22 + re[6] * m23) < 0.0) && (se.y = -sY);
+            ((re[8] * m31 + re[9] * m32 + re[10] * m33) < 0.0) && (se.z = -sZ);
+            return true;
+        }
+        decomposeYawPitchRoll(yawPitchRoll) {
+            var pitch = Math.asin(-this.elements[9]);
+            yawPitchRoll.y = pitch;
+            var test = Math.cos(pitch);
+            if (test > MathUtils3D.zeroTolerance) {
+                yawPitchRoll.z = Math.atan2(this.elements[1], this.elements[5]);
+                yawPitchRoll.x = Math.atan2(this.elements[8], this.elements[10]);
+            }
+            else {
+                yawPitchRoll.z = Math.atan2(-this.elements[4], this.elements[0]);
+                yawPitchRoll.x = 0.0;
+            }
+        }
+        normalize() {
+            var v = this.elements;
+            var c = v[0], d = v[1], e = v[2], g = Math.sqrt(c * c + d * d + e * e);
+            if (g) {
+                if (g == 1)
+                    return;
+            }
+            else {
+                v[0] = 0;
+                v[1] = 0;
+                v[2] = 0;
+                return;
+            }
+            g = 1 / g;
+            v[0] = c * g;
+            v[1] = d * g;
+            v[2] = e * g;
+        }
+        transpose() {
+            var e, t;
+            e = this.elements;
+            t = e[1];
+            e[1] = e[4];
+            e[4] = t;
+            t = e[2];
+            e[2] = e[8];
+            e[8] = t;
+            t = e[3];
+            e[3] = e[12];
+            e[12] = t;
+            t = e[6];
+            e[6] = e[9];
+            e[9] = t;
+            t = e[7];
+            e[7] = e[13];
+            e[13] = t;
+            t = e[11];
+            e[11] = e[14];
+            e[14] = t;
+            return this;
+        }
+        invert(out) {
+            var ae = this.elements;
+            var oe = out.elements;
+            var a00 = ae[0], a01 = ae[1], a02 = ae[2], a03 = ae[3], a10 = ae[4], a11 = ae[5], a12 = ae[6], a13 = ae[7], a20 = ae[8], a21 = ae[9], a22 = ae[10], a23 = ae[11], a30 = ae[12], a31 = ae[13], a32 = ae[14], a33 = ae[15], b00 = a00 * a11 - a01 * a10, b01 = a00 * a12 - a02 * a10, b02 = a00 * a13 - a03 * a10, b03 = a01 * a12 - a02 * a11, b04 = a01 * a13 - a03 * a11, b05 = a02 * a13 - a03 * a12, b06 = a20 * a31 - a21 * a30, b07 = a20 * a32 - a22 * a30, b08 = a20 * a33 - a23 * a30, b09 = a21 * a32 - a22 * a31, b10 = a21 * a33 - a23 * a31, b11 = a22 * a33 - a23 * a32, det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
+            if (Math.abs(det) === 0.0) {
+                return;
+            }
+            det = 1.0 / det;
+            oe[0] = (a11 * b11 - a12 * b10 + a13 * b09) * det;
+            oe[1] = (a02 * b10 - a01 * b11 - a03 * b09) * det;
+            oe[2] = (a31 * b05 - a32 * b04 + a33 * b03) * det;
+            oe[3] = (a22 * b04 - a21 * b05 - a23 * b03) * det;
+            oe[4] = (a12 * b08 - a10 * b11 - a13 * b07) * det;
+            oe[5] = (a00 * b11 - a02 * b08 + a03 * b07) * det;
+            oe[6] = (a32 * b02 - a30 * b05 - a33 * b01) * det;
+            oe[7] = (a20 * b05 - a22 * b02 + a23 * b01) * det;
+            oe[8] = (a10 * b10 - a11 * b08 + a13 * b06) * det;
+            oe[9] = (a01 * b08 - a00 * b10 - a03 * b06) * det;
+            oe[10] = (a30 * b04 - a31 * b02 + a33 * b00) * det;
+            oe[11] = (a21 * b02 - a20 * b04 - a23 * b00) * det;
+            oe[12] = (a11 * b07 - a10 * b09 - a12 * b06) * det;
+            oe[13] = (a00 * b09 - a01 * b07 + a02 * b06) * det;
+            oe[14] = (a31 * b01 - a30 * b03 - a32 * b00) * det;
+            oe[15] = (a20 * b03 - a21 * b01 + a22 * b00) * det;
+        }
+        static billboard(objectPosition, cameraPosition, cameraUp, cameraForward, mat) {
+            Vector3.subtract(objectPosition, cameraPosition, _tempVector0);
+            var lengthSq = Vector3.scalarLengthSquared(_tempVector0);
+            if (MathUtils3D.isZero(lengthSq)) {
+                Vector3.scale(cameraForward, -1, _tempVector1);
+                _tempVector1.cloneTo(_tempVector0);
+            }
+            else {
+                Vector3.scale(_tempVector0, 1 / Math.sqrt(lengthSq), _tempVector0);
+            }
+            Vector3.cross(cameraUp, _tempVector0, _tempVector2);
+            Vector3.normalize(_tempVector2, _tempVector2);
+            Vector3.cross(_tempVector0, _tempVector2, _tempVector3);
+            var crosse = _tempVector2;
+            var finale = _tempVector3;
+            var diffee = _tempVector0;
+            var obpose = objectPosition;
+            var mate = mat.elements;
+            mate[0] = crosse.x;
+            mate[1] = crosse.y;
+            mate[2] = crosse.z;
+            mate[3] = 0.0;
+            mate[4] = finale.x;
+            mate[5] = finale.y;
+            mate[6] = finale.z;
+            mate[7] = 0.0;
+            mate[8] = diffee.x;
+            mate[9] = diffee.y;
+            mate[10] = diffee.z;
+            mate[11] = 0.0;
+            mate[12] = obpose.x;
+            mate[13] = obpose.y;
+            mate[14] = obpose.z;
+            mate[15] = 1.0;
+        }
+        identity() {
+            this.elements.set(DEFAULTARRAY);
+        }
+        isIdentity() {
+            let delty = function (num0, num1) {
+                return Math.abs(num0 - num1) < 1e-7;
+            };
+            let e = this.elements;
+            let defined = Matrix4x4.DEFAULT.elements;
+            for (let i = 0, n = e.length; i < n; i++) {
+                if (!delty(e[i], defined[i]))
+                    return false;
+            }
+            return true;
+        }
+        cloneTo(destObject) {
+            var s, d;
+            s = this.elements;
+            d = destObject.elements;
+            if (s === d) {
+                return;
+            }
+            destObject.elements.set(this.elements);
+        }
+        cloneByArray(destObject) {
+            this.elements.set(destObject);
+        }
+        clone() {
+            var dest = new Matrix4x4(null);
+            dest.elements = this.elements.slice();
+            return dest;
+        }
+        static translation(v3, out) {
+            var oe = out.elements;
+            oe[0] = oe[5] = oe[10] = oe[15] = 1;
+            oe[12] = v3.x;
+            oe[13] = v3.y;
+            oe[14] = v3.z;
+        }
+        getTranslationVector(out) {
+            var me = this.elements;
+            out.x = me[12];
+            out.y = me[13];
+            out.z = me[14];
+        }
+        setTranslationVector(translate) {
+            var me = this.elements;
+            var ve = translate;
+            me[12] = ve.x;
+            me[13] = ve.y;
+            me[14] = ve.z;
+        }
+        getForward(out) {
+            var me = this.elements;
+            out.x = -me[8];
+            out.y = -me[9];
+            out.z = -me[10];
+        }
+        setForward(forward) {
+            var me = this.elements;
+            me[8] = -forward.x;
+            me[9] = -forward.y;
+            me[10] = -forward.z;
+        }
+        getInvertFront() {
+            this.decomposeTransRotScale(_tempVector0, Quaternion.TEMP, _tempVector1);
+            var scale = _tempVector1;
+            var isInvert = scale.x < 0;
+            (scale.y < 0) && (isInvert = !isInvert);
+            (scale.z < 0) && (isInvert = !isInvert);
+            return isInvert;
+        }
+    }
+    Matrix4x4.TEMPMatrix0 = new Matrix4x4();
+    Matrix4x4.TEMPMatrix1 = new Matrix4x4();
+    Matrix4x4.DEFAULT = new Matrix4x4();
+    Matrix4x4.ZERO = new Matrix4x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    const _tempMatrix4x4 = new Matrix4x4();
+
+    exports.ShaderDataType = void 0;
+    (function (ShaderDataType) {
+        ShaderDataType[ShaderDataType["Int"] = 0] = "Int";
+        ShaderDataType[ShaderDataType["Bool"] = 1] = "Bool";
+        ShaderDataType[ShaderDataType["Float"] = 2] = "Float";
+        ShaderDataType[ShaderDataType["Vector2"] = 3] = "Vector2";
+        ShaderDataType[ShaderDataType["Vector3"] = 4] = "Vector3";
+        ShaderDataType[ShaderDataType["Vector4"] = 5] = "Vector4";
+        ShaderDataType[ShaderDataType["Color"] = 6] = "Color";
+        ShaderDataType[ShaderDataType["Matrix4x4"] = 7] = "Matrix4x4";
+        ShaderDataType[ShaderDataType["Texture2D"] = 8] = "Texture2D";
+        ShaderDataType[ShaderDataType["TextureCube"] = 9] = "TextureCube";
+        ShaderDataType[ShaderDataType["Buffer"] = 10] = "Buffer";
+    })(exports.ShaderDataType || (exports.ShaderDataType = {}));
+    function ShaderDataDefaultValue(type) {
+        switch (type) {
+            case exports.ShaderDataType.Int:
+                return 0;
+            case exports.ShaderDataType.Bool:
+                return false;
+            case exports.ShaderDataType.Float:
+                return 0;
+            case exports.ShaderDataType.Vector2:
+                return Vector2.ZERO;
+            case exports.ShaderDataType.Vector3:
+                return Vector3.ZERO;
+            case exports.ShaderDataType.Vector4:
+                return Vector4.ZERO;
+            case exports.ShaderDataType.Color:
+                return Color.BLACK;
+            case exports.ShaderDataType.Matrix4x4:
+                return Matrix4x4.DEFAULT;
+        }
+        return null;
+    }
+    class ShaderData {
+        constructor(ownerResource = null) {
+            this._ownerResource = null;
+            this._data = null;
+            this._defineDatas = new DefineDatas();
+            this._ownerResource = ownerResource;
+            this._initData();
+            this._uniformBufferDatas = new Map();
+            this._uniformBuffersMap = new Map();
+        }
+        get uniformBufferDatas() {
+            return this._uniformBufferDatas;
+        }
+        get uniformBuffersMap() {
+            return this._uniformBuffersMap;
+        }
+        _addCheckUBO(key, ubo, uboData) {
+            this._uniformBufferDatas.set(key, ubo);
+            uboData._uniformParamsState.forEach((value, id) => {
+                this.uniformBuffersMap.set(id, ubo);
+            });
+            ubo.setDataByUniformBufferData(uboData);
+        }
+        _initData() {
+            this._data = {};
+            this._gammaColorMap = new Map();
+        }
+        getData() {
+            return this._data;
+        }
+        addDefine(define) {
+            this._defineDatas.add(define);
+        }
+        removeDefine(define) {
+            this._defineDatas.remove(define);
+        }
+        hasDefine(define) {
+            return this._defineDatas.has(define);
+        }
+        clearDefine() {
+            this._defineDatas.clear();
+        }
+        getBool(index) {
+            return this._data[index];
+        }
+        setBool(index, value) {
+            this._data[index] = value;
+        }
+        getInt(index) {
+            return this._data[index];
+        }
+        setInt(index, value) {
+            this._data[index] = value;
+            let ubo = this._uniformBuffersMap.get(index);
+            if (ubo) {
+                ubo._updateDataInfo._setData(index, this.getInt(index));
+                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
+            }
+        }
+        getNumber(index) {
+            return this._data[index];
+        }
+        setNumber(index, value) {
+            this._data[index] = value;
+            let ubo = this._uniformBuffersMap.get(index);
+            if (ubo) {
+                ubo._updateDataInfo._setData(index, this.getNumber(index));
+                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
+            }
+        }
+        getVector2(index) {
+            return this._data[index];
+        }
+        setVector2(index, value) {
+            if (this._data[index]) {
+                value.cloneTo(this._data[index]);
+            }
+            else
+                this._data[index] = value.clone();
+            let ubo = this._uniformBuffersMap.get(index);
+            if (ubo) {
+                ubo._updateDataInfo._setData(index, this.getVector2(index));
+                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
+            }
+        }
+        getVector3(index) {
+            return this._data[index];
+        }
+        setVector3(index, value) {
+            if (this._data[index]) {
+                value.cloneTo(this._data[index]);
+            }
+            else
+                this._data[index] = value.clone();
+            let ubo = this._uniformBuffersMap.get(index);
+            if (ubo) {
+                ubo._updateDataInfo._setData(index, this.getVector3(index));
+                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
+            }
+        }
+        getVector(index) {
+            return this._data[index];
+        }
+        setVector(index, value) {
+            if (this._data[index]) {
+                value.cloneTo(this._data[index]);
+            }
+            else
+                this._data[index] = value.clone();
+            let ubo = this._uniformBuffersMap.get(index);
+            if (ubo) {
+                ubo._updateDataInfo._setData(index, this.getVector(index));
+                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
+            }
+        }
+        getColor(index) {
+            return this._gammaColorMap.get(index);
+        }
+        setColor(index, value) {
+            if (!value)
+                return;
+            if (this._data[index]) {
+                let gammaColor = this._gammaColorMap.get(index);
+                value.cloneTo(gammaColor);
+                let linearColor = this._data[index];
+                linearColor.x = Color.gammaToLinearSpace(value.r);
+                linearColor.y = Color.gammaToLinearSpace(value.g);
+                linearColor.z = Color.gammaToLinearSpace(value.b);
+                linearColor.w = value.a;
+            }
+            else {
+                let linearColor = new Vector4();
+                linearColor.x = Color.gammaToLinearSpace(value.r);
+                linearColor.y = Color.gammaToLinearSpace(value.g);
+                linearColor.z = Color.gammaToLinearSpace(value.b);
+                linearColor.w = value.a;
+                this._data[index] = linearColor;
+                this._gammaColorMap.set(index, value.clone());
+            }
+            let ubo = this._uniformBuffersMap.get(index);
+            if (ubo) {
+                ubo._updateDataInfo._setData(index, this.getLinearColor(index));
+                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
+            }
+        }
+        getLinearColor(index) {
+            return this._data[index];
+        }
+        getMatrix4x4(index) {
+            return this._data[index];
+        }
+        setMatrix4x4(index, value) {
+            if (this._data[index]) {
+                value.cloneTo(this._data[index]);
+            }
+            else {
+                this._data[index] = value.clone();
+            }
+            let ubo = this._uniformBuffersMap.get(index);
+            if (ubo) {
+                ubo._updateDataInfo._setData(index, this.getVector(index));
+                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
+            }
+        }
+        getBuffer(index) {
+            return this._data[index];
+        }
+        setBuffer(index, value) {
+            this._data[index] = value;
+        }
+        setTexture(index, value) {
+            var lastValue = this._data[index];
+            if (value) {
+                let shaderDefine = ShaderDefine._texGammaDefine[index];
+                if (shaderDefine && value && value.gammaCorrection > 1) {
+                    this.addDefine(shaderDefine);
+                }
+                else {
+                    shaderDefine && this.removeDefine(shaderDefine);
+                }
+            }
+            this._data[index] = value ? value : Texture2D.erroTextur;
+            (lastValue) && (lastValue._removeReference());
+            (value) && (value._addReference());
+        }
+        getTexture(index) {
+            return this._data[index];
+        }
+        getSourceIndex(value) {
+            for (var i in this._data) {
+                if (this._data[i] == value)
+                    return Number(i);
+            }
+            return -1;
+        }
+        setValueData(index, value) {
+            if (value instanceof Color) {
+                this.setColor(index, value);
+                return;
+            }
+            else if (!value) {
+                this._data[index] = value;
+            }
+            else if (!!value.clone) {
+                this._data[index] = value.clone();
+            }
+            else
+                this._data[index] = value;
+            let ubo = this._uniformBuffersMap.get(index);
+            if (ubo) {
+                ubo._updateDataInfo._setData(index, this.getValueData(index));
+                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
+            }
+        }
+        setUniformBuffer(index, value) {
+            this._data[index] = value;
+        }
+        getUniformBuffer(index) {
+            return this._data[index];
+        }
+        setShaderData(uniformIndex, type, value) {
+            switch (type) {
+                case exports.ShaderDataType.Int:
+                    this.setInt(uniformIndex, value);
+                    break;
+                case exports.ShaderDataType.Bool:
+                    this.setBool(uniformIndex, value);
+                    break;
+                case exports.ShaderDataType.Float:
+                    this.setNumber(uniformIndex, value);
+                    break;
+                case exports.ShaderDataType.Vector2:
+                    this.setVector2(uniformIndex, value);
+                    break;
+                case exports.ShaderDataType.Vector3:
+                    this.setVector3(uniformIndex, value);
+                    break;
+                case exports.ShaderDataType.Vector4:
+                    this.setVector(uniformIndex, value);
+                    break;
+                case exports.ShaderDataType.Color:
+                    this.setColor(uniformIndex, value);
+                    break;
+                case exports.ShaderDataType.Matrix4x4:
+                    this.setMatrix4x4(uniformIndex, value);
+                    break;
+                case exports.ShaderDataType.Texture2D:
+                case exports.ShaderDataType.TextureCube:
+                    this.setTexture(uniformIndex, value);
+                    break;
+                case exports.ShaderDataType.Buffer:
+                    this.setBuffer(uniformIndex, value);
+                    break;
+                default:
+                    throw "unkone shader data type.";
+            }
+        }
+        getShaderData(uniformIndex, type) {
+            switch (type) {
+                case exports.ShaderDataType.Int:
+                    return this.getInt(uniformIndex);
+                case exports.ShaderDataType.Bool:
+                    return this.getBool(uniformIndex);
+                case exports.ShaderDataType.Float:
+                    return this.getNumber(uniformIndex);
+                case exports.ShaderDataType.Vector2:
+                    return this.getVector2(uniformIndex);
+                case exports.ShaderDataType.Vector3:
+                    return this.getVector3(uniformIndex);
+                case exports.ShaderDataType.Vector4:
+                    return this.getVector(uniformIndex);
+                case exports.ShaderDataType.Color:
+                    return this.getColor(uniformIndex);
+                case exports.ShaderDataType.Matrix4x4:
+                    return this.getMatrix4x4(uniformIndex);
+                case exports.ShaderDataType.Texture2D:
+                case exports.ShaderDataType.TextureCube:
+                    return this.getTexture(uniformIndex);
+                case exports.ShaderDataType.Buffer:
+                    return this.getBuffer(uniformIndex);
+                default:
+                    throw "unkone shader data type.";
+            }
+        }
+        getValueData(index) {
+            return this._data[index];
+        }
+        cloneTo(destObject) {
+            var dest = destObject;
+            var destData = dest._data;
+            for (var k in this._data) {
+                var value = this._data[k];
+                if (value != null) {
+                    if (typeof (value) == 'number') {
+                        destData[k] = value;
+                    }
+                    else if (typeof (value) == 'number') {
+                        destData[k] = value;
+                    }
+                    else if (typeof (value) == "boolean") {
+                        destData[k] = value;
+                    }
+                    else if (value instanceof Vector2) {
+                        var v2 = (destData[k]) || (destData[k] = new Vector2());
+                        value.cloneTo(v2);
+                        destData[k] = v2;
+                    }
+                    else if (value instanceof Vector3) {
+                        var v3 = (destData[k]) || (destData[k] = new Vector3());
+                        value.cloneTo(v3);
+                        destData[k] = v3;
+                    }
+                    else if (value instanceof Vector4) {
+                        let color = this.getColor(parseInt(k));
+                        if (color) {
+                            let clonecolor = color.clone();
+                            destObject.setColor(parseInt(k), clonecolor);
+                        }
+                        else {
+                            var v4 = (destData[k]) || (destData[k] = new Vector4());
+                            value.cloneTo(v4);
+                            destData[k] = v4;
+                        }
+                    }
+                    else if (value instanceof Matrix4x4) {
+                        var mat = (destData[k]) || (destData[k] = new Matrix4x4());
+                        value.cloneTo(mat);
+                        destData[k] = mat;
+                    }
+                    else if (value instanceof BaseTexture) {
+                        destData[k] = value;
+                        value._addReference();
+                    }
+                }
+            }
+            this._defineDatas.cloneTo(dest._defineDatas);
+            this._gammaColorMap.forEach((color, index) => {
+                destObject._gammaColorMap.set(index, color.clone());
+            });
+        }
+        clone() {
+            var dest = new ShaderData();
+            this.cloneTo(dest);
+            return dest;
+        }
+        reset() {
+            for (var k in this._data) {
+                var value = this._data[k];
+                if (value instanceof Resource) {
+                    value._removeReference();
+                }
+            }
+            this._data = {};
+            this._gammaColorMap.clear();
+            this._uniformBufferDatas.clear();
+            this._uniformBuffersMap.clear();
+            this._defineDatas.clear();
+        }
+        destroy() {
+            this._defineDatas.destroy();
+            this._defineDatas = null;
+            for (var k in this._data) {
+                var value = this._data[k];
+                if (value instanceof Resource) {
+                    value._removeReference();
+                }
+            }
+            this._data = null;
+            this._gammaColorMap.clear();
+            this._gammaColorMap = null;
+            delete this._uniformBufferDatas;
+            delete this._uniformBuffersMap;
+            this._uniformBufferDatas = null;
+            this._uniformBuffersMap = null;
+        }
+    }
+
+    exports.UniformBufferParamsType = void 0;
+    (function (UniformBufferParamsType) {
+        UniformBufferParamsType[UniformBufferParamsType["Number"] = 0] = "Number";
+        UniformBufferParamsType[UniformBufferParamsType["Vector2"] = 1] = "Vector2";
+        UniformBufferParamsType[UniformBufferParamsType["Vector3"] = 2] = "Vector3";
+        UniformBufferParamsType[UniformBufferParamsType["Vector4"] = 3] = "Vector4";
+        UniformBufferParamsType[UniformBufferParamsType["Matrix4x4"] = 4] = "Matrix4x4";
+        UniformBufferParamsType[UniformBufferParamsType["Vector4Array"] = 5] = "Vector4Array";
+        UniformBufferParamsType[UniformBufferParamsType["MatrixArray"] = 6] = "MatrixArray";
+    })(exports.UniformBufferParamsType || (exports.UniformBufferParamsType = {}));
+    class UnifromBufferData {
+        constructor(uniformParamsStat) {
+            this._uniformParamsState = new Map(uniformParamsStat);
+            this._createBuffer();
+            this._updateFlag = new Vector2();
+            this._resetUpdateFlag();
+        }
+        _createBuffer() {
+            var dataPos = 0;
+            this._layoutMap = {};
+            const elementSize = 4;
+            this._uniformParamsState.forEach((key, value) => {
+                dataPos += this._addUniformParams(value, key, dataPos);
+            });
+            this._bytelength = Math.ceil(dataPos / 4) * 4 * elementSize;
+            this._buffer = new Float32Array(dataPos);
+        }
+        _getArraySize(key) {
+            let left = key.indexOf("[");
+            let right = key.indexOf("]");
+            if (left != -1 && right != -1 && left < right) {
+                return parseFloat(key.substring(left + 1, right));
+            }
+            else
+                throw key + " is illegal ";
+        }
+        _addUniformParams(uniformID, value, offset) {
+            let size = 0;
+            let posAdd = 0;
+            let posG = offset % 4;
+            let offsetadd;
+            switch (value) {
+                case exports.UniformBufferParamsType.Number:
+                    size = 1;
+                    posAdd = 1;
+                    break;
+                case exports.UniformBufferParamsType.Vector2:
+                    size = 2;
+                    switch (posG) {
+                        case 0:
+                        case 2:
+                            posAdd = 2;
+                            break;
+                        case 1:
+                        case 3:
+                            offset += 1;
+                            posAdd = 3;
+                            break;
+                    }
+                    break;
+                case exports.UniformBufferParamsType.Vector3:
+                    size = 3;
+                    posAdd = 3;
+                    switch (posG) {
+                        case 1:
+                        case 2:
+                        case 3:
+                            offset += (4 - posG);
+                            posAdd = (4 - posG) + 3;
+                            break;
+                    }
+                    break;
+                case exports.UniformBufferParamsType.Vector4:
+                    size = 4;
+                    switch (posG) {
+                        case 0:
+                            posAdd = 4;
+                            break;
+                        case 1:
+                            offset += 3;
+                            posAdd = 7;
+                            break;
+                        case 2:
+                            offset += 2;
+                            posAdd = 6;
+                            break;
+                        case 3:
+                            offset += 1;
+                            posAdd = 5;
+                            break;
+                    }
+                    break;
+                case exports.UniformBufferParamsType.Matrix4x4:
+                    size = 16;
+                    offsetadd = posG ? 4 - posG : posG;
+                    offset += offsetadd;
+                    posAdd = size + offsetadd;
+                    break;
+                case exports.UniformBufferParamsType.Vector4Array:
+                    size = this._getArraySize(Shader3D.propertyIDToName(uniformID)) * 4;
+                    offsetadd = posG ? 4 - posG : posG;
+                    offset += offsetadd;
+                    posAdd = size + offsetadd;
+                    break;
+                case exports.UniformBufferParamsType.MatrixArray:
+                    size = this._getArraySize(Shader3D.propertyIDToName(uniformID)) * 16;
+                    offsetadd = posG ? 4 - posG : posG;
+                    offset += offsetadd;
+                    posAdd = size + offsetadd;
+                    break;
+                default:
+                    throw "Unifrom Buffer Params Type is illegal ";
+            }
+            const paramsInfo = new Vector2(offset, size);
+            this._layoutMap[uniformID] = paramsInfo;
+            return posAdd;
+        }
+        _getParamsInfo(key) {
+            return this._layoutMap[key];
+        }
+        _setUpdateFlag(min, max) {
+            if (min < this._updateFlag.x)
+                this._updateFlag.x = min;
+            if (max > this._updateFlag.y)
+                this._updateFlag.y = max;
+        }
+        destroy() {
+            delete this._buffer;
+            this._uniformParamsState.clear();
+            this._uniformParamsState = null;
+            this._layoutMap = null;
+            this._updateFlag = null;
+        }
+        _resetUpdateFlag() {
+            this._updateFlag.setValue(this._buffer.length, 0);
+        }
+        _has(uniformID) {
+            const info = this._getParamsInfo(uniformID);
+            return !!info;
+        }
+        _setData(uniformID, value) {
+            let uniformType = this._uniformParamsState.get(uniformID);
+            switch (uniformType) {
+                case exports.UniformBufferParamsType.Number:
+                    this.setNumberbyIndex(uniformID, value);
+                    break;
+                case exports.UniformBufferParamsType.Vector2:
+                    this.setVector2byIndex(uniformID, value);
+                    break;
+                case exports.UniformBufferParamsType.Vector3:
+                    this.setVector3byIndex(uniformID, value);
+                    break;
+                case exports.UniformBufferParamsType.Vector4:
+                    this.setVector4byIndex(uniformID, value);
+                    break;
+                case exports.UniformBufferParamsType.Matrix4x4:
+                    this.setMatrixbyIndex(uniformID, value);
+                    break;
+                case exports.UniformBufferParamsType.Vector4Array:
+                    this.setVector4ArraybyIndex(uniformID, value);
+                    break;
+                case exports.UniformBufferParamsType.MatrixArray:
+                    this.setMatrixArraybyIndex(uniformID, value);
+                    break;
+            }
+        }
+        getbyteLength() {
+            return this._bytelength;
+        }
+        setVector4Array(name, value) {
+            const uniformID = Shader3D.propertyNameToID(name);
+            this.setVector4ArraybyIndex(uniformID, value);
+        }
+        setVector4ArraybyIndex(uniformID, value) {
+            const info = this._getParamsInfo(uniformID);
+            if (!info)
+                return;
+            let pos = info.x;
+            let count = info.y / 4;
+            for (let i = 0; i < count; i++) {
+                let vec = value[i];
+                this._buffer[pos++] = vec.x;
+                this._buffer[pos++] = vec.y;
+                this._buffer[pos++] = vec.z;
+                this._buffer[pos++] = vec.w;
+            }
+            this._setUpdateFlag(info.x, pos);
+        }
+        setMatrixArray(name, value) {
+            const uniformID = Shader3D.propertyNameToID(name);
+            this.setMatrixArraybyIndex(uniformID, value);
+        }
+        setMatrixArraybyIndex(uniformID, value) {
+            const info = this._getParamsInfo(uniformID);
+            if (!info)
+                return;
+            let pos = info.x;
+            let count = info.y / 4;
+            for (let i = 0; i < count; i++) {
+                let mat = value[i];
+                this._buffer.set(mat.elements, pos);
+                pos += 16;
+            }
+            this._setUpdateFlag(info.x, pos);
+        }
+        setNumber(name, value) {
+            const uniformID = Shader3D.propertyNameToID(name);
+            this.setNumberbyIndex(uniformID, value);
+        }
+        setNumberbyIndex(uniformID, value) {
+            const info = this._getParamsInfo(uniformID);
+            if (!info)
+                return;
+            let pos = info.x;
+            this._buffer[pos++] = value;
+            this._setUpdateFlag(info.x, pos);
+        }
+        setVector2(name, value) {
+            const uniformID = Shader3D.propertyNameToID(name);
+            this.setVector2byIndex(uniformID, value);
+        }
+        setVector2byIndex(uniformID, value) {
+            const info = this._getParamsInfo(uniformID);
+            if (!info)
+                return;
+            let pos = info.x;
+            this._buffer[pos++] = value.x;
+            this._buffer[pos++] = value.y;
+            this._setUpdateFlag(info.x, pos);
+        }
+        setVector3(name, value) {
+            const uniformID = Shader3D.propertyNameToID(name);
+            this.setVector3byIndex(uniformID, value);
+        }
+        setVector3byIndex(uniformID, value) {
+            const info = this._getParamsInfo(uniformID);
+            if (!info)
+                return;
+            let pos = info.x;
+            this._buffer[pos++] = value.x;
+            this._buffer[pos++] = value.y;
+            this._buffer[pos++] = value.z;
+            this._setUpdateFlag(info.x, pos);
+        }
+        setVector4(name, value) {
+            const uniformID = Shader3D.propertyNameToID(name);
+            this.setVector4byIndex(uniformID, value);
+        }
+        setVector4byIndex(uniformID, value) {
+            const info = this._getParamsInfo(uniformID);
+            if (!info)
+                return;
+            let pos = info.x;
+            this._buffer[pos++] = value.x;
+            this._buffer[pos++] = value.y;
+            this._buffer[pos++] = value.z;
+            this._buffer[pos++] = value.w;
+            this._setUpdateFlag(info.x, pos);
+        }
+        setColor(name, value) {
+            const uniformID = Shader3D.propertyNameToID(name);
+            this.setColorbyIndex(uniformID, value);
+        }
+        setColorbyIndex(uniformID, value) {
+            const info = this._getParamsInfo(uniformID);
+            if (!info)
+                return;
+            let pos = info.x;
+            this._buffer[pos++] = Color.gammaToLinearSpace(value.r);
+            this._buffer[pos++] = Color.gammaToLinearSpace(value.g);
+            this._buffer[pos++] = Color.gammaToLinearSpace(value.b);
+            this._buffer[pos++] = Color.gammaToLinearSpace(value.a);
+            this._setUpdateFlag(info.x, pos);
+        }
+        setMatrix(name, value) {
+            const uniformID = Shader3D.propertyNameToID(name);
+            this.setMatrixbyIndex(uniformID, value);
+        }
+        setMatrixbyIndex(uniformID, value) {
+            const info = this._getParamsInfo(uniformID);
+            if (!info)
+                return;
+            let pos = info.x;
+            this._buffer.set(value.elements, pos);
+            pos += 16;
+            this._setUpdateFlag(info.x, pos);
+        }
+        clone() {
+            let ubd = new UnifromBufferData(this._uniformParamsState);
+            return ubd;
+        }
+    }
+
+    class ShaderCompileDefineBase {
+        constructor(owner, name, compiledObj) {
+            this._validDefine = new DefineDatas();
+            this._cacheShaderHierarchy = 1;
+            this._cacheSharders = {};
+            this._owner = owner;
+            this.name = name;
+            this._VS = compiledObj.vsNode;
+            this._PS = compiledObj.psNode;
+            this._defs = compiledObj.defs;
+            for (let k of compiledObj.defs)
+                this._validDefine.add(Shader3D.getDefineByName(k));
+        }
+        _resizeCacheShaderMap(cacheMap, hierarchy, resizeLength) {
+            var end = this._cacheShaderHierarchy - 1;
+            if (hierarchy == end) {
+                for (var k in cacheMap) {
+                    var shader = cacheMap[k];
+                    for (var i = 0, n = resizeLength - end; i < n; i++) {
+                        if (i == n - 1)
+                            cacheMap[0] = shader;
+                        else
+                            cacheMap = cacheMap[i == 0 ? k : 0] = {};
+                    }
+                }
+            }
+            else {
+                ++hierarchy;
+                for (var k in cacheMap)
+                    this._resizeCacheShaderMap(cacheMap[k], hierarchy, resizeLength);
+            }
+        }
+        withCompile(compileDefine) {
+            var debugDefineString = ShaderCompileDefineBase._debugDefineString;
+            var debugDefineMask = ShaderCompileDefineBase._debugDefineMask;
+            var debugMaskLength;
+            compileDefine._intersectionDefineDatas(this._validDefine);
+            if (Shader3D.debugMode) {
+                debugMaskLength = compileDefine._length;
+            }
+            var cacheShaders = this._cacheSharders;
+            var maskLength = compileDefine._length;
+            if (maskLength > this._cacheShaderHierarchy) {
+                this._resizeCacheShaderMap(cacheShaders, 0, maskLength);
+                this._cacheShaderHierarchy = maskLength;
+            }
+            var mask = compileDefine._mask;
+            var endIndex = compileDefine._length - 1;
+            var maxEndIndex = this._cacheShaderHierarchy - 1;
+            for (var i = 0; i < maxEndIndex; i++) {
+                var subMask = endIndex < i ? 0 : mask[i];
+                var subCacheShaders = cacheShaders[subMask];
+                (subCacheShaders) || (cacheShaders[subMask] = subCacheShaders = {});
+                cacheShaders = subCacheShaders;
+            }
+            var cacheKey = endIndex < maxEndIndex ? 0 : mask[maxEndIndex];
+            var shader = cacheShaders[cacheKey];
+            if (shader)
+                return shader;
+            var defineString = ShaderCompileDefineBase._defineString;
+            Shader3D._getNamesByDefineData(compileDefine, defineString);
+            var defMap = {};
+            var vertexHead;
+            var fragmentHead;
+            var defineStr = "";
+            if (WebGL._isWebGL2) {
+                vertexHead =
+                    `#version 300 es\n
+                #define attribute in
+                #define varying out
+                #define textureCube texture
+                #define texture2D texture\n`;
+                fragmentHead =
+                    `#version 300 es\n
+                #define varying in
+                out highp vec4 pc_fragColor;
+                #define gl_FragColor pc_fragColor
+                #define gl_FragDepthEXT gl_FragDepth
+                #define texture2D texture
+                #define textureCube texture
+                #define texture2DProj textureProj
+                #define texture2DLodEXT textureLod
+                #define texture2DProjLodEXT textureProjLod
+                #define textureCubeLodEXT textureLod
+                #define texture2DGradEXT textureGrad
+                #define texture2DProjGradEXT textureProjGrad
+                #define textureCubeGradEXT textureGrad\n`;
+            }
+            else {
+                vertexHead = "";
+                fragmentHead =
+                    `#ifdef GL_EXT_shader_texture_lod
+                    #extension GL_EXT_shader_texture_lod : enable
+                #endif
+                #if !defined(GL_EXT_shader_texture_lod)
+                    #define texture1DLodEXT texture1D
+                    #define texture2DLodEXT texture2D
+                    #define texture2DProjLodEXT texture2DProj
+                    #define texture3DLodEXT texture3D
+                    #define textureCubeLodEXT textureCube
+                #endif\n`;
+            }
+            for (var i = 0, n = defineString.length; i < n; i++) {
+                var def = defineString[i];
+                defineStr += "#define " + def + "\n";
+                defMap[def] = true;
+            }
+            var vs = this._VS.toscript(defMap, []);
+            var vsVersion = '';
+            if (vs[0].indexOf('#version') == 0) {
+                vsVersion = vs[0] + '\n';
+                vs.shift();
+            }
+            var ps = this._PS.toscript(defMap, []);
+            var psVersion = '';
+            if (ps[0].indexOf('#version') == 0) {
+                psVersion = ps[0] + '\n';
+                ps.shift();
+            }
+            shader = LayaGL.renderOBJCreate.createShaderInstance(vsVersion + vertexHead + defineStr + vs.join('\n'), psVersion + fragmentHead + defineStr + ps.join('\n'), this._owner._attributeMap, this);
+            cacheShaders[cacheKey] = shader;
+            if (Shader3D.debugMode) {
+                var defStr = "";
+                var defMask = "";
+                for (var i = 0, n = debugMaskLength; i < n; i++)
+                    (i == n - 1) ? defMask += debugDefineMask[i] : defMask += debugDefineMask[i] + ",";
+                for (var i = 0, n = debugDefineString.length; i < n; i++)
+                    (i == n - 1) ? defStr += debugDefineString[i] : defStr += debugDefineString[i] + ",";
+                console.log("%cLayaAir: Shader Compile Information---ShaderName:" + this.name + " " + " DefineMask:[" + defMask + "]" + " DefineNames:[" + defStr + "]", "color:green");
+            }
+            return shader;
+        }
+    }
+    ShaderCompileDefineBase._defineString = [];
+    ShaderCompileDefineBase._debugDefineString = [];
+    ShaderCompileDefineBase._debugDefineMask = [];
+
+    class GLSLCodeGenerator {
+        static glslAttributeString(attributeMap) {
+            let res = "";
+            for (const key in attributeMap) {
+                let type = getAttributeType(attributeMap[key][1]);
+                res = `${res}attribute ${type} ${key};\n`;
+            }
+            return res;
+        }
+        static glslUniformString(uniformsMap, useUniformBlock) {
+            if (useUniformBlock) {
+                let blocksStr = "";
+                let uniformsStr = "";
+                for (const key in uniformsMap) {
+                    if (typeof uniformsMap[key] == "object") {
+                        let blockUniforms = uniformsMap[key];
+                        blocksStr += `uniform ${key} {\n`;
+                        for (const uniformName in blockUniforms) {
+                            let dataType = blockUniforms[uniformName];
+                            blocksStr += `${getAttributeType(dataType)} ${uniformName};\n`;
+                        }
+                        blocksStr += "};\n";
+                    }
+                    else {
+                        let dataType = uniformsMap[key];
+                        uniformsStr += `uniform ${getAttributeType(dataType)} ${key};\n`;
+                    }
+                }
+                return blocksStr + uniformsStr;
+            }
+            else {
+                let uniformsStr = "";
+                for (const key in uniformsMap) {
+                    if (typeof uniformsMap[key] == "object") {
+                        let blockUniforms = uniformsMap[key];
+                        for (const uniformName in blockUniforms) {
+                            let dataType = blockUniforms[uniformName];
+                            uniformsStr += `uniform ${getAttributeType(dataType)} ${uniformName};\n`;
+                        }
+                    }
+                    else {
+                        let dataType = uniformsMap[key];
+                        uniformsStr += `uniform ${getAttributeType(dataType)} ${key};\n`;
+                    }
+                }
+                return uniformsStr;
+            }
+        }
+    }
+    function getAttributeType(type) {
+        switch (type) {
+            case exports.ShaderDataType.Int:
+                return "int";
+            case exports.ShaderDataType.Bool:
+                return "bool";
+            case exports.ShaderDataType.Float:
+                return "float";
+            case exports.ShaderDataType.Vector2:
+                return "vec2";
+            case exports.ShaderDataType.Vector3:
+                return "vec3";
+            case exports.ShaderDataType.Vector4:
+            case exports.ShaderDataType.Color:
+                return "vec4";
+            case exports.ShaderDataType.Matrix4x4:
+                return "mat4";
+            case exports.ShaderDataType.Texture2D:
+                return "sampler2D";
+            case exports.ShaderDataType.TextureCube:
+                return "samplerCube";
+            default:
+                return "";
+        }
+    }
+
+    class ShaderPass extends ShaderCompileDefineBase {
+        constructor(owner, compiledObj) {
+            super(owner, null, compiledObj);
+            this._tags = {};
+            this.statefirst = false;
+            this._renderState = LayaGL.renderOBJCreate.createRenderState();
+            this._renderState.setNull();
+        }
+        get renderState() {
+            return this._renderState;
+        }
+        _addDebugShaderVariantCollection(compileDefine, outDebugDefines, outDebugDefineMask) {
+            var dbugShaderVariantInfo = Shader3D._debugShaderVariantInfo;
+            var debugSubShader = this._owner;
+            var debugShader = debugSubShader._owner;
+            var mask = compileDefine._mask;
+            Shader3D._getNamesByDefineData(compileDefine, outDebugDefines);
+            outDebugDefineMask.length = mask.length;
+            for (var i = 0, n = mask.length; i < n; i++)
+                outDebugDefineMask[i] = mask[i];
+            if (dbugShaderVariantInfo)
+                dbugShaderVariantInfo.setValue(debugShader, debugShader._subShaders.indexOf(debugSubShader), debugSubShader._passes.indexOf(this), outDebugDefines);
+            else
+                Shader3D._debugShaderVariantInfo = dbugShaderVariantInfo = new ShaderVariant(debugShader, debugShader._subShaders.indexOf(debugSubShader), debugSubShader._passes.indexOf(this), outDebugDefines);
+            Shader3D.debugShaderVariantCollection.add(dbugShaderVariantInfo);
+        }
+        withCompile(compileDefine) {
+            var debugDefineString = ShaderPass._debugDefineStrings;
+            var debugDefineMask = ShaderPass._debugDefineMasks;
+            var debugMaskLength;
+            compileDefine._intersectionDefineDatas(this._validDefine);
+            if (Shader3D.debugMode) {
+                debugMaskLength = compileDefine._length;
+                this._addDebugShaderVariantCollection(compileDefine, debugDefineString, debugDefineMask);
+            }
+            var cacheShaders = this._cacheSharders;
+            var maskLength = compileDefine._length;
+            if (maskLength > this._cacheShaderHierarchy) {
+                this._resizeCacheShaderMap(cacheShaders, 0, maskLength);
+                this._cacheShaderHierarchy = maskLength;
+            }
+            var mask = compileDefine._mask;
+            var endIndex = compileDefine._length - 1;
+            var maxEndIndex = this._cacheShaderHierarchy - 1;
+            for (var i = 0; i < maxEndIndex; i++) {
+                var subMask = endIndex < i ? 0 : mask[i];
+                var subCacheShaders = cacheShaders[subMask];
+                (subCacheShaders) || (cacheShaders[subMask] = subCacheShaders = {});
+                cacheShaders = subCacheShaders;
+            }
+            var cacheKey = endIndex < maxEndIndex ? 0 : mask[maxEndIndex];
+            var shader = cacheShaders[cacheKey];
+            if (shader)
+                return shader;
+            var defineString = ShaderPass._defineStrings;
+            Shader3D._getNamesByDefineData(compileDefine, defineString);
+            var clusterSlices = Config3D.lightClusterCount;
+            var defMap = {};
+            var vertexHead;
+            var fragmentHead;
+            var defineStr = "";
+            let attributeMap = this._owner._attributeMap;
+            let uniformMap = this._owner._uniformMap;
+            let useUniformBlock = Config3D._uniformBlock;
+            let attributeglsl = GLSLCodeGenerator.glslAttributeString(attributeMap);
+            let uniformglsl = GLSLCodeGenerator.glslUniformString(uniformMap, useUniformBlock);
+            if (WebGL._isWebGL2) {
+                vertexHead =
+                    `#version 300 es
+#if defined(GL_FRAGMENT_PRECISION_HIGH)
+    precision highp float;
+    precision highp int;
+#else
+    precision mediump float;
+    precision mediump int;
+#endif
+layout(std140, column_major) uniform;
+#define attribute in
+#define varying out
+#define textureCube texture
+#define texture2D texture
+${attributeglsl}
+${uniformglsl}
+`;
+                fragmentHead =
+                    `#version 300 es
+#if defined(GL_FRAGMENT_PRECISION_HIGH)
+    precision highp float;
+    precision highp int;
+#else
+    precision mediump float;
+    precision mediump int;
+#endif
+layout(std140, column_major) uniform;
+#define varying in
+out highp vec4 pc_fragColor;
+#define gl_FragColor pc_fragColor
+#define gl_FragDepthEXT gl_FragDepth
+#define texture2D texture
+#define textureCube texture
+#define texture2DProj textureProj
+#define texture2DLodEXT textureLod
+#define texture2DProjLodEXT textureProjLod
+#define textureCubeLodEXT textureLod
+#define texture2DGradEXT textureGrad
+#define texture2DProjGradEXT textureProjGrad
+#define textureCubeGradEXT textureGrad
+${uniformglsl}`;
+            }
+            else {
+                vertexHead =
+                    `#if defined(GL_FRAGMENT_PRECISION_HIGH)
+    precision highp float;
+    precision highp int;
+#else
+    precision mediump float;
+    precision mediump int;
+#endif
+${attributeglsl}
+${uniformglsl}`;
+                fragmentHead =
+                    `#ifdef GL_EXT_shader_texture_lod
+    #extension GL_EXT_shader_texture_lod : enable
+#endif
+
+#if defined(GL_FRAGMENT_PRECISION_HIGH)
+    precision highp float;
+    precision highp int;
+#else
+    precision mediump float;
+    precision mediump int;
+#endif
+
+#if !defined(GL_EXT_shader_texture_lod)
+    #define texture1DLodEXT texture1D
+    #define texture2DLodEXT texture2D
+    #define texture2DProjLodEXT texture2DProj
+    #define texture3DLodEXT texture3D
+    #define textureCubeLodEXT textureCube
+#endif
+${uniformglsl}`;
+            }
+            defineStr += "#define MAX_LIGHT_COUNT " + Config3D.maxLightCount + "\n";
+            defineStr += "#define MAX_LIGHT_COUNT_PER_CLUSTER " + Config3D._maxAreaLightCountPerClusterAverage + "\n";
+            defineStr += "#define CLUSTER_X_COUNT " + clusterSlices.x + "\n";
+            defineStr += "#define CLUSTER_Y_COUNT " + clusterSlices.y + "\n";
+            defineStr += "#define CLUSTER_Z_COUNT " + clusterSlices.z + "\n";
+            defineStr += "#define SHADER_CAPAILITY_LEVEL " + LayaGL.renderEngine.getParams(exports.RenderParams.SHADER_CAPAILITY_LEVEL) + "\n";
+            for (var i = 0, n = defineString.length; i < n; i++) {
+                var def = defineString[i];
+                defineStr += "#define " + def + "\n";
+                defMap[def] = true;
+            }
+            var vs = this._VS.toscript(defMap, []);
+            var vsVersion = '';
+            if (vs[0].indexOf('#version') == 0) {
+                vsVersion = vs[0] + '\n';
+                vs.shift();
+            }
+            var ps = this._PS.toscript(defMap, []);
+            var psVersion = '';
+            if (ps[0].indexOf('#version') == 0) {
+                psVersion = ps[0] + '\n';
+                ps.shift();
+            }
+            shader = LayaGL.renderOBJCreate.createShaderInstance(vsVersion + vertexHead + defineStr + vs.join('\n'), psVersion + fragmentHead + defineStr + ps.join('\n'), this._owner._attributeMap, this);
+            cacheShaders[cacheKey] = shader;
+            if (Shader3D.debugMode) {
+                var defStr = "";
+                var defMask = "";
+                for (var i = 0, n = debugMaskLength; i < n; i++) {
+                    (i == n - 1) ? defMask += debugDefineMask[i] : defMask += debugDefineMask[i] + ",";
+                }
+                for (var i = 0, n = debugDefineString.length; i < n; i++)
+                    (i == n - 1) ? defStr += debugDefineString[i] : defStr += debugDefineString[i] + ",";
+                console.log("%cLayaAir: Shader Compile Information---ShaderName:" + this._owner._owner._name + " SubShaderIndex:" + this._owner._owner._subShaders.indexOf(this._owner) + " PassIndex:" + this._owner._passes.indexOf(this) + " DefineMask:[" + defMask + "]" + " DefineNames:[" + defStr + "]", "color:green");
+            }
+            return shader;
+        }
+    }
+    ShaderPass._defineStrings = [];
+    ShaderPass._debugDefineStrings = [];
+    ShaderPass._debugDefineMasks = [];
+
+    class VertexMesh {
+        static __init__() {
+            VertexMesh.instanceWorldMatrixDeclaration = new VertexDeclaration(64, [new VertexElement(0, VertexElementFormat.Vector4, VertexMesh.MESH_WORLDMATRIX_ROW0),
+                new VertexElement(16, VertexElementFormat.Vector4, VertexMesh.MESH_WORLDMATRIX_ROW1),
+                new VertexElement(32, VertexElementFormat.Vector4, VertexMesh.MESH_WORLDMATRIX_ROW2),
+                new VertexElement(48, VertexElementFormat.Vector4, VertexMesh.MESH_WORLDMATRIX_ROW3)]);
+            VertexMesh.instanceSimpleAnimatorDeclaration = new VertexDeclaration(16, [new VertexElement(0, VertexElementFormat.Vector4, VertexMesh.MESH_SIMPLEANIMATOR)]);
+        }
+        static getVertexDeclaration(vertexFlag, compatible = true) {
+            var verDec = VertexMesh._vertexDeclarationMap[vertexFlag + (compatible ? "_0" : "_1")];
+            if (!verDec) {
+                var subFlags = vertexFlag.split(",");
+                var offset = 0;
+                var elements = [];
+                for (var i = 0, n = subFlags.length; i < n; i++) {
+                    var element;
+                    switch (subFlags[i]) {
+                        case "POSITION":
+                            element = new VertexElement(offset, VertexElementFormat.Vector3, VertexMesh.MESH_POSITION0);
+                            offset += 12;
+                            break;
+                        case "NORMAL":
+                            element = new VertexElement(offset, VertexElementFormat.Vector3, VertexMesh.MESH_NORMAL0);
+                            offset += 12;
+                            break;
+                        case "COLOR":
+                            element = new VertexElement(offset, VertexElementFormat.Vector4, VertexMesh.MESH_COLOR0);
+                            offset += 16;
+                            break;
+                        case "UV":
+                            element = new VertexElement(offset, VertexElementFormat.Vector2, VertexMesh.MESH_TEXTURECOORDINATE0);
+                            offset += 8;
+                            break;
+                        case "UV1":
+                            element = new VertexElement(offset, VertexElementFormat.Vector2, VertexMesh.MESH_TEXTURECOORDINATE1);
+                            offset += 8;
+                            break;
+                        case "BLENDWEIGHT":
+                            element = new VertexElement(offset, VertexElementFormat.Vector4, VertexMesh.MESH_BLENDWEIGHT0);
+                            offset += 16;
+                            break;
+                        case "BLENDINDICES":
+                            if (compatible) {
+                                element = new VertexElement(offset, VertexElementFormat.Vector4, VertexMesh.MESH_BLENDINDICES0);
+                                offset += 16;
+                            }
+                            else {
+                                element = new VertexElement(offset, VertexElementFormat.Byte4, VertexMesh.MESH_BLENDINDICES0);
+                                offset += 4;
+                            }
+                            break;
+                        case "TANGENT":
+                            element = new VertexElement(offset, VertexElementFormat.Vector4, VertexMesh.MESH_TANGENT0);
+                            offset += 16;
+                            break;
+                        case "NORMAL_BYTE":
+                            element = new VertexElement(offset, VertexElementFormat.NorByte4, VertexMesh.MESH_NORMAL0);
+                            offset += 4;
+                            break;
+                        default:
+                            throw "VertexMesh: unknown vertex flag.";
+                    }
+                    elements.push(element);
+                }
+                verDec = new VertexDeclaration(offset, elements);
+                VertexMesh._vertexDeclarationMap[vertexFlag + (compatible ? "_0" : "_1")] = verDec;
+            }
+            return verDec;
+        }
+    }
+    VertexMesh.MESH_POSITION0 = 0;
+    VertexMesh.MESH_COLOR0 = 1;
+    VertexMesh.MESH_TEXTURECOORDINATE0 = 2;
+    VertexMesh.MESH_NORMAL0 = 3;
+    VertexMesh.MESH_TANGENT0 = 4;
+    VertexMesh.MESH_BLENDINDICES0 = 5;
+    VertexMesh.MESH_BLENDWEIGHT0 = 6;
+    VertexMesh.MESH_TEXTURECOORDINATE1 = 7;
+    VertexMesh.MESH_WORLDMATRIX_ROW0 = 8;
+    VertexMesh.MESH_WORLDMATRIX_ROW1 = 9;
+    VertexMesh.MESH_WORLDMATRIX_ROW2 = 10;
+    VertexMesh.MESH_WORLDMATRIX_ROW3 = 11;
+    VertexMesh.MESH_SIMPLEANIMATOR = 12;
+    VertexMesh.MESH_CUSTOME0 = 12;
+    VertexMesh.MESH_CUSTOME1 = 13;
+    VertexMesh.MESH_CUSTOME2 = 14;
+    VertexMesh.MESH_CUSTOME3 = 15;
+    VertexMesh._vertexDeclarationMap = {};
+
+    class SubShader {
+        constructor(attributeMap = SubShader.DefaultAttributeMap, uniformMap = {}, uniformDefaultValue = null) {
+            this._uniformBufferDataMap = new Map();
+            this._flags = {};
+            this._passes = [];
+            this._attributeMap = attributeMap;
+            this._uniformMap = uniformMap;
+            this._uniformDefaultValue = uniformDefaultValue;
+            this._uniformTypeMap = new Map();
+            for (const key in uniformMap) {
+                if (typeof uniformMap[key] == "object") {
+                    let block = (uniformMap[key]);
+                    let blockUniformMap = new Map();
+                    for (const uniformName in block) {
+                        let uniformType = ShaderDataTypeToUniformBufferType(block[uniformName]);
+                        blockUniformMap.set(uniformName, uniformType);
+                        this._uniformTypeMap.set(uniformName, block[uniformName]);
+                    }
+                    let blockUniformIndexMap = new Map();
+                    blockUniformMap.forEach((value, key) => {
+                        blockUniformIndexMap.set(Shader3D.propertyNameToID(key), value);
+                    });
+                    let blockData = new UnifromBufferData(blockUniformIndexMap);
+                    this._uniformBufferDataMap.set(key, blockData);
+                }
+                else {
+                    let unifromType = uniformMap[key];
+                    this._uniformTypeMap.set(key, unifromType);
+                    if (unifromType == exports.ShaderDataType.Texture2D || unifromType == exports.ShaderDataType.TextureCube) {
+                        let textureGammaDefine = Shader3D.getDefineByName(`Gamma_${key}`);
+                        let uniformIndex = Shader3D.propertyNameToID(key);
+                        ShaderDefine._texGammaDefine[uniformIndex] = textureGammaDefine;
+                    }
+                }
+            }
+        }
+        static regIncludeBindUnifrom(includeName, uniformMap, defaultValue) {
+            let obj = {};
+            let data = obj[includeName] = {};
+            data["uniformMap"] = uniformMap;
+            data["defaultValue"] = defaultValue;
+            Object.assign(SubShader.IncludeUniformMap, obj);
+        }
+        static __init__() {
+            let DefaultShaderStateMap = {
+                's_Cull': Shader3D.RENDER_STATE_CULL,
+                's_Blend': Shader3D.RENDER_STATE_BLEND,
+                's_BlendSrc': Shader3D.RENDER_STATE_BLEND_SRC,
+                's_BlendDst': Shader3D.RENDER_STATE_BLEND_DST,
+                's_BlendSrcRGB': Shader3D.RENDER_STATE_BLEND_SRC_RGB,
+                's_BlendDstRGB': Shader3D.RENDER_STATE_BLEND_DST_RGB,
+                's_BlendSrcAlpha': Shader3D.RENDER_STATE_BLEND_SRC_ALPHA,
+                's_BlendDstAlpha': Shader3D.RENDER_STATE_BLEND_DST_ALPHA,
+                's_BlendEquation': Shader3D.RENDER_STATE_BLEND_EQUATION,
+                's_BlendEquationRGB': Shader3D.RENDER_STATE_BLEND_EQUATION_RGB,
+                's_BlendEquationAlpha': Shader3D.RENDER_STATE_BLEND_EQUATION_ALPHA,
+                's_DepthTest': Shader3D.RENDER_STATE_DEPTH_TEST,
+                's_DepthWrite': Shader3D.RENDER_STATE_DEPTH_WRITE,
+                's_StencilRef': Shader3D.RENDER_STATE_STENCIL_REF,
+                's_StencilTest': Shader3D.RENDER_STATE_STENCIL_TEST,
+                's_StencilWrite': Shader3D.RENDER_STATE_STENCIL_WRITE,
+                's_StencilOp': Shader3D.RENDER_STATE_STENCIL_OP
+            };
+            this.StateParamsMap = {};
+            for (let s in DefaultShaderStateMap) {
+                this.StateParamsMap[DefaultShaderStateMap[s]] = Shader3D.propertyNameToID(s);
+            }
+            SubShader.IncludeUniformMap = {};
+        }
+        setFlag(key, value) {
+            if (value)
+                this._flags[key] = value;
+            else
+                delete this._flags[key];
+        }
+        getFlag(key) {
+            return this._flags[key];
+        }
+        addShaderPass(vs, ps, pipelineMode = "Forward") {
+            return this._addShaderPass(ShaderCompile.compile(vs, ps), pipelineMode);
+        }
+        _addShaderPass(compiledObj, pipelineMode = "Forward") {
+            var shaderPass = new ShaderPass(this, compiledObj);
+            shaderPass._pipelineMode = pipelineMode;
+            this._passes.push(shaderPass);
+            this._addIncludeUniform(compiledObj.includeNames);
+            return shaderPass;
+        }
+        _addIncludeUniform(includemap) {
+            for (let ele of includemap) {
+                if (SubShader.IncludeUniformMap[ele]) {
+                    let includeBindInfo = SubShader.IncludeUniformMap[ele];
+                    let bindtypeMap = includeBindInfo["uniformMap"];
+                    let bindDefaultValue = includeBindInfo["defaultValue"];
+                    for (var i in bindtypeMap) {
+                        if (!this._uniformTypeMap.has(i)) {
+                            this._uniformTypeMap.set(i, bindtypeMap[i]);
+                            this._uniformMap[i] = bindtypeMap[i];
+                        }
+                    }
+                    for (var i in bindDefaultValue) {
+                        if (!this._uniformDefaultValue[i]) {
+                            this._uniformDefaultValue[i] = bindDefaultValue[i];
+                        }
+                    }
+                }
+            }
+        }
+    }
+    SubShader.DefaultAttributeMap = {
+        'a_Position': [VertexMesh.MESH_POSITION0, exports.ShaderDataType.Vector4],
+        'a_Normal': [VertexMesh.MESH_NORMAL0, exports.ShaderDataType.Vector3],
+        'a_Tangent0': [VertexMesh.MESH_TANGENT0, exports.ShaderDataType.Vector4],
+        'a_Texcoord0': [VertexMesh.MESH_TEXTURECOORDINATE0, exports.ShaderDataType.Vector2],
+        'a_Texcoord1': [VertexMesh.MESH_TEXTURECOORDINATE1, exports.ShaderDataType.Vector2],
+        'a_Color': [VertexMesh.MESH_COLOR0, exports.ShaderDataType.Vector4],
+        'a_BoneWeights': [VertexMesh.MESH_BLENDWEIGHT0, exports.ShaderDataType.Vector4],
+        'a_BoneIndices': [VertexMesh.MESH_BLENDINDICES0, exports.ShaderDataType.Vector4],
+        'a_WorldMat': [VertexMesh.MESH_WORLDMATRIX_ROW0, exports.ShaderDataType.Matrix4x4],
+        'a_SimpleTextureParams': [VertexMesh.MESH_SIMPLEANIMATOR, exports.ShaderDataType.Vector2]
+    };
+    function ShaderDataTypeToUniformBufferType(shaderDataType) {
+        switch (shaderDataType) {
+            case exports.ShaderDataType.Float:
+                return exports.UniformBufferParamsType.Number;
+            case exports.ShaderDataType.Vector2:
+                return exports.UniformBufferParamsType.Vector2;
+            case exports.ShaderDataType.Vector3:
+                return exports.UniformBufferParamsType.Vector3;
+            case exports.ShaderDataType.Vector4:
+            case exports.ShaderDataType.Color:
+                return exports.UniformBufferParamsType.Vector4;
+            case exports.ShaderDataType.Matrix4x4:
+                return exports.UniformBufferParamsType.Matrix4x4;
+            default:
+                throw "ShaderDataType can not be in UniformBuffer.";
+        }
+    }
+
+    class Shader3D {
+        constructor(name, enableInstancing, supportReflectionProbe) {
+            this._enableInstancing = false;
+            this._supportReflectionProbe = false;
+            this._subShaders = [];
+            this._name = name;
+            this._enableInstancing = enableInstancing;
+            this._supportReflectionProbe = supportReflectionProbe;
+        }
+        static init() {
+            Shader3D.debugShaderVariantCollection = new ShaderVariantCollection();
+        }
+        static _getNamesByDefineData(defineData, out) {
+            var maskMap = Shader3D._maskMap;
+            var mask = defineData._mask;
+            out.length = 0;
+            for (var i = 0, n = defineData._length; i < n; i++) {
+                var subMaskMap = maskMap[i];
+                var subMask = mask[i];
+                for (var j = 0; j < 32; j++) {
+                    var d = 1 << j;
+                    if (subMask > 0 && d > subMask)
+                        break;
+                    if (subMask & d)
+                        out.push(subMaskMap[d]);
+                }
+            }
+        }
+        static getDefineByName(name) {
+            var define = Shader3D._defineMap[name];
+            if (!define) {
+                var maskMap = Shader3D._maskMap;
+                var counter = Shader3D._defineCounter;
+                var index = Math.floor(counter / 32);
+                var value = 1 << counter % 32;
+                define = new ShaderDefine(index, value);
+                Shader3D._defineMap[name] = define;
+                if (index == maskMap.length) {
+                    maskMap.length++;
+                    maskMap[index] = {};
+                }
+                maskMap[index][value] = name;
+                Shader3D._defineCounter++;
+            }
+            return define;
+        }
+        static propertyNameToID(name) {
+            return LayaGL.renderEngine.propertyNameToID(name);
+        }
+        static propertyIDToName(id) {
+            return LayaGL.renderEngine.propertyIDToName(id);
+        }
+        static addInclude(fileName, txt) {
+            ShaderCompile.addInclude(fileName, txt);
+        }
+        static compileShaderByDefineNames(shaderName, subShaderIndex, passIndex, defineNames) {
+            var shader = Shader3D.find(shaderName);
+            if (shader) {
+                var subShader = shader.getSubShaderAt(subShaderIndex);
+                if (subShader) {
+                    var pass = subShader._passes[passIndex];
+                    if (pass) {
+                        var compileDefineDatas = Shader3D._compileDefineDatas;
+                        compileDefineDatas.clear();
+                        for (var i = 0, n = defineNames.length; i < n; i++)
+                            compileDefineDatas.add(Shader3D.getDefineByName(defineNames[i]));
+                        compileDefineDatas.addDefineDatas(Shader3D._configDefineValues);
+                        pass.withCompile(compileDefineDatas);
+                    }
+                    else {
+                        console.warn("Shader3D: unknown passIndex.");
+                    }
+                }
+                else {
+                    console.warn("Shader3D: unknown subShaderIndex.");
+                }
+            }
+            else {
+                console.warn("Shader3D: unknown shader name.");
+            }
+        }
+        static add(name, enableInstancing = false, supportReflectionProbe = false) {
+            return Shader3D._preCompileShader[name] = new Shader3D(name, enableInstancing, supportReflectionProbe);
+        }
+        static find(name) {
+            return Shader3D._preCompileShader[name];
+        }
+        static parse(data, basePath) {
+            if (!data.name || !data.uniformMap)
+                console.error("TODO");
+            let shader = Shader3D.add(data.name, data.enableInstancing, data.supportReflectionProbe);
+            let subshader = new SubShader(data.attributeMap ? data.attributeMap : SubShader.DefaultAttributeMap, data.uniformMap, data.defaultValue);
+            shader.addSubShader(subshader);
+            let passArray = data.shaderPass;
+            for (var i in passArray) {
+                let pass = passArray[i];
+                subshader._addShaderPass(ShaderCompile.compile(pass.VS, pass.FS, basePath), pass.pipeline);
+            }
+            return shader;
+        }
+        get name() {
+            return this._name;
+        }
+        addSubShader(subShader) {
+            this._subShaders.push(subShader);
+            subShader._owner = this;
+        }
+        getSubShaderAt(index) {
+            return this._subShaders[index];
+        }
+        static compileShader(shaderName, subShaderIndex, passIndex, ...defineMask) {
+            var shader = Shader3D.find(shaderName);
+            if (shader) {
+                var subShader = shader.getSubShaderAt(subShaderIndex);
+                if (subShader) {
+                    var pass = subShader._passes[passIndex];
+                    if (pass) {
+                        var compileDefineDatas = Shader3D._compileDefineDatas;
+                        var mask = compileDefineDatas._mask;
+                        mask.length = 0;
+                        for (var i = 0, n = defineMask.length; i < n; i++)
+                            mask.push(defineMask[i]);
+                        compileDefineDatas._length = defineMask.length;
+                        pass.withCompile(compileDefineDatas);
+                    }
+                    else {
+                        console.warn("Shader3D: unknown passIndex.");
+                    }
+                }
+                else {
+                    console.warn("Shader3D: unknown subShaderIndex.");
+                }
+            }
+            else {
+                console.warn("Shader3D: unknown shader name.");
+            }
+        }
+    }
+    Shader3D._configDefineValues = new DefineDatas();
+    Shader3D._compileDefineDatas = new DefineDatas();
+    Shader3D.RENDER_STATE_CULL = 0;
+    Shader3D.RENDER_STATE_BLEND = 1;
+    Shader3D.RENDER_STATE_BLEND_SRC = 2;
+    Shader3D.RENDER_STATE_BLEND_DST = 3;
+    Shader3D.RENDER_STATE_BLEND_SRC_RGB = 4;
+    Shader3D.RENDER_STATE_BLEND_DST_RGB = 5;
+    Shader3D.RENDER_STATE_BLEND_SRC_ALPHA = 6;
+    Shader3D.RENDER_STATE_BLEND_DST_ALPHA = 7;
+    Shader3D.RENDER_STATE_BLEND_CONST_COLOR = 8;
+    Shader3D.RENDER_STATE_BLEND_EQUATION = 9;
+    Shader3D.RENDER_STATE_BLEND_EQUATION_RGB = 10;
+    Shader3D.RENDER_STATE_BLEND_EQUATION_ALPHA = 11;
+    Shader3D.RENDER_STATE_DEPTH_TEST = 12;
+    Shader3D.RENDER_STATE_DEPTH_WRITE = 13;
+    Shader3D.RENDER_STATE_STENCIL_TEST = 14;
+    Shader3D.RENDER_STATE_STENCIL_WRITE = 15;
+    Shader3D.RENDER_STATE_STENCIL_REF = 16;
+    Shader3D.RENDER_STATE_STENCIL_OP = 17;
+    Shader3D.PERIOD_CUSTOM = 0;
+    Shader3D.PERIOD_MATERIAL = 1;
+    Shader3D.PERIOD_SPRITE = 2;
+    Shader3D.PERIOD_CAMERA = 3;
+    Shader3D.PERIOD_SCENE = 4;
+    Shader3D._propertyNameMap = {};
+    Shader3D._propertyNameCounter = 0;
+    Shader3D._defineCounter = 0;
+    Shader3D._defineMap = {};
+    Shader3D._preCompileShader = {};
+    Shader3D._maskMap = [];
+    Shader3D.debugMode = false;
+
+    var _isinit = false;
+    class Laya {
+        static init(...args) {
+            if (_isinit)
+                return Promise.resolve();
+            _isinit = true;
+            let stageConfig;
+            if (typeof (args[0]) === "number") {
+                stageConfig = {
+                    designWidth: args[0],
+                    designHeight: args[1]
+                };
+            }
+            else
+                stageConfig = args[0];
+            ArrayBuffer.prototype.slice || (ArrayBuffer.prototype.slice = arrayBufferSlice);
+            Float32Array.prototype.slice || (Float32Array.prototype.slice = float32ArraySlice);
+            Uint16Array.prototype.slice || (Uint16Array.prototype.slice = uint16ArraySlice);
+            Uint8Array.prototype.slice || (Uint8Array.prototype.slice = uint8ArraySlice);
+            Browser.__init__();
+            URL.__init__();
+            let laya3D = window["Laya3D"];
+            if (laya3D) {
+                if (!WebGL.enable())
+                    return Promise.reject("Must support webGL!");
+                RunDriver.changeWebGLSize = laya3D._changeWebGLSize;
+                Render.is3DMode = true;
+            }
+            var mainCanv = Browser.mainCanvas = new HTMLCanvas(true);
+            var style = mainCanv.source.style;
+            style.position = 'absolute';
+            style.top = style.left = "0px";
+            style.background = "#000000";
+            if (!Browser.onKGMiniGame && !Browser.onAlipayMiniGame) {
+                Browser.container.appendChild(mainCanv.source);
+            }
+            Browser.canvas = new HTMLCanvas(true);
+            Browser.context = Browser.canvas.getContext('2d');
+            Browser.supportWebAudio = SoundManager.__init__();
+            Browser.supportLocalStorage = LocalStorage.__init__();
+            Laya.systemTimer = new Timer(false);
+            exports.systemTimer = Timer.gSysTimer = Laya.systemTimer;
+            Laya.physicsTimer = new Timer(false);
+            Laya.timer = new Timer(false);
+            ILaya.systemTimer = Laya.systemTimer;
+            exports.timer = ILaya.timer = Laya.timer;
+            exports.physicsTimer = ILaya.physicsTimer = Laya.physicsTimer;
+            Laya.loader = new Loader();
+            ILaya.Laya = Laya;
+            exports.loader = ILaya.loader = Laya.loader;
+            WeakObject.__init__();
+            Mouse.__init__();
+            if (LayaEnv.beforeInit) {
+                if (LayaEnv.isPlaying)
+                    LayaEnv.beforeInit(stageConfig);
+                else
+                    LayaEnv.beforeInit = null;
+            }
+            if (LayaEnv.isConch) {
+                Laya.enableNative();
+            }
+            CacheManger.beginCheck();
+            exports.stage = Laya.stage = new Stage();
+            ILaya.stage = Laya.stage;
+            if (LayaEnv.isConch && window.conch.setGlobalRepaint) {
+                window.conch.setGlobalRepaint(exports.stage.setGlobalRepaint.bind(exports.stage));
+            }
+            Shader3D.init();
+            MeshQuadTexture.__int__();
+            MeshVG.__init__();
+            MeshTexture.__init__();
+            Laya.render = new Render(0, 0, Browser.mainCanvas);
+            exports.render = Laya.render;
+            exports.stage.size(stageConfig.designWidth, stageConfig.designHeight);
+            if (stageConfig.scaleMode)
+                exports.stage.scaleMode = stageConfig.scaleMode;
+            if (stageConfig.screenMode)
+                exports.stage.screenMode = stageConfig.screenMode;
+            if (stageConfig.alignV)
+                exports.stage.alignV = stageConfig.alignV;
+            if (stageConfig.alignH)
+                exports.stage.alignH = stageConfig.alignH;
+            if (Config.isAlpha)
+                exports.stage.bgColor = null;
+            else if (stageConfig.backgroundColor)
+                exports.stage.bgColor = stageConfig.backgroundColor;
+            window.stage = exports.stage;
+            RenderStateContext.__init__();
+            MeshParticle2D.__init__();
+            RenderSprite.__init__();
+            InputManager.__init__(exports.stage, Render.canvas);
+            if (!!window.conch && "conchUseWXAdapter" in Browser.window) {
+                Input.isAppUseNewInput = true;
+            }
+            Input.__init__();
+            SoundManager.autoStopMusic = true;
+            Stat._StatRender = new StatUI();
+            Value2D._initone(ShaderDefines2D.TEXTURE2D, TextureSV);
+            Value2D._initone(ShaderDefines2D.TEXTURE2D | ShaderDefines2D.FILTERGLOW, TextureSV);
+            Value2D._initone(ShaderDefines2D.PRIMITIVE, PrimitiveSV);
+            Value2D._initone(ShaderDefines2D.SKINMESH, SkinSV);
+            if (laya3D) {
+                return laya3D.__init__().then(() => {
+                    if (LayaEnv.afterInit) {
+                        if (LayaEnv.isPlaying)
+                            LayaEnv.afterInit();
+                        else
+                            LayaEnv.afterInit = null;
+                    }
+                });
+            }
+            else {
+                if (LayaEnv.afterInit) {
+                    if (LayaEnv.isPlaying)
+                        LayaEnv.afterInit();
+                    else
+                        LayaEnv.afterInit = null;
+                }
+                return Promise.resolve();
+            }
+        }
+        static addWasmModule(id, exports, memory) {
+            Laya.WasmModules[id] = { exports, memory };
+        }
+        static alertGlobalError(value) {
+            var erralert = 0;
+            if (value) {
+                Browser.window.onerror = function (msg, url, line, column, detail) {
+                    if (erralert++ < 5 && detail)
+                        this.alert("出错啦，请把此信息截图给研发商\n" + msg + "\n" + detail.stack);
+                };
+            }
+            else {
+                Browser.window.onerror = null;
+            }
+        }
+        static _runScript(script) {
+            return Browser.window[Laya._evcode](script);
+        }
+        static enableDebugPanel(debugJsPath = "libs/laya.debugtool.js") {
+            if (!window['Laya']["DebugPanel"]) {
+                var script = Browser.createElement("script");
+                script.onload = function () {
+                    window['Laya']["DebugPanel"].enable();
+                };
+                script.src = debugJsPath;
+                Browser.document.body.appendChild(script);
+            }
+            else {
+                window['Laya']["DebugPanel"].enable();
+            }
+        }
+        static enableNative() {
+            if (Laya.isNativeRender_enable)
+                return;
+            Laya.isNativeRender_enable = true;
+            RenderState2D.width = Browser.window.innerWidth;
+            RenderState2D.height = Browser.window.innerHeight;
+            Browser.measureText = function (txt, font) {
+                window["conchTextCanvas"].font = font;
+                return window["conchTextCanvas"].measureText(txt);
+            };
+            Stage.clear = function (color) {
+                Context.set2DRenderConfig();
+                var c = ColorUtils.create(color).arrColor;
+                LayaGL.renderEngine.clearRenderTexture(exports.RenderClearFlag.Color | exports.RenderClearFlag.Depth, new Color(c[0], c[1], c[2], c[3]), 1);
+                RenderState2D.clear();
+            };
+            Sprite.drawToCanvas = function (sprite, _renderType, canvasWidth, canvasHeight, offsetX, offsetY) {
+                offsetX -= sprite.x;
+                offsetY -= sprite.y;
+                offsetX |= 0;
+                offsetY |= 0;
+                canvasWidth |= 0;
+                canvasHeight |= 0;
+                var canv = new HTMLCanvas(false);
+                var ctx = canv.getContext('2d');
+                canv.size(canvasWidth, canvasHeight);
+                ctx.asBitmap = true;
+                ctx._targets.start();
+                RenderSprite.renders[_renderType]._fun(sprite, ctx, offsetX, offsetY);
+                ctx.flush();
+                ctx._targets.end();
+                ctx._targets.restore();
+                return canv;
+            };
+            Object["defineProperty"](RenderTexture2D.prototype, "uv", {
+                "get": function () {
+                    return this._uv;
+                },
+                "set": function (v) {
+                    this._uv = v;
+                }
+            });
+            HTMLCanvas.prototype.getTexture = function () {
+                if (!this._texture) {
+                    this._texture = this.context._targets;
+                    this._texture.uv = RenderTexture2D.flipyuv;
+                    this._texture.bitmap = this._texture;
+                }
+                return this._texture;
+            };
+        }
+    }
+    Laya.stage = null;
+    Laya.systemTimer = null;
+    Laya.physicsTimer = null;
+    Laya.timer = null;
+    Laya.loader = null;
+    Laya.isWXOpenDataContext = false;
+    Laya.isWXPosMsg = false;
+    Laya.WasmModules = {};
+    Laya._evcode = "eva" + "l";
+    Laya.isNativeRender_enable = false;
+    function arrayBufferSlice(start, end) {
+        var arrU8List = new Uint8Array(this, start, end - start);
+        var newU8List = new Uint8Array(arrU8List.length);
+        newU8List.set(arrU8List);
+        return newU8List.buffer;
+    }
+    function uint8ArraySlice() {
+        var sz = this.length;
+        var dec = new Uint8Array(this.length);
+        for (var i = 0; i < sz; i++)
+            dec[i] = this[i];
+        return dec;
+    }
+    function float32ArraySlice() {
+        var sz = this.length;
+        var dec = new Float32Array(this.length);
+        for (var i = 0; i < sz; i++)
+            dec[i] = this[i];
+        return dec;
+    }
+    function uint16ArraySlice(...arg) {
+        var sz;
+        var dec;
+        var i;
+        if (arg.length === 0) {
+            sz = this.length;
+            dec = new Uint16Array(sz);
+            for (i = 0; i < sz; i++)
+                dec[i] = this[i];
+        }
+        else if (arg.length === 2) {
+            var start = arg[0];
+            var end = arg[1];
+            if (end > start) {
+                sz = end - start;
+                dec = new Uint16Array(sz);
+                for (i = start; i < end; i++)
+                    dec[i - start] = this[i];
+            }
+            else {
+                dec = new Uint16Array(0);
+            }
+        }
+        return dec;
+    }
+    ILaya.Loader = Loader;
+    ILaya.Context = Context;
+    ILaya.Browser = Browser;
+    var init = Laya.init;
+    exports.stage = void 0;
+    exports.systemTimer = void 0;
+    var startTimer;
+    exports.physicsTimer = void 0;
+    var updateTimer;
+    var lateTimer;
+    exports.timer = void 0;
+    exports.loader = void 0;
+    exports.render = void 0;
+    var isWXOpenDataContext;
+    var isWXPosMsg;
+    var alertGlobalError = Laya.alertGlobalError;
+    var enableDebugPanel = Laya.enableDebugPanel;
+
+    class Component {
+        constructor() {
+            this._hideFlags = 0;
+            this._status = 0;
+            this._enabled = true;
+            this._singleton = true;
+            this._id = Utils.getGID();
+            this._initialize();
+        }
+        get hideFlags() {
+            return this._hideFlags;
+        }
+        set hideFlags(value) {
+            this._hideFlags = value;
+        }
+        _initialize() {
+            this._extra = {};
+        }
+        hasHideFlag(flag) {
+            return (this._hideFlags & flag) != 0;
+        }
+        get id() {
+            return this._id;
+        }
+        get enabled() {
+            return this._enabled;
+        }
+        set enabled(value) {
+            if (this._enabled != value) {
+                this._enabled = value;
+                if (this.owner)
+                    this._setActive(value && this.owner.activeInHierarchy);
+            }
+        }
+        get awaked() {
+            return this._status > 0;
+        }
+        get destroyed() {
+            return this._status == 4;
+        }
+        _isScript() {
+            return false;
+        }
+        _resetComp() {
+            this._enabled = true;
+            this._status = 0;
+            this._enableState = false;
+            this.owner = null;
+        }
+        _setOwner(node) {
+            if (this._status != 0) {
+                throw 'reuse a destroyed component';
+            }
+            this.owner = node;
+            if (this._isScript())
+                node._setBit(NodeFlags.HAS_SCRIPT, true);
+            this._onAdded();
+            this.onAdded();
+        }
+        _onAdded() {
+        }
+        _onAwake() {
+        }
+        _onEnable() {
+            this.onEnable();
+        }
+        _onDisable() {
+            this.onDisable();
+        }
+        _onDestroy() {
+        }
+        _parse(data, interactMap = null) {
+        }
+        _parseInteractive(data = null, spriteMap = null) {
+        }
+        _cloneTo(dest) {
+        }
+        _setActive(value) {
+            var _a, _b;
+            if (value) {
+                if (this._status == 0) {
+                    this._status = 1;
+                    if (LayaEnv.isPlaying || this.runInEditor) {
+                        this._onAwake();
+                        this.onAwake();
+                    }
+                }
+                if (this._enabled && !this._enableState) {
+                    this._enableState = true;
+                    if (LayaEnv.isPlaying || this.runInEditor) {
+                        let driver = ((_a = (this.owner._is3D && this.owner._scene)) === null || _a === void 0 ? void 0 : _a._componentDriver) || ILaya.stage._componentDriver;
+                        driver.add(this);
+                        if (LayaEnv.isPlaying && this._isScript())
+                            this.setupScript();
+                        this._onEnable();
+                    }
+                }
+            }
+            else if (this._enableState) {
+                this._enableState = false;
+                if (LayaEnv.isPlaying || this.runInEditor) {
+                    let driver = ((_b = (this.owner._is3D && this.owner._scene)) === null || _b === void 0 ? void 0 : _b._componentDriver) || ILaya.stage._componentDriver;
+                    driver.remove(this);
+                    this.owner.offAllCaller(this);
+                    this._onDisable();
+                }
+            }
+        }
+        setupScript() {
+        }
+        destroy() {
+            if (this._status == 4)
+                return;
+            if (this.owner)
+                this.owner._destroyComponent(this);
+        }
+        _destroy(second) {
+            var _a;
+            if (second) {
+                this._onDestroy();
+                this.onDestroy();
+                if (this.onReset) {
+                    this.onReset();
+                    this._resetComp();
+                    Pool.recoverByClass(this);
+                }
+                return;
+            }
+            this._setActive(false);
+            this._status = 4;
+            let driver = ((_a = (this.owner._is3D && this.owner._scene)) === null || _a === void 0 ? void 0 : _a._componentDriver) || ILaya.stage._componentDriver;
+            driver._toDestroys.add(this);
+        }
+        onAdded() {
+        }
+        onAwake() {
+        }
+        onEnable() {
+        }
+        onDisable() {
+        }
+        onDestroy() {
+        }
+    }
+
+    class AnimationBase extends Sprite {
+        constructor() {
+            super();
+            this.wrapMode = 0;
+            this._interval = Config.animationInterval;
+            this._isReverse = false;
+            this._frameRateChanged = false;
+            this._setBitUp(NodeFlags.DISPLAY);
+        }
+        play(start = 0, loop = true, name = "") {
+            this._isPlaying = true;
+            this._actionName = name;
+            this.index = (typeof (start) == 'string') ? this._getFrameByLabel(start) : start;
+            this.loop = loop;
+            this._isReverse = this.wrapMode === AnimationBase.WRAP_REVERSE;
+            if (this.index == 0 && this._isReverse) {
+                this.index = this.count - 1;
+            }
+            if (this.interval > 0)
+                this.timerLoop(this.interval, this, this._frameLoop, null, true, true);
+        }
+        get interval() {
+            return this._interval;
+        }
+        set interval(value) {
+            if (this._interval != value) {
+                this._frameRateChanged = true;
+                this._interval = value;
+                if (this._isPlaying && value > 0) {
+                    this.timerLoop(value, this, this._frameLoop, null, true, true);
+                }
+            }
+        }
+        _getFrameByLabel(label) {
+            for (var i = 0; i < this._count; i++) {
+                var item = this._labels[i];
+                if (item && item.indexOf(label) > -1)
+                    return i;
+            }
+            return 0;
+        }
+        _frameLoop() {
+            if (!this._controlNode || this._controlNode._destroyed) {
+                this.clearTimer(this, this._frameLoop);
+                return;
+            }
+            if (this._isReverse) {
+                this._index--;
+                if (this._index < 0) {
+                    if (this.loop) {
+                        if (this.wrapMode == AnimationBase.WRAP_PINGPONG) {
+                            this._index = this._count > 0 ? 1 : 0;
+                            this._isReverse = false;
+                        }
+                        else {
+                            this._index = this._count - 1;
+                        }
+                        this.event(Event.COMPLETE);
+                    }
+                    else {
+                        this._index = 0;
+                        this.stop();
+                        this.event(Event.COMPLETE);
+                        return;
+                    }
+                }
+            }
+            else {
+                this._index++;
+                if (this._index >= this._count) {
+                    if (this.loop) {
+                        if (this.wrapMode == AnimationBase.WRAP_PINGPONG) {
+                            this._index = this._count - 2 >= 0 ? this._count - 2 : 0;
+                            this._isReverse = true;
+                        }
+                        else {
+                            this._index = 0;
+                        }
+                        this.event(Event.COMPLETE);
+                    }
+                    else {
+                        this._index--;
+                        this.stop();
+                        this.event(Event.COMPLETE);
+                        return;
+                    }
+                }
+            }
+            this.index = this._index;
+        }
+        _setControlNode(node) {
+            if (this._controlNode) {
+                this._controlNode.off(Event.DISPLAY, this, this._resumePlay);
+                this._controlNode.off(Event.UNDISPLAY, this, this._resumePlay);
+            }
+            this._controlNode = node;
+            if (node && node != this) {
+                node.on(Event.DISPLAY, this, this._resumePlay);
+                node.on(Event.UNDISPLAY, this, this._resumePlay);
+            }
+        }
+        _setDisplay(value) {
+            super._setDisplay(value);
+            this._resumePlay();
+        }
+        _resumePlay() {
+            if (this._isPlaying) {
+                if (this._controlNode.displayedInStage)
+                    this.play(this._index, this.loop, this._actionName);
+                else
+                    this.clearTimer(this, this._frameLoop);
+            }
+        }
+        stop() {
+            this._isPlaying = false;
+            this.clearTimer(this, this._frameLoop);
+        }
+        get isPlaying() {
+            return this._isPlaying;
+        }
+        addLabel(label, index) {
+            if (!this._labels)
+                this._labels = {};
+            if (!this._labels[index])
+                this._labels[index] = [];
+            this._labels[index].push(label);
+        }
+        removeLabel(label) {
+            if (!label)
+                this._labels = null;
+            else if (this._labels) {
+                for (var name in this._labels) {
+                    this._removeLabelFromList(this._labels[name], label);
+                }
+            }
+        }
+        _removeLabelFromList(list, label) {
+            if (!list)
+                return;
+            for (var i = list.length - 1; i >= 0; i--) {
+                if (list[i] == label) {
+                    list.splice(i, 1);
+                }
+            }
+        }
+        gotoAndStop(position) {
+            this.index = (typeof (position) == 'string') ? this._getFrameByLabel(position) : position;
+            this.stop();
+        }
+        get index() {
+            return this._index;
+        }
+        set index(value) {
+            this._index = value;
+            this._displayToIndex(value);
+            if (this._labels && this._labels[value]) {
+                var tArr = this._labels[value];
+                for (var i = 0, len = tArr.length; i < len; i++) {
+                    this.event(Event.LABEL, tArr[i]);
+                }
+            }
+        }
+        _displayToIndex(value) {
+        }
+        get count() {
+            return this._count;
+        }
+        clear() {
+            this.stop();
+            this._labels = null;
+            return this;
+        }
+    }
+    AnimationBase.WRAP_POSITIVE = 0;
+    AnimationBase.WRAP_REVERSE = 1;
+    AnimationBase.WRAP_PINGPONG = 2;
+
+    class MathUtil {
+        static subtractVector3(l, r, o) {
+            o[0] = l[0] - r[0];
+            o[1] = l[1] - r[1];
+            o[2] = l[2] - r[2];
+        }
+        static lerp(left, right, amount) {
+            return left * (1 - amount) + right * amount;
+        }
+        static scaleVector3(f, b, e) {
+            e[0] = f[0] * b;
+            e[1] = f[1] * b;
+            e[2] = f[2] * b;
+        }
+        static lerpVector3(l, r, t, o) {
+            var ax = l[0], ay = l[1], az = l[2];
+            o[0] = ax + t * (r[0] - ax);
+            o[1] = ay + t * (r[1] - ay);
+            o[2] = az + t * (r[2] - az);
+        }
+        static lerpVector4(l, r, t, o) {
+            var ax = l[0], ay = l[1], az = l[2], aw = l[3];
+            o[0] = ax + t * (r[0] - ax);
+            o[1] = ay + t * (r[1] - ay);
+            o[2] = az + t * (r[2] - az);
+            o[3] = aw + t * (r[3] - aw);
+        }
+        static slerpQuaternionArray(a, Offset1, b, Offset2, t, out, Offset3) {
+            var ax = a[Offset1 + 0], ay = a[Offset1 + 1], az = a[Offset1 + 2], aw = a[Offset1 + 3], bx = b[Offset2 + 0], by = b[Offset2 + 1], bz = b[Offset2 + 2], bw = b[Offset2 + 3];
+            var omega, cosom, sinom, scale0, scale1;
+            cosom = ax * bx + ay * by + az * bz + aw * bw;
+            if (cosom < 0.0) {
+                cosom = -cosom;
+                bx = -bx;
+                by = -by;
+                bz = -bz;
+                bw = -bw;
+            }
+            if ((1.0 - cosom) > 0.000001) {
+                omega = Math.acos(cosom);
+                sinom = Math.sin(omega);
+                scale0 = Math.sin((1.0 - t) * omega) / sinom;
+                scale1 = Math.sin(t * omega) / sinom;
+            }
+            else {
+                scale0 = 1.0 - t;
+                scale1 = t;
+            }
+            out[Offset3 + 0] = scale0 * ax + scale1 * bx;
+            out[Offset3 + 1] = scale0 * ay + scale1 * by;
+            out[Offset3 + 2] = scale0 * az + scale1 * bz;
+            out[Offset3 + 3] = scale0 * aw + scale1 * bw;
+            return out;
+        }
+        static getRotation(x0, y0, x1, y1) {
+            return Math.atan2(y1 - y0, x1 - x0) / Math.PI * 180;
+        }
+        static sortBigFirst(a, b) {
+            if (a == b)
+                return 0;
+            return b > a ? 1 : -1;
+        }
+        static sortSmallFirst(a, b) {
+            if (a == b)
+                return 0;
+            return b > a ? -1 : 1;
+        }
+        static sortNumBigFirst(a, b) {
+            return parseFloat(b) - parseFloat(a);
+        }
+        static sortNumSmallFirst(a, b) {
+            return parseFloat(a) - parseFloat(b);
+        }
+        static sortByKey(key, bigFirst = false, forceNum = true) {
+            var _sortFun;
+            if (bigFirst) {
+                _sortFun = forceNum ? MathUtil.sortNumBigFirst : MathUtil.sortBigFirst;
+            }
+            else {
+                _sortFun = forceNum ? MathUtil.sortNumSmallFirst : MathUtil.sortSmallFirst;
+            }
+            return function (a, b) {
+                return _sortFun(a[key], b[key]);
+            };
+        }
+    }
+
+    class FrameAnimation extends AnimationBase {
+        constructor() {
+            super();
+            if (FrameAnimation._sortIndexFun === undefined) {
+                FrameAnimation._sortIndexFun = MathUtil.sortByKey("index", false, true);
+            }
+        }
+        static _sortIndexFun(objpre, objnext) {
+            return objpre.index - objnext.index;
+        }
+        _setUp(targetDic, animationData) {
+            this._targetDic = targetDic;
+            this._animationData = animationData;
+            this.interval = 1000 / animationData.frameRate;
+            if (animationData.parsed) {
+                this._count = animationData.count;
+                this._labels = animationData.labels;
+                this._usedFrames = animationData.animationNewFrames;
+            }
+            else {
+                this._usedFrames = [];
+                this._calculateDatas();
+                animationData.parsed = true;
+                animationData.labels = this._labels;
+                animationData.count = this._count;
+                animationData.animationNewFrames = this._usedFrames;
+            }
+        }
+        clear() {
+            super.clear();
+            this._targetDic = null;
+            this._animationData = null;
+            return this;
+        }
+        _displayToIndex(value) {
+            if (!this._animationData)
+                return;
+            if (value < 0)
+                value = 0;
+            if (value > this._count)
+                value = this._count;
+            var nodes = this._animationData.nodes, i, len = nodes.length;
+            for (i = 0; i < len; i++) {
+                this._displayNodeToFrame(nodes[i], value);
+            }
+        }
+        _displayNodeToFrame(node, frame, targetDic = null) {
+            if (!targetDic)
+                targetDic = this._targetDic;
+            var target = targetDic[node.target];
+            if (!target) {
+                return;
+            }
+            var frames = node.frames, key, propFrames, value;
+            var keys = node.keys, i, len = keys.length;
+            for (i = 0; i < len; i++) {
+                key = keys[i];
+                propFrames = frames[key];
+                if (propFrames.length > frame) {
+                    value = propFrames[frame];
+                }
+                else {
+                    value = propFrames[propFrames.length - 1];
+                }
+                target[key] = value;
+            }
+            var funkeys = node.funkeys;
+            len = funkeys.length;
+            var funFrames;
+            if (len == 0)
+                return;
+            for (i = 0; i < len; i++) {
+                key = funkeys[i];
+                funFrames = frames[key];
+                if (funFrames[frame] !== undefined) {
+                    target[key] && target[key].apply(target, funFrames[frame]);
+                }
+            }
+        }
+        _calculateDatas() {
+            if (!this._animationData)
+                return;
+            var nodes = this._animationData.nodes, i, len = nodes.length, tNode;
+            this._count = 0;
+            for (i = 0; i < len; i++) {
+                tNode = nodes[i];
+                this._calculateKeyFrames(tNode);
+            }
+            this._count += 1;
+        }
+        _calculateKeyFrames(node) {
+            var keyFrames = node.keyframes, key, tKeyFrames, target = node.target;
+            if (!node.frames)
+                node.frames = {};
+            if (!node.keys)
+                node.keys = [];
+            else
+                node.keys.length = 0;
+            if (!node.funkeys)
+                node.funkeys = [];
+            else
+                node.funkeys.length = 0;
+            if (!node.initValues)
+                node.initValues = {};
+            for (key in keyFrames) {
+                var isFun = key.indexOf("()") != -1;
+                tKeyFrames = keyFrames[key];
+                if (isFun)
+                    key = key.substr(0, key.length - 2);
+                if (!node.frames[key]) {
+                    node.frames[key] = [];
+                }
+                if (!isFun) {
+                    if (this._targetDic && this._targetDic[target]) {
+                        node.initValues[key] = this._targetDic[target][key];
+                    }
+                    tKeyFrames.sort(FrameAnimation._sortIndexFun);
+                    node.keys.push(key);
+                    this._calculateNodePropFrames(tKeyFrames, node.frames[key], key, target);
+                }
+                else {
+                    node.funkeys.push(key);
+                    var map = node.frames[key];
+                    for (var i = 0; i < tKeyFrames.length; i++) {
+                        var temp = tKeyFrames[i];
+                        map[temp.index] = temp.value;
+                        if (temp.index > this._count)
+                            this._count = temp.index;
+                    }
+                }
+            }
+        }
+        resetNodes() {
+            if (!this._targetDic)
+                return;
+            if (!this._animationData)
+                return;
+            var nodes = this._animationData.nodes, i, len = nodes.length;
+            var tNode;
+            var initValues;
+            for (i = 0; i < len; i++) {
+                tNode = nodes[i];
+                initValues = tNode.initValues;
+                if (!initValues)
+                    continue;
+                var target = this._targetDic[tNode.target];
+                if (!target)
+                    continue;
+                var key;
+                for (key in initValues) {
+                    target[key] = initValues[key];
+                }
+            }
+        }
+        _calculateNodePropFrames(keyframes, frames, key, target) {
+            var i, len = keyframes.length - 1;
+            frames.length = keyframes[len].index + 1;
+            for (i = 0; i < len; i++) {
+                this._dealKeyFrame(keyframes[i]);
+                this._calculateFrameValues(keyframes[i], keyframes[i + 1], frames);
+            }
+            if (len == 0) {
+                frames[0] = keyframes[0].value;
+                if (this._usedFrames)
+                    this._usedFrames[keyframes[0].index] = true;
+            }
+            this._dealKeyFrame(keyframes[i]);
+        }
+        _dealKeyFrame(keyFrame) {
+            if (keyFrame.label && keyFrame.label != "")
+                this.addLabel(keyFrame.label, keyFrame.index);
+        }
+        _calculateFrameValues(startFrame, endFrame, result) {
+            var i, easeFun;
+            var start = startFrame.index, end = endFrame.index;
+            var startValue = startFrame.value;
+            var dValue = endFrame.value - startFrame.value;
+            var dLen = end - start;
+            var frames = this._usedFrames;
+            if (end > this._count)
+                this._count = end;
+            if (startFrame.tween) {
+                easeFun = Ease[startFrame.tweenMethod];
+                if (easeFun == null)
+                    easeFun = Ease.linearNone;
+                for (i = start; i < end; i++) {
+                    result[i] = easeFun(i - start, startValue, dValue, dLen);
+                    if (frames)
+                        frames[i] = true;
+                }
+            }
+            else {
+                for (i = start; i < end; i++) {
+                    result[i] = startValue;
+                }
+            }
+            if (frames) {
+                frames[startFrame.index] = true;
+                frames[endFrame.index] = true;
+            }
+            result[endFrame.index] = endFrame.value;
+        }
+    }
+
+    class GraphicAnimation extends FrameAnimation {
+        constructor() {
+            super(...arguments);
+            this._nodeIDAniDic = {};
+        }
+        _parseNodeList(uiView) {
+            if (!this._nodeList)
+                this._nodeList = [];
+            this._nodeDefaultProps[uiView.compId] = uiView.props;
+            if (uiView.compId)
+                this._nodeList.push(uiView.compId);
+            var childs = uiView.child;
+            if (childs) {
+                var i, len = childs.length;
+                for (i = 0; i < len; i++) {
+                    this._parseNodeList(childs[i]);
+                }
+            }
+        }
+        _calGraphicData(aniData) {
+            this._setUp(null, aniData);
+            this._createGraphicData();
+            if (this._nodeIDAniDic) {
+                var key;
+                for (key in this._nodeIDAniDic) {
+                    this._nodeIDAniDic[key] = null;
+                }
+            }
+        }
+        _createGraphicData() {
+            var gList = [];
+            var i, len = this.count;
+            var animationDataNew = this._usedFrames;
+            if (!animationDataNew)
+                animationDataNew = [];
+            var preGraphic;
+            for (i = 0; i < len; i++) {
+                if (animationDataNew[i] || !preGraphic) {
+                    preGraphic = this._createFrameGraphic(i);
+                }
+                gList.push(preGraphic);
+            }
+            this._gList = gList;
+        }
+        _createFrameGraphic(frame) {
+            var g = new Graphics();
+            if (!GraphicAnimation._rootMatrix)
+                GraphicAnimation._rootMatrix = new Matrix();
+            this._updateNodeGraphic(this._rootNode, frame, GraphicAnimation._rootMatrix, g);
+            return g;
+        }
+        _updateNodeGraphic(node, frame, parentTransfrom, g, alpha = 1) {
+            var tNodeG;
+            tNodeG = this._nodeGDic[node.compId] = this._getNodeGraphicData(node.compId, frame, this._nodeGDic[node.compId]);
+            if (!tNodeG.resultTransform)
+                tNodeG.resultTransform = new Matrix();
+            var tResultTransform;
+            tResultTransform = tNodeG.resultTransform;
+            Matrix.mul(tNodeG.transform, parentTransfrom, tResultTransform);
+            var tTex;
+            var tGraphicAlpha = tNodeG.alpha * alpha;
+            if (tGraphicAlpha < 0.01)
+                return;
+            if (tNodeG.skin) {
+                tTex = this._getTextureByUrl(tNodeG.skin);
+                if (tTex) {
+                    if (tResultTransform._checkTransform()) {
+                        g.drawTexture(tTex, 0, 0, tNodeG.width, tNodeG.height, tResultTransform, tGraphicAlpha);
+                        tNodeG.resultTransform = null;
+                    }
+                    else {
+                        g.drawTexture(tTex, tResultTransform.tx, tResultTransform.ty, tNodeG.width, tNodeG.height, null, tGraphicAlpha);
+                    }
+                }
+            }
+            var childs = node.child;
+            if (!childs)
+                return;
+            var i, len;
+            len = childs.length;
+            for (i = 0; i < len; i++) {
+                this._updateNodeGraphic(childs[i], frame, tResultTransform, g, tGraphicAlpha);
+            }
+        }
+        _updateNoChilds(tNodeG, g) {
+            if (!tNodeG.skin)
+                return;
+            var tTex = this._getTextureByUrl(tNodeG.skin);
+            if (!tTex)
+                return;
+            var tTransform = tNodeG.transform;
+            tTransform._checkTransform();
+            var onlyTranslate;
+            onlyTranslate = !tTransform._bTransform;
+            if (!onlyTranslate) {
+                g.drawTexture(tTex, 0, 0, tNodeG.width, tNodeG.height, tTransform.clone(), tNodeG.alpha);
+            }
+            else {
+                g.drawTexture(tTex, tTransform.tx, tTransform.ty, tNodeG.width, tNodeG.height, null, tNodeG.alpha);
+            }
+        }
+        _updateNodeGraphic2(node, frame, g) {
+            var tNodeG;
+            tNodeG = this._nodeGDic[node.compId] = this._getNodeGraphicData(node.compId, frame, this._nodeGDic[node.compId]);
+            if (!node.child) {
+                this._updateNoChilds(tNodeG, g);
+                return;
+            }
+            var tTransform = tNodeG.transform;
+            tTransform._checkTransform();
+            var onlyTranslate;
+            onlyTranslate = !tTransform._bTransform;
+            var hasTrans;
+            hasTrans = onlyTranslate && (tTransform.tx != 0 || tTransform.ty != 0);
+            var ifSave;
+            ifSave = (tTransform._bTransform) || tNodeG.alpha != 1;
+            if (ifSave)
+                g.save();
+            if (tNodeG.alpha != 1)
+                g.alpha(tNodeG.alpha);
+            if (!onlyTranslate)
+                g.transform(tTransform.clone());
+            else if (hasTrans)
+                g.translate(tTransform.tx, tTransform.ty);
+            var childs = node.child;
+            var tTex;
+            if (tNodeG.skin) {
+                tTex = this._getTextureByUrl(tNodeG.skin);
+                if (tTex) {
+                    g.drawImage(tTex, 0, 0, tNodeG.width, tNodeG.height);
+                }
+            }
+            if (childs) {
+                var i, len;
+                len = childs.length;
+                for (i = 0; i < len; i++) {
+                    this._updateNodeGraphic2(childs[i], frame, g);
+                }
+            }
+            if (ifSave) {
+                g.restore();
+            }
+            else {
+                if (!onlyTranslate) {
+                    g.transform(tTransform.clone().invert());
+                }
+                else if (hasTrans) {
+                    g.translate(-tTransform.tx, -tTransform.ty);
+                }
+            }
+        }
+        _calculateKeyFrames(node) {
+            super._calculateKeyFrames(node);
+            this._nodeIDAniDic[node.target] = node;
+        }
+        getNodeDataByID(nodeID) {
+            return this._nodeIDAniDic[nodeID];
+        }
+        _getParams(obj, params, frame, obj2) {
+            var rst = GraphicAnimation._temParam;
+            rst.length = params.length;
+            var i, len = params.length;
+            for (i = 0; i < len; i++) {
+                rst[i] = this._getObjVar(obj, params[i][0], frame, params[i][1], obj2);
+            }
+            return rst;
+        }
+        _getObjVar(obj, key, frame, noValue, obj2) {
+            if (key in obj) {
+                var vArr = obj[key];
+                if (frame >= vArr.length)
+                    frame = vArr.length - 1;
+                return obj[key][frame];
+            }
+            if (key in obj2) {
+                return obj2[key];
+            }
+            return noValue;
+        }
+        _getNodeGraphicData(nodeID, frame, rst) {
+            if (!rst)
+                rst = new GraphicNode();
+            if (!rst.transform) {
+                rst.transform = new Matrix();
+            }
+            else {
+                rst.transform.identity();
+            }
+            var node = this.getNodeDataByID(nodeID);
+            if (!node)
+                return rst;
+            var frameData = node.frames;
+            var params = this._getParams(frameData, GraphicAnimation._drawTextureCmd, frame, this._nodeDefaultProps[nodeID]);
+            var url = params[0];
+            var width, height;
+            var px = params[5], py = params[6];
+            var aX = params[13], aY = params[14];
+            var sx = params[7], sy = params[8];
+            var rotate = params[9];
+            var skewX = params[11], skewY = params[12];
+            width = params[3];
+            height = params[4];
+            if (width == 0 || height == 0)
+                url = null;
+            if (width == -1)
+                width = 0;
+            if (height == -1)
+                height = 0;
+            var tex;
+            rst.skin = url;
+            rst.width = width;
+            rst.height = height;
+            if (url) {
+                tex = this._getTextureByUrl(url);
+                if (tex) {
+                    if (!width)
+                        width = tex.sourceWidth;
+                    if (!height)
+                        height = tex.sourceHeight;
+                }
+                else {
+                    console.warn("lost skin:", url, ",you may load pics first");
+                }
+            }
+            rst.alpha = params[10];
+            var m = rst.transform;
+            if (aX != 0) {
+                px = aX * width;
+            }
+            if (aY != 0) {
+                py = aY * height;
+            }
+            if (px != 0 || py != 0) {
+                m.translate(-px, -py);
+            }
+            var tm = null;
+            if (rotate || sx !== 1 || sy !== 1 || skewX || skewY) {
+                tm = GraphicAnimation._tempMt;
+                tm.identity();
+                tm._bTransform = true;
+                var skx = (rotate - skewX) * 0.0174532922222222;
+                var sky = (rotate + skewY) * 0.0174532922222222;
+                var cx = Math.cos(sky);
+                var ssx = Math.sin(sky);
+                var cy = Math.sin(skx);
+                var ssy = Math.cos(skx);
+                tm.a = sx * cx;
+                tm.b = sx * ssx;
+                tm.c = -sy * cy;
+                tm.d = sy * ssy;
+                tm.tx = tm.ty = 0;
+            }
+            if (tm) {
+                m = Matrix.mul(m, tm, m);
+            }
+            m.translate(params[1], params[2]);
+            return rst;
+        }
+        _getTextureByUrl(url) {
+            return Loader.getRes(url);
+        }
+        setAniData(uiView, aniName = null) {
+            if (uiView.animations) {
+                this._nodeDefaultProps = {};
+                this._nodeGDic = {};
+                if (this._nodeList)
+                    this._nodeList.length = 0;
+                this._rootNode = uiView;
+                this._parseNodeList(uiView);
+                var aniDic = {};
+                var anilist = [];
+                var animations = uiView.animations;
+                var i, len = animations.length;
+                var tAniO;
+                for (i = 0; i < len; i++) {
+                    tAniO = animations[i];
+                    this._labels = null;
+                    if (aniName && aniName != tAniO.name) {
+                        continue;
+                    }
+                    if (!tAniO)
+                        continue;
+                    try {
+                        this._calGraphicData(tAniO);
+                    }
+                    catch (e) {
+                        console.warn("parse animation fail:" + tAniO.name + ",empty animation created");
+                        this._gList = [];
+                    }
+                    var frameO = {};
+                    frameO.interval = 1000 / tAniO["frameRate"];
+                    frameO.frames = this._gList;
+                    frameO.labels = this._labels;
+                    frameO.name = tAniO.name;
+                    anilist.push(frameO);
+                    aniDic[tAniO.name] = frameO;
+                }
+                this.animationList = anilist;
+                this.animationDic = aniDic;
+            }
+            GraphicAnimation._temParam.length = 0;
+        }
+        parseByData(aniData) {
+            var rootNode, aniO;
+            rootNode = aniData.nodeRoot;
+            aniO = aniData.aniO;
+            delete aniData.nodeRoot;
+            delete aniData.aniO;
+            this._nodeDefaultProps = {};
+            this._nodeGDic = {};
+            if (this._nodeList)
+                this._nodeList.length = 0;
+            this._rootNode = rootNode;
+            this._parseNodeList(rootNode);
+            this._labels = null;
+            try {
+                this._calGraphicData(aniO);
+            }
+            catch (e) {
+                console.warn("parse animation fail:" + aniO.name + ",empty animation created");
+                this._gList = [];
+            }
+            var frameO = aniData;
+            frameO.interval = 1000 / aniO["frameRate"];
+            frameO.frames = this._gList;
+            frameO.labels = this._labels;
+            frameO.name = aniO.name;
+            return frameO;
+        }
+        setUpAniData(uiView) {
+            if (uiView.animations) {
+                var aniDic = {};
+                var anilist = [];
+                var animations = uiView.animations;
+                var i, len = animations.length;
+                var tAniO;
+                for (i = 0; i < len; i++) {
+                    tAniO = animations[i];
+                    if (!tAniO)
+                        continue;
+                    var frameO = {};
+                    frameO.name = tAniO.name;
+                    frameO.aniO = tAniO;
+                    frameO.nodeRoot = uiView;
+                    anilist.push(frameO);
+                    aniDic[tAniO.name] = frameO;
+                }
+                this.animationList = anilist;
+                this.animationDic = aniDic;
+            }
+        }
+        _clear() {
+            this.animationList = null;
+            this.animationDic = null;
+            this._gList = null;
+            this._nodeGDic = null;
+        }
+        static parseAnimationByData(animationObject) {
+            if (!GraphicAnimation._I)
+                GraphicAnimation._I = new GraphicAnimation();
+            var rst;
+            rst = GraphicAnimation._I.parseByData(animationObject);
+            GraphicAnimation._I._clear();
+            return rst;
+        }
+        static parseAnimationData(aniData) {
+            if (!GraphicAnimation._I)
+                GraphicAnimation._I = new GraphicAnimation();
+            GraphicAnimation._I.setUpAniData(aniData);
+            var rst;
+            rst = {};
+            rst.animationList = GraphicAnimation._I.animationList;
+            rst.animationDic = GraphicAnimation._I.animationDic;
+            GraphicAnimation._I._clear();
+            return rst;
+        }
+    }
+    GraphicAnimation._drawTextureCmd = [["skin", null], ["x", 0], ["y", 0], ["width", -1], ["height", -1], ["pivotX", 0], ["pivotY", 0], ["scaleX", 1], ["scaleY", 1], ["rotation", 0], ["alpha", 1], ["skewX", 0], ["skewY", 0], ["anchorX", 0], ["anchorY", 0]];
+    GraphicAnimation._temParam = [];
+    GraphicAnimation._tempMt = new Matrix();
+    class GraphicNode {
+        constructor() {
+            this.alpha = 1;
+        }
+    }
+
+    class Animation extends AnimationBase {
+        constructor() {
+            super();
+            this._setControlNode(this);
+        }
+        destroy(destroyChild = true) {
+            this.stop();
+            super.destroy(destroyChild);
+            this._frames = null;
+            this._labels = null;
+        }
+        play(start = 0, loop = true, name = "") {
+            if (name)
+                this._setFramesFromCache(name, true);
+            super.play(start, loop, name);
+        }
+        _setFramesFromCache(name, showWarn = false) {
+            if (this._url)
+                name = this._url + "#" + name;
+            if (name && Animation.framesMap[name]) {
+                var tAniO = Animation.framesMap[name];
+                if (tAniO instanceof Array) {
+                    this._frames = Animation.framesMap[name];
+                    this._count = this._frames.length;
+                }
+                else {
+                    if (tAniO.nodeRoot) {
+                        Animation.framesMap[name] = GraphicAnimation.parseAnimationByData(tAniO);
+                        tAniO = Animation.framesMap[name];
+                    }
+                    this._frames = tAniO.frames;
+                    this._count = this._frames.length;
+                    if (!this._frameRateChanged)
+                        this._interval = tAniO.interval;
+                    this._labels = this._copyLabels(tAniO.labels);
+                }
+                return true;
+            }
+            else {
+                if (showWarn)
+                    console.log("ani not found:", name);
+            }
+            return false;
+        }
+        _copyLabels(labels) {
+            if (!labels)
+                return null;
+            var rst;
+            rst = {};
+            var key;
+            for (key in labels) {
+                rst[key] = Utils.copyArray([], labels[key]);
+            }
+            return rst;
+        }
+        _frameLoop() {
+            if (this._visible && this._style.alpha > 0.01 && this._frames) {
+                super._frameLoop();
+            }
+        }
+        _displayToIndex(value) {
+            if (this._frames)
+                this.graphics = this._frames[value];
+        }
+        get frames() {
+            return this._frames;
+        }
+        set frames(value) {
+            this._frames = value;
+            if (value) {
+                this._count = value.length;
+                if (this._actionName)
+                    this._setFramesFromCache(this._actionName, true);
+                this.index = this._index;
+            }
+        }
+        set source(value) {
+            if (value.indexOf(".ani") > -1)
+                this.loadAnimation(value);
+            else if (value.indexOf(".json") > -1 || value.indexOf("als") > -1 || value.indexOf("atlas") > -1)
+                this.loadAtlas(value);
+            else
+                this.loadImages(value.split(","));
+        }
+        set autoAnimation(value) {
+            this.play(0, true, value);
+        }
+        set autoPlay(value) {
+            if (value)
+                this.play();
+            else
+                this.stop();
+        }
+        clear() {
+            super.clear();
+            this.stop();
+            this.graphics = null;
+            this._frames = null;
+            this._labels = null;
+            return this;
+        }
+        loadImages(urls, cacheName = "") {
+            this._url = "";
+            if (!this._setFramesFromCache(cacheName)) {
+                this.frames = Animation.framesMap[cacheName] ? Animation.framesMap[cacheName] : Animation.createFrames(urls, cacheName);
+            }
+            return this;
+        }
+        loadAtlas(url, loaded = null, cacheName = "") {
+            this._url = "";
+            var _this = this;
+            if (!_this._setFramesFromCache(cacheName)) {
+                function onLoaded(loadUrl) {
+                    if (url === loadUrl) {
+                        _this.frames = Animation.framesMap[cacheName] ? Animation.framesMap[cacheName] : Animation.createFrames(url, cacheName);
+                        if (loaded)
+                            loaded.run();
+                    }
+                }
+                if (Loader.getAtlas(url))
+                    onLoaded(url);
+                else
+                    ILaya.loader.load(url, Handler.create(null, onLoaded, [url]), null, Loader.ATLAS);
+            }
+            return this;
+        }
+        loadAnimation(url, loaded = null, atlas = null) {
+            this._url = url;
+            var _this = this;
+            if (!this._actionName)
+                this._actionName = "";
+            if (!_this._setFramesFromCache(this._actionName)) {
+                if (!atlas || Loader.getAtlas(atlas)) {
+                    this._loadAnimationData(url, loaded, atlas);
+                }
+                else {
+                    ILaya.loader.load(atlas, Handler.create(this, this._loadAnimationData, [url, loaded, atlas]), null, Loader.ATLAS);
+                }
+            }
+            else {
+                _this._setFramesFromCache(this._actionName, true);
+                this.index = 0;
+                if (loaded)
+                    loaded.run();
+            }
+            return this;
+        }
+        _loadAnimationData(url, loaded = null, atlas = null) {
+            if (atlas && !Loader.getAtlas(atlas)) {
+                console.warn("atlas load fail:" + atlas);
+                return;
+            }
+            ILaya.loader.fetch(url, "json").then(data => {
+                if (this._url !== url)
+                    return;
+                if (!data) {
+                    if (Animation.framesMap[url + "#"]) {
+                        this._setFramesFromCache(this._actionName, true);
+                        this.index = 0;
+                        this._resumePlay();
+                        if (loaded)
+                            loaded.run();
+                    }
+                    return;
+                }
+                let tAniO;
+                if (!Animation.framesMap[url + "#"]) {
+                    let aniData = GraphicAnimation.parseAnimationData(data);
+                    if (!aniData)
+                        return;
+                    let aniList = aniData.animationList;
+                    let len = aniList.length;
+                    let defaultO;
+                    for (let i = 0; i < len; i++) {
+                        tAniO = aniList[i];
+                        Animation.framesMap[url + "#" + tAniO.name] = tAniO;
+                        if (!defaultO)
+                            defaultO = tAniO;
+                    }
+                    if (defaultO) {
+                        Animation.framesMap[url + "#"] = defaultO;
+                        this._setFramesFromCache(this._actionName, true);
+                        this.index = 0;
+                    }
+                    this._resumePlay();
+                }
+                else {
+                    this._setFramesFromCache(this._actionName, true);
+                    this.index = 0;
+                    this._resumePlay();
+                }
+                if (loaded)
+                    loaded.run();
+            });
+        }
+        static createFrames(url, name) {
+            var arr;
+            if (typeof (url) == 'string') {
+                var atlas = Loader.getAtlas(url);
+                if (atlas && atlas.frames.length) {
+                    let frames = atlas.frames;
+                    arr = [];
+                    for (var i = 0, n = frames.length; i < n; i++) {
+                        var g = new Graphics();
+                        g.drawImage(frames[i], 0, 0);
+                        arr.push(g);
+                    }
+                }
+            }
+            else if (url instanceof Array) {
+                arr = [];
+                for (i = 0, n = url.length; i < n; i++) {
+                    g = new Graphics();
+                    g.loadImage(url[i], 0, 0);
+                    arr.push(g);
+                }
+            }
+            if (name)
+                Animation.framesMap[name] = arr;
+            return arr;
+        }
+        static clearCache(key) {
+            var cache = Animation.framesMap;
+            var val;
+            var key2 = key + "#";
+            for (val in cache) {
+                if (val === key || val.indexOf(key2) === 0) {
+                    delete Animation.framesMap[val];
+                }
+            }
+        }
+    }
+    Animation.framesMap = {};
+
+    class BitmapFont {
+        constructor() {
+            this._fontCharDic = {};
+            this._fontWidthMap = {};
+            this._maxWidth = 0;
+            this._spaceWidth = 10;
+            this.fontSize = 12;
+            this.autoScaleSize = false;
+            this.letterSpacing = 0;
+        }
+        loadFont(path, complete) {
+            this._path = path;
+            if (!path || path.indexOf(".fnt") === -1) {
+                console.error('Bitmap font configuration information must be a ".fnt" file');
+                return;
+            }
+            ILaya.loader.load([path, path.replace(".fnt", ".png")]).then((contents) => {
+                this.parseFont(contents[0].data, contents[1]);
+                complete && complete.run();
+            });
+        }
+        parseFont(xml, texture) {
+            if (xml == null || texture == null)
+                return;
+            this._texture = texture;
+            texture._addReference();
+            let tScale = 1;
+            let tInfo = xml.getElementsByTagName("info");
+            if (!tInfo[0].getAttributeNode) {
+                return this.parseFont2(xml, texture);
+            }
+            this.fontSize = parseInt(tInfo[0].getAttributeNode("size").nodeValue);
+            let tPadding = tInfo[0].getAttributeNode("padding").nodeValue;
+            let tPaddingArray = tPadding.split(",");
+            this._padding = [parseInt(tPaddingArray[0]), parseInt(tPaddingArray[1]), parseInt(tPaddingArray[2]), parseInt(tPaddingArray[3])];
+            let chars = xml.getElementsByTagName("char");
+            for (let i = 0; i < chars.length; i++) {
+                let tAttribute = chars[i];
+                let tId = parseInt(tAttribute.getAttributeNode("id").nodeValue);
+                let xOffset = parseInt(tAttribute.getAttributeNode("xoffset").nodeValue) / tScale;
+                let yOffset = parseInt(tAttribute.getAttributeNode("yoffset").nodeValue) / tScale;
+                let xAdvance = parseInt(tAttribute.getAttributeNode("xadvance").nodeValue) / tScale;
+                let region = new Rectangle();
+                region.x = parseInt(tAttribute.getAttributeNode("x").nodeValue);
+                region.y = parseInt(tAttribute.getAttributeNode("y").nodeValue);
+                region.width = parseInt(tAttribute.getAttributeNode("width").nodeValue);
+                region.height = parseInt(tAttribute.getAttributeNode("height").nodeValue);
+                let tTexture = Texture.create(texture, region.x, region.y, region.width, region.height, xOffset, yOffset);
+                this._maxWidth = Math.max(this._maxWidth, xAdvance + this.letterSpacing);
+                this._fontCharDic[tId] = tTexture;
+                this._fontWidthMap[tId] = xAdvance;
+            }
+        }
+        parseFont2(xml, texture) {
+            if (xml == null || texture == null)
+                return;
+            this._texture = texture;
+            let tScale = 1;
+            let tInfo = xml.getElementsByTagName("info");
+            this.fontSize = parseInt(tInfo[0].attributes["size"].nodeValue);
+            let tPadding = tInfo[0].attributes["padding"].nodeValue;
+            let tPaddingArray = tPadding.split(",");
+            this._padding = [parseInt(tPaddingArray[0]), parseInt(tPaddingArray[1]), parseInt(tPaddingArray[2]), parseInt(tPaddingArray[3])];
+            let chars = xml.getElementsByTagName("char");
+            for (let i = 0; i < chars.length; i++) {
+                let tAttribute = chars[i].attributes;
+                let tId = parseInt(tAttribute["id"].nodeValue);
+                let xOffset = parseInt(tAttribute["xoffset"].nodeValue) / tScale;
+                let yOffset = parseInt(tAttribute["yoffset"].nodeValue) / tScale;
+                let xAdvance = parseInt(tAttribute["xadvance"].nodeValue) / tScale;
+                let region = new Rectangle();
+                region.x = parseInt(tAttribute["x"].nodeValue);
+                region.y = parseInt(tAttribute["y"].nodeValue);
+                region.width = parseInt(tAttribute["width"].nodeValue);
+                region.height = parseInt(tAttribute["height"].nodeValue);
+                let tTexture = Texture.create(texture, region.x, region.y, region.width, region.height, xOffset, yOffset);
+                this._maxWidth = Math.max(this._maxWidth, xAdvance + this.letterSpacing);
+                this._fontCharDic[tId] = tTexture;
+                this._fontWidthMap[tId] = xAdvance;
+            }
+        }
+        getCharTexture(char) {
+            return this._fontCharDic[char.charCodeAt(0)];
+        }
+        destroy() {
+            if (this._texture) {
+                for (let k in this._fontCharDic) {
+                    this._fontCharDic[k].destroy();
+                }
+                this._texture._removeReference();
+                this._fontCharDic = null;
+                this._fontWidthMap = null;
+                this._texture = null;
+                this._padding = null;
+            }
+        }
+        setSpaceWidth(spaceWidth) {
+            this._spaceWidth = spaceWidth;
+        }
+        getCharWidth(char) {
+            let code = char.charCodeAt(0);
+            if (this._fontWidthMap[code])
+                return this._fontWidthMap[code] + this.letterSpacing;
+            if (char === " ")
+                return this._spaceWidth + this.letterSpacing;
+            return 0;
+        }
+        getTextWidth(text) {
+            let tWidth = 0;
+            for (let i = 0, n = text.length; i < n; i++) {
+                tWidth += this.getCharWidth(text.charAt(i));
+            }
+            return tWidth;
+        }
+        getMaxWidth() {
+            return this._maxWidth;
+        }
+        getMaxHeight() {
+            return this.fontSize;
+        }
+        _drawText(text, sprite, drawX, drawY, align, width) {
+            let tWidth = this.getTextWidth(text);
+            let tTexture;
+            let dx = 0;
+            align === "center" && (dx = (width - tWidth) / 2);
+            align === "right" && (dx = (width - tWidth));
+            let tx = 0;
+            for (let i = 0, n = text.length; i < n; i++) {
+                tTexture = this.getCharTexture(text.charAt(i));
+                if (tTexture) {
+                    sprite.graphics.drawImage(tTexture, drawX + tx + dx, drawY);
+                    tx += this.getCharWidth(text.charAt(i));
+                }
+            }
+        }
+    }
+
+    class EffectAnimation extends FrameAnimation {
+        constructor() {
+            super(...arguments);
+            this._initData = {};
+        }
+        set target(v) {
+            if (this._target)
+                this._target.off(EffectAnimation.EFFECT_BEGIN, this, this._onOtherBegin);
+            this._target = v;
+            if (this._target)
+                this._target.on(EffectAnimation.EFFECT_BEGIN, this, this._onOtherBegin);
+            this._addEvent();
+        }
+        get target() {
+            return this._target;
+        }
+        _onOtherBegin(effect) {
+            if (effect === this)
+                return;
+            this.stop();
+        }
+        set playEvent(event) {
+            this._playEvent = event;
+            if (!event)
+                return;
+            this._addEvent();
+        }
+        _addEvent() {
+            if (!this._target || !this._playEvent)
+                return;
+            this._setControlNode(this._target);
+            this._target.on(this._playEvent, this, this._onPlayAction);
+        }
+        _onPlayAction() {
+            this.play(0, false);
+        }
+        play(start = 0, loop = true, name = "") {
+            if (!this._target)
+                return;
+            this._target.event(EffectAnimation.EFFECT_BEGIN, [this]);
+            this._recordInitData();
+            super.play(start, loop, name);
+        }
+        _recordInitData() {
+            if (!this._aniKeys)
+                return;
+            var i, len;
+            len = this._aniKeys.length;
+            var key;
+            for (i = 0; i < len; i++) {
+                key = this._aniKeys[i];
+                this._initData[key] = this._target[key];
+            }
+        }
+        set effectClass(classStr) {
+            this._effectClass = ClassUtils.getClass(classStr);
+            if (this._effectClass) {
+                var uiData = this._effectClass["uiView"];
+                if (uiData) {
+                    var aniData = uiData["animations"];
+                    if (aniData && aniData[0]) {
+                        var data = aniData[0];
+                        this._setUp({}, data);
+                        if (data.nodes && data.nodes[0]) {
+                            this._aniKeys = data.nodes[0].keys;
+                        }
+                    }
+                }
+            }
+        }
+        set effectData(uiData) {
+            if (uiData) {
+                var aniData = uiData["animations"];
+                if (aniData && aniData[0]) {
+                    var data = aniData[0];
+                    this._setUp({}, data);
+                    if (data.nodes && data.nodes[0]) {
+                        this._aniKeys = data.nodes[0].keys;
+                    }
+                }
+            }
+        }
+        _displayToIndex(value) {
+            if (!this._animationData)
+                return;
+            if (value < 0)
+                value = 0;
+            if (value > this._count)
+                value = this._count;
+            var nodes = this._animationData.nodes, i, len = nodes.length;
+            len = len > 1 ? 1 : len;
+            for (i = 0; i < len; i++) {
+                this._displayNodeToFrame(nodes[i], value);
+            }
+        }
+        _displayNodeToFrame(node, frame, targetDic = null) {
+            if (!this._target)
+                return;
+            var target = this._target;
+            var frames = node.frames, key, propFrames, value;
+            var keys = node.keys, i, len = keys.length;
+            var secondFrames = node.secondFrames;
+            var tSecondFrame;
+            var easeFun;
+            var tKeyFrames;
+            var startFrame;
+            var endFrame;
+            for (i = 0; i < len; i++) {
+                key = keys[i];
+                propFrames = frames[key];
+                tSecondFrame = secondFrames[key];
+                if (tSecondFrame == -1) {
+                    value = this._initData[key];
+                }
+                else {
+                    if (frame < tSecondFrame) {
+                        tKeyFrames = node.keyframes[key];
+                        startFrame = tKeyFrames[0];
+                        if (startFrame.tween) {
+                            easeFun = Ease[startFrame.tweenMethod];
+                            if (easeFun == null)
+                                easeFun = Ease.linearNone;
+                            endFrame = tKeyFrames[1];
+                            value = easeFun(frame, this._initData[key], endFrame.value - this._initData[key], endFrame.index);
+                        }
+                        else {
+                            value = this._initData[key];
+                        }
+                    }
+                    else {
+                        if (propFrames.length > frame)
+                            value = propFrames[frame];
+                        else
+                            value = propFrames[propFrames.length - 1];
+                    }
+                }
+                target[key] = value;
+            }
+        }
+        _calculateKeyFrames(node) {
+            super._calculateKeyFrames(node);
+            var keyFrames = node.keyframes, key, tKeyFrames; node.target;
+            var secondFrames = {};
+            node.secondFrames = secondFrames;
+            for (key in keyFrames) {
+                tKeyFrames = keyFrames[key];
+                if (tKeyFrames.length <= 1)
+                    secondFrames[key] = -1;
+                else
+                    secondFrames[key] = tKeyFrames[1].index;
+            }
+        }
+    }
+    EffectAnimation.EFFECT_BEGIN = "effectbegin";
+
+    class Widget extends Component {
+        constructor() {
+            super();
+            this._top = null;
+            this._bottom = null;
+            this._left = null;
+            this._right = null;
+            this._centerX = null;
+            this._centerY = null;
+            this.runInEditor = true;
+            this.hideFlags |= HideFlags.HideAndDontSave;
+        }
+        onReset() {
+            this._top = this._bottom = this._left = this._right = this._centerX = this._centerY = null;
+        }
+        _onEnable() {
+            if (this.owner.parent)
+                this._onAdded();
+            else
+                this.owner.once(Event.ADDED, this, this._onAdded);
+        }
+        _onDisable() {
+            this.owner.off(Event.ADDED, this, this._onAdded);
+            if (this.owner.parent)
+                this.owner.parent.off(Event.RESIZE, this, this._onParentResize);
+        }
+        _onAdded() {
+            if (this.owner.parent)
+                this.owner.parent.on(Event.RESIZE, this, this._onParentResize);
+            this.resetLayoutX();
+            this.resetLayoutY();
+        }
+        _onParentResize() {
+            var flagX = this.resetLayoutX();
+            var flagY = this.resetLayoutY();
+            if (flagX || flagY)
+                this.owner.event(Event.RESIZE);
+        }
+        resetLayoutX() {
+            var owner = this.owner;
+            if (!owner)
+                return false;
+            var parent = owner.parent;
+            if (parent) {
+                if (this._centerX != null) {
+                    owner.x = Math.round((parent.width - owner.displayWidth) * 0.5 + this._centerX + owner.pivotX * owner.scaleX);
+                }
+                else if (this._left != null) {
+                    owner.x = Math.round(this._left + owner.pivotX * owner.scaleX);
+                    if (this._right != null) {
+                        if (!parent._width)
+                            return false;
+                        var temp = (parent._width - this._left - this._right) / (owner.scaleX || 0.01);
+                        if (temp != owner._width) {
+                            owner.width = temp;
+                            return true;
+                        }
+                    }
+                }
+                else if (this._right != null) {
+                    owner.x = Math.round(parent.width - owner.displayWidth - this._right + owner.pivotX * owner.scaleX);
+                }
+            }
+            return false;
+        }
+        resetLayoutY() {
+            var owner = this.owner;
+            if (!owner)
+                return false;
+            var parent = owner.parent;
+            if (parent) {
+                if (this._centerY != null) {
+                    owner.y = Math.round((parent.height - owner.displayHeight) * 0.5 + this._centerY + owner.pivotY * owner.scaleY);
+                }
+                else if (this._top != null) {
+                    owner.y = Math.round(this._top + owner.pivotY * owner.scaleY);
+                    if (this._bottom != null) {
+                        if (!parent._height)
+                            return false;
+                        var temp = (parent._height - this._top - this._bottom) / (owner.scaleY || 0.01);
+                        if (temp != owner._height) {
+                            owner.height = temp;
+                            return true;
+                        }
+                    }
+                }
+                else if (this._bottom != null) {
+                    owner.y = Math.round(parent.height - owner.displayHeight - this._bottom + owner.pivotY * owner.scaleY);
+                }
+            }
+            return false;
+        }
+        resetLayout() {
+            if (this.owner) {
+                this.resetLayoutX();
+                this.resetLayoutY();
+            }
+        }
+        get top() {
+            return this._top;
+        }
+        set top(value) {
+            if (isNaN(value))
+                value = null;
+            if (this._top != value) {
+                this._top = value;
+                this.resetLayoutY();
+            }
+        }
+        get bottom() {
+            return this._bottom;
+        }
+        set bottom(value) {
+            if (isNaN(value))
+                value = null;
+            if (this._bottom != value) {
+                this._bottom = value;
+                this.resetLayoutY();
+            }
+        }
+        get left() {
+            return this._left;
+        }
+        set left(value) {
+            if (isNaN(value))
+                value = null;
+            if (this._left != value) {
+                this._left = value;
+                this.resetLayoutX();
+            }
+        }
+        get right() {
+            return this._right;
+        }
+        set right(value) {
+            if (isNaN(value))
+                value = null;
+            if (this._right != value) {
+                this._right = value;
+                this.resetLayoutX();
+            }
+        }
+        get centerX() {
+            return this._centerX;
+        }
+        set centerX(value) {
+            if (isNaN(value))
+                value = null;
+            if (this._centerX != value) {
+                this._centerX = value;
+                this.resetLayoutX();
+            }
+        }
+        get centerY() {
+            return this._centerY;
+        }
+        set centerY(value) {
+            if (isNaN(value))
+                value = null;
+            if (this._centerY != value) {
+                this._centerY = value;
+                this.resetLayoutY();
+            }
+        }
+    }
+    Widget.EMPTY = null;
+    Widget.EMPTY = new Widget();
+
+    const _rect = new Rectangle();
+    const _ptPoint = new Point();
+    class HitArea {
+        contains(x, y, sp) {
+            if (!HitArea._isHitGraphic(x, y, sp, this._hit))
+                return false;
+            return !HitArea._isHitGraphic(x, y, sp, this._unHit);
+        }
+        static _isHitGraphic(x, y, sp, graphic) {
+            if (!graphic)
+                return false;
+            let cmds = graphic.cmds;
+            if (cmds.length == 0)
+                return false;
+            let len = cmds.length;
+            for (let i = 0; i < len; i++) {
+                let cmd = cmds[i];
+                if (!cmd)
+                    continue;
+                switch (cmd.cmdID) {
+                    case "Translate":
+                        x -= cmd.tx;
+                        y -= cmd.ty;
+                }
+                if (HitArea._isHitCmd(x, y, sp, cmd))
+                    return true;
+            }
+            return false;
+        }
+        static _isHitCmd(x, y, sp, cmd) {
+            if (!cmd)
+                return false;
+            var rst = false;
+            switch (cmd.cmdID) {
+                case "DrawRect":
+                    if (cmd.percent)
+                        _rect.setTo(cmd.x * sp.width, cmd.y * sp.height, cmd.width * sp.width, cmd.height * sp.height);
+                    else
+                        _rect.setTo(cmd.x, cmd.y, cmd.width, cmd.height);
+                    rst = _rect.contains(x, y);
+                    break;
+                case "DrawCircle":
+                    let r = cmd.radius;
+                    var d;
+                    if (cmd.percent) {
+                        x -= cmd.x * sp.width;
+                        y -= cmd.y * sp.height;
+                        r *= sp.width;
+                    }
+                    else {
+                        x -= cmd.x;
+                        y -= cmd.y;
+                    }
+                    d = x * x + y * y;
+                    rst = d < r * r;
+                    break;
+                case "DrawPoly":
+                    x -= cmd.x;
+                    y -= cmd.y;
+                    rst = HitArea._ptInPolygon(x, y, cmd.points);
+                    break;
+            }
+            return rst;
+        }
+        static _ptInPolygon(x, y, areaPoints) {
+            var p = _ptPoint;
+            p.setTo(x, y);
+            var nCross = 0;
+            var p1x, p1y, p2x, p2y;
+            var len;
+            len = areaPoints.length;
+            for (var i = 0; i < len; i += 2) {
+                p1x = areaPoints[i];
+                p1y = areaPoints[i + 1];
+                p2x = areaPoints[(i + 2) % len];
+                p2y = areaPoints[(i + 3) % len];
+                if (p1y == p2y)
+                    continue;
+                if (p.y < Math.min(p1y, p2y))
+                    continue;
+                if (p.y >= Math.max(p1y, p2y))
+                    continue;
+                var tx = (p.y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x;
+                if (tx > p.x)
+                    nCross++;
+            }
+            return (nCross % 2 == 1);
+        }
+        get hit() {
+            if (!this._hit)
+                this._hit = new Graphics();
+            return this._hit;
+        }
+        set hit(value) {
+            this._hit = value;
+        }
+        get unHit() {
+            if (!this._unHit)
+                this._unHit = new Graphics();
+            return this._unHit;
+        }
+        set unHit(value) {
+            this._unHit = value;
+        }
+        onAfterDeserialize() {
+            if (LayaEnv.isPlaying) {
+                if (this._hitCmds) {
+                    this.hit.cmds = this._hitCmds;
+                    delete this._hitCmds;
+                }
+                if (this._unHitCmds) {
+                    this.unHit.cmds = this._unHitCmds;
+                    delete this._unHitCmds;
+                }
+            }
+        }
+    }
+    ClassUtils.regClass("HitArea", HitArea);
+
+    class Prefab extends Resource {
+        constructor(version) {
+            super();
+            this.version = version;
+            this._deps = [];
+        }
+        create(options, errors) {
+            if (this.json)
+                return LegacyUIParser.createByData(null, this.json);
+            else
+                return null;
+        }
+        get deps() {
+            return this._deps;
+        }
+        addDep(res) {
+            if (res instanceof Resource) {
+                res._addReference();
+                this._deps.push(res);
+                if (!LayaEnv.isPlaying && (res instanceof Prefab))
+                    res.on("obsolute", this, this.onDepObsolute);
+            }
+        }
+        addDeps(resArr) {
+            for (let res of resArr) {
+                if (res instanceof Resource) {
+                    res._addReference();
+                    this._deps.push(res);
+                    if (!LayaEnv.isPlaying && (res instanceof Prefab))
+                        res.on("obsolute", this, this.onDepObsolute);
+                }
+            }
+        }
+        _disposeResource() {
+            for (let res of this._deps) {
+                res._removeReference();
+                if (!LayaEnv.isPlaying && (res instanceof Prefab))
+                    res.off("obsolute", this, this.onDepObsolute);
+            }
+        }
+        get obsolute() {
+            return this._obsolute;
+        }
+        set obsolute(value) {
+            if (this._obsolute != value) {
+                this._obsolute = value;
+                if (value && !LayaEnv.isPlaying)
+                    this.event("obsolute");
+            }
+        }
+        onDepObsolute() {
+            this.obsolute = true;
+        }
+    }
+    var HierarchyResource = Prefab;
+
+    class PrefabImpl extends Prefab {
+        constructor(api, data, version) {
+            super(version);
+            this.api = api;
+            this.data = data;
+        }
+        create(options, errors) {
+            let ret = this.api.parse(this.data, options, errors);
+            if (Array.isArray(ret)) {
+                if (ret.length == 1) {
+                    ret[0].url = this.url;
+                }
+                return ret[0];
+            }
+            else {
+                ret.url = this.url;
+                return ret;
+            }
+        }
+    }
+
+    var _listClass;
+    var _viewClass;
+    class LegacyUIParser {
+        static parse(data, options) {
+            let root = options === null || options === void 0 ? void 0 : options.root;
+            if (!root) {
+                let runtime = (LayaEnv.isPlaying && data.props.runtime) ? data.props.runtime : data.type;
+                let clas = ClassUtils.getClass(runtime);
+                if (data.props.renderType == "instance")
+                    root = clas.instance || (clas.instance = new clas());
+                else
+                    root = new clas();
+            }
+            if (root && root._viewCreated)
+                return root;
+            return LegacyUIParser.createByData(root, data);
+        }
+        static getBindFun(value) {
+            let map = LegacyUIParser._funMap;
+            if (!map)
+                map = LegacyUIParser._funMap = new WeakObject();
+            var fun = LegacyUIParser._funMap.get(value);
+            if (fun == null) {
+                var temp = "\"" + value + "\"";
+                temp = temp.replace(/^"\${|}"$/g, "").replace(/\${/g, "\"+").replace(/}/g, "+\"");
+                var str = "(function(data){if(data==null)return;with(data){try{\nreturn " + temp + "\n}catch(e){}}})";
+                fun = window.Laya._runScript(str);
+                LegacyUIParser._funMap.set(value, fun);
+            }
+            return fun;
+        }
+        static createByData(root, uiView) {
+            var tInitTool = InitTool.create();
+            root = LegacyUIParser.createComp(uiView, root, root, null, tInitTool);
+            if ("_idMap" in root) {
+                root["_idMap"] = tInitTool._idMap;
+            }
+            if (uiView.animations) {
+                var anilist = [];
+                var animations = uiView.animations;
+                var i, len = animations.length;
+                var tAni;
+                var tAniO;
+                for (i = 0; i < len; i++) {
+                    tAni = new FrameAnimation();
+                    tAniO = animations[i];
+                    tAni._setUp(tInitTool._idMap, tAniO);
+                    root[tAniO.name] = tAni;
+                    tAni._setControlNode(root);
+                    switch (tAniO.action) {
+                        case 1:
+                            tAni.play(0, false);
+                            break;
+                        case 2:
+                            tAni.play(0, true);
+                            break;
+                    }
+                    anilist.push(tAni);
+                }
+                root._aniList = anilist;
+            }
+            if ((root instanceof Scene) && root._width > 0 && uiView.props.hitTestPrior == null && !root.mouseThrough)
+                root.hitTestPrior = true;
+            tInitTool.finish();
+            root._setBit(NodeFlags.NOT_READY, false);
+            if (root.parent && root.parent.activeInHierarchy && root.active)
+                root._processActive(true);
+            return root;
+        }
+        static createInitTool() {
+            return InitTool.create();
+        }
+        static createComp(uiView, comp = null, view = null, dataMap = null, initTool = null) {
+            comp = comp || LegacyUIParser.getCompInstance(uiView);
+            if (!comp) {
+                if (uiView.props && uiView.props.runtime)
+                    console.warn("runtime not found:" + uiView.props.runtime);
+                else
+                    console.warn("can not create:" + uiView.type);
+                return null;
+            }
+            var child = uiView.child;
+            if (child) {
+                var isList = comp instanceof (_listClass || (_listClass = ClassUtils.getClass("List")));
+                for (var i = 0, n = child.length; i < n; i++) {
+                    var node = child[i];
+                    if ('itemRender' in comp && (node.props.name == "render" || node.props.renderType === "render")) {
+                        comp["itemRender"] = node;
+                    }
+                    else if (node.type == "Graphic") {
+                        this._addGraphicsToSprite(node, comp);
+                    }
+                    else if (this._isDrawType(node.type)) {
+                        this._addGraphicToSprite(node, comp, true);
+                    }
+                    else {
+                        if (isList) {
+                            var arr = [];
+                            var tChild = LegacyUIParser.createComp(node, null, view, arr, initTool);
+                            if (arr.length)
+                                tChild["_$bindData"] = arr;
+                        }
+                        else {
+                            tChild = LegacyUIParser.createComp(node, null, view, dataMap, initTool);
+                        }
+                        if (node.type == "Script") {
+                            if (tChild instanceof Component) {
+                                comp.addComponentInstance(tChild);
+                            }
+                            else {
+                                if ("owner" in tChild) {
+                                    tChild["owner"] = comp;
+                                }
+                                else if ("target" in tChild) {
+                                    tChild["target"] = comp;
+                                }
+                            }
+                        }
+                        else if (node.props.renderType == "mask" || node.props.name == "mask") {
+                            comp.mask = tChild;
+                        }
+                        else {
+                            tChild instanceof Node && comp.addChild(tChild);
+                        }
+                    }
+                }
+            }
+            var props = uiView.props;
+            for (var prop in props) {
+                var value = props[prop];
+                if (typeof (value) == 'string' && (value.indexOf("@node:") >= 0 || value.indexOf("@Prefab:") >= 0)) {
+                    if (initTool) {
+                        initTool.addNodeRef(comp, prop, value);
+                    }
+                }
+                else
+                    LegacyUIParser.setCompValue(comp, prop, value, view, dataMap);
+            }
+            if (comp._afterInited) {
+                comp._afterInited();
+            }
+            if (uiView.compId && initTool && initTool._idMap) {
+                initTool._idMap[uiView.compId] = comp;
+            }
+            return comp;
+        }
+        static setCompValue(comp, prop, value, view = null, dataMap = null) {
+            if (typeof (value) == 'string' && value.indexOf("${") > -1) {
+                LegacyUIParser._sheet || (LegacyUIParser._sheet = ClassUtils.getClass("laya.data.Table"));
+                if (!LegacyUIParser._sheet) {
+                    console.warn("Can not find class Sheet");
+                    return;
+                }
+                if (dataMap) {
+                    dataMap.push(comp, prop, value);
+                }
+                else if (view) {
+                    if (value.indexOf("].") == -1) {
+                        value = value.replace(".", "[0].");
+                    }
+                    var watcher = new DataWatcher(comp, prop, value);
+                    watcher.exe(view);
+                    var one, temp;
+                    var str = value.replace(/\[.*?\]\./g, ".");
+                    while ((one = LegacyUIParser._parseWatchData.exec(str)) != null) {
+                        var key1 = one[1];
+                        while ((temp = LegacyUIParser._parseKeyWord.exec(key1)) != null) {
+                            var key2 = temp[0];
+                            var arr = (view._watchMap[key2] || (view._watchMap[key2] = []));
+                            arr.push(watcher);
+                            LegacyUIParser._sheet.I.notifer.on(key2, view, view.changeData, [key2]);
+                        }
+                        arr = (view._watchMap[key1] || (view._watchMap[key1] = []));
+                        arr.push(watcher);
+                        LegacyUIParser._sheet.I.notifer.on(key1, view, view.changeData, [key1]);
+                    }
+                }
+                return;
+            }
+            if (prop === "var" && view) {
+                view[value] = comp;
+            }
+            else {
+                comp[prop] = (value === "true" ? true : (value === "false" ? false : value));
+            }
+        }
+        static getCompInstance(json) {
+            if (json.type == "UIView") {
+                if (json.props && json.props.pageData) {
+                    return LegacyUIParser.createByData(null, json.props.pageData);
+                }
+            }
+            var runtime = LayaEnv.isPlaying ? ((json.props && json.props.runtime) || json.type) : json.type;
+            var compClass = ClassUtils.getClass(runtime);
+            if (!compClass)
+                throw "Can not find class " + runtime;
+            if (json.type === "Script" && compClass.prototype._doAwake) {
+                var comp = Pool.createByClass(compClass);
+                comp._destroyed = false;
+                return comp;
+            }
+            if (json.props && "renderType" in json.props && json.props["renderType"] == "instance") {
+                if (!compClass["instance"])
+                    compClass["instance"] = new compClass();
+                return compClass["instance"];
+            }
+            let ret = new compClass();
+            if (ret instanceof (_viewClass || (_viewClass = ClassUtils.getClass("View"))))
+                ret._scene = ret;
+            return ret;
+        }
+        static collectResourceLinks(uiView) {
+            let test = new Set();
+            let innerUrls = [];
+            function addInnerUrl(url) {
+                if (!test.has(url)) {
+                    test.add(url);
+                    innerUrls.push(url);
+                }
+            }
+            function check(uiView) {
+                let props = uiView.props;
+                for (let prop in props) {
+                    let value = props[prop];
+                    if (typeof (value) == 'string' && value.indexOf("@Prefab:") >= 0) {
+                        let url = value.replace("@Prefab:", "");
+                        addInnerUrl(url);
+                    }
+                }
+                let child = uiView.child;
+                if (child) {
+                    for (let i = 0, n = child.length; i < n; i++) {
+                        let node = child[i];
+                        check(node);
+                    }
+                }
+            }
+            if (uiView.loadList) {
+                for (let url of uiView.loadList)
+                    addInnerUrl(url);
+            }
+            if (uiView.loadList3D) {
+                for (let url of uiView.loadList3D)
+                    addInnerUrl(url);
+            }
+            check(uiView);
+            return innerUrls;
+        }
+        static createByJson(json, node = null, root = null, customHandler = null, instanceHandler = null) {
+            if (typeof (json) == 'string')
+                json = JSON.parse(json);
+            var props = json.props;
+            if (!node) {
+                node = instanceHandler ? instanceHandler.runWith(json) : ClassUtils.getInstance(LayaEnv.isPlaying ? (props.runtime || json.type) : json.type);
+                if (!node)
+                    return null;
+            }
+            var child = json.child;
+            if (child) {
+                for (var i = 0, n = child.length; i < n; i++) {
+                    var data = child[i];
+                    if ((data.props.name === "render" || data.props.renderType === "render") && node["_$set_itemRender"])
+                        node.itemRender = data;
+                    else {
+                        if (data.type == "Graphic") {
+                            this._addGraphicsToSprite(data, node);
+                        }
+                        else if (this._isDrawType(data.type)) {
+                            this._addGraphicToSprite(data, node, true);
+                        }
+                        else {
+                            var tChild = this.createByJson(data, null, root, customHandler, instanceHandler);
+                            if (data.type === "Script") {
+                                if ("owner" in tChild) {
+                                    tChild["owner"] = node;
+                                }
+                                else if ("target" in tChild) {
+                                    tChild["target"] = node;
+                                }
+                            }
+                            else if (data.props.renderType == "mask") {
+                                node.mask = tChild;
+                            }
+                            else {
+                                node.addChild(tChild);
+                            }
+                        }
+                    }
+                }
+            }
+            if (props) {
+                for (var prop in props) {
+                    var value = props[prop];
+                    if (prop === "var" && root) {
+                        root[value] = node;
+                    }
+                    else if (value instanceof Array && node[prop] instanceof Function) {
+                        node[prop].apply(node, value);
+                    }
+                    else {
+                        node[prop] = value;
+                    }
+                }
+            }
+            if (customHandler && json.customProps) {
+                customHandler.runWith([node, json]);
+            }
+            if (node["created"])
+                node.created();
+            return node;
+        }
+        static _addGraphicsToSprite(graphicO, sprite) {
+            var graphics = graphicO.child;
+            if (!graphics || graphics.length < 1)
+                return;
+            var g = this._getGraphicsFromSprite(graphicO, sprite);
+            var ox = 0;
+            var oy = 0;
+            if (graphicO.props) {
+                ox = this._getObjVar(graphicO.props, "x", 0);
+                oy = this._getObjVar(graphicO.props, "y", 0);
+            }
+            if (ox != 0 && oy != 0) {
+                g.translate(ox, oy);
+            }
+            var i, len;
+            len = graphics.length;
+            for (i = 0; i < len; i++) {
+                this._addGraphicToGraphics(graphics[i], g);
+            }
+            if (ox != 0 && oy != 0) {
+                g.translate(-ox, -oy);
+            }
+        }
+        static _addGraphicToSprite(graphicO, sprite, isChild = false) {
+            var g = isChild ? this._getGraphicsFromSprite(graphicO, sprite) : sprite.graphics;
+            this._addGraphicToGraphics(graphicO, g);
+        }
+        static _getGraphicsFromSprite(dataO, sprite) {
+            if (!dataO || !dataO.props)
+                return sprite.graphics;
+            var propsName = dataO.props.renderType;
+            if (propsName === "hit" || propsName === "unHit") {
+                var hitArea = sprite._style.hitArea || (sprite.hitArea = new HitArea());
+                if (!hitArea[propsName]) {
+                    hitArea[propsName] = new Graphics();
+                }
+                var g = hitArea[propsName];
+            }
+            if (!g)
+                g = sprite.graphics;
+            return g;
+        }
+        static _getTransformData(propsO) {
+            var m;
+            if ("pivotX" in propsO || "pivotY" in propsO) {
+                m = m || new Matrix();
+                m.translate(-this._getObjVar(propsO, "pivotX", 0), -this._getObjVar(propsO, "pivotY", 0));
+            }
+            var sx = this._getObjVar(propsO, "scaleX", 1), sy = this._getObjVar(propsO, "scaleY", 1);
+            var rotate = this._getObjVar(propsO, "rotation", 0);
+            this._getObjVar(propsO, "skewX", 0);
+            this._getObjVar(propsO, "skewY", 0);
+            if (sx != 1 || sy != 1 || rotate != 0) {
+                m = m || new Matrix();
+                m.scale(sx, sy);
+                m.rotate(rotate * 0.0174532922222222);
+            }
+            return m;
+        }
+        static _addGraphicToGraphics(graphicO, graphic) {
+            var propsO;
+            propsO = graphicO.props;
+            if (!propsO)
+                return;
+            var drawConfig;
+            drawConfig = this.DrawTypeDic[graphicO.type];
+            if (!drawConfig)
+                return;
+            var g = graphic;
+            var params = this._getParams(propsO, drawConfig[1], drawConfig[2], drawConfig[3]);
+            var m = this._tM;
+            if (m || this._alpha != 1) {
+                g.save();
+                if (m)
+                    g.transform(m);
+                if (this._alpha != 1)
+                    g.alpha(this._alpha);
+            }
+            g[drawConfig[0]].apply(g, params);
+            if (m || this._alpha != 1) {
+                g.restore();
+            }
+        }
+        static _adptLineData(params) {
+            params[2] = parseFloat(params[0]) + parseFloat(params[2]);
+            params[3] = parseFloat(params[1]) + parseFloat(params[3]);
+            return params;
+        }
+        static _adptTextureData(params) {
+            params[0] = ILaya.Loader.getRes(params[0]);
+            return params;
+        }
+        static _adptLinesData(params) {
+            params[2] = this._getPointListByStr(params[2]);
+            return params;
+        }
+        static _isDrawType(type) {
+            if (type === "Image")
+                return false;
+            return type in this.DrawTypeDic;
+        }
+        static _getParams(obj, params, xPos = 0, adptFun = null) {
+            var rst = this._temParam;
+            rst.length = params.length;
+            var i, len;
+            len = params.length;
+            for (i = 0; i < len; i++) {
+                rst[i] = this._getObjVar(obj, params[i][0], params[i][1]);
+            }
+            this._alpha = this._getObjVar(obj, "alpha", 1);
+            var m;
+            m = this._getTransformData(obj);
+            if (m) {
+                if (!xPos)
+                    xPos = 0;
+                m.translate(rst[xPos], rst[xPos + 1]);
+                rst[xPos] = rst[xPos + 1] = 0;
+                this._tM = m;
+            }
+            else {
+                this._tM = null;
+            }
+            if (adptFun && this[adptFun]) {
+                rst = this[adptFun](rst);
+            }
+            return rst;
+        }
+        static _getPointListByStr(str) {
+            var pointArr = str.split(",");
+            var i, len;
+            len = pointArr.length;
+            for (i = 0; i < len; i++) {
+                pointArr[i] = parseFloat(pointArr[i]);
+            }
+            return pointArr;
+        }
+        static _getObjVar(obj, key, noValue) {
+            if (key in obj) {
+                return obj[key];
+            }
+            return noValue;
+        }
+    }
+    LegacyUIParser._parseWatchData = /\${(.*?)}/g;
+    LegacyUIParser._parseKeyWord = /[a-zA-Z_][a-zA-Z0-9_]*(?:(?:\.[a-zA-Z_][a-zA-Z0-9_]*)+)/g;
+    LegacyUIParser.DrawTypeDic = { "Rect": ["drawRect", [["x", 0], ["y", 0], ["width", 0], ["height", 0], ["fillColor", null], ["lineColor", null], ["lineWidth", 1]]], "Circle": ["drawCircle", [["x", 0], ["y", 0], ["radius", 0], ["fillColor", null], ["lineColor", null], ["lineWidth", 1]]], "Pie": ["drawPie", [["x", 0], ["y", 0], ["radius", 0], ["startAngle", 0], ["endAngle", 0], ["fillColor", null], ["lineColor", null], ["lineWidth", 1]]], "Image": ["drawTexture", [["x", 0], ["y", 0], ["width", 0], ["height", 0]]], "Texture": ["drawTexture", [["skin", null], ["x", 0], ["y", 0], ["width", 0], ["height", 0]], 1, "_adptTextureData"], "FillTexture": ["fillTexture", [["skin", null], ["x", 0], ["y", 0], ["width", 0], ["height", 0], ["repeat", null]], 1, "_adptTextureData"], "FillText": ["fillText", [["text", ""], ["x", 0], ["y", 0], ["font", null], ["color", null], ["textAlign", null]], 1], "Line": ["drawLine", [["x", 0], ["y", 0], ["toX", 0], ["toY", 0], ["lineColor", null], ["lineWidth", 0]], 0, "_adptLineData"], "Lines": ["drawLines", [["x", 0], ["y", 0], ["points", ""], ["lineColor", null], ["lineWidth", 0]], 0, "_adptLinesData"], "Curves": ["drawCurves", [["x", 0], ["y", 0], ["points", ""], ["lineColor", null], ["lineWidth", 0]], 0, "_adptLinesData"], "Poly": ["drawPoly", [["x", 0], ["y", 0], ["points", ""], ["fillColor", null], ["lineColor", null], ["lineWidth", 1]], 0, "_adptLinesData"] };
+    LegacyUIParser._temParam = [];
+    class DataWatcher {
+        constructor(comp, prop, value) {
+            this.comp = comp;
+            this.prop = prop;
+            this.value = value;
+        }
+        exe(view) {
+            var fun = LegacyUIParser.getBindFun(this.value);
+            this.comp[this.prop] = fun.call(this, view);
+        }
+    }
+    class InitTool {
+        reset() {
+            this._nodeRefList = null;
+            this._initList = null;
+            this._idMap = null;
+        }
+        recover() {
+            this.reset();
+            Pool.recover("InitTool", this);
+        }
+        static create() {
+            var tool = Pool.getItemByClass("InitTool", InitTool);
+            tool._idMap = {};
+            return tool;
+        }
+        addNodeRef(node, prop, referStr) {
+            if (!this._nodeRefList)
+                this._nodeRefList = [];
+            this._nodeRefList.push([node, prop, referStr]);
+        }
+        setNodeRef() {
+            if (!this._nodeRefList)
+                return;
+            if (!this._idMap) {
+                this._nodeRefList = null;
+                return;
+            }
+            var i, len;
+            len = this._nodeRefList.length;
+            var tRefInfo;
+            for (i = 0; i < len; i++) {
+                tRefInfo = this._nodeRefList[i];
+                tRefInfo[0][tRefInfo[1]] = this.getReferData(tRefInfo[2]);
+            }
+            this._nodeRefList = null;
+        }
+        getReferData(referStr) {
+            if (referStr.indexOf("@Prefab:") >= 0) {
+                return new PrefabImpl(LegacyUIParser, Loader.getRes(referStr.replace("@Prefab:", "")), 2);
+            }
+            else if (referStr.indexOf("@arr:") >= 0) {
+                referStr = referStr.replace("@arr:", "");
+                var list;
+                list = referStr.split(",");
+                var i, len;
+                var tStr;
+                len = list.length;
+                var list2 = [];
+                for (i = 0; i < len; i++) {
+                    tStr = list[i];
+                    if (tStr) {
+                        list2.push(this._idMap[tStr.replace("@node:", "")]);
+                    }
+                    else {
+                        list2.push(null);
+                    }
+                }
+                return list2;
+            }
+            else {
+                return this._idMap[referStr.replace("@node:", "")];
+            }
+        }
+        addInitItem(item) {
+            if (!this._initList)
+                this._initList = [];
+            this._initList.push(item);
+        }
+        doInits() {
+            if (!this._initList)
+                return;
+            this._initList = null;
+        }
+        finish() {
+            this.setNodeRef();
+            this.doInits();
+            this.recover();
+        }
+    }
+
+    class Scene extends Sprite {
+        constructor(createChildren = true) {
+            super();
+            this.autoDestroyAtClosed = false;
+            this._anchorX = null;
+            this._anchorY = null;
+            this._viewCreated = false;
+            this._timer = ILaya.timer;
+            this._widget = Widget.EMPTY;
+            this._scene = this;
+            if (createChildren)
+                this.createChildren();
+        }
+        createChildren() {
+        }
+        static setUIMap(url) {
+            let uimap = ILaya.loader.getRes(url);
+            if (uimap) {
+                for (let key in uimap) {
+                    ILaya.Loader.loadedMap[key + ".scene"] = uimap[key];
+                }
+            }
+            else {
+                throw "请提前加载uimap的json，再使用该接口设置！";
+            }
+        }
+        loadScene(path) {
+            Scene.unDestroyedScenes.add(this);
+            let url = path.indexOf(".") > -1 ? path : path + ".scene";
+            let content = ILaya.loader.getRes(url);
+            if (content) {
+                if (!this._viewCreated) {
+                    content.create({ root: this });
+                    this._viewCreated = true;
+                    Scene.unDestroyedScenes.add(this);
+                }
+            }
+            else {
+                this._setBit(NodeFlags.NOT_READY, true);
+                ILaya.loader.load(url, null, value => {
+                    if (Scene._loadPage)
+                        Scene._loadPage.event("progress", value);
+                }).then((content) => {
+                    if (!content)
+                        throw "Can not find scene:" + path;
+                    if (!this._viewCreated) {
+                        this.url = url;
+                        Scene.hideLoadingPage();
+                        content.create({ root: this });
+                        this._viewCreated = true;
+                        Scene.unDestroyedScenes.add(this);
+                    }
+                    else
+                        this._setBit(NodeFlags.NOT_READY, false);
+                });
+            }
+        }
+        createView(view) {
+            if (view && !this._viewCreated) {
+                this._viewCreated = true;
+                LegacyUIParser.createByData(this, view);
+            }
+        }
+        getNodeByID(id) {
+            if (this._idMap)
+                return this._idMap[id];
+            return null;
+        }
+        open(closeOther = true, param = null) {
+            if (closeOther)
+                Scene.closeAll();
+            Scene.root.addChild(this);
+            if (this._scene3D)
+                ILaya.stage.addChildAt(this._scene3D, 0);
+            this.onOpened(param);
+        }
+        onOpened(param) {
+        }
+        close(type = null) {
+            this.onClosed(type);
+            if (this.autoDestroyAtClosed) {
+                this.destroy();
+                if (this._scene3D)
+                    this._scene3D.destroy();
+            }
+            else {
+                this.removeSelf();
+                if (this._scene3D)
+                    this._scene3D.removeSelf();
+            }
+        }
+        onClosed(type = null) {
+        }
+        destroy(destroyChild = true) {
+            super.destroy(destroyChild);
+            if (this._scene3D) {
+                this._scene3D.destroy();
+                this._scene3D = null;
+            }
+            this._idMap = null;
+            Scene.unDestroyedScenes.delete(this);
+        }
+        set scaleX(value) {
+            if (super.get_scaleX() == value)
+                return;
+            super.set_scaleX(value);
+            this.event(Event.RESIZE);
+        }
+        get scaleX() {
+            return super.scaleX;
+        }
+        set scaleY(value) {
+            if (super.get_scaleY() == value)
+                return;
+            super.set_scaleY(value);
+            this.event(Event.RESIZE);
+        }
+        get scaleY() {
+            return super.scaleY;
+        }
+        get width() {
+            if (this._width)
+                return this._width;
+            var max = 0;
+            for (var i = this.numChildren - 1; i > -1; i--) {
+                var comp = this.getChildAt(i);
+                if (comp._visible) {
+                    max = Math.max(comp._x + comp.width * comp.scaleX, max);
+                }
+            }
+            return max;
+        }
+        set width(value) {
+            if (super.get_width() == value)
+                return;
+            super.set_width(value);
+            this.callLater(this._sizeChanged);
+        }
+        get height() {
+            if (this._height)
+                return this._height;
+            var max = 0;
+            for (var i = this.numChildren - 1; i > -1; i--) {
+                var comp = this.getChildAt(i);
+                if (comp._visible) {
+                    max = Math.max(comp._y + comp.height * comp.scaleY, max);
+                }
+            }
+            return max;
+        }
+        set height(value) {
+            if (super.get_height() == value)
+                return;
+            super.set_height(value);
+            this.callLater(this._sizeChanged);
+        }
+        get timer() {
+            return this._timer;
+        }
+        set timer(value) {
+            this._timer = value;
+        }
+        get scene3D() {
+            return this._scene3D;
+        }
+        get top() {
+            return this._widget.top;
+        }
+        set top(value) {
+            if (value != this._widget.top) {
+                this._getWidget().top = value;
+            }
+        }
+        get bottom() {
+            return this._widget.bottom;
+        }
+        set bottom(value) {
+            if (value != this._widget.bottom) {
+                this._getWidget().bottom = value;
+            }
+        }
+        get left() {
+            return this._widget.left;
+        }
+        set left(value) {
+            if (value != this._widget.left) {
+                this._getWidget().left = value;
+            }
+        }
+        get right() {
+            return this._widget.right;
+        }
+        set right(value) {
+            if (value != this._widget.right) {
+                this._getWidget().right = value;
+            }
+        }
+        get centerX() {
+            return this._widget.centerX;
+        }
+        set centerX(value) {
+            if (value != this._widget.centerX) {
+                this._getWidget().centerX = value;
+            }
+        }
+        get centerY() {
+            return this._widget.centerY;
+        }
+        set centerY(value) {
+            if (value != this._widget.centerY) {
+                this._getWidget().centerY = value;
+            }
+        }
+        get anchorX() {
+            return this._anchorX;
+        }
+        set anchorX(value) {
+            if (this._anchorX != value) {
+                this._anchorX = value;
+                this.callLater(this._sizeChanged);
+            }
+        }
+        get anchorY() {
+            return this._anchorY;
+        }
+        set anchorY(value) {
+            if (this._anchorY != value) {
+                this._anchorY = value;
+                this.callLater(this._sizeChanged);
+            }
+        }
+        _sizeChanged() {
+            if (this._anchorX != null)
+                this.pivotX = this.anchorX * this.width;
+            if (this._anchorY != null)
+                this.pivotY = this.anchorY * this.height;
+            this.event(Event.RESIZE);
+            if (this._widget != Widget.EMPTY) {
+                this._widget.resetLayout();
+            }
+        }
+        freshLayout() {
+            if (this._widget != Widget.EMPTY) {
+                this._widget.resetLayout();
+            }
+        }
+        _getWidget() {
+            this._widget === Widget.EMPTY && (this._widget = this.addComponent(Widget));
+            return this._widget;
+        }
+        static get root() {
+            let root = Scene._root;
+            if (!root) {
+                root = Scene._root = ILaya.stage.addChild(new Sprite());
+                root.name = "root";
+                root.mouseThrough = true;
+                ILaya.stage.on("resize", null, () => {
+                    root.size(ILaya.stage.width, ILaya.stage.height);
+                    root.event(Event.RESIZE);
+                });
+                root.size(ILaya.stage.width, ILaya.stage.height);
+                root.event(Event.RESIZE);
+            }
+            return root;
+        }
+        static load(url, complete = null, progress = null) {
+            return ILaya.loader.load(url, null, value => {
+                if (Scene._loadPage)
+                    Scene._loadPage.event("progress", value);
+                progress && progress.runWith(value);
+            }).then((content) => {
+                if (!content)
+                    throw "Can not find scene:" + url;
+                let scene;
+                let errors = [];
+                let ret = content.create(null, errors);
+                if (errors.length > 0)
+                    console.warn(`Error loading ${url}: \n${errors}`);
+                if (ret instanceof Scene)
+                    scene = ret;
+                else if (ret._is3D) {
+                    scene = new Scene();
+                    scene.left = scene.right = scene.top = scene.bottom = 0;
+                    scene._scene3D = ret;
+                }
+                else
+                    throw "Not a scene:" + url;
+                scene._viewCreated = true;
+                Scene.hideLoadingPage();
+                complete && complete.runWith(scene);
+                return scene;
+            });
+        }
+        static open(url, closeOther = true, param = null, complete = null, progress = null) {
+            if (param instanceof Handler) {
+                var temp = complete;
+                complete = param;
+                param = temp;
+            }
+            Scene.showLoadingPage();
+            return Scene.load(url, Handler.create(null, this._onSceneLoaded, [closeOther, complete, param]), progress);
+        }
+        static _onSceneLoaded(closeOther, complete, param, scene) {
+            scene.open(closeOther, param);
+            if (complete)
+                complete.runWith(scene);
+        }
+        static close(url, name) {
+            let flag = false;
+            for (let scene of Scene.unDestroyedScenes) {
+                if (scene && scene.parent && scene.url === url && (name == null || scene.name == name)) {
+                    scene.close();
+                    flag = true;
+                    break;
+                }
+            }
+            return flag;
+        }
+        static closeAll() {
+            let root = Scene.root;
+            for (let i = 0, n = root.numChildren; i < n; i++) {
+                var scene = root.getChildAt(0);
+                if (scene instanceof Scene)
+                    scene.close();
+                else
+                    scene.removeSelf();
+            }
+        }
+        static destroy(url, name) {
+            let flag = false;
+            for (let scene of Scene.unDestroyedScenes) {
+                if (scene.url === url && (name == null || scene.name == name) && !scene._destroyed) {
+                    scene.destroy();
+                    flag = true;
+                    break;
+                }
+            }
+            return flag;
+        }
+        static gc() {
+            Resource.destroyUnusedResources();
+        }
+        static setLoadingPage(loadPage) {
+            Scene._loadPage = loadPage;
+        }
+        static showLoadingPage(param = null, delay = 500) {
+            if (Scene._loadPage) {
+                ILaya.systemTimer.clear(null, Scene._showLoading);
+                ILaya.systemTimer.clear(null, Scene._hideLoading);
+                ILaya.systemTimer.once(delay, null, Scene._showLoading, [param], false);
+            }
+        }
+        static _showLoading(param) {
+            ILaya.stage.addChild(Scene._loadPage);
+            if (Scene._loadPage instanceof Scene)
+                Scene._loadPage.onOpened(param);
+        }
+        static _hideLoading() {
+            if (Scene._loadPage instanceof Scene)
+                Scene._loadPage.close();
+            else
+                Scene._loadPage.removeSelf();
+        }
+        static hideLoadingPage(delay = 500) {
+            if (Scene._loadPage) {
+                ILaya.systemTimer.clear(null, Scene._showLoading);
+                ILaya.systemTimer.clear(null, Scene._hideLoading);
+                ILaya.systemTimer.once(delay, null, Scene._hideLoading);
+            }
+        }
+    }
+    Scene.unDestroyedScenes = new Set();
+
+    class BlurFilterGLRender {
+        render(rt, ctx, width, height, filter) {
+            var shaderValue = Value2D.create(ShaderDefines2D.TEXTURE2D, 0);
+            this.setShaderInfo(shaderValue, filter, rt.width, rt.height);
+            ctx.drawTarget(rt, 0, 0, width, height, Matrix.EMPTY.identity(), shaderValue);
+        }
+        setShaderInfo(shader, filter, w, h) {
+            shader.defines.add(Filter.BLUR);
+            var sv = shader;
+            BlurFilterGLRender.blurinfo[0] = w;
+            BlurFilterGLRender.blurinfo[1] = h;
+            sv.blurInfo = BlurFilterGLRender.blurinfo;
+            var sigma = filter.strength / 3.0;
+            var sigma2 = sigma * sigma;
+            filter.strength_sig2_2sig2_gauss1[0] = filter.strength;
+            filter.strength_sig2_2sig2_gauss1[1] = sigma2;
+            filter.strength_sig2_2sig2_gauss1[2] = 2.0 * sigma2;
+            filter.strength_sig2_2sig2_gauss1[3] = 1.0 / (2.0 * Math.PI * sigma2);
+            sv.strength_sig2_2sig2_gauss1 = filter.strength_sig2_2sig2_gauss1;
+        }
+    }
+    BlurFilterGLRender.blurinfo = new Array(2);
+
+    class BlurFilter extends Filter {
+        constructor(strength = 4) {
+            super();
+            this.strength_sig2_2sig2_gauss1 = [];
+            this.strength = strength;
+            this._glRender = new BlurFilterGLRender();
+        }
+        get type() {
+            return Filter.BLUR;
+        }
+        getStrenth_sig2_2sig2_native() {
+            if (!this.strength_sig2_native) {
+                this.strength_sig2_native = new Float32Array(4);
+            }
+            var sigma = this.strength / 3.0;
+            var sigma2 = sigma * sigma;
+            this.strength_sig2_native[0] = this.strength;
+            this.strength_sig2_native[1] = sigma2;
+            this.strength_sig2_native[2] = 2.0 * sigma2;
+            this.strength_sig2_native[3] = 1.0 / (2.0 * Math.PI * sigma2);
+            return this.strength_sig2_native;
+        }
+    }
+
+    class GlowFilterGLRender {
+        setShaderInfo(shader, w, h, data) {
+            shader.defines.add(data.type);
+            var sv = shader;
+            sv.u_blurInfo1 = data._sv_blurInfo1;
+            var info2 = data._sv_blurInfo2;
+            info2[0] = w;
+            info2[1] = h;
+            sv.u_blurInfo2 = info2;
+            sv.u_color = data.getColor();
+        }
+        render(rt, ctx, width, height, filter) {
+            var w = width, h = height;
+            var svBlur = Value2D.create(ShaderDefines2D.TEXTURE2D, 0);
+            this.setShaderInfo(svBlur, w, h, filter);
+            var svCP = Value2D.create(ShaderDefines2D.TEXTURE2D, 0);
+            var matI = Matrix.TEMP.identity();
+            ctx.drawTarget(rt, 0, 0, w, h, matI, svBlur);
+            ctx.drawTarget(rt, 0, 0, w, h, matI, svCP);
+        }
+    }
+
+    class GlowFilter extends Filter {
+        constructor(color, blur = 4, offX = 6, offY = 6) {
+            super();
+            this._elements = new Float32Array(9);
+            this._sv_blurInfo1 = new Array(4);
+            this._sv_blurInfo2 = [0, 0, 1, 0];
+            this._color = new ColorUtils(color || "#000");
+            this.blur = Math.min(blur, 20);
+            this.offX = offX;
+            this.offY = offY;
+            this._sv_blurInfo1[0] = this._sv_blurInfo1[1] = this.blur;
+            this._sv_blurInfo1[2] = offX;
+            this._sv_blurInfo1[3] = -offY;
+            this._glRender = new GlowFilterGLRender();
+        }
+        get type() {
+            return BlurFilter.GLOW;
+        }
+        get offY() {
+            return this._elements[6];
+        }
+        set offY(value) {
+            this._elements[6] = value;
+            this._sv_blurInfo1[3] = -value;
+        }
+        get offX() {
+            return this._elements[5];
+        }
+        set offX(value) {
+            this._elements[5] = value;
+            this._sv_blurInfo1[2] = value;
+        }
+        get color() {
+            return this._color.strColor;
+        }
+        set color(value) {
+            this._color = new ColorUtils(value);
+        }
+        getColor() {
+            return this._color.arrColor;
+        }
+        get blur() {
+            return this._elements[4];
+        }
+        set blur(value) {
+            this._elements[4] = value;
+            this._sv_blurInfo1[0] = this._sv_blurInfo1[1] = value;
+        }
+        getColorNative() {
+            if (!this._color_native) {
+                this._color_native = new Float32Array(4);
+            }
+            var color = this.getColor();
+            this._color_native[0] = color[0];
+            this._color_native[1] = color[1];
+            this._color_native[2] = color[2];
+            this._color_native[3] = color[3];
+            return this._color_native;
+        }
+        getBlurInfo1Native() {
+            if (!this._blurInof1_native) {
+                this._blurInof1_native = new Float32Array(4);
+            }
+            this._blurInof1_native[0] = this._blurInof1_native[1] = this.blur;
+            this._blurInof1_native[2] = this.offX;
+            this._blurInof1_native[3] = this.offY;
+            return this._blurInof1_native;
+        }
+        getBlurInfo2Native() {
+            if (!this._blurInof2_native) {
+                this._blurInof2_native = new Float32Array(4);
+            }
+            this._blurInof2_native[2] = 1;
+            return this._blurInof2_native;
+        }
+    }
 
     class SoundNode extends Sprite {
         constructor() {
@@ -30160,15 +33838,15 @@ window.Laya = (function (exports) {
     }
 
     class AnimatorPlayState2D {
+        constructor() {
+            this._currentState = null;
+            this._frontPlay = true;
+        }
         get duration() {
             return this._duration;
         }
         get animatorState() {
             return this._currentState;
-        }
-        constructor() {
-            this._currentState = null;
-            this._frontPlay = true;
         }
         _resetPlayState(startTime, clipDuration) {
             this._finish = false;
@@ -30391,8 +34069,8 @@ window.Laya = (function (exports) {
                 else if ("-1" == state.id) {
                     enterState = state;
                 }
-                else if ("-2" == state.id);
-                else if ("-3" == state.id);
+                else if ("-2" == state.id) ;
+                else if ("-3" == state.id) ;
                 else if (null == state.clip || null == state.clip._$uuid || "" == state.clip._$uuid) {
                     states.splice(j, 1);
                 }
@@ -31338,6 +35016,11 @@ window.Laya = (function (exports) {
     }
 
     class AnimationClip2D extends Resource {
+        constructor() {
+            super();
+            this._nodes = new KeyframeNodeList2D();
+            this._animationEvents = [];
+        }
         static _parse(data) {
             var clip = new AnimationClip2D();
             var reader = new Byte(data);
@@ -31350,11 +35033,6 @@ window.Laya = (function (exports) {
                     throw "unknown animationClip version.";
             }
             return clip;
-        }
-        constructor() {
-            super();
-            this._nodes = new KeyframeNodeList2D();
-            this._animationEvents = [];
         }
         duration() {
             return this._duration;
@@ -31738,6 +35416,12 @@ window.Laya = (function (exports) {
     }
 
     class AnimatorStateCondition {
+        constructor(name = null) {
+            if (!name)
+                return;
+            this._id = AnimatorStateCondition.conditionNameToID(name);
+            this._name = name;
+        }
         static conditionNameToID(name) {
             if (AnimatorStateCondition._conditionNameMap[name] != null) {
                 return AnimatorStateCondition._conditionNameMap[name];
@@ -31751,12 +35435,6 @@ window.Laya = (function (exports) {
         }
         static conditionIDToName(id) {
             return this._conditionNameMap[id];
-        }
-        constructor(name = null) {
-            if (!name)
-                return;
-            this._id = AnimatorStateCondition.conditionNameToID(name);
-            this._name = name;
         }
         get id() {
             return this._id;
@@ -32175,1225 +35853,6 @@ window.Laya = (function (exports) {
             }
         }
     }
-
-    const _tempVector0 = new Vector3();
-    const _tempVector1 = new Vector3();
-    const _tempVector2 = new Vector3();
-    const _tempVector3 = new Vector3();
-    const DEFAULTARRAY = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-    class Matrix4x4 {
-        static createRotationX(rad, out) {
-            var oe = out.elements;
-            var s = Math.sin(rad), c = Math.cos(rad);
-            oe[1] = oe[2] = oe[3] = oe[4] = oe[7] = oe[8] = oe[11] = oe[12] = oe[13] = oe[14] = 0;
-            oe[0] = oe[15] = 1;
-            oe[5] = oe[10] = c;
-            oe[6] = s;
-            oe[9] = -s;
-        }
-        static createRotationY(rad, out) {
-            var oe = out.elements;
-            var s = Math.sin(rad), c = Math.cos(rad);
-            oe[1] = oe[3] = oe[4] = oe[6] = oe[7] = oe[9] = oe[11] = oe[12] = oe[13] = oe[14] = 0;
-            oe[5] = oe[15] = 1;
-            oe[0] = oe[10] = c;
-            oe[2] = -s;
-            oe[8] = s;
-        }
-        static createRotationZ(rad, out) {
-            var oe = out.elements;
-            var s = Math.sin(rad), c = Math.cos(rad);
-            oe[2] = oe[3] = oe[6] = oe[7] = oe[8] = oe[9] = oe[11] = oe[12] = oe[13] = oe[14] = 0;
-            oe[10] = oe[15] = 1;
-            oe[0] = oe[5] = c;
-            oe[1] = s;
-            oe[4] = -s;
-        }
-        static createRotationYawPitchRoll(yaw, pitch, roll, result) {
-            Quaternion.createFromYawPitchRoll(yaw, pitch, roll, Quaternion.TEMP);
-            Matrix4x4.createRotationQuaternion(Quaternion.TEMP, result);
-        }
-        static createRotationAxis(axis, angle, result) {
-            var x = axis.x;
-            var y = axis.y;
-            var z = axis.z;
-            var cos = Math.cos(angle);
-            var sin = Math.sin(angle);
-            var xx = x * x;
-            var yy = y * y;
-            var zz = z * z;
-            var xy = x * y;
-            var xz = x * z;
-            var yz = y * z;
-            var resultE = result.elements;
-            resultE[3] = resultE[7] = resultE[11] = resultE[12] = resultE[13] = resultE[14] = 0;
-            resultE[15] = 1.0;
-            resultE[0] = xx + (cos * (1.0 - xx));
-            resultE[1] = (xy - (cos * xy)) + (sin * z);
-            resultE[2] = (xz - (cos * xz)) - (sin * y);
-            resultE[4] = (xy - (cos * xy)) - (sin * z);
-            resultE[5] = yy + (cos * (1.0 - yy));
-            resultE[6] = (yz - (cos * yz)) + (sin * x);
-            resultE[8] = (xz - (cos * xz)) + (sin * y);
-            resultE[9] = (yz - (cos * yz)) - (sin * x);
-            resultE[10] = zz + (cos * (1.0 - zz));
-        }
-        static createRotationQuaternion(rotation, result) {
-            var resultE = result.elements;
-            var rotationX = rotation.x;
-            var rotationY = rotation.y;
-            var rotationZ = rotation.z;
-            var rotationW = rotation.w;
-            var xx = rotationX * rotationX;
-            var yy = rotationY * rotationY;
-            var zz = rotationZ * rotationZ;
-            var xy = rotationX * rotationY;
-            var zw = rotationZ * rotationW;
-            var zx = rotationZ * rotationX;
-            var yw = rotationY * rotationW;
-            var yz = rotationY * rotationZ;
-            var xw = rotationX * rotationW;
-            resultE[3] = resultE[7] = resultE[11] = resultE[12] = resultE[13] = resultE[14] = 0;
-            resultE[15] = 1.0;
-            resultE[0] = 1.0 - (2.0 * (yy + zz));
-            resultE[1] = 2.0 * (xy + zw);
-            resultE[2] = 2.0 * (zx - yw);
-            resultE[4] = 2.0 * (xy - zw);
-            resultE[5] = 1.0 - (2.0 * (zz + xx));
-            resultE[6] = 2.0 * (yz + xw);
-            resultE[8] = 2.0 * (zx + yw);
-            resultE[9] = 2.0 * (yz - xw);
-            resultE[10] = 1.0 - (2.0 * (yy + xx));
-        }
-        static createTranslate(trans, out) {
-            var oe = out.elements;
-            oe[4] = oe[8] = oe[1] = oe[9] = oe[2] = oe[6] = oe[3] = oe[7] = oe[11] = 0;
-            oe[0] = oe[5] = oe[10] = oe[15] = 1;
-            oe[12] = trans.x;
-            oe[13] = trans.y;
-            oe[14] = trans.z;
-        }
-        static createScaling(scale, out) {
-            var oe = out.elements;
-            oe[0] = scale.x;
-            oe[5] = scale.y;
-            oe[10] = scale.z;
-            oe[1] = oe[4] = oe[8] = oe[12] = oe[9] = oe[13] = oe[2] = oe[6] = oe[14] = oe[3] = oe[7] = oe[11] = 0;
-            oe[15] = 1;
-        }
-        static multiply(left, right, out) {
-            var l = right.elements;
-            var r = left.elements;
-            var e = out.elements;
-            var l11 = l[0], l12 = l[1], l13 = l[2], l14 = l[3];
-            var l21 = l[4], l22 = l[5], l23 = l[6], l24 = l[7];
-            var l31 = l[8], l32 = l[9], l33 = l[10], l34 = l[11];
-            var l41 = l[12], l42 = l[13], l43 = l[14], l44 = l[15];
-            var r11 = r[0], r12 = r[1], r13 = r[2], r14 = r[3];
-            var r21 = r[4], r22 = r[5], r23 = r[6], r24 = r[7];
-            var r31 = r[8], r32 = r[9], r33 = r[10], r34 = r[11];
-            var r41 = r[12], r42 = r[13], r43 = r[14], r44 = r[15];
-            e[0] = (l11 * r11) + (l12 * r21) + (l13 * r31) + (l14 * r41);
-            e[1] = (l11 * r12) + (l12 * r22) + (l13 * r32) + (l14 * r42);
-            e[2] = (l11 * r13) + (l12 * r23) + (l13 * r33) + (l14 * r43);
-            e[3] = (l11 * r14) + (l12 * r24) + (l13 * r34) + (l14 * r44);
-            e[4] = (l21 * r11) + (l22 * r21) + (l23 * r31) + (l24 * r41);
-            e[5] = (l21 * r12) + (l22 * r22) + (l23 * r32) + (l24 * r42);
-            e[6] = (l21 * r13) + (l22 * r23) + (l23 * r33) + (l24 * r43);
-            e[7] = (l21 * r14) + (l22 * r24) + (l23 * r34) + (l24 * r44);
-            e[8] = (l31 * r11) + (l32 * r21) + (l33 * r31) + (l34 * r41);
-            e[9] = (l31 * r12) + (l32 * r22) + (l33 * r32) + (l34 * r42);
-            e[10] = (l31 * r13) + (l32 * r23) + (l33 * r33) + (l34 * r43);
-            e[11] = (l31 * r14) + (l32 * r24) + (l33 * r34) + (l34 * r44);
-            e[12] = (l41 * r11) + (l42 * r21) + (l43 * r31) + (l44 * r41);
-            e[13] = (l41 * r12) + (l42 * r22) + (l43 * r32) + (l44 * r42);
-            e[14] = (l41 * r13) + (l42 * r23) + (l43 * r33) + (l44 * r43);
-            e[15] = (l41 * r14) + (l42 * r24) + (l43 * r34) + (l44 * r44);
-        }
-        static createFromQuaternion(rotation, out) {
-            var e = out.elements;
-            var x = rotation.x, y = rotation.y, z = rotation.z, w = rotation.w;
-            var x2 = x + x;
-            var y2 = y + y;
-            var z2 = z + z;
-            var xx = x * x2;
-            var yx = y * x2;
-            var yy = y * y2;
-            var zx = z * x2;
-            var zy = z * y2;
-            var zz = z * z2;
-            var wx = w * x2;
-            var wy = w * y2;
-            var wz = w * z2;
-            e[0] = 1 - yy - zz;
-            e[1] = yx + wz;
-            e[2] = zx - wy;
-            e[3] = 0;
-            e[4] = yx - wz;
-            e[5] = 1 - xx - zz;
-            e[6] = zy + wx;
-            e[7] = 0;
-            e[8] = zx + wy;
-            e[9] = zy - wx;
-            e[10] = 1 - xx - yy;
-            e[11] = 0;
-            e[12] = 0;
-            e[13] = 0;
-            e[14] = 0;
-            e[15] = 1;
-        }
-        static createAffineTransformation(trans, rot, scale, out) {
-            var oe = out.elements;
-            var x = rot.x, y = rot.y, z = rot.z, w = rot.w, x2 = x + x, y2 = y + y, z2 = z + z;
-            var xx = x * x2, xy = x * y2, xz = x * z2, yy = y * y2, yz = y * z2, zz = z * z2;
-            var wx = w * x2, wy = w * y2, wz = w * z2, sx = scale.x, sy = scale.y, sz = scale.z;
-            oe[0] = (1 - (yy + zz)) * sx;
-            oe[1] = (xy + wz) * sx;
-            oe[2] = (xz - wy) * sx;
-            oe[3] = 0;
-            oe[4] = (xy - wz) * sy;
-            oe[5] = (1 - (xx + zz)) * sy;
-            oe[6] = (yz + wx) * sy;
-            oe[7] = 0;
-            oe[8] = (xz + wy) * sz;
-            oe[9] = (yz - wx) * sz;
-            oe[10] = (1 - (xx + yy)) * sz;
-            oe[11] = 0;
-            oe[12] = trans.x;
-            oe[13] = trans.y;
-            oe[14] = trans.z;
-            oe[15] = 1;
-        }
-        static createLookAt(eye, target, up, out) {
-            var oE = out.elements;
-            var xaxis = _tempVector0;
-            var yaxis = _tempVector1;
-            var zaxis = _tempVector2;
-            Vector3.subtract(eye, target, zaxis);
-            Vector3.normalize(zaxis, zaxis);
-            Vector3.cross(up, zaxis, xaxis);
-            Vector3.normalize(xaxis, xaxis);
-            Vector3.cross(zaxis, xaxis, yaxis);
-            oE[3] = oE[7] = oE[11] = 0;
-            oE[15] = 1;
-            oE[0] = xaxis.x;
-            oE[4] = xaxis.y;
-            oE[8] = xaxis.z;
-            oE[1] = yaxis.x;
-            oE[5] = yaxis.y;
-            oE[9] = yaxis.z;
-            oE[2] = zaxis.x;
-            oE[6] = zaxis.y;
-            oE[10] = zaxis.z;
-            oE[12] = -Vector3.dot(xaxis, eye);
-            oE[13] = -Vector3.dot(yaxis, eye);
-            oE[14] = -Vector3.dot(zaxis, eye);
-        }
-        static createPerspective(fov, aspect, znear, zfar, out) {
-            var yScale = 1.0 / Math.tan(fov * 0.5);
-            var xScale = yScale / aspect;
-            var halfWidth = znear / xScale;
-            var halfHeight = znear / yScale;
-            Matrix4x4.createPerspectiveOffCenter(-halfWidth, halfWidth, -halfHeight, halfHeight, znear, zfar, out);
-        }
-        static createPerspectiveOffCenter(left, right, bottom, top, znear, zfar, out) {
-            var oe = out.elements;
-            var zRange = zfar / (zfar - znear);
-            oe[1] = oe[2] = oe[3] = oe[4] = oe[6] = oe[7] = oe[12] = oe[13] = oe[15] = 0;
-            oe[0] = 2.0 * znear / (right - left);
-            oe[5] = 2.0 * znear / (top - bottom);
-            oe[8] = (left + right) / (right - left);
-            oe[9] = (top + bottom) / (top - bottom);
-            oe[10] = -zRange;
-            oe[11] = -1.0;
-            oe[14] = -znear * zRange;
-        }
-        static createOrthoOffCenter(left, right, bottom, top, znear, zfar, out) {
-            var oe = out.elements;
-            var zRange = 1.0 / (zfar - znear);
-            oe[1] = oe[2] = oe[3] = oe[4] = oe[6] = oe[8] = oe[7] = oe[9] = oe[11] = 0;
-            oe[15] = 1;
-            oe[0] = 2.0 / (right - left);
-            oe[5] = 2.0 / (top - bottom);
-            oe[10] = -zRange;
-            oe[12] = (left + right) / (left - right);
-            oe[13] = (top + bottom) / (bottom - top);
-            oe[14] = -znear * zRange;
-        }
-        constructor(m11 = 1, m12 = 0, m13 = 0, m14 = 0, m21 = 0, m22 = 1, m23 = 0, m24 = 0, m31 = 0, m32 = 0, m33 = 1, m34 = 0, m41 = 0, m42 = 0, m43 = 0, m44 = 1, elements = null) {
-            if (arguments.length == 0) {
-                this.elements = DEFAULTARRAY.slice();
-                return;
-            }
-            if (arguments.length === 1 && arguments[0] === null)
-                return;
-            var e = elements ? this.elements = elements : this.elements = new Float32Array(16);
-            e[0] = m11;
-            e[1] = m12;
-            e[2] = m13;
-            e[3] = m14;
-            e[4] = m21;
-            e[5] = m22;
-            e[6] = m23;
-            e[7] = m24;
-            e[8] = m31;
-            e[9] = m32;
-            e[10] = m33;
-            e[11] = m34;
-            e[12] = m41;
-            e[13] = m42;
-            e[14] = m43;
-            e[15] = m44;
-        }
-        getElementByRowColumn(row, column) {
-            if (row < 0 || row > 3)
-                throw new Error("row Rows and columns for matrices run from 0 to 3, inclusive.");
-            if (column < 0 || column > 3)
-                throw new Error("column Rows and columns for matrices run from 0 to 3, inclusive.");
-            return this.elements[(row * 4) + column];
-        }
-        setElementByRowColumn(row, column, value) {
-            if (row < 0 || row > 3)
-                throw new Error("row Rows and columns for matrices run from 0 to 3, inclusive.");
-            if (column < 0 || column > 3)
-                throw new Error("column Rows and columns for matrices run from 0 to 3, inclusive.");
-            this.elements[(row * 4) + column] = value;
-        }
-        setRotation(rotation) {
-            var rotationX = rotation.x;
-            var rotationY = rotation.y;
-            var rotationZ = rotation.z;
-            var rotationW = rotation.w;
-            var xx = rotationX * rotationX;
-            var yy = rotationY * rotationY;
-            var zz = rotationZ * rotationZ;
-            var xy = rotationX * rotationY;
-            var zw = rotationZ * rotationW;
-            var zx = rotationZ * rotationX;
-            var yw = rotationY * rotationW;
-            var yz = rotationY * rotationZ;
-            var xw = rotationX * rotationW;
-            var e = this.elements;
-            e[0] = 1.0 - (2.0 * (yy + zz));
-            e[1] = 2.0 * (xy + zw);
-            e[2] = 2.0 * (zx - yw);
-            e[4] = 2.0 * (xy - zw);
-            e[5] = 1.0 - (2.0 * (zz + xx));
-            e[6] = 2.0 * (yz + xw);
-            e[8] = 2.0 * (zx + yw);
-            e[9] = 2.0 * (yz - xw);
-            e[10] = 1.0 - (2.0 * (yy + xx));
-        }
-        setPosition(position) {
-            var e = this.elements;
-            e[12] = position.x;
-            e[13] = position.y;
-            e[14] = position.z;
-        }
-        equalsOtherMatrix(other) {
-            var e = this.elements;
-            var oe = other.elements;
-            return (MathUtils3D.nearEqual(e[0], oe[0]) && MathUtils3D.nearEqual(e[1], oe[1]) && MathUtils3D.nearEqual(e[2], oe[2]) && MathUtils3D.nearEqual(e[3], oe[3]) && MathUtils3D.nearEqual(e[4], oe[4]) && MathUtils3D.nearEqual(e[5], oe[5]) && MathUtils3D.nearEqual(e[6], oe[6]) && MathUtils3D.nearEqual(e[7], oe[7]) && MathUtils3D.nearEqual(e[8], oe[8]) && MathUtils3D.nearEqual(e[9], oe[9]) && MathUtils3D.nearEqual(e[10], oe[10]) && MathUtils3D.nearEqual(e[11], oe[11]) && MathUtils3D.nearEqual(e[12], oe[12]) && MathUtils3D.nearEqual(e[13], oe[13]) && MathUtils3D.nearEqual(e[14], oe[14]) && MathUtils3D.nearEqual(e[15], oe[15]));
-        }
-        decomposeTransRotScale(translation, rotation, scale) {
-            var rotationMatrix = _tempMatrix4x4;
-            if (this.decomposeTransRotMatScale(translation, rotationMatrix, scale)) {
-                Quaternion.createFromMatrix4x4(rotationMatrix, rotation);
-                return true;
-            }
-            else {
-                rotation.identity();
-                return false;
-            }
-        }
-        decomposeTransRotMatScale(translation, rotationMatrix, scale) {
-            var e = this.elements;
-            var te = translation;
-            var re = rotationMatrix.elements;
-            var se = scale;
-            te.x = e[12];
-            te.y = e[13];
-            te.z = e[14];
-            var m11 = e[0], m12 = e[1], m13 = e[2];
-            var m21 = e[4], m22 = e[5], m23 = e[6];
-            var m31 = e[8], m32 = e[9], m33 = e[10];
-            var sX = se.x = Math.sqrt((m11 * m11) + (m12 * m12) + (m13 * m13));
-            var sY = se.y = Math.sqrt((m21 * m21) + (m22 * m22) + (m23 * m23));
-            var sZ = se.z = Math.sqrt((m31 * m31) + (m32 * m32) + (m33 * m33));
-            if (MathUtils3D.isZero(sX) || MathUtils3D.isZero(sY) || MathUtils3D.isZero(sZ)) {
-                re[1] = re[2] = re[3] = re[4] = re[6] = re[7] = re[8] = re[9] = re[11] = re[12] = re[13] = re[14] = 0;
-                re[0] = re[5] = re[10] = re[15] = 1;
-                return false;
-            }
-            var at = _tempVector0;
-            at.x = m31 / sZ;
-            at.y = m32 / sZ;
-            at.z = m33 / sZ;
-            var tempRight = _tempVector1;
-            tempRight.x = m11 / sX;
-            tempRight.y = m12 / sX;
-            tempRight.z = m13 / sX;
-            var up = _tempVector2;
-            Vector3.cross(at, tempRight, up);
-            var right = _tempVector1;
-            Vector3.cross(up, at, right);
-            re[3] = re[7] = re[11] = re[12] = re[13] = re[14] = 0;
-            re[15] = 1;
-            re[0] = right.x;
-            re[1] = right.y;
-            re[2] = right.z;
-            re[4] = up.x;
-            re[5] = up.y;
-            re[6] = up.z;
-            re[8] = at.x;
-            re[9] = at.y;
-            re[10] = at.z;
-            ((re[0] * m11 + re[1] * m12 + re[2] * m13) < 0.0) && (se.x = -sX);
-            ((re[4] * m21 + re[5] * m22 + re[6] * m23) < 0.0) && (se.y = -sY);
-            ((re[8] * m31 + re[9] * m32 + re[10] * m33) < 0.0) && (se.z = -sZ);
-            return true;
-        }
-        decomposeYawPitchRoll(yawPitchRoll) {
-            var pitch = Math.asin(-this.elements[9]);
-            yawPitchRoll.y = pitch;
-            var test = Math.cos(pitch);
-            if (test > MathUtils3D.zeroTolerance) {
-                yawPitchRoll.z = Math.atan2(this.elements[1], this.elements[5]);
-                yawPitchRoll.x = Math.atan2(this.elements[8], this.elements[10]);
-            }
-            else {
-                yawPitchRoll.z = Math.atan2(-this.elements[4], this.elements[0]);
-                yawPitchRoll.x = 0.0;
-            }
-        }
-        normalize() {
-            var v = this.elements;
-            var c = v[0], d = v[1], e = v[2], g = Math.sqrt(c * c + d * d + e * e);
-            if (g) {
-                if (g == 1)
-                    return;
-            }
-            else {
-                v[0] = 0;
-                v[1] = 0;
-                v[2] = 0;
-                return;
-            }
-            g = 1 / g;
-            v[0] = c * g;
-            v[1] = d * g;
-            v[2] = e * g;
-        }
-        transpose() {
-            var e, t;
-            e = this.elements;
-            t = e[1];
-            e[1] = e[4];
-            e[4] = t;
-            t = e[2];
-            e[2] = e[8];
-            e[8] = t;
-            t = e[3];
-            e[3] = e[12];
-            e[12] = t;
-            t = e[6];
-            e[6] = e[9];
-            e[9] = t;
-            t = e[7];
-            e[7] = e[13];
-            e[13] = t;
-            t = e[11];
-            e[11] = e[14];
-            e[14] = t;
-            return this;
-        }
-        invert(out) {
-            var ae = this.elements;
-            var oe = out.elements;
-            var a00 = ae[0], a01 = ae[1], a02 = ae[2], a03 = ae[3], a10 = ae[4], a11 = ae[5], a12 = ae[6], a13 = ae[7], a20 = ae[8], a21 = ae[9], a22 = ae[10], a23 = ae[11], a30 = ae[12], a31 = ae[13], a32 = ae[14], a33 = ae[15], b00 = a00 * a11 - a01 * a10, b01 = a00 * a12 - a02 * a10, b02 = a00 * a13 - a03 * a10, b03 = a01 * a12 - a02 * a11, b04 = a01 * a13 - a03 * a11, b05 = a02 * a13 - a03 * a12, b06 = a20 * a31 - a21 * a30, b07 = a20 * a32 - a22 * a30, b08 = a20 * a33 - a23 * a30, b09 = a21 * a32 - a22 * a31, b10 = a21 * a33 - a23 * a31, b11 = a22 * a33 - a23 * a32, det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
-            if (Math.abs(det) === 0.0) {
-                return;
-            }
-            det = 1.0 / det;
-            oe[0] = (a11 * b11 - a12 * b10 + a13 * b09) * det;
-            oe[1] = (a02 * b10 - a01 * b11 - a03 * b09) * det;
-            oe[2] = (a31 * b05 - a32 * b04 + a33 * b03) * det;
-            oe[3] = (a22 * b04 - a21 * b05 - a23 * b03) * det;
-            oe[4] = (a12 * b08 - a10 * b11 - a13 * b07) * det;
-            oe[5] = (a00 * b11 - a02 * b08 + a03 * b07) * det;
-            oe[6] = (a32 * b02 - a30 * b05 - a33 * b01) * det;
-            oe[7] = (a20 * b05 - a22 * b02 + a23 * b01) * det;
-            oe[8] = (a10 * b10 - a11 * b08 + a13 * b06) * det;
-            oe[9] = (a01 * b08 - a00 * b10 - a03 * b06) * det;
-            oe[10] = (a30 * b04 - a31 * b02 + a33 * b00) * det;
-            oe[11] = (a21 * b02 - a20 * b04 - a23 * b00) * det;
-            oe[12] = (a11 * b07 - a10 * b09 - a12 * b06) * det;
-            oe[13] = (a00 * b09 - a01 * b07 + a02 * b06) * det;
-            oe[14] = (a31 * b01 - a30 * b03 - a32 * b00) * det;
-            oe[15] = (a20 * b03 - a21 * b01 + a22 * b00) * det;
-        }
-        static billboard(objectPosition, cameraPosition, cameraUp, cameraForward, mat) {
-            Vector3.subtract(objectPosition, cameraPosition, _tempVector0);
-            var lengthSq = Vector3.scalarLengthSquared(_tempVector0);
-            if (MathUtils3D.isZero(lengthSq)) {
-                Vector3.scale(cameraForward, -1, _tempVector1);
-                _tempVector1.cloneTo(_tempVector0);
-            }
-            else {
-                Vector3.scale(_tempVector0, 1 / Math.sqrt(lengthSq), _tempVector0);
-            }
-            Vector3.cross(cameraUp, _tempVector0, _tempVector2);
-            Vector3.normalize(_tempVector2, _tempVector2);
-            Vector3.cross(_tempVector0, _tempVector2, _tempVector3);
-            var crosse = _tempVector2;
-            var finale = _tempVector3;
-            var diffee = _tempVector0;
-            var obpose = objectPosition;
-            var mate = mat.elements;
-            mate[0] = crosse.x;
-            mate[1] = crosse.y;
-            mate[2] = crosse.z;
-            mate[3] = 0.0;
-            mate[4] = finale.x;
-            mate[5] = finale.y;
-            mate[6] = finale.z;
-            mate[7] = 0.0;
-            mate[8] = diffee.x;
-            mate[9] = diffee.y;
-            mate[10] = diffee.z;
-            mate[11] = 0.0;
-            mate[12] = obpose.x;
-            mate[13] = obpose.y;
-            mate[14] = obpose.z;
-            mate[15] = 1.0;
-        }
-        identity() {
-            this.elements.set(DEFAULTARRAY);
-        }
-        isIdentity() {
-            let delty = function (num0, num1) {
-                return Math.abs(num0 - num1) < 1e-7;
-            };
-            let e = this.elements;
-            let defined = Matrix4x4.DEFAULT.elements;
-            for (let i = 0, n = e.length; i < n; i++) {
-                if (!delty(e[i], defined[i]))
-                    return false;
-            }
-            return true;
-        }
-        cloneTo(destObject) {
-            var s, d;
-            s = this.elements;
-            d = destObject.elements;
-            if (s === d) {
-                return;
-            }
-            destObject.elements.set(this.elements);
-        }
-        cloneByArray(destObject) {
-            this.elements.set(destObject);
-        }
-        clone() {
-            var dest = new Matrix4x4(null);
-            dest.elements = this.elements.slice();
-            return dest;
-        }
-        static translation(v3, out) {
-            var oe = out.elements;
-            oe[0] = oe[5] = oe[10] = oe[15] = 1;
-            oe[12] = v3.x;
-            oe[13] = v3.y;
-            oe[14] = v3.z;
-        }
-        getTranslationVector(out) {
-            var me = this.elements;
-            out.x = me[12];
-            out.y = me[13];
-            out.z = me[14];
-        }
-        setTranslationVector(translate) {
-            var me = this.elements;
-            var ve = translate;
-            me[12] = ve.x;
-            me[13] = ve.y;
-            me[14] = ve.z;
-        }
-        getForward(out) {
-            var me = this.elements;
-            out.x = -me[8];
-            out.y = -me[9];
-            out.z = -me[10];
-        }
-        setForward(forward) {
-            var me = this.elements;
-            me[8] = -forward.x;
-            me[9] = -forward.y;
-            me[10] = -forward.z;
-        }
-        getInvertFront() {
-            this.decomposeTransRotScale(_tempVector0, Quaternion.TEMP, _tempVector1);
-            var scale = _tempVector1;
-            var isInvert = scale.x < 0;
-            (scale.y < 0) && (isInvert = !isInvert);
-            (scale.z < 0) && (isInvert = !isInvert);
-            return isInvert;
-        }
-    }
-    Matrix4x4.TEMPMatrix0 = new Matrix4x4();
-    Matrix4x4.TEMPMatrix1 = new Matrix4x4();
-    Matrix4x4.DEFAULT = new Matrix4x4();
-    Matrix4x4.ZERO = new Matrix4x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    const _tempMatrix4x4 = new Matrix4x4();
-
-    const _DEFAULTELEMENTS = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
-    const _tempV30 = new Vector3();
-    const _tempV31 = new Vector3();
-    const _tempV32 = new Vector3();
-    class Matrix3x3 {
-        static createRotationQuaternion(rotation, out) {
-            var rotX = rotation.x;
-            var rotY = rotation.y;
-            var rotZ = rotation.z;
-            var rotW = rotation.w;
-            var xx = rotX * rotX;
-            var yy = rotY * rotY;
-            var zz = rotZ * rotZ;
-            var xy = rotX * rotY;
-            var zw = rotZ * rotW;
-            var zx = rotZ * rotX;
-            var yw = rotY * rotW;
-            var yz = rotY * rotZ;
-            var xw = rotX * rotW;
-            var resultE = out.elements;
-            resultE[0] = 1.0 - (2.0 * (yy + zz));
-            resultE[1] = 2.0 * (xy + zw);
-            resultE[2] = 2.0 * (zx - yw);
-            resultE[3] = 2.0 * (xy - zw);
-            resultE[4] = 1.0 - (2.0 * (zz + xx));
-            resultE[5] = 2.0 * (yz + xw);
-            resultE[6] = 2.0 * (zx + yw);
-            resultE[7] = 2.0 * (yz - xw);
-            resultE[8] = 1.0 - (2.0 * (yy + xx));
-        }
-        static createFromTranslation(trans, out) {
-            var e = out.elements;
-            e[0] = 1;
-            e[1] = 0;
-            e[2] = 0;
-            e[3] = 0;
-            e[4] = 1;
-            e[5] = 0;
-            e[6] = trans.x;
-            e[7] = trans.y;
-            e[8] = 1;
-        }
-        static createFromRotation(rad, out) {
-            var e = out.elements;
-            var s = Math.sin(rad), c = Math.cos(rad);
-            e[0] = c;
-            e[1] = s;
-            e[2] = 0;
-            e[3] = -s;
-            e[4] = c;
-            e[5] = 0;
-            e[6] = 0;
-            e[7] = 0;
-            e[8] = 1;
-        }
-        static createFromScaling(scale, out) {
-            var e = out.elements;
-            e[0] = scale.x;
-            e[1] = 0;
-            e[2] = 0;
-            e[3] = 0;
-            e[4] = scale.y;
-            e[5] = 0;
-            e[6] = 0;
-            e[7] = 0;
-            e[8] = scale.z;
-        }
-        static createFromMatrix4x4(sou, out) {
-            var souE = sou.elements;
-            var outE = out.elements;
-            outE[0] = souE[0];
-            outE[1] = souE[1];
-            outE[2] = souE[2];
-            outE[3] = souE[4];
-            outE[4] = souE[5];
-            outE[5] = souE[6];
-            outE[6] = souE[8];
-            outE[7] = souE[9];
-            outE[8] = souE[10];
-        }
-        static multiply(left, right, out) {
-            var l = left.elements;
-            var r = right.elements;
-            var e = out.elements;
-            var l11 = l[0], l12 = l[1], l13 = l[2];
-            var l21 = l[3], l22 = l[4], l23 = l[5];
-            var l31 = l[6], l32 = l[7], l33 = l[8];
-            var r11 = r[0], r12 = r[1], r13 = r[2];
-            var r21 = r[3], r22 = r[4], r23 = r[5];
-            var r31 = r[6], r32 = r[7], r33 = r[8];
-            e[0] = r11 * l11 + r12 * l21 + r13 * l31;
-            e[1] = r11 * l12 + r12 * l22 + r13 * r32;
-            e[2] = r11 * l13 + r12 * l23 + r13 * l33;
-            e[3] = r21 * l11 + r22 * l21 + r23 * l31;
-            e[4] = r21 * l12 + r22 * l22 + r23 * l32;
-            e[5] = r21 * l13 + r22 * l23 + r23 * l33;
-            e[6] = r31 * l11 + r32 * l21 + r33 * l31;
-            e[7] = r31 * l12 + r32 * l22 + r33 * l32;
-            e[8] = r31 * l13 + r32 * l23 + r33 * l33;
-        }
-        constructor(createElement = true) {
-            createElement && (this.elements = _DEFAULTELEMENTS.slice());
-        }
-        determinant() {
-            var f = this.elements;
-            var a00 = f[0], a01 = f[1], a02 = f[2];
-            var a10 = f[3], a11 = f[4], a12 = f[5];
-            var a20 = f[6], a21 = f[7], a22 = f[8];
-            return a00 * (a22 * a11 - a12 * a21) + a01 * (-a22 * a10 + a12 * a20) + a02 * (a21 * a10 - a11 * a20);
-        }
-        translate(trans, out) {
-            var e = out.elements;
-            var f = this.elements;
-            var a00 = f[0], a01 = f[1], a02 = f[2];
-            var a10 = f[3], a11 = f[4], a12 = f[5];
-            var a20 = f[6], a21 = f[7], a22 = f[8];
-            var x = trans.x, y = trans.y;
-            e[0] = a00;
-            e[1] = a01;
-            e[2] = a02;
-            e[3] = a10;
-            e[4] = a11;
-            e[5] = a12;
-            e[6] = x * a00 + y * a10 + a20;
-            e[7] = x * a01 + y * a11 + a21;
-            e[8] = x * a02 + y * a12 + a22;
-        }
-        rotate(rad, out) {
-            var e = out.elements;
-            var f = this.elements;
-            var a00 = f[0], a01 = f[1], a02 = f[2];
-            var a10 = f[3], a11 = f[4], a12 = f[5];
-            var a20 = f[6], a21 = f[7], a22 = f[8];
-            var s = Math.sin(rad);
-            var c = Math.cos(rad);
-            e[0] = c * a00 + s * a10;
-            e[1] = c * a01 + s * a11;
-            e[2] = c * a02 + s * a12;
-            e[3] = c * a10 - s * a00;
-            e[4] = c * a11 - s * a01;
-            e[5] = c * a12 - s * a02;
-            e[6] = a20;
-            e[7] = a21;
-            e[8] = a22;
-        }
-        scale(scale, out) {
-            var e = out.elements;
-            var f = this.elements;
-            var x = scale.x, y = scale.y;
-            e[0] = x * f[0];
-            e[1] = x * f[1];
-            e[2] = x * f[2];
-            e[3] = y * f[3];
-            e[4] = y * f[4];
-            e[5] = y * f[5];
-            e[6] = f[6];
-            e[7] = f[7];
-            e[8] = f[8];
-        }
-        invert(out) {
-            var e = out.elements;
-            var f = this.elements;
-            var a00 = f[0], a01 = f[1], a02 = f[2];
-            var a10 = f[3], a11 = f[4], a12 = f[5];
-            var a20 = f[6], a21 = f[7], a22 = f[8];
-            var b01 = a22 * a11 - a12 * a21;
-            var b11 = -a22 * a10 + a12 * a20;
-            var b21 = a21 * a10 - a11 * a20;
-            var det = a00 * b01 + a01 * b11 + a02 * b21;
-            if (!det) {
-                return;
-            }
-            det = 1.0 / det;
-            e[0] = b01 * det;
-            e[1] = (-a22 * a01 + a02 * a21) * det;
-            e[2] = (a12 * a01 - a02 * a11) * det;
-            e[3] = b11 * det;
-            e[4] = (a22 * a00 - a02 * a20) * det;
-            e[5] = (-a12 * a00 + a02 * a10) * det;
-            e[6] = b21 * det;
-            e[7] = (-a21 * a00 + a01 * a20) * det;
-            e[8] = (a11 * a00 - a01 * a10) * det;
-        }
-        transpose(out) {
-            var e = out.elements;
-            var f = this.elements;
-            if (out === this) {
-                var a01 = f[1], a02 = f[2], a12 = f[5];
-                e[1] = f[3];
-                e[2] = f[6];
-                e[3] = a01;
-                e[5] = f[7];
-                e[6] = a02;
-                e[7] = a12;
-            }
-            else {
-                e[0] = f[0];
-                e[1] = f[3];
-                e[2] = f[6];
-                e[3] = f[1];
-                e[4] = f[4];
-                e[5] = f[7];
-                e[6] = f[2];
-                e[7] = f[5];
-                e[8] = f[8];
-            }
-        }
-        identity() {
-            this.elements.set(_DEFAULTELEMENTS);
-        }
-        cloneTo(destObject) {
-            var s, d;
-            s = this.elements;
-            d = destObject.elements;
-            if (s === d) {
-                return;
-            }
-            s.set(d);
-        }
-        clone() {
-            var dest = new Matrix3x3(false);
-            dest.elements = this.elements.slice();
-            return dest;
-        }
-        static lookAt(eye, target, up, out) {
-            Vector3.subtract(eye, target, _tempV30);
-            Vector3.normalize(_tempV30, _tempV30);
-            Vector3.cross(up, _tempV30, _tempV31);
-            Vector3.normalize(_tempV31, _tempV31);
-            Vector3.cross(_tempV30, _tempV31, _tempV32);
-            var v0 = _tempV30;
-            var v1 = _tempV31;
-            var v2 = _tempV32;
-            var me = out.elements;
-            me[0] = v1.x;
-            me[3] = v1.y;
-            me[6] = v1.z;
-            me[1] = v2.x;
-            me[4] = v2.y;
-            me[7] = v2.z;
-            me[2] = v0.x;
-            me[5] = v0.y;
-            me[8] = v0.z;
-        }
-        static forwardLookAt(eye, target, up, out) {
-            var vx = _tempV31;
-            var vy = _tempV32;
-            var vz = _tempV30;
-            target.vsub(eye, vz).normalize();
-            up.cross(vz, vx).normalize();
-            vz.cross(vx, vy);
-            var m = out.elements;
-            m[0] = vx.x;
-            m[1] = vx.y;
-            m[2] = vx.z;
-            m[3] = vy.x;
-            m[4] = vy.y;
-            m[5] = vy.z;
-            m[6] = vz.x;
-            m[7] = vz.y;
-            m[8] = vz.z;
-        }
-    }
-    Matrix3x3.DEFAULT = new Matrix3x3();
-
-    const TEMPVector30 = new Vector3();
-    const TEMPVector31 = new Vector3();
-    const TEMPVector32 = new Vector3();
-    const TEMPVector33 = new Vector3();
-    const _tempMatrix3x3 = new Matrix3x3();
-    class Quaternion {
-        static createFromYawPitchRoll(yaw, pitch, roll, out) {
-            var halfRoll = roll * 0.5;
-            var halfPitch = pitch * 0.5;
-            var halfYaw = yaw * 0.5;
-            var sinRoll = Math.sin(halfRoll);
-            var cosRoll = Math.cos(halfRoll);
-            var sinPitch = Math.sin(halfPitch);
-            var cosPitch = Math.cos(halfPitch);
-            var sinYaw = Math.sin(halfYaw);
-            var cosYaw = Math.cos(halfYaw);
-            out.x = (cosYaw * sinPitch * cosRoll) + (sinYaw * cosPitch * sinRoll);
-            out.y = (sinYaw * cosPitch * cosRoll) - (cosYaw * sinPitch * sinRoll);
-            out.z = (cosYaw * cosPitch * sinRoll) - (sinYaw * sinPitch * cosRoll);
-            out.w = (cosYaw * cosPitch * cosRoll) + (sinYaw * sinPitch * sinRoll);
-        }
-        static multiply(left, right, out) {
-            var lx = left.x;
-            var ly = left.y;
-            var lz = left.z;
-            var lw = left.w;
-            var rx = right.x;
-            var ry = right.y;
-            var rz = right.z;
-            var rw = right.w;
-            var a = (ly * rz - lz * ry);
-            var b = (lz * rx - lx * rz);
-            var c = (lx * ry - ly * rx);
-            var d = (lx * rx + ly * ry + lz * rz);
-            out.x = (lx * rw + rx * lw) + a;
-            out.y = (ly * rw + ry * lw) + b;
-            out.z = (lz * rw + rz * lw) + c;
-            out.w = lw * rw - d;
-        }
-        static arcTanAngle(x, y) {
-            if (x == 0) {
-                if (y == 1)
-                    return Math.PI / 2;
-                return -Math.PI / 2;
-            }
-            if (x > 0)
-                return Math.atan(y / x);
-            if (x < 0) {
-                if (y > 0)
-                    return Math.atan(y / x) + Math.PI;
-                return Math.atan(y / x) - Math.PI;
-            }
-            return 0;
-        }
-        static angleTo(from, location, angle) {
-            Vector3.subtract(location, from, TEMPVector30);
-            Vector3.normalize(TEMPVector30, TEMPVector30);
-            angle.x = Math.asin(TEMPVector30.y);
-            angle.y = Quaternion.arcTanAngle(-TEMPVector30.z, -TEMPVector30.x);
-        }
-        static createFromAxisAngle(axis, rad, out) {
-            rad = rad * 0.5;
-            var s = Math.sin(rad);
-            out.x = s * axis.x;
-            out.y = s * axis.y;
-            out.z = s * axis.z;
-            out.w = Math.cos(rad);
-        }
-        static createFromMatrix4x4(mat, out) {
-            var me = mat.elements;
-            var sqrt;
-            var half;
-            var scale = me[0] + me[5] + me[10];
-            if (scale > 0.0) {
-                sqrt = Math.sqrt(scale + 1.0);
-                out.w = sqrt * 0.5;
-                sqrt = 0.5 / sqrt;
-                out.x = (me[6] - me[9]) * sqrt;
-                out.y = (me[8] - me[2]) * sqrt;
-                out.z = (me[1] - me[4]) * sqrt;
-            }
-            else if ((me[0] >= me[5]) && (me[0] >= me[10])) {
-                sqrt = Math.sqrt(1.0 + me[0] - me[5] - me[10]);
-                half = 0.5 / sqrt;
-                out.x = 0.5 * sqrt;
-                out.y = (me[1] + me[4]) * half;
-                out.z = (me[2] + me[8]) * half;
-                out.w = (me[6] - me[9]) * half;
-            }
-            else if (me[5] > me[10]) {
-                sqrt = Math.sqrt(1.0 + me[5] - me[0] - me[10]);
-                half = 0.5 / sqrt;
-                out.x = (me[4] + me[1]) * half;
-                out.y = 0.5 * sqrt;
-                out.z = (me[9] + me[6]) * half;
-                out.w = (me[8] - me[2]) * half;
-            }
-            else {
-                sqrt = Math.sqrt(1.0 + me[10] - me[0] - me[5]);
-                half = 0.5 / sqrt;
-                out.x = (me[8] + me[2]) * half;
-                out.y = (me[9] + me[6]) * half;
-                out.z = 0.5 * sqrt;
-                out.w = (me[1] - me[4]) * half;
-            }
-        }
-        static slerp(left, right, t, out) {
-            var ax = left.x, ay = left.y, az = left.z, aw = left.w, bx = right.x, by = right.y, bz = right.z, bw = right.w;
-            var omega, cosom, sinom, scale0, scale1;
-            cosom = ax * bx + ay * by + az * bz + aw * bw;
-            if (cosom < 0.0) {
-                cosom = -cosom;
-                bx = -bx;
-                by = -by;
-                bz = -bz;
-                bw = -bw;
-            }
-            if ((1.0 - cosom) > 0.000001) {
-                omega = Math.acos(cosom);
-                sinom = Math.sin(omega);
-                scale0 = Math.sin((1.0 - t) * omega) / sinom;
-                scale1 = Math.sin(t * omega) / sinom;
-            }
-            else {
-                scale0 = 1.0 - t;
-                scale1 = t;
-            }
-            out.x = scale0 * ax + scale1 * bx;
-            out.y = scale0 * ay + scale1 * by;
-            out.z = scale0 * az + scale1 * bz;
-            out.w = scale0 * aw + scale1 * bw;
-            return out;
-        }
-        static lerp(left, right, amount, out) {
-            var inverse = 1.0 - amount;
-            if (Quaternion.dot(left, right) >= 0) {
-                out.x = (inverse * left.x) + (amount * right.x);
-                out.y = (inverse * left.y) + (amount * right.y);
-                out.z = (inverse * left.z) + (amount * right.z);
-                out.w = (inverse * left.w) + (amount * right.w);
-            }
-            else {
-                out.x = (inverse * left.x) - (amount * right.x);
-                out.y = (inverse * left.y) - (amount * right.y);
-                out.z = (inverse * left.z) - (amount * right.z);
-                out.w = (inverse * left.w) - (amount * right.w);
-            }
-            out.normalize(out);
-        }
-        static add(left, right, out) {
-            out.x = left.x + right.x;
-            out.y = left.y + right.y;
-            out.z = left.z + right.z;
-            out.w = left.w + right.w;
-        }
-        static dot(left, right) {
-            return left.x * right.x + left.y * right.y + left.z * right.z + left.w * right.w;
-        }
-        constructor(x = 0, y = 0, z = 0, w = 1) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.w = w;
-        }
-        setValue(x, y, z, w) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.w = w;
-        }
-        set(x, y, z, w) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.w = w;
-            return this;
-        }
-        scaling(scaling, out) {
-            out.x = this.x * scaling;
-            out.y = this.y * scaling;
-            out.z = this.z * scaling;
-            out.w = this.w * scaling;
-        }
-        normalize(out) {
-            var len = this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w;
-            if (len > 0) {
-                len = 1 / Math.sqrt(len);
-                out.x = this.x * len;
-                out.y = this.y * len;
-                out.z = this.z * len;
-                out.w = this.w * len;
-            }
-        }
-        length() {
-            return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
-        }
-        rotateX(rad, out) {
-            rad *= 0.5;
-            var bx = Math.sin(rad), bw = Math.cos(rad);
-            out.x = this.x * bw + this.w * bx;
-            out.y = this.y * bw + this.z * bx;
-            out.z = this.z * bw - this.y * bx;
-            out.w = this.w * bw - this.x * bx;
-        }
-        rotateY(rad, out) {
-            rad *= 0.5;
-            var by = Math.sin(rad), bw = Math.cos(rad);
-            out.x = this.x * bw - this.z * by;
-            out.y = this.y * bw + this.w * by;
-            out.z = this.z * bw + this.x * by;
-            out.w = this.w * bw - this.y * by;
-        }
-        rotateZ(rad, out) {
-            rad *= 0.5;
-            var bz = Math.sin(rad), bw = Math.cos(rad);
-            out.x = this.x * bw + this.y * bz;
-            out.y = this.y * bw - this.x * bz;
-            out.z = this.z * bw + this.w * bz;
-            out.w = this.w * bw - this.z * bz;
-        }
-        getYawPitchRoll(out) {
-            Vector3.transformQuat(Vector3.ForwardRH, this, TEMPVector31);
-            Vector3.transformQuat(Vector3.Up, this, TEMPVector32);
-            var upe = TEMPVector32;
-            Quaternion.angleTo(Vector3.ZERO, TEMPVector31, TEMPVector33);
-            var angle = TEMPVector33;
-            if (angle.x == Math.PI / 2) {
-                angle.y = Quaternion.arcTanAngle(upe.z, upe.x);
-                angle.z = 0;
-            }
-            else if (angle.x == -Math.PI / 2) {
-                angle.y = Quaternion.arcTanAngle(-upe.z, -upe.x);
-                angle.z = 0;
-            }
-            else {
-                Matrix4x4.createRotationY(-angle.y, Matrix4x4.TEMPMatrix0);
-                Matrix4x4.createRotationX(-angle.x, Matrix4x4.TEMPMatrix1);
-                Vector3.transformCoordinate(TEMPVector32, Matrix4x4.TEMPMatrix0, TEMPVector32);
-                Vector3.transformCoordinate(TEMPVector32, Matrix4x4.TEMPMatrix1, TEMPVector32);
-                angle.z = Quaternion.arcTanAngle(upe.y, -upe.x);
-            }
-            if (angle.y <= -Math.PI)
-                angle.y = Math.PI;
-            if (angle.z <= -Math.PI)
-                angle.z = Math.PI;
-            if (angle.y >= Math.PI && angle.z >= Math.PI) {
-                angle.y = 0;
-                angle.z = 0;
-                angle.x = Math.PI - angle.x;
-            }
-            var oe = out;
-            oe.x = angle.y;
-            oe.y = angle.x;
-            oe.z = angle.z;
-        }
-        invert(out) {
-            var a0 = this.x, a1 = this.y, a2 = this.z, a3 = this.w;
-            var dot = a0 * a0 + a1 * a1 + a2 * a2 + a3 * a3;
-            var invDot = dot ? 1.0 / dot : 0;
-            out.x = -a0 * invDot;
-            out.y = -a1 * invDot;
-            out.z = -a2 * invDot;
-            out.w = a3 * invDot;
-        }
-        identity() {
-            this.x = 0;
-            this.y = 0;
-            this.z = 0;
-            this.w = 1;
-        }
-        fromArray(array, offset = 0) {
-            this.x = array[offset + 0];
-            this.y = array[offset + 1];
-            this.z = array[offset + 2];
-            this.w = array[offset + 3];
-        }
-        cloneTo(destObject) {
-            if (this === destObject) {
-                return;
-            }
-            destObject.x = this.x;
-            destObject.y = this.y;
-            destObject.z = this.z;
-            destObject.w = this.w;
-        }
-        clone() {
-            var dest = new Quaternion();
-            this.cloneTo(dest);
-            return dest;
-        }
-        equals(b) {
-            return MathUtils3D.nearEqual(this.x, b.x) && MathUtils3D.nearEqual(this.y, b.y) && MathUtils3D.nearEqual(this.z, b.z) && MathUtils3D.nearEqual(this.w, b.w);
-        }
-        static rotationLookAt(forward, up, out) {
-            Quaternion.lookAt(Vector3.ZERO, forward, up, out);
-        }
-        static lookAt(eye, target, up, out) {
-            Matrix3x3.lookAt(eye, target, up, _tempMatrix3x3);
-            Quaternion.rotationMatrix(_tempMatrix3x3, out);
-        }
-        static forwardLookAt(eye, target, up, out) {
-            Matrix3x3.forwardLookAt(eye, target, up, _tempMatrix3x3);
-            Quaternion.rotationMatrix(_tempMatrix3x3, out);
-        }
-        lengthSquared() {
-            return (this.x * this.x) + (this.y * this.y) + (this.z * this.z) + (this.w * this.w);
-        }
-        static invert(value, out) {
-            var lengthSq = value.lengthSquared();
-            if (!MathUtils3D.isZero(lengthSq)) {
-                lengthSq = 1.0 / lengthSq;
-                out.x = -value.x * lengthSq;
-                out.y = -value.y * lengthSq;
-                out.z = -value.z * lengthSq;
-                out.w = value.w * lengthSq;
-            }
-        }
-        static rotationMatrix(matrix3x3, out) {
-            var me = matrix3x3.elements;
-            var m11 = me[0];
-            var m12 = me[1];
-            var m13 = me[2];
-            var m21 = me[3];
-            var m22 = me[4];
-            var m23 = me[5];
-            var m31 = me[6];
-            var m32 = me[7];
-            var m33 = me[8];
-            var sqrt, half;
-            var scale = m11 + m22 + m33;
-            if (scale > 0) {
-                sqrt = Math.sqrt(scale + 1);
-                out.w = sqrt * 0.5;
-                sqrt = 0.5 / sqrt;
-                out.x = (m23 - m32) * sqrt;
-                out.y = (m31 - m13) * sqrt;
-                out.z = (m12 - m21) * sqrt;
-            }
-            else if ((m11 >= m22) && (m11 >= m33)) {
-                sqrt = Math.sqrt(1 + m11 - m22 - m33);
-                half = 0.5 / sqrt;
-                out.x = 0.5 * sqrt;
-                out.y = (m12 + m21) * half;
-                out.z = (m13 + m31) * half;
-                out.w = (m23 - m32) * half;
-            }
-            else if (m22 > m33) {
-                sqrt = Math.sqrt(1 + m22 - m11 - m33);
-                half = 0.5 / sqrt;
-                out.x = (m21 + m12) * half;
-                out.y = 0.5 * sqrt;
-                out.z = (m32 + m23) * half;
-                out.w = (m31 - m13) * half;
-            }
-            else {
-                sqrt = Math.sqrt(1 + m33 - m11 - m22);
-                half = 0.5 / sqrt;
-                out.x = (m31 + m13) * half;
-                out.y = (m32 + m23) * half;
-                out.z = 0.5 * sqrt;
-                out.w = (m12 - m21) * half;
-            }
-        }
-        forNativeElement(nativeElements = null) {
-            if (nativeElements) {
-                this.elements = nativeElements;
-                this.elements[0] = this.x;
-                this.elements[1] = this.y;
-                this.elements[2] = this.z;
-                this.elements[3] = this.w;
-            }
-            else {
-                this.elements = new Float32Array([this.x, this.y, this.z, this.w]);
-            }
-            Vector2.rewriteNumProperty(this, "x", 0);
-            Vector2.rewriteNumProperty(this, "y", 1);
-            Vector2.rewriteNumProperty(this, "z", 2);
-            Vector2.rewriteNumProperty(this, "w", 3);
-        }
-    }
-    Quaternion.TEMP = new Quaternion();
-    Quaternion.DEFAULT = new Quaternion();
-    Quaternion.NAN = new Quaternion(NaN, NaN, NaN, NaN);
 
     exports.TextResourceFormat = void 0;
     (function (TextResourceFormat) {
@@ -33969,6 +36428,15 @@ window.Laya = (function (exports) {
     Loader.registerLoader(["lh", "ls", "scene", "prefab"], HierarchyLoader, Loader.HIERARCHY);
 
     class HDRTextureInfo {
+        constructor(source, byteOffset, decreaseX, decreaseY, width, height, format) {
+            this.source = source;
+            this.byteOffset = byteOffset;
+            this.decreaseX = decreaseX;
+            this.decreaseY = decreaseY;
+            this.width = width;
+            this.height = height;
+            this.format = format;
+        }
         static _parseHDRTexture(data, propertyParams = null, constructParams = null) {
             let hdrInfo = HDRTextureInfo.getHDRInfo(data);
             let texture = new Texture2D(hdrInfo.width, hdrInfo.height, hdrInfo.format, false, false, false);
@@ -34020,15 +36488,6 @@ window.Laya = (function (exports) {
                 index++;
             }
             return res;
-        }
-        constructor(source, byteOffset, decreaseX, decreaseY, width, height, format) {
-            this.source = source;
-            this.byteOffset = byteOffset;
-            this.decreaseX = decreaseX;
-            this.decreaseY = decreaseY;
-            this.width = width;
-            this.height = height;
-            this.format = format;
         }
         get_32_bit_rle_rgbe() {
             let width = this.width;
@@ -34503,650 +36962,6 @@ window.Laya = (function (exports) {
     c("Quaternion", Quaternion);
     c("Color", Color);
 
-    class LocalStorage {
-        static __init__() {
-            if (!LocalStorage._baseClass) {
-                LocalStorage._baseClass = Storage;
-                Storage.init();
-            }
-            LocalStorage.items = LocalStorage._baseClass.items;
-            LocalStorage.support = LocalStorage._baseClass.support;
-            return LocalStorage.support;
-        }
-        static setItem(key, value) {
-            LocalStorage._baseClass.setItem(key, value);
-        }
-        static getItem(key) {
-            return LocalStorage._baseClass.getItem(key);
-        }
-        static setJSON(key, value) {
-            LocalStorage._baseClass.setJSON(key, value);
-        }
-        static getJSON(key) {
-            return LocalStorage._baseClass.getJSON(key);
-        }
-        static removeItem(key) {
-            LocalStorage._baseClass.removeItem(key);
-        }
-        static clear() {
-            LocalStorage._baseClass.clear();
-        }
-    }
-    LocalStorage.support = false;
-    class Storage {
-        static init() {
-            try {
-                Storage.support = true;
-                Storage.items = window.localStorage;
-                Storage.setItem('laya', '1');
-                Storage.removeItem('laya');
-            }
-            catch (e) {
-                Storage.support = false;
-            }
-            if (!Storage.support)
-                console.log('LocalStorage is not supprot or browser is private mode.');
-        }
-        static setItem(key, value) {
-            try {
-                Storage.support && Storage.items.setItem(key, value);
-            }
-            catch (e) {
-                console.warn("set localStorage failed", e);
-            }
-        }
-        static getItem(key) {
-            return Storage.support ? Storage.items.getItem(key) : null;
-        }
-        static setJSON(key, value) {
-            try {
-                Storage.support && Storage.items.setItem(key, JSON.stringify(value));
-            }
-            catch (e) {
-                console.warn("set localStorage failed", e);
-            }
-        }
-        static getJSON(key) {
-            try {
-                let obj = JSON.parse(Storage.support ? Storage.items.getItem(key) : null);
-                return obj;
-            }
-            catch (err) {
-                return Storage.items.getItem(key);
-            }
-        }
-        static removeItem(key) {
-            Storage.support && Storage.items.removeItem(key);
-        }
-        static clear() {
-            Storage.support && Storage.items.clear();
-        }
-    }
-    Storage.support = false;
-
-    class IStatRender {
-        show(x = 0, y = 0, views) {
-        }
-        enable() {
-        }
-        hide() {
-        }
-        set_onclick(fn) {
-        }
-        isCanvasRender() {
-            return true;
-        }
-        renderNotCanvas(ctx, x, y) { }
-    }
-
-    class StatUI extends IStatRender {
-        constructor() {
-            super(...arguments);
-            this._show = false;
-            this._useCanvas = false;
-            this._height = 100;
-            this._view = [];
-        }
-        show(x = 0, y = 0, views) {
-            this._view.length = views.length;
-            for (let i = 0, n = this._view.length; i < n; i++) {
-                this._view[i] = views[i];
-            }
-            this._show = true;
-            if (this._useCanvas) {
-                this.createUIPre(x, y);
-            }
-            else
-                this.createUI(x, y);
-            this.enable();
-        }
-        createUIPre(x, y) {
-            var pixel = Browser.pixelRatio;
-            this._width = pixel * 180;
-            this._vx = pixel * 120;
-            this._height = pixel * (this._view.length * 12 + 3 * pixel) + 4;
-            StatUI._fontSize = 12 * pixel;
-            for (var i = 0; i < this._view.length; i++) {
-                this._view[i].x = 4;
-                this._view[i].y = i * StatUI._fontSize + 2 * pixel;
-            }
-            if (!this._canvas) {
-                this._canvas = new HTMLCanvas(true);
-                this._canvas.size(this._width, this._height);
-                this._ctx = this._canvas.getContext('2d');
-                this._ctx.textBaseline = "top";
-                this._ctx.font = StatUI._fontSize + "px Arial";
-                this._canvas.source.style.cssText = "pointer-events:none;background:rgba(150,150,150,0.8);z-index:100000;position: absolute;direction:ltr;left:" + x + "px;top:" + y + "px;width:" + (this._width / pixel) + "px;height:" + (this._height / pixel) + "px;";
-            }
-            if (!Browser.onKGMiniGame) {
-                Browser.container.appendChild(this._canvas.source);
-            }
-            this._first = true;
-            this.loop();
-            this._first = false;
-        }
-        createUI(x, y) {
-            var stat = this._sp;
-            var pixel = Browser.pixelRatio;
-            if (!stat) {
-                stat = new Sprite();
-                this._leftText = new Text();
-                this._leftText.pos(5, 5);
-                this._leftText.color = "#ffffff";
-                stat.addChild(this._leftText);
-                this._txt = new Text();
-                this._txt.pos(170 * pixel, 5);
-                this._txt.color = "#ffffff";
-                stat.addChild(this._txt);
-                this._sp = stat;
-            }
-            stat.pos(x, y);
-            var text = "";
-            for (var i = 0; i < this._view.length; i++) {
-                var one = this._view[i];
-                text += one.title + "\n";
-            }
-            this._leftText.text = text;
-            var width = pixel * 138;
-            var height = pixel * (this._view.length * 12 + 3 * pixel) + 4;
-            this._txt.fontSize = StatUI._fontSize * pixel;
-            this._leftText.fontSize = StatUI._fontSize * pixel;
-            stat.size(width, height);
-            stat.graphics.clear();
-            stat.graphics.alpha(0.5);
-            stat.graphics.drawRect(0, 0, width + 110, height + 30, "#999999");
-            stat.graphics.alpha(2);
-            this.loop();
-        }
-        enable() {
-            ILaya.systemTimer.frameLoop(1, this, this.loop);
-        }
-        hide() {
-            this._show = false;
-            ILaya.systemTimer.clear(this, this.loop);
-            if (this._canvas) {
-                Browser.removeElement(this._canvas.source);
-            }
-        }
-        set_onclick(fn) {
-            if (this._sp) {
-                this._sp.on("click", this._sp, fn);
-            }
-            if (this._canvas) {
-                this._canvas.source.onclick = fn;
-                this._canvas.source.style.pointerEvents = '';
-            }
-        }
-        loop() {
-            Stat._count++;
-            var timer = Browser.now();
-            if (timer - Stat._timer < 1000)
-                return;
-            var count = Stat._count;
-            Stat.FPS = Math.round((count * 1000) / (timer - Stat._timer));
-            if (this._show) {
-                Stat.updateEngineData();
-                var delay = Stat.FPS > 0 ? Math.floor(1000 / Stat.FPS).toString() : " ";
-                Stat._fpsStr = Stat.FPS + (Stat.renderSlow ? " slow" : "") + " " + delay;
-                this.renderInfo(count);
-                Stat.clear();
-            }
-            Stat._count = 0;
-            Stat._timer = timer;
-        }
-        renderInfo(count) {
-            var text = "";
-            for (var i = 0; i < this._view.length; i++) {
-                let vieparam = this._view[i];
-                let isAverage = vieparam.mode == "average";
-                var value = Stat[vieparam.value];
-                (vieparam.units == "M") && (value = Math.floor(value / (1024 * 1024) * 100) / 100);
-                (vieparam.units == "K") && (value = Math.floor(value / (1024) * 100) / 100);
-                if (isAverage) {
-                    value /= count;
-                    value = Math.floor(value);
-                }
-                (vieparam.units == "M") && (value += "M");
-                (vieparam.units == "K") && (value += "K");
-                text += value + "\n";
-            }
-            this._txt.text = text;
-        }
-        isCanvasRender() {
-            return this._useCanvas;
-        }
-        renderNotCanvas(ctx, x, y) {
-            this._show && this._sp && this._sp.render(ctx, 0, 0);
-        }
-    }
-    StatUI._fontSize = 14;
-
-    class SkinSV extends Value2D {
-        constructor(type) {
-            super(ShaderDefines2D.SKINMESH, 0);
-            this.offsetX = 300;
-            this.offsetY = 0;
-            var _vlen = 8 * Const.BYTES_PE;
-            const glfloat = LayaGL.renderEngine.getParams(exports.RenderParams.FLOAT);
-            this.position = [2, glfloat, false, _vlen, 0];
-            this.texcoord = [2, glfloat, false, _vlen, 2 * Const.BYTES_PE];
-            this.color = [4, glfloat, false, _vlen, 4 * Const.BYTES_PE];
-        }
-    }
-
-    class PrimitiveSV extends Value2D {
-        constructor(args) {
-            super(ShaderDefines2D.PRIMITIVE, 0);
-            this._attribLocation = ['position', 0, 'attribColor', 1];
-        }
-    }
-
-    class TextureSV extends Value2D {
-        constructor(subID = 0) {
-            super(ShaderDefines2D.TEXTURE2D, subID);
-            this.strength = 0;
-            this.blurInfo = null;
-            this.colorMat = null;
-            this.colorAlpha = null;
-            this._attribLocation = ['posuv', 0, 'attribColor', 1, 'attribFlags', 2];
-        }
-        clear() {
-            this.texture = null;
-            this.shader = null;
-            this.defines._value = this.subID;
-        }
-    }
-
-    class Mouse {
-        static set cursor(cursorStr) {
-            Mouse._style.cursor = cursorStr;
-        }
-        static get cursor() {
-            return Mouse._style.cursor;
-        }
-        static __init__() {
-            Mouse._style = Browser.document.body.style;
-        }
-        static hide() {
-            if (Mouse.cursor != "none") {
-                Mouse._preCursor = Mouse.cursor;
-                Mouse.cursor = "none";
-            }
-        }
-        static show() {
-            if (Mouse.cursor == "none") {
-                if (Mouse._preCursor) {
-                    Mouse.cursor = Mouse._preCursor;
-                }
-                else {
-                    Mouse.cursor = "auto";
-                }
-            }
-        }
-    }
-
-    class MeshParticle2D extends Mesh2D {
-        static __init__() {
-            const glfloat = LayaGL.renderEngine.getParams(exports.RenderParams.FLOAT);
-            MeshParticle2D._fixattriInfo = [
-                glfloat, 4, 0,
-                glfloat, 3, 16,
-                glfloat, 3, 28,
-                glfloat, 4, 40,
-                glfloat, 4, 56,
-                glfloat, 3, 72,
-                glfloat, 2, 84,
-                glfloat, 4, 92,
-                glfloat, 1, 108,
-                glfloat, 1, 112
-            ];
-        }
-        constructor(maxNum) {
-            super(MeshParticle2D.const_stride, maxNum * 4 * MeshParticle2D.const_stride, 4);
-            this.canReuse = true;
-            this.setAttributes(MeshParticle2D._fixattriInfo);
-            this.createQuadIB(maxNum);
-            this._quadNum = maxNum;
-            if (!MeshParticle2D.vertexDeclaration) {
-                MeshParticle2D.vertexDeclaration = new VertexDeclaration(116, [
-                    new VertexElement(0, VertexElementFormat.Vector4, 0),
-                    new VertexElement(16, VertexElementFormat.Vector3, 1),
-                    new VertexElement(28, VertexElementFormat.Vector3, 2),
-                    new VertexElement(40, VertexElementFormat.Vector4, 3),
-                    new VertexElement(56, VertexElementFormat.Vector4, 4),
-                    new VertexElement(72, VertexElementFormat.Vector3, 5),
-                    new VertexElement(84, VertexElementFormat.Vector2, 6),
-                    new VertexElement(92, VertexElementFormat.Vector4, 7),
-                    new VertexElement(108, VertexElementFormat.Single, 8),
-                    new VertexElement(112, VertexElementFormat.Single, 9)
-                ]);
-            }
-            this._vb.vertexDeclaration = MeshParticle2D.vertexDeclaration;
-        }
-        setMaxParticleNum(maxNum) {
-            this._vb.buffer2D._resizeBuffer(maxNum * 4 * MeshParticle2D.const_stride, false);
-            this.createQuadIB(maxNum);
-        }
-        static getAMesh(maxNum) {
-            if (MeshParticle2D._POOL.length) {
-                var ret = MeshParticle2D._POOL.pop();
-                ret.setMaxParticleNum(maxNum);
-                return ret;
-            }
-            return new MeshParticle2D(maxNum);
-        }
-        releaseMesh() {
-            this._vb.buffer2D.setByteLength(0);
-            this.vertNum = 0;
-            this.indexNum = 0;
-            MeshParticle2D._POOL.push(this);
-        }
-        destroy() {
-            this._ib.destroy();
-            this._vb.destroy();
-            this._vb.deleteBuffer();
-        }
-    }
-    MeshParticle2D.const_stride = 116;
-    MeshParticle2D._POOL = [];
-    MeshParticle2D.vertexDeclaration = null;
-
-    var _isinit = false;
-    class Laya {
-        static init(...args) {
-            if (_isinit)
-                return Promise.resolve();
-            _isinit = true;
-            let stageConfig;
-            if (typeof (args[0]) === "number") {
-                stageConfig = {
-                    designWidth: args[0],
-                    designHeight: args[1]
-                };
-            }
-            else
-                stageConfig = args[0];
-            ArrayBuffer.prototype.slice || (ArrayBuffer.prototype.slice = arrayBufferSlice);
-            Float32Array.prototype.slice || (Float32Array.prototype.slice = float32ArraySlice);
-            Uint16Array.prototype.slice || (Uint16Array.prototype.slice = uint16ArraySlice);
-            Uint8Array.prototype.slice || (Uint8Array.prototype.slice = uint8ArraySlice);
-            Browser.__init__();
-            URL.__init__();
-            let laya3D = window["Laya3D"];
-            if (laya3D) {
-                if (!WebGL.enable())
-                    return Promise.reject("Must support webGL!");
-                RunDriver.changeWebGLSize = laya3D._changeWebGLSize;
-                Render.is3DMode = true;
-            }
-            var mainCanv = Browser.mainCanvas = new HTMLCanvas(true);
-            var style = mainCanv.source.style;
-            style.position = 'absolute';
-            style.top = style.left = "0px";
-            style.background = "#000000";
-            if (!Browser.onKGMiniGame && !Browser.onAlipayMiniGame) {
-                Browser.container.appendChild(mainCanv.source);
-            }
-            Browser.canvas = new HTMLCanvas(true);
-            Browser.context = Browser.canvas.getContext('2d');
-            Browser.supportWebAudio = SoundManager.__init__();
-            Browser.supportLocalStorage = LocalStorage.__init__();
-            Laya.systemTimer = new Timer(false);
-            exports.systemTimer = Timer.gSysTimer = Laya.systemTimer;
-            Laya.physicsTimer = new Timer(false);
-            Laya.timer = new Timer(false);
-            ILaya.systemTimer = Laya.systemTimer;
-            exports.timer = ILaya.timer = Laya.timer;
-            exports.physicsTimer = ILaya.physicsTimer = Laya.physicsTimer;
-            Laya.loader = new Loader();
-            ILaya.Laya = Laya;
-            exports.loader = ILaya.loader = Laya.loader;
-            WeakObject.__init__();
-            Mouse.__init__();
-            if (LayaEnv.beforeInit) {
-                if (LayaEnv.isPlaying)
-                    LayaEnv.beforeInit(stageConfig);
-                else
-                    LayaEnv.beforeInit = null;
-            }
-            if (LayaEnv.isConch) {
-                Laya.enableNative();
-            }
-            CacheManger.beginCheck();
-            exports.stage = Laya.stage = new Stage();
-            ILaya.stage = Laya.stage;
-            if (LayaEnv.isConch && window.conch.setGlobalRepaint) {
-                window.conch.setGlobalRepaint(exports.stage.setGlobalRepaint.bind(exports.stage));
-            }
-            MeshQuadTexture.__int__();
-            MeshVG.__init__();
-            MeshTexture.__init__();
-            Laya.render = new Render(0, 0, Browser.mainCanvas);
-            exports.render = Laya.render;
-            exports.stage.size(stageConfig.designWidth, stageConfig.designHeight);
-            if (stageConfig.scaleMode)
-                exports.stage.scaleMode = stageConfig.scaleMode;
-            if (stageConfig.screenMode)
-                exports.stage.screenMode = stageConfig.screenMode;
-            if (stageConfig.alignV)
-                exports.stage.alignV = stageConfig.alignV;
-            if (stageConfig.alignH)
-                exports.stage.alignH = stageConfig.alignH;
-            if (Config.isAlpha)
-                exports.stage.bgColor = null;
-            else if (stageConfig.backgroundColor)
-                exports.stage.bgColor = stageConfig.backgroundColor;
-            window.stage = exports.stage;
-            RenderStateContext.__init__();
-            MeshParticle2D.__init__();
-            RenderSprite.__init__();
-            InputManager.__init__(exports.stage, Render.canvas);
-            if (!!window.conch && "conchUseWXAdapter" in Browser.window) {
-                Input.isAppUseNewInput = true;
-            }
-            Input.__init__();
-            SoundManager.autoStopMusic = true;
-            Stat._StatRender = new StatUI();
-            Value2D._initone(ShaderDefines2D.TEXTURE2D, TextureSV);
-            Value2D._initone(ShaderDefines2D.TEXTURE2D | ShaderDefines2D.FILTERGLOW, TextureSV);
-            Value2D._initone(ShaderDefines2D.PRIMITIVE, PrimitiveSV);
-            Value2D._initone(ShaderDefines2D.SKINMESH, SkinSV);
-            if (laya3D) {
-                return laya3D.__init__().then(() => {
-                    if (LayaEnv.afterInit) {
-                        if (LayaEnv.isPlaying)
-                            LayaEnv.afterInit();
-                        else
-                            LayaEnv.afterInit = null;
-                    }
-                });
-            }
-            else {
-                if (LayaEnv.afterInit) {
-                    if (LayaEnv.isPlaying)
-                        LayaEnv.afterInit();
-                    else
-                        LayaEnv.afterInit = null;
-                }
-                return Promise.resolve();
-            }
-        }
-        static addWasmModule(id, exports, memory) {
-            Laya.WasmModules[id] = { exports, memory };
-        }
-        static alertGlobalError(value) {
-            var erralert = 0;
-            if (value) {
-                Browser.window.onerror = function (msg, url, line, column, detail) {
-                    if (erralert++ < 5 && detail)
-                        this.alert("出错啦，请把此信息截图给研发商\n" + msg + "\n" + detail.stack);
-                };
-            }
-            else {
-                Browser.window.onerror = null;
-            }
-        }
-        static _runScript(script) {
-            return Browser.window[Laya._evcode](script);
-        }
-        static enableDebugPanel(debugJsPath = "libs/laya.debugtool.js") {
-            if (!window['Laya']["DebugPanel"]) {
-                var script = Browser.createElement("script");
-                script.onload = function () {
-                    window['Laya']["DebugPanel"].enable();
-                };
-                script.src = debugJsPath;
-                Browser.document.body.appendChild(script);
-            }
-            else {
-                window['Laya']["DebugPanel"].enable();
-            }
-        }
-        static enableNative() {
-            if (Laya.isNativeRender_enable)
-                return;
-            Laya.isNativeRender_enable = true;
-            RenderState2D.width = Browser.window.innerWidth;
-            RenderState2D.height = Browser.window.innerHeight;
-            Browser.measureText = function (txt, font) {
-                window["conchTextCanvas"].font = font;
-                return window["conchTextCanvas"].measureText(txt);
-            };
-            Stage.clear = function (color) {
-                Context.set2DRenderConfig();
-                var c = ColorUtils.create(color).arrColor;
-                LayaGL.renderEngine.clearRenderTexture(exports.RenderClearFlag.Color | exports.RenderClearFlag.Depth, new Color(c[0], c[1], c[2], c[3]), 1);
-                RenderState2D.clear();
-            };
-            Sprite.drawToCanvas = function (sprite, _renderType, canvasWidth, canvasHeight, offsetX, offsetY) {
-                offsetX -= sprite.x;
-                offsetY -= sprite.y;
-                offsetX |= 0;
-                offsetY |= 0;
-                canvasWidth |= 0;
-                canvasHeight |= 0;
-                var canv = new HTMLCanvas(false);
-                var ctx = canv.getContext('2d');
-                canv.size(canvasWidth, canvasHeight);
-                ctx.asBitmap = true;
-                ctx._targets.start();
-                RenderSprite.renders[_renderType]._fun(sprite, ctx, offsetX, offsetY);
-                ctx.flush();
-                ctx._targets.end();
-                ctx._targets.restore();
-                return canv;
-            };
-            Object["defineProperty"](RenderTexture2D.prototype, "uv", {
-                "get": function () {
-                    return this._uv;
-                },
-                "set": function (v) {
-                    this._uv = v;
-                }
-            });
-            HTMLCanvas.prototype.getTexture = function () {
-                if (!this._texture) {
-                    this._texture = this.context._targets;
-                    this._texture.uv = RenderTexture2D.flipyuv;
-                    this._texture.bitmap = this._texture;
-                }
-                return this._texture;
-            };
-        }
-    }
-    Laya.stage = null;
-    Laya.systemTimer = null;
-    Laya.physicsTimer = null;
-    Laya.timer = null;
-    Laya.loader = null;
-    Laya.isWXOpenDataContext = false;
-    Laya.isWXPosMsg = false;
-    Laya.WasmModules = {};
-    Laya._evcode = "eva" + "l";
-    Laya.isNativeRender_enable = false;
-    function arrayBufferSlice(start, end) {
-        var arrU8List = new Uint8Array(this, start, end - start);
-        var newU8List = new Uint8Array(arrU8List.length);
-        newU8List.set(arrU8List);
-        return newU8List.buffer;
-    }
-    function uint8ArraySlice() {
-        var sz = this.length;
-        var dec = new Uint8Array(this.length);
-        for (var i = 0; i < sz; i++)
-            dec[i] = this[i];
-        return dec;
-    }
-    function float32ArraySlice() {
-        var sz = this.length;
-        var dec = new Float32Array(this.length);
-        for (var i = 0; i < sz; i++)
-            dec[i] = this[i];
-        return dec;
-    }
-    function uint16ArraySlice(...arg) {
-        var sz;
-        var dec;
-        var i;
-        if (arg.length === 0) {
-            sz = this.length;
-            dec = new Uint16Array(sz);
-            for (i = 0; i < sz; i++)
-                dec[i] = this[i];
-        }
-        else if (arg.length === 2) {
-            var start = arg[0];
-            var end = arg[1];
-            if (end > start) {
-                sz = end - start;
-                dec = new Uint16Array(sz);
-                for (i = start; i < end; i++)
-                    dec[i - start] = this[i];
-            }
-            else {
-                dec = new Uint16Array(0);
-            }
-        }
-        return dec;
-    }
-    ILaya.Loader = Loader;
-    ILaya.Context = Context;
-    ILaya.Browser = Browser;
-    var init = Laya.init;
-    exports.stage = void 0;
-    exports.systemTimer = void 0;
-    var startTimer;
-    exports.physicsTimer = void 0;
-    var updateTimer;
-    var lateTimer;
-    exports.timer = void 0;
-    exports.loader = void 0;
-    exports.render = void 0;
-    var isWXOpenDataContext;
-    var isWXPosMsg;
-    var alertGlobalError = Laya.alertGlobalError;
-    var enableDebugPanel = Laya.enableDebugPanel;
-
     class AnimatorState2DScript {
         onStateEnter() {
         }
@@ -35301,13 +37116,6 @@ window.Laya = (function (exports) {
         }
     }
 
-    class KeyLocation {
-    }
-    KeyLocation.STANDARD = 0;
-    KeyLocation.LEFT = 1;
-    KeyLocation.RIGHT = 2;
-    KeyLocation.NUM_PAD = 3;
-
     class Keyboard {
     }
     Keyboard.NUMBER_0 = 48;
@@ -35410,6 +37218,13 @@ window.Laya = (function (exports) {
     Keyboard.TAB = 9;
     Keyboard.INSERT = 45;
 
+    class KeyLocation {
+    }
+    KeyLocation.STANDARD = 0;
+    KeyLocation.LEFT = 1;
+    KeyLocation.RIGHT = 2;
+    KeyLocation.NUM_PAD = 3;
+
     class CommandEncoder {
         constructor() {
             this._idata = [];
@@ -35426,6 +37241,8 @@ window.Laya = (function (exports) {
     }
 
     class QuickTestTool {
+        constructor() {
+        }
         static getMCDName(type) {
             return QuickTestTool._typeToNameDic[type];
         }
@@ -35461,8 +37278,6 @@ window.Laya = (function (exports) {
             QuickTestTool._typeToNameDic[SpriteConst.MASK] = "MASK";
             QuickTestTool._typeToNameDic[SpriteConst.CLIP] = "CLIP";
             QuickTestTool._typeToNameDic[SpriteConst.LAYAGL3D] = "LAYAGL3D";
-        }
-        constructor() {
         }
         render(context, x, y) {
             QuickTestTool._addType(this._renderType);
@@ -35616,6 +37431,16 @@ window.Laya = (function (exports) {
     ResourceVersion.type = ResourceVersion.FOLDER_VERSION;
 
     class Socket extends EventDispatcher {
+        constructor(host = null, port = 0, byteClass = null, protocols = null) {
+            super();
+            this.disableInput = false;
+            this.protocols = [];
+            this._byteClass = byteClass ? byteClass : Byte;
+            this.protocols = protocols;
+            this.endian = Socket.BIG_ENDIAN;
+            if (host && port > 0 && port < 65535)
+                this.connect(host, port);
+        }
         get input() {
             return this._input;
         }
@@ -35634,16 +37459,6 @@ window.Laya = (function (exports) {
                 this._input.endian = value;
             if (this._output != null)
                 this._output.endian = value;
-        }
-        constructor(host = null, port = 0, byteClass = null, protocols = null) {
-            super();
-            this.disableInput = false;
-            this.protocols = [];
-            this._byteClass = byteClass ? byteClass : Byte;
-            this.protocols = protocols;
-            this.endian = Socket.BIG_ENDIAN;
-            if (host && port > 0 && port < 65535)
-                this.connect(host, port);
         }
         connect(host, port) {
             var url = "ws://" + host + ":" + port;
@@ -36450,15 +38265,22 @@ window.Laya = (function (exports) {
     }
 
     class BlendState {
-        static create(blendType, colorBlendhash, alphaBlendComponent) {
-        }
         constructor(blendType) {
             this.blendType = 0;
+        }
+        static create(blendType, colorBlendhash, alphaBlendComponent) {
         }
     }
     BlendState._blend_All_pool = {};
     BlendState._blend_seperate_pool = {};
     class BlendComponent {
+        constructor(blendOperationGLData, sourceBlendFactor, destinationFactor, hashindex) {
+            this._hashIndex = 0;
+            this._hashIndex = hashindex;
+            this._blendOperationGLData = blendOperationGLData;
+            this._sourceBlendFactor = sourceBlendFactor;
+            this._destinationFactor = destinationFactor;
+        }
         static getHash(blendOperationGLData, sourceBlendFactor, destinationFactor) {
             return (blendOperationGLData) + (sourceBlendFactor << 3) + (destinationFactor << 7);
         }
@@ -36467,13 +38289,6 @@ window.Laya = (function (exports) {
             if (!BlendComponent._pool[index])
                 BlendComponent._pool[index] = new BlendComponent(blendOperationGLData, sourceBlendFactor, destinationFactor, index);
             return BlendComponent._pool[index];
-        }
-        constructor(blendOperationGLData, sourceBlendFactor, destinationFactor, hashindex) {
-            this._hashIndex = 0;
-            this._hashIndex = hashindex;
-            this._blendOperationGLData = blendOperationGLData;
-            this._sourceBlendFactor = sourceBlendFactor;
-            this._destinationFactor = destinationFactor;
         }
     }
     BlendComponent._pool = {};
@@ -36626,7 +38441,7 @@ window.Laya = (function (exports) {
             version &= 0x400;
             let bit11 = version &= 0x800;
             let bit12 = version &= 0x1000;
-            if (bit9 == 0 && bit11 == 0 && bit12 == 0);
+            if (bit9 == 0 && bit11 == 0 && bit12 == 0) ;
             else if (bit9 == 1 && bit11 == 0 && bit12 == 0) {
                 todo();
                 wrong();
@@ -36711,1732 +38526,6 @@ window.Laya = (function (exports) {
     class StencilState {
     }
 
-    class DefineDatas {
-        constructor() {
-            this._mask = [];
-            this._length = 0;
-        }
-        _intersectionDefineDatas(define) {
-            var unionMask = define._mask;
-            var mask = this._mask;
-            for (var i = this._length - 1; i >= 0; i--) {
-                var value = mask[i] & unionMask[i];
-                if (value == 0 && i == this._length - 1)
-                    this._length--;
-                else
-                    mask[i] = value;
-            }
-        }
-        add(define) {
-            var index = define._index;
-            var size = index + 1;
-            var mask = this._mask;
-            var maskStart = this._length;
-            if (maskStart < size) {
-                (mask.length < size) && (mask.length = size);
-                for (; maskStart < index; maskStart++)
-                    mask[maskStart] = 0;
-                mask[index] = define._value;
-                this._length = size;
-            }
-            else {
-                mask[index] |= define._value;
-            }
-        }
-        remove(define) {
-            var index = define._index;
-            var mask = this._mask;
-            var endIndex = this._length - 1;
-            if (index > endIndex)
-                return;
-            var newValue = mask[index] & ~define._value;
-            if (index == endIndex && newValue === 0)
-                this._length--;
-            else
-                mask[index] = newValue;
-        }
-        addDefineDatas(define) {
-            var addMask = define._mask;
-            var size = define._length;
-            var mask = this._mask;
-            var maskStart = this._length;
-            if (maskStart < size) {
-                mask.length = size;
-                for (var i = 0; i < maskStart; i++)
-                    mask[i] |= addMask[i];
-                for (; i < size; i++)
-                    mask[i] = addMask[i];
-                this._length = size;
-            }
-            else {
-                for (var i = 0; i < size; i++) {
-                    mask[i] |= addMask[i];
-                }
-            }
-        }
-        removeDefineDatas(define) {
-            var removeMask = define._mask;
-            var mask = this._mask;
-            var endIndex = this._length - 1;
-            var i = Math.min(define._length, endIndex);
-            for (; i >= 0; i--) {
-                var newValue = mask[i] & ~removeMask[i];
-                if (i == endIndex && newValue === 0) {
-                    endIndex--;
-                    this._length--;
-                }
-                else {
-                    mask[i] = newValue;
-                }
-            }
-        }
-        has(define) {
-            var index = define._index;
-            if (index >= this._length)
-                return false;
-            return (this._mask[index] & define._value) !== 0;
-        }
-        clear() {
-            this._length = 0;
-        }
-        cloneTo(destObject) {
-            var destDefineData = destObject;
-            var destMask = destDefineData._mask;
-            var mask = this._mask;
-            var count = this._length;
-            destMask.length = count;
-            for (var i = 0; i < count; i++)
-                destMask[i] = mask[i];
-            destDefineData._length = count;
-        }
-        clone() {
-            var dest = new DefineDatas();
-            this.cloneTo(dest);
-            return dest;
-        }
-        destroy() {
-            delete this._mask;
-        }
-    }
-
-    class ShaderDefine {
-        constructor(index, value) {
-            this._index = index;
-            this._value = value;
-        }
-    }
-    ShaderDefine._texGammaDefine = {};
-
-    class ShaderVariant {
-        get shader() {
-            return this._shader;
-        }
-        get subShaderIndex() {
-            return this._subShaderIndex;
-        }
-        get passIndex() {
-            return this._passIndex;
-        }
-        get defineNames() {
-            return this._defineNames;
-        }
-        constructor(shader, subShaderIndex, passIndex, defines) {
-            this._subShaderIndex = 0;
-            this._passIndex = 0;
-            this.setValue(shader, subShaderIndex, passIndex, defines);
-        }
-        setValue(shader, subShaderIndex, passIndex, defineNames) {
-            if (shader) {
-                var subShader = shader.getSubShaderAt(subShaderIndex);
-                if (subShader) {
-                    var pass = subShader._passes[passIndex];
-                    if (pass) {
-                        var validDefine = pass._validDefine;
-                        for (var i = 0, n = defineNames.length; i < n; i++) {
-                            var defname = defineNames[i];
-                            if (!validDefine.has(Shader3D.getDefineByName(defname)))
-                                throw `ShaderVariantInfo:Invalid defineName ${defname} in ${shader._name} subShaderIndex of ${subShaderIndex} passIndex of ${passIndex}.`;
-                        }
-                    }
-                    else {
-                        throw `ShaderVariantInfo:Shader don't have passIndex of ${passIndex}.`;
-                    }
-                }
-                else {
-                    throw `ShaderVariantInfo:Shader don't have subShaderIndex of ${subShaderIndex}.`;
-                }
-            }
-            else {
-                throw `ShaderVariantInfo:Shader can't be null.`;
-            }
-            this._shader = shader;
-            this._subShaderIndex = subShaderIndex;
-            this._passIndex = passIndex;
-            this._defineNames = defineNames;
-        }
-        equal(other) {
-            if (this._shader !== other._shader || this._subShaderIndex !== other._subShaderIndex || this._passIndex !== other._passIndex)
-                return false;
-            var defines = this._defineNames;
-            var otherDefines = other._defineNames;
-            if (defines.length !== otherDefines.length)
-                return false;
-            for (var i = 0, n = this._defineNames.length; i < n; i++) {
-                if (defines[i] !== otherDefines[i])
-                    return false;
-            }
-            return true;
-        }
-        clone() {
-            var dest = new ShaderVariant(this._shader, this._subShaderIndex, this._passIndex, this._defineNames.slice());
-            return dest;
-        }
-    }
-    class ShaderVariantCollection {
-        constructor() {
-            this._allCompiled = false;
-            this._variants = [];
-        }
-        get allCompiled() {
-            return this._allCompiled;
-        }
-        get variantCount() {
-            return this._variants.length;
-        }
-        add(variant) {
-            for (var i = 0, n = this._variants.length; i < n; i++) {
-                if (this._variants[i].equal(variant))
-                    return false;
-            }
-            this._variants.push(variant.clone());
-            this._allCompiled = false;
-            return true;
-        }
-        remove(variant) {
-            for (var i = 0, n = this._variants.length; i < n; i++) {
-                if (this._variants[i].equal(variant)) {
-                    this._variants.splice(i, 1);
-                    return true;
-                }
-            }
-            return false;
-        }
-        contatins(variant) {
-            for (var i = 0, n = this._variants.length; i < n; i++) {
-                if (this._variants[i].equal(variant))
-                    return true;
-            }
-            return false;
-        }
-        getByIndex(index) {
-            return this._variants[index];
-        }
-        clear() {
-            this._variants.length = 0;
-        }
-        compile() {
-            if (!this._allCompiled) {
-                var variants = this._variants;
-                for (var i = 0, n = variants.length; i < n; i++) {
-                    var variant = variants[i];
-                    Shader3D.compileShaderByDefineNames(variant._shader._name, variant._subShaderIndex, variant._passIndex, variant._defineNames);
-                }
-                this._allCompiled = true;
-            }
-        }
-    }
-
-    exports.ShaderDataType = void 0;
-    (function (ShaderDataType) {
-        ShaderDataType[ShaderDataType["Int"] = 0] = "Int";
-        ShaderDataType[ShaderDataType["Bool"] = 1] = "Bool";
-        ShaderDataType[ShaderDataType["Float"] = 2] = "Float";
-        ShaderDataType[ShaderDataType["Vector2"] = 3] = "Vector2";
-        ShaderDataType[ShaderDataType["Vector3"] = 4] = "Vector3";
-        ShaderDataType[ShaderDataType["Vector4"] = 5] = "Vector4";
-        ShaderDataType[ShaderDataType["Color"] = 6] = "Color";
-        ShaderDataType[ShaderDataType["Matrix4x4"] = 7] = "Matrix4x4";
-        ShaderDataType[ShaderDataType["Texture2D"] = 8] = "Texture2D";
-        ShaderDataType[ShaderDataType["TextureCube"] = 9] = "TextureCube";
-        ShaderDataType[ShaderDataType["Buffer"] = 10] = "Buffer";
-    })(exports.ShaderDataType || (exports.ShaderDataType = {}));
-    function ShaderDataDefaultValue(type) {
-        switch (type) {
-            case exports.ShaderDataType.Int:
-                return 0;
-            case exports.ShaderDataType.Bool:
-                return false;
-            case exports.ShaderDataType.Float:
-                return 0;
-            case exports.ShaderDataType.Vector2:
-                return Vector2.ZERO;
-            case exports.ShaderDataType.Vector3:
-                return Vector3.ZERO;
-            case exports.ShaderDataType.Vector4:
-                return Vector4.ZERO;
-            case exports.ShaderDataType.Color:
-                return Color.BLACK;
-            case exports.ShaderDataType.Matrix4x4:
-                return Matrix4x4.DEFAULT;
-        }
-        return null;
-    }
-    class ShaderData {
-        get uniformBufferDatas() {
-            return this._uniformBufferDatas;
-        }
-        get uniformBuffersMap() {
-            return this._uniformBuffersMap;
-        }
-        constructor(ownerResource = null) {
-            this._ownerResource = null;
-            this._data = null;
-            this._defineDatas = new DefineDatas();
-            this._ownerResource = ownerResource;
-            this._initData();
-            this._uniformBufferDatas = new Map();
-            this._uniformBuffersMap = new Map();
-        }
-        _addCheckUBO(key, ubo, uboData) {
-            this._uniformBufferDatas.set(key, ubo);
-            uboData._uniformParamsState.forEach((value, id) => {
-                this.uniformBuffersMap.set(id, ubo);
-            });
-            ubo.setDataByUniformBufferData(uboData);
-        }
-        _initData() {
-            this._data = {};
-            this._gammaColorMap = new Map();
-        }
-        getData() {
-            return this._data;
-        }
-        addDefine(define) {
-            this._defineDatas.add(define);
-        }
-        removeDefine(define) {
-            this._defineDatas.remove(define);
-        }
-        hasDefine(define) {
-            return this._defineDatas.has(define);
-        }
-        clearDefine() {
-            this._defineDatas.clear();
-        }
-        getBool(index) {
-            return this._data[index];
-        }
-        setBool(index, value) {
-            this._data[index] = value;
-        }
-        getInt(index) {
-            return this._data[index];
-        }
-        setInt(index, value) {
-            this._data[index] = value;
-            let ubo = this._uniformBuffersMap.get(index);
-            if (ubo) {
-                ubo._updateDataInfo._setData(index, this.getInt(index));
-                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
-            }
-        }
-        getNumber(index) {
-            return this._data[index];
-        }
-        setNumber(index, value) {
-            this._data[index] = value;
-            let ubo = this._uniformBuffersMap.get(index);
-            if (ubo) {
-                ubo._updateDataInfo._setData(index, this.getNumber(index));
-                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
-            }
-        }
-        getVector2(index) {
-            return this._data[index];
-        }
-        setVector2(index, value) {
-            if (this._data[index]) {
-                value.cloneTo(this._data[index]);
-            }
-            else
-                this._data[index] = value.clone();
-            let ubo = this._uniformBuffersMap.get(index);
-            if (ubo) {
-                ubo._updateDataInfo._setData(index, this.getVector2(index));
-                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
-            }
-        }
-        getVector3(index) {
-            return this._data[index];
-        }
-        setVector3(index, value) {
-            if (this._data[index]) {
-                value.cloneTo(this._data[index]);
-            }
-            else
-                this._data[index] = value.clone();
-            let ubo = this._uniformBuffersMap.get(index);
-            if (ubo) {
-                ubo._updateDataInfo._setData(index, this.getVector3(index));
-                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
-            }
-        }
-        getVector(index) {
-            return this._data[index];
-        }
-        setVector(index, value) {
-            if (this._data[index]) {
-                value.cloneTo(this._data[index]);
-            }
-            else
-                this._data[index] = value.clone();
-            let ubo = this._uniformBuffersMap.get(index);
-            if (ubo) {
-                ubo._updateDataInfo._setData(index, this.getVector(index));
-                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
-            }
-        }
-        getColor(index) {
-            return this._gammaColorMap.get(index);
-        }
-        setColor(index, value) {
-            if (!value)
-                return;
-            if (this._data[index]) {
-                let gammaColor = this._gammaColorMap.get(index);
-                value.cloneTo(gammaColor);
-                let linearColor = this._data[index];
-                linearColor.x = Color.gammaToLinearSpace(value.r);
-                linearColor.y = Color.gammaToLinearSpace(value.g);
-                linearColor.z = Color.gammaToLinearSpace(value.b);
-                linearColor.w = value.a;
-            }
-            else {
-                let linearColor = new Vector4();
-                linearColor.x = Color.gammaToLinearSpace(value.r);
-                linearColor.y = Color.gammaToLinearSpace(value.g);
-                linearColor.z = Color.gammaToLinearSpace(value.b);
-                linearColor.w = value.a;
-                this._data[index] = linearColor;
-                this._gammaColorMap.set(index, value.clone());
-            }
-            let ubo = this._uniformBuffersMap.get(index);
-            if (ubo) {
-                ubo._updateDataInfo._setData(index, this.getLinearColor(index));
-                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
-            }
-        }
-        getLinearColor(index) {
-            return this._data[index];
-        }
-        getMatrix4x4(index) {
-            return this._data[index];
-        }
-        setMatrix4x4(index, value) {
-            if (this._data[index]) {
-                value.cloneTo(this._data[index]);
-            }
-            else {
-                this._data[index] = value.clone();
-            }
-            let ubo = this._uniformBuffersMap.get(index);
-            if (ubo) {
-                ubo._updateDataInfo._setData(index, this.getVector(index));
-                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
-            }
-        }
-        getBuffer(index) {
-            return this._data[index];
-        }
-        setBuffer(index, value) {
-            this._data[index] = value;
-        }
-        setTexture(index, value) {
-            var lastValue = this._data[index];
-            if (value) {
-                let shaderDefine = ShaderDefine._texGammaDefine[index];
-                if (shaderDefine && value && value.gammaCorrection > 1) {
-                    this.addDefine(shaderDefine);
-                }
-                else {
-                    shaderDefine && this.removeDefine(shaderDefine);
-                }
-            }
-            this._data[index] = value ? value : Texture2D.erroTextur;
-            (lastValue) && (lastValue._removeReference());
-            (value) && (value._addReference());
-        }
-        getTexture(index) {
-            return this._data[index];
-        }
-        setValueData(index, value) {
-            if (value instanceof Color) {
-                this.setColor(index, value);
-                return;
-            }
-            else if (!value) {
-                this._data[index] = value;
-            }
-            else if (!!value.clone) {
-                this._data[index] = value.clone();
-            }
-            else
-                this._data[index] = value;
-            let ubo = this._uniformBuffersMap.get(index);
-            if (ubo) {
-                ubo._updateDataInfo._setData(index, this.getValueData(index));
-                ubo.setDataByUniformBufferData(ubo._updateDataInfo);
-            }
-        }
-        setUniformBuffer(index, value) {
-            this._data[index] = value;
-        }
-        getUniformBuffer(index) {
-            return this._data[index];
-        }
-        setShaderData(uniformIndex, type, value) {
-            switch (type) {
-                case exports.ShaderDataType.Int:
-                    this.setInt(uniformIndex, value);
-                    break;
-                case exports.ShaderDataType.Bool:
-                    this.setBool(uniformIndex, value);
-                    break;
-                case exports.ShaderDataType.Float:
-                    this.setNumber(uniformIndex, value);
-                    break;
-                case exports.ShaderDataType.Vector2:
-                    this.setVector2(uniformIndex, value);
-                    break;
-                case exports.ShaderDataType.Vector3:
-                    this.setVector3(uniformIndex, value);
-                    break;
-                case exports.ShaderDataType.Vector4:
-                    this.setVector(uniformIndex, value);
-                    break;
-                case exports.ShaderDataType.Color:
-                    this.setColor(uniformIndex, value);
-                    break;
-                case exports.ShaderDataType.Matrix4x4:
-                    this.setMatrix4x4(uniformIndex, value);
-                    break;
-                case exports.ShaderDataType.Texture2D:
-                case exports.ShaderDataType.TextureCube:
-                    this.setTexture(uniformIndex, value);
-                    break;
-                case exports.ShaderDataType.Buffer:
-                    this.setBuffer(uniformIndex, value);
-                    break;
-                default:
-                    throw "unkone shader data type.";
-            }
-        }
-        getShaderData(uniformIndex, type) {
-            switch (type) {
-                case exports.ShaderDataType.Int:
-                    return this.getInt(uniformIndex);
-                case exports.ShaderDataType.Bool:
-                    return this.getBool(uniformIndex);
-                case exports.ShaderDataType.Float:
-                    return this.getNumber(uniformIndex);
-                case exports.ShaderDataType.Vector2:
-                    return this.getVector2(uniformIndex);
-                case exports.ShaderDataType.Vector3:
-                    return this.getVector3(uniformIndex);
-                case exports.ShaderDataType.Vector4:
-                    return this.getVector(uniformIndex);
-                case exports.ShaderDataType.Color:
-                    return this.getColor(uniformIndex);
-                case exports.ShaderDataType.Matrix4x4:
-                    return this.getMatrix4x4(uniformIndex);
-                case exports.ShaderDataType.Texture2D:
-                case exports.ShaderDataType.TextureCube:
-                    return this.getTexture(uniformIndex);
-                case exports.ShaderDataType.Buffer:
-                    return this.getBuffer(uniformIndex);
-                default:
-                    throw "unkone shader data type.";
-            }
-        }
-        getValueData(index) {
-            return this._data[index];
-        }
-        cloneTo(destObject) {
-            var dest = destObject;
-            var destData = dest._data;
-            for (var k in this._data) {
-                var value = this._data[k];
-                if (value != null) {
-                    if (typeof (value) == 'number') {
-                        destData[k] = value;
-                    }
-                    else if (typeof (value) == 'number') {
-                        destData[k] = value;
-                    }
-                    else if (typeof (value) == "boolean") {
-                        destData[k] = value;
-                    }
-                    else if (value instanceof Vector2) {
-                        var v2 = (destData[k]) || (destData[k] = new Vector2());
-                        value.cloneTo(v2);
-                        destData[k] = v2;
-                    }
-                    else if (value instanceof Vector3) {
-                        var v3 = (destData[k]) || (destData[k] = new Vector3());
-                        value.cloneTo(v3);
-                        destData[k] = v3;
-                    }
-                    else if (value instanceof Vector4) {
-                        let color = this.getColor(parseInt(k));
-                        if (color) {
-                            let clonecolor = color.clone();
-                            destObject.setColor(parseInt(k), clonecolor);
-                        }
-                        else {
-                            var v4 = (destData[k]) || (destData[k] = new Vector4());
-                            value.cloneTo(v4);
-                            destData[k] = v4;
-                        }
-                    }
-                    else if (value instanceof Matrix4x4) {
-                        var mat = (destData[k]) || (destData[k] = new Matrix4x4());
-                        value.cloneTo(mat);
-                        destData[k] = mat;
-                    }
-                    else if (value instanceof BaseTexture) {
-                        destData[k] = value;
-                        value._addReference();
-                    }
-                }
-            }
-            this._defineDatas.cloneTo(dest._defineDatas);
-            this._gammaColorMap.forEach((color, index) => {
-                destObject._gammaColorMap.set(index, color.clone());
-            });
-        }
-        clone() {
-            var dest = new ShaderData();
-            this.cloneTo(dest);
-            return dest;
-        }
-        reset() {
-            for (var k in this._data) {
-                var value = this._data[k];
-                if (value instanceof Resource) {
-                    value._removeReference();
-                }
-            }
-            this._data = {};
-            this._gammaColorMap.clear();
-            this._uniformBufferDatas.clear();
-            this._uniformBuffersMap.clear();
-            this._defineDatas.clear();
-        }
-        destroy() {
-            this._defineDatas.destroy();
-            this._defineDatas = null;
-            for (var k in this._data) {
-                var value = this._data[k];
-                if (value instanceof Resource) {
-                    value._removeReference();
-                }
-            }
-            this._data = null;
-            this._gammaColorMap.clear();
-            this._gammaColorMap = null;
-            delete this._uniformBufferDatas;
-            delete this._uniformBuffersMap;
-            this._uniformBufferDatas = null;
-            this._uniformBuffersMap = null;
-        }
-    }
-
-    class ShaderCompileDefineBase {
-        constructor(owner, name, compiledObj) {
-            this._validDefine = new DefineDatas();
-            this._cacheShaderHierarchy = 1;
-            this._cacheSharders = {};
-            this._owner = owner;
-            this.name = name;
-            this._VS = compiledObj.vsNode;
-            this._PS = compiledObj.psNode;
-            this._defs = compiledObj.defs;
-            for (let k of compiledObj.defs)
-                this._validDefine.add(Shader3D.getDefineByName(k));
-        }
-        _resizeCacheShaderMap(cacheMap, hierarchy, resizeLength) {
-            var end = this._cacheShaderHierarchy - 1;
-            if (hierarchy == end) {
-                for (var k in cacheMap) {
-                    var shader = cacheMap[k];
-                    for (var i = 0, n = resizeLength - end; i < n; i++) {
-                        if (i == n - 1)
-                            cacheMap[0] = shader;
-                        else
-                            cacheMap = cacheMap[i == 0 ? k : 0] = {};
-                    }
-                }
-            }
-            else {
-                ++hierarchy;
-                for (var k in cacheMap)
-                    this._resizeCacheShaderMap(cacheMap[k], hierarchy, resizeLength);
-            }
-        }
-        withCompile(compileDefine) {
-            var debugDefineString = ShaderCompileDefineBase._debugDefineString;
-            var debugDefineMask = ShaderCompileDefineBase._debugDefineMask;
-            var debugMaskLength;
-            compileDefine._intersectionDefineDatas(this._validDefine);
-            if (Shader3D.debugMode) {
-                debugMaskLength = compileDefine._length;
-            }
-            var cacheShaders = this._cacheSharders;
-            var maskLength = compileDefine._length;
-            if (maskLength > this._cacheShaderHierarchy) {
-                this._resizeCacheShaderMap(cacheShaders, 0, maskLength);
-                this._cacheShaderHierarchy = maskLength;
-            }
-            var mask = compileDefine._mask;
-            var endIndex = compileDefine._length - 1;
-            var maxEndIndex = this._cacheShaderHierarchy - 1;
-            for (var i = 0; i < maxEndIndex; i++) {
-                var subMask = endIndex < i ? 0 : mask[i];
-                var subCacheShaders = cacheShaders[subMask];
-                (subCacheShaders) || (cacheShaders[subMask] = subCacheShaders = {});
-                cacheShaders = subCacheShaders;
-            }
-            var cacheKey = endIndex < maxEndIndex ? 0 : mask[maxEndIndex];
-            var shader = cacheShaders[cacheKey];
-            if (shader)
-                return shader;
-            var defineString = ShaderCompileDefineBase._defineString;
-            Shader3D._getNamesByDefineData(compileDefine, defineString);
-            var defMap = {};
-            var vertexHead;
-            var fragmentHead;
-            var defineStr = "";
-            if (WebGL._isWebGL2) {
-                vertexHead =
-                    `#version 300 es\n
-                #define attribute in
-                #define varying out
-                #define textureCube texture
-                #define texture2D texture\n`;
-                fragmentHead =
-                    `#version 300 es\n
-                #define varying in
-                out highp vec4 pc_fragColor;
-                #define gl_FragColor pc_fragColor
-                #define gl_FragDepthEXT gl_FragDepth
-                #define texture2D texture
-                #define textureCube texture
-                #define texture2DProj textureProj
-                #define texture2DLodEXT textureLod
-                #define texture2DProjLodEXT textureProjLod
-                #define textureCubeLodEXT textureLod
-                #define texture2DGradEXT textureGrad
-                #define texture2DProjGradEXT textureProjGrad
-                #define textureCubeGradEXT textureGrad\n`;
-            }
-            else {
-                vertexHead = "";
-                fragmentHead =
-                    `#ifdef GL_EXT_shader_texture_lod
-                    #extension GL_EXT_shader_texture_lod : enable
-                #endif
-                #if !defined(GL_EXT_shader_texture_lod)
-                    #define texture1DLodEXT texture1D
-                    #define texture2DLodEXT texture2D
-                    #define texture2DProjLodEXT texture2DProj
-                    #define texture3DLodEXT texture3D
-                    #define textureCubeLodEXT textureCube
-                #endif\n`;
-            }
-            for (var i = 0, n = defineString.length; i < n; i++) {
-                var def = defineString[i];
-                defineStr += "#define " + def + "\n";
-                defMap[def] = true;
-            }
-            var vs = this._VS.toscript(defMap, []);
-            var vsVersion = '';
-            if (vs[0].indexOf('#version') == 0) {
-                vsVersion = vs[0] + '\n';
-                vs.shift();
-            }
-            var ps = this._PS.toscript(defMap, []);
-            var psVersion = '';
-            if (ps[0].indexOf('#version') == 0) {
-                psVersion = ps[0] + '\n';
-                ps.shift();
-            }
-            shader = LayaGL.renderOBJCreate.createShaderInstance(vsVersion + vertexHead + defineStr + vs.join('\n'), psVersion + fragmentHead + defineStr + ps.join('\n'), this._owner._attributeMap, this);
-            cacheShaders[cacheKey] = shader;
-            if (Shader3D.debugMode) {
-                var defStr = "";
-                var defMask = "";
-                for (var i = 0, n = debugMaskLength; i < n; i++)
-                    (i == n - 1) ? defMask += debugDefineMask[i] : defMask += debugDefineMask[i] + ",";
-                for (var i = 0, n = debugDefineString.length; i < n; i++)
-                    (i == n - 1) ? defStr += debugDefineString[i] : defStr += debugDefineString[i] + ",";
-                console.log("%cLayaAir: Shader Compile Information---ShaderName:" + this.name + " " + " DefineMask:[" + defMask + "]" + " DefineNames:[" + defStr + "]", "color:green");
-            }
-            return shader;
-        }
-    }
-    ShaderCompileDefineBase._defineString = [];
-    ShaderCompileDefineBase._debugDefineString = [];
-    ShaderCompileDefineBase._debugDefineMask = [];
-
-    class GLSLCodeGenerator {
-        static glslAttributeString(attributeMap) {
-            let res = "";
-            for (const key in attributeMap) {
-                let type = getAttributeType(attributeMap[key][1]);
-                res = `${res}attribute ${type} ${key};\n`;
-            }
-            return res;
-        }
-        static glslUniformString(uniformsMap, useUniformBlock) {
-            if (useUniformBlock) {
-                let blocksStr = "";
-                let uniformsStr = "";
-                for (const key in uniformsMap) {
-                    if (typeof uniformsMap[key] == "object") {
-                        let blockUniforms = uniformsMap[key];
-                        blocksStr += `uniform ${key} {\n`;
-                        for (const uniformName in blockUniforms) {
-                            let dataType = blockUniforms[uniformName];
-                            blocksStr += `${getAttributeType(dataType)} ${uniformName};\n`;
-                        }
-                        blocksStr += "};\n";
-                    }
-                    else {
-                        let dataType = uniformsMap[key];
-                        uniformsStr += `uniform ${getAttributeType(dataType)} ${key};\n`;
-                    }
-                }
-                return blocksStr + uniformsStr;
-            }
-            else {
-                let uniformsStr = "";
-                for (const key in uniformsMap) {
-                    if (typeof uniformsMap[key] == "object") {
-                        let blockUniforms = uniformsMap[key];
-                        for (const uniformName in blockUniforms) {
-                            let dataType = blockUniforms[uniformName];
-                            uniformsStr += `uniform ${getAttributeType(dataType)} ${uniformName};\n`;
-                        }
-                    }
-                    else {
-                        let dataType = uniformsMap[key];
-                        uniformsStr += `uniform ${getAttributeType(dataType)} ${key};\n`;
-                    }
-                }
-                return uniformsStr;
-            }
-        }
-    }
-    function getAttributeType(type) {
-        switch (type) {
-            case exports.ShaderDataType.Int:
-                return "int";
-            case exports.ShaderDataType.Bool:
-                return "bool";
-            case exports.ShaderDataType.Float:
-                return "float";
-            case exports.ShaderDataType.Vector2:
-                return "vec2";
-            case exports.ShaderDataType.Vector3:
-                return "vec3";
-            case exports.ShaderDataType.Vector4:
-            case exports.ShaderDataType.Color:
-                return "vec4";
-            case exports.ShaderDataType.Matrix4x4:
-                return "mat4";
-            case exports.ShaderDataType.Texture2D:
-                return "sampler2D";
-            case exports.ShaderDataType.TextureCube:
-                return "samplerCube";
-            default:
-                return "";
-        }
-    }
-
-    class ShaderPass extends ShaderCompileDefineBase {
-        get renderState() {
-            return this._renderState;
-        }
-        constructor(owner, compiledObj) {
-            super(owner, null, compiledObj);
-            this._tags = {};
-            this.statefirst = false;
-            this._renderState = LayaGL.renderOBJCreate.createRenderState();
-            this._renderState.setNull();
-        }
-        _addDebugShaderVariantCollection(compileDefine, outDebugDefines, outDebugDefineMask) {
-            var dbugShaderVariantInfo = Shader3D._debugShaderVariantInfo;
-            var debugSubShader = this._owner;
-            var debugShader = debugSubShader._owner;
-            var mask = compileDefine._mask;
-            Shader3D._getNamesByDefineData(compileDefine, outDebugDefines);
-            outDebugDefineMask.length = mask.length;
-            for (var i = 0, n = mask.length; i < n; i++)
-                outDebugDefineMask[i] = mask[i];
-            if (dbugShaderVariantInfo)
-                dbugShaderVariantInfo.setValue(debugShader, debugShader._subShaders.indexOf(debugSubShader), debugSubShader._passes.indexOf(this), outDebugDefines);
-            else
-                Shader3D._debugShaderVariantInfo = dbugShaderVariantInfo = new ShaderVariant(debugShader, debugShader._subShaders.indexOf(debugSubShader), debugSubShader._passes.indexOf(this), outDebugDefines);
-            Shader3D.debugShaderVariantCollection.add(dbugShaderVariantInfo);
-        }
-        withCompile(compileDefine) {
-            var debugDefineString = ShaderPass._debugDefineStrings;
-            var debugDefineMask = ShaderPass._debugDefineMasks;
-            var debugMaskLength;
-            compileDefine._intersectionDefineDatas(this._validDefine);
-            if (Shader3D.debugMode) {
-                debugMaskLength = compileDefine._length;
-                this._addDebugShaderVariantCollection(compileDefine, debugDefineString, debugDefineMask);
-            }
-            var cacheShaders = this._cacheSharders;
-            var maskLength = compileDefine._length;
-            if (maskLength > this._cacheShaderHierarchy) {
-                this._resizeCacheShaderMap(cacheShaders, 0, maskLength);
-                this._cacheShaderHierarchy = maskLength;
-            }
-            var mask = compileDefine._mask;
-            var endIndex = compileDefine._length - 1;
-            var maxEndIndex = this._cacheShaderHierarchy - 1;
-            for (var i = 0; i < maxEndIndex; i++) {
-                var subMask = endIndex < i ? 0 : mask[i];
-                var subCacheShaders = cacheShaders[subMask];
-                (subCacheShaders) || (cacheShaders[subMask] = subCacheShaders = {});
-                cacheShaders = subCacheShaders;
-            }
-            var cacheKey = endIndex < maxEndIndex ? 0 : mask[maxEndIndex];
-            var shader = cacheShaders[cacheKey];
-            if (shader)
-                return shader;
-            var defineString = ShaderPass._defineStrings;
-            Shader3D._getNamesByDefineData(compileDefine, defineString);
-            var clusterSlices = Config3D.lightClusterCount;
-            var defMap = {};
-            var vertexHead;
-            var fragmentHead;
-            var defineStr = "";
-            let attributeMap = this._owner._attributeMap;
-            let uniformMap = this._owner._uniformMap;
-            let useUniformBlock = Config3D._uniformBlock;
-            let attributeglsl = GLSLCodeGenerator.glslAttributeString(attributeMap);
-            let uniformglsl = GLSLCodeGenerator.glslUniformString(uniformMap, useUniformBlock);
-            if (WebGL._isWebGL2) {
-                vertexHead =
-                    `#version 300 es
-#if defined(GL_FRAGMENT_PRECISION_HIGH)
-    precision highp float;
-    precision highp int;
-#else
-    precision mediump float;
-    precision mediump int;
-#endif
-layout(std140, column_major) uniform;
-#define attribute in
-#define varying out
-#define textureCube texture
-#define texture2D texture
-${attributeglsl}
-${uniformglsl}
-`;
-                fragmentHead =
-                    `#version 300 es
-#if defined(GL_FRAGMENT_PRECISION_HIGH)
-    precision highp float;
-    precision highp int;
-#else
-    precision mediump float;
-    precision mediump int;
-#endif
-layout(std140, column_major) uniform;
-#define varying in
-out highp vec4 pc_fragColor;
-#define gl_FragColor pc_fragColor
-#define gl_FragDepthEXT gl_FragDepth
-#define texture2D texture
-#define textureCube texture
-#define texture2DProj textureProj
-#define texture2DLodEXT textureLod
-#define texture2DProjLodEXT textureProjLod
-#define textureCubeLodEXT textureLod
-#define texture2DGradEXT textureGrad
-#define texture2DProjGradEXT textureProjGrad
-#define textureCubeGradEXT textureGrad
-${uniformglsl}`;
-            }
-            else {
-                vertexHead =
-                    `#if defined(GL_FRAGMENT_PRECISION_HIGH)
-    precision highp float;
-    precision highp int;
-#else
-    precision mediump float;
-    precision mediump int;
-#endif
-${attributeglsl}
-${uniformglsl}`;
-                fragmentHead =
-                    `#ifdef GL_EXT_shader_texture_lod
-    #extension GL_EXT_shader_texture_lod : enable
-#endif
-
-#if defined(GL_FRAGMENT_PRECISION_HIGH)
-    precision highp float;
-    precision highp int;
-#else
-    precision mediump float;
-    precision mediump int;
-#endif
-
-#if !defined(GL_EXT_shader_texture_lod)
-    #define texture1DLodEXT texture1D
-    #define texture2DLodEXT texture2D
-    #define texture2DProjLodEXT texture2DProj
-    #define texture3DLodEXT texture3D
-    #define textureCubeLodEXT textureCube
-#endif
-${uniformglsl}`;
-            }
-            defineStr += "#define MAX_LIGHT_COUNT " + Config3D.maxLightCount + "\n";
-            defineStr += "#define MAX_LIGHT_COUNT_PER_CLUSTER " + Config3D._maxAreaLightCountPerClusterAverage + "\n";
-            defineStr += "#define CLUSTER_X_COUNT " + clusterSlices.x + "\n";
-            defineStr += "#define CLUSTER_Y_COUNT " + clusterSlices.y + "\n";
-            defineStr += "#define CLUSTER_Z_COUNT " + clusterSlices.z + "\n";
-            defineStr += "#define SHADER_CAPAILITY_LEVEL " + LayaGL.renderEngine.getParams(exports.RenderParams.SHADER_CAPAILITY_LEVEL) + "\n";
-            for (var i = 0, n = defineString.length; i < n; i++) {
-                var def = defineString[i];
-                defineStr += "#define " + def + "\n";
-                defMap[def] = true;
-            }
-            var vs = this._VS.toscript(defMap, []);
-            var vsVersion = '';
-            if (vs[0].indexOf('#version') == 0) {
-                vsVersion = vs[0] + '\n';
-                vs.shift();
-            }
-            var ps = this._PS.toscript(defMap, []);
-            var psVersion = '';
-            if (ps[0].indexOf('#version') == 0) {
-                psVersion = ps[0] + '\n';
-                ps.shift();
-            }
-            shader = LayaGL.renderOBJCreate.createShaderInstance(vsVersion + vertexHead + defineStr + vs.join('\n'), psVersion + fragmentHead + defineStr + ps.join('\n'), this._owner._attributeMap, this);
-            cacheShaders[cacheKey] = shader;
-            if (Shader3D.debugMode) {
-                var defStr = "";
-                var defMask = "";
-                for (var i = 0, n = debugMaskLength; i < n; i++) {
-                    (i == n - 1) ? defMask += debugDefineMask[i] : defMask += debugDefineMask[i] + ",";
-                }
-                for (var i = 0, n = debugDefineString.length; i < n; i++)
-                    (i == n - 1) ? defStr += debugDefineString[i] : defStr += debugDefineString[i] + ",";
-                console.log("%cLayaAir: Shader Compile Information---ShaderName:" + this._owner._owner._name + " SubShaderIndex:" + this._owner._owner._subShaders.indexOf(this._owner) + " PassIndex:" + this._owner._passes.indexOf(this) + " DefineMask:[" + defMask + "]" + " DefineNames:[" + defStr + "]", "color:green");
-            }
-            return shader;
-        }
-    }
-    ShaderPass._defineStrings = [];
-    ShaderPass._debugDefineStrings = [];
-    ShaderPass._debugDefineMasks = [];
-
-    class VertexMesh {
-        static __init__() {
-            VertexMesh.instanceWorldMatrixDeclaration = new VertexDeclaration(64, [new VertexElement(0, VertexElementFormat.Vector4, VertexMesh.MESH_WORLDMATRIX_ROW0),
-            new VertexElement(16, VertexElementFormat.Vector4, VertexMesh.MESH_WORLDMATRIX_ROW1),
-            new VertexElement(32, VertexElementFormat.Vector4, VertexMesh.MESH_WORLDMATRIX_ROW2),
-            new VertexElement(48, VertexElementFormat.Vector4, VertexMesh.MESH_WORLDMATRIX_ROW3)]);
-            VertexMesh.instanceSimpleAnimatorDeclaration = new VertexDeclaration(16, [new VertexElement(0, VertexElementFormat.Vector4, VertexMesh.MESH_SIMPLEANIMATOR)]);
-        }
-        static getVertexDeclaration(vertexFlag, compatible = true) {
-            var verDec = VertexMesh._vertexDeclarationMap[vertexFlag + (compatible ? "_0" : "_1")];
-            if (!verDec) {
-                var subFlags = vertexFlag.split(",");
-                var offset = 0;
-                var elements = [];
-                for (var i = 0, n = subFlags.length; i < n; i++) {
-                    var element;
-                    switch (subFlags[i]) {
-                        case "POSITION":
-                            element = new VertexElement(offset, VertexElementFormat.Vector3, VertexMesh.MESH_POSITION0);
-                            offset += 12;
-                            break;
-                        case "NORMAL":
-                            element = new VertexElement(offset, VertexElementFormat.Vector3, VertexMesh.MESH_NORMAL0);
-                            offset += 12;
-                            break;
-                        case "COLOR":
-                            element = new VertexElement(offset, VertexElementFormat.Vector4, VertexMesh.MESH_COLOR0);
-                            offset += 16;
-                            break;
-                        case "UV":
-                            element = new VertexElement(offset, VertexElementFormat.Vector2, VertexMesh.MESH_TEXTURECOORDINATE0);
-                            offset += 8;
-                            break;
-                        case "UV1":
-                            element = new VertexElement(offset, VertexElementFormat.Vector2, VertexMesh.MESH_TEXTURECOORDINATE1);
-                            offset += 8;
-                            break;
-                        case "BLENDWEIGHT":
-                            element = new VertexElement(offset, VertexElementFormat.Vector4, VertexMesh.MESH_BLENDWEIGHT0);
-                            offset += 16;
-                            break;
-                        case "BLENDINDICES":
-                            if (compatible) {
-                                element = new VertexElement(offset, VertexElementFormat.Vector4, VertexMesh.MESH_BLENDINDICES0);
-                                offset += 16;
-                            }
-                            else {
-                                element = new VertexElement(offset, VertexElementFormat.Byte4, VertexMesh.MESH_BLENDINDICES0);
-                                offset += 4;
-                            }
-                            break;
-                        case "TANGENT":
-                            element = new VertexElement(offset, VertexElementFormat.Vector4, VertexMesh.MESH_TANGENT0);
-                            offset += 16;
-                            break;
-                        case "NORMAL_BYTE":
-                            element = new VertexElement(offset, VertexElementFormat.NorByte4, VertexMesh.MESH_NORMAL0);
-                            offset += 4;
-                            break;
-                        default:
-                            throw "VertexMesh: unknown vertex flag.";
-                    }
-                    elements.push(element);
-                }
-                verDec = new VertexDeclaration(offset, elements);
-                VertexMesh._vertexDeclarationMap[vertexFlag + (compatible ? "_0" : "_1")] = verDec;
-            }
-            return verDec;
-        }
-    }
-    VertexMesh.MESH_POSITION0 = 0;
-    VertexMesh.MESH_COLOR0 = 1;
-    VertexMesh.MESH_TEXTURECOORDINATE0 = 2;
-    VertexMesh.MESH_NORMAL0 = 3;
-    VertexMesh.MESH_TANGENT0 = 4;
-    VertexMesh.MESH_BLENDINDICES0 = 5;
-    VertexMesh.MESH_BLENDWEIGHT0 = 6;
-    VertexMesh.MESH_TEXTURECOORDINATE1 = 7;
-    VertexMesh.MESH_WORLDMATRIX_ROW0 = 8;
-    VertexMesh.MESH_WORLDMATRIX_ROW1 = 9;
-    VertexMesh.MESH_WORLDMATRIX_ROW2 = 10;
-    VertexMesh.MESH_WORLDMATRIX_ROW3 = 11;
-    VertexMesh.MESH_SIMPLEANIMATOR = 12;
-    VertexMesh.MESH_CUSTOME0 = 12;
-    VertexMesh.MESH_CUSTOME1 = 13;
-    VertexMesh.MESH_CUSTOME2 = 14;
-    VertexMesh.MESH_CUSTOME3 = 15;
-    VertexMesh._vertexDeclarationMap = {};
-
-    class SubShader {
-        static regIncludeBindUnifrom(includeName, uniformMap, defaultValue) {
-            let obj = {};
-            let data = obj[includeName] = {};
-            data["uniformMap"] = uniformMap;
-            data["defaultValue"] = defaultValue;
-            Object.assign(SubShader.IncludeUniformMap, obj);
-        }
-        static __init__() {
-            let DefaultShaderStateMap = {
-                's_Cull': Shader3D.RENDER_STATE_CULL,
-                's_Blend': Shader3D.RENDER_STATE_BLEND,
-                's_BlendSrc': Shader3D.RENDER_STATE_BLEND_SRC,
-                's_BlendDst': Shader3D.RENDER_STATE_BLEND_DST,
-                's_BlendSrcRGB': Shader3D.RENDER_STATE_BLEND_SRC_RGB,
-                's_BlendDstRGB': Shader3D.RENDER_STATE_BLEND_DST_RGB,
-                's_BlendSrcAlpha': Shader3D.RENDER_STATE_BLEND_SRC_ALPHA,
-                's_BlendDstAlpha': Shader3D.RENDER_STATE_BLEND_DST_ALPHA,
-                's_BlendEquation': Shader3D.RENDER_STATE_BLEND_EQUATION,
-                's_BlendEquationRGB': Shader3D.RENDER_STATE_BLEND_EQUATION_RGB,
-                's_BlendEquationAlpha': Shader3D.RENDER_STATE_BLEND_EQUATION_ALPHA,
-                's_DepthTest': Shader3D.RENDER_STATE_DEPTH_TEST,
-                's_DepthWrite': Shader3D.RENDER_STATE_DEPTH_WRITE,
-                's_StencilRef': Shader3D.RENDER_STATE_STENCIL_REF,
-                's_StencilTest': Shader3D.RENDER_STATE_STENCIL_TEST,
-                's_StencilWrite': Shader3D.RENDER_STATE_STENCIL_WRITE,
-                's_StencilOp': Shader3D.RENDER_STATE_STENCIL_OP
-            };
-            this.StateParamsMap = {};
-            for (let s in DefaultShaderStateMap) {
-                this.StateParamsMap[DefaultShaderStateMap[s]] = Shader3D.propertyNameToID(s);
-            }
-            SubShader.IncludeUniformMap = {};
-        }
-        constructor(attributeMap = SubShader.DefaultAttributeMap, uniformMap = {}, uniformDefaultValue = null) {
-            this._uniformBufferDataMap = new Map();
-            this._flags = {};
-            this._passes = [];
-            this._attributeMap = attributeMap;
-            this._uniformMap = uniformMap;
-            this._uniformDefaultValue = uniformDefaultValue;
-            this._uniformTypeMap = new Map();
-            for (const key in uniformMap) {
-                if (typeof uniformMap[key] == "object") {
-                    let block = (uniformMap[key]);
-                    let blockUniformMap = new Map();
-                    for (const uniformName in block) {
-                        let uniformType = ShaderDataTypeToUniformBufferType(block[uniformName]);
-                        blockUniformMap.set(uniformName, uniformType);
-                        this._uniformTypeMap.set(uniformName, block[uniformName]);
-                    }
-                    let blockUniformIndexMap = new Map();
-                    blockUniformMap.forEach((value, key) => {
-                        blockUniformIndexMap.set(Shader3D.propertyNameToID(key), value);
-                    });
-                    let blockData = new UnifromBufferData(blockUniformIndexMap);
-                    this._uniformBufferDataMap.set(key, blockData);
-                }
-                else {
-                    let unifromType = uniformMap[key];
-                    this._uniformTypeMap.set(key, unifromType);
-                    if (unifromType == exports.ShaderDataType.Texture2D || unifromType == exports.ShaderDataType.TextureCube) {
-                        let textureGammaDefine = Shader3D.getDefineByName(`Gamma_${key}`);
-                        let uniformIndex = Shader3D.propertyNameToID(key);
-                        ShaderDefine._texGammaDefine[uniformIndex] = textureGammaDefine;
-                    }
-                }
-            }
-        }
-        setFlag(key, value) {
-            if (value)
-                this._flags[key] = value;
-            else
-                delete this._flags[key];
-        }
-        getFlag(key) {
-            return this._flags[key];
-        }
-        addShaderPass(vs, ps, pipelineMode = "Forward") {
-            return this._addShaderPass(ShaderCompile.compile(vs, ps), pipelineMode);
-        }
-        _addShaderPass(compiledObj, pipelineMode = "Forward") {
-            var shaderPass = new ShaderPass(this, compiledObj);
-            shaderPass._pipelineMode = pipelineMode;
-            this._passes.push(shaderPass);
-            this._addIncludeUniform(compiledObj.includeNames);
-            return shaderPass;
-        }
-        _addIncludeUniform(includemap) {
-            for (let ele of includemap) {
-                if (SubShader.IncludeUniformMap[ele]) {
-                    let includeBindInfo = SubShader.IncludeUniformMap[ele];
-                    let bindtypeMap = includeBindInfo["uniformMap"];
-                    let bindDefaultValue = includeBindInfo["defaultValue"];
-                    for (var i in bindtypeMap) {
-                        if (!this._uniformTypeMap.has(i)) {
-                            this._uniformTypeMap.set(i, bindtypeMap[i]);
-                            this._uniformMap[i] = bindtypeMap[i];
-                        }
-                    }
-                    for (var i in bindDefaultValue) {
-                        if (!this._uniformDefaultValue[i]) {
-                            this._uniformDefaultValue[i] = bindDefaultValue[i];
-                        }
-                    }
-                }
-            }
-        }
-    }
-    SubShader.DefaultAttributeMap = {
-        'a_Position': [VertexMesh.MESH_POSITION0, exports.ShaderDataType.Vector4],
-        'a_Normal': [VertexMesh.MESH_NORMAL0, exports.ShaderDataType.Vector3],
-        'a_Tangent0': [VertexMesh.MESH_TANGENT0, exports.ShaderDataType.Vector4],
-        'a_Texcoord0': [VertexMesh.MESH_TEXTURECOORDINATE0, exports.ShaderDataType.Vector2],
-        'a_Texcoord1': [VertexMesh.MESH_TEXTURECOORDINATE1, exports.ShaderDataType.Vector2],
-        'a_Color': [VertexMesh.MESH_COLOR0, exports.ShaderDataType.Vector4],
-        'a_BoneWeights': [VertexMesh.MESH_BLENDWEIGHT0, exports.ShaderDataType.Vector4],
-        'a_BoneIndices': [VertexMesh.MESH_BLENDINDICES0, exports.ShaderDataType.Vector4],
-        'a_WorldMat': [VertexMesh.MESH_WORLDMATRIX_ROW0, exports.ShaderDataType.Matrix4x4],
-        'a_SimpleTextureParams': [VertexMesh.MESH_SIMPLEANIMATOR, exports.ShaderDataType.Vector2]
-    };
-    function ShaderDataTypeToUniformBufferType(shaderDataType) {
-        switch (shaderDataType) {
-            case exports.ShaderDataType.Float:
-                return exports.UniformBufferParamsType.Number;
-            case exports.ShaderDataType.Vector2:
-                return exports.UniformBufferParamsType.Vector2;
-            case exports.ShaderDataType.Vector3:
-                return exports.UniformBufferParamsType.Vector3;
-            case exports.ShaderDataType.Vector4:
-            case exports.ShaderDataType.Color:
-                return exports.UniformBufferParamsType.Vector4;
-            case exports.ShaderDataType.Matrix4x4:
-                return exports.UniformBufferParamsType.Matrix4x4;
-            default:
-                throw "ShaderDataType can not be in UniformBuffer.";
-        }
-    }
-
-    class Shader3D {
-        static _getNamesByDefineData(defineData, out) {
-            var maskMap = Shader3D._maskMap;
-            var mask = defineData._mask;
-            out.length = 0;
-            for (var i = 0, n = defineData._length; i < n; i++) {
-                var subMaskMap = maskMap[i];
-                var subMask = mask[i];
-                for (var j = 0; j < 32; j++) {
-                    var d = 1 << j;
-                    if (subMask > 0 && d > subMask)
-                        break;
-                    if (subMask & d)
-                        out.push(subMaskMap[d]);
-                }
-            }
-        }
-        static getDefineByName(name) {
-            var define = Shader3D._defineMap[name];
-            if (!define) {
-                var maskMap = Shader3D._maskMap;
-                var counter = Shader3D._defineCounter;
-                var index = Math.floor(counter / 32);
-                var value = 1 << counter % 32;
-                define = new ShaderDefine(index, value);
-                Shader3D._defineMap[name] = define;
-                if (index == maskMap.length) {
-                    maskMap.length++;
-                    maskMap[index] = {};
-                }
-                maskMap[index][value] = name;
-                Shader3D._defineCounter++;
-            }
-            return define;
-        }
-        static propertyNameToID(name) {
-            return LayaGL.renderEngine.propertyNameToID(name);
-        }
-        static propertyIDToName(id) {
-            return LayaGL.renderEngine.propertyIDToName(id);
-        }
-        static addInclude(fileName, txt) {
-            ShaderCompile.addInclude(fileName, txt);
-        }
-        static compileShaderByDefineNames(shaderName, subShaderIndex, passIndex, defineNames) {
-            var shader = Shader3D.find(shaderName);
-            if (shader) {
-                var subShader = shader.getSubShaderAt(subShaderIndex);
-                if (subShader) {
-                    var pass = subShader._passes[passIndex];
-                    if (pass) {
-                        var compileDefineDatas = Shader3D._compileDefineDatas;
-                        compileDefineDatas.clear();
-                        for (var i = 0, n = defineNames.length; i < n; i++)
-                            compileDefineDatas.add(Shader3D.getDefineByName(defineNames[i]));
-                        compileDefineDatas.addDefineDatas(Shader3D._configDefineValues);
-                        pass.withCompile(compileDefineDatas);
-                    }
-                    else {
-                        console.warn("Shader3D: unknown passIndex.");
-                    }
-                }
-                else {
-                    console.warn("Shader3D: unknown subShaderIndex.");
-                }
-            }
-            else {
-                console.warn("Shader3D: unknown shader name.");
-            }
-        }
-        static add(name, enableInstancing = false, supportReflectionProbe = false) {
-            return Shader3D._preCompileShader[name] = new Shader3D(name, enableInstancing, supportReflectionProbe);
-        }
-        static find(name) {
-            return Shader3D._preCompileShader[name];
-        }
-        static parse(data, basePath) {
-            if (!data.name || !data.uniformMap)
-                console.error("TODO");
-            let shader = Shader3D.add(data.name, data.enableInstancing, data.supportReflectionProbe);
-            let subshader = new SubShader(data.attributeMap ? data.attributeMap : SubShader.DefaultAttributeMap, data.uniformMap, data.defaultValue);
-            shader.addSubShader(subshader);
-            let passArray = data.shaderPass;
-            for (var i in passArray) {
-                let pass = passArray[i];
-                subshader._addShaderPass(ShaderCompile.compile(pass.VS, pass.FS, basePath), pass.pipeline);
-            }
-            return shader;
-        }
-        get name() {
-            return this._name;
-        }
-        constructor(name, enableInstancing, supportReflectionProbe) {
-            this._enableInstancing = false;
-            this._supportReflectionProbe = false;
-            this._subShaders = [];
-            this._name = name;
-            this._enableInstancing = enableInstancing;
-            this._supportReflectionProbe = supportReflectionProbe;
-        }
-        addSubShader(subShader) {
-            this._subShaders.push(subShader);
-            subShader._owner = this;
-        }
-        getSubShaderAt(index) {
-            return this._subShaders[index];
-        }
-        static compileShader(shaderName, subShaderIndex, passIndex, ...defineMask) {
-            var shader = Shader3D.find(shaderName);
-            if (shader) {
-                var subShader = shader.getSubShaderAt(subShaderIndex);
-                if (subShader) {
-                    var pass = subShader._passes[passIndex];
-                    if (pass) {
-                        var compileDefineDatas = Shader3D._compileDefineDatas;
-                        var mask = compileDefineDatas._mask;
-                        mask.length = 0;
-                        for (var i = 0, n = defineMask.length; i < n; i++)
-                            mask.push(defineMask[i]);
-                        compileDefineDatas._length = defineMask.length;
-                        pass.withCompile(compileDefineDatas);
-                    }
-                    else {
-                        console.warn("Shader3D: unknown passIndex.");
-                    }
-                }
-                else {
-                    console.warn("Shader3D: unknown subShaderIndex.");
-                }
-            }
-            else {
-                console.warn("Shader3D: unknown shader name.");
-            }
-        }
-    }
-    Shader3D._configDefineValues = new DefineDatas();
-    Shader3D._compileDefineDatas = new DefineDatas();
-    Shader3D.RENDER_STATE_CULL = 0;
-    Shader3D.RENDER_STATE_BLEND = 1;
-    Shader3D.RENDER_STATE_BLEND_SRC = 2;
-    Shader3D.RENDER_STATE_BLEND_DST = 3;
-    Shader3D.RENDER_STATE_BLEND_SRC_RGB = 4;
-    Shader3D.RENDER_STATE_BLEND_DST_RGB = 5;
-    Shader3D.RENDER_STATE_BLEND_SRC_ALPHA = 6;
-    Shader3D.RENDER_STATE_BLEND_DST_ALPHA = 7;
-    Shader3D.RENDER_STATE_BLEND_CONST_COLOR = 8;
-    Shader3D.RENDER_STATE_BLEND_EQUATION = 9;
-    Shader3D.RENDER_STATE_BLEND_EQUATION_RGB = 10;
-    Shader3D.RENDER_STATE_BLEND_EQUATION_ALPHA = 11;
-    Shader3D.RENDER_STATE_DEPTH_TEST = 12;
-    Shader3D.RENDER_STATE_DEPTH_WRITE = 13;
-    Shader3D.RENDER_STATE_STENCIL_TEST = 14;
-    Shader3D.RENDER_STATE_STENCIL_WRITE = 15;
-    Shader3D.RENDER_STATE_STENCIL_REF = 16;
-    Shader3D.RENDER_STATE_STENCIL_OP = 17;
-    Shader3D.PERIOD_CUSTOM = 0;
-    Shader3D.PERIOD_MATERIAL = 1;
-    Shader3D.PERIOD_SPRITE = 2;
-    Shader3D.PERIOD_CAMERA = 3;
-    Shader3D.PERIOD_SCENE = 4;
-    Shader3D._propertyNameMap = {};
-    Shader3D._propertyNameCounter = 0;
-    Shader3D._defineCounter = 0;
-    Shader3D._defineMap = {};
-    Shader3D._preCompileShader = {};
-    Shader3D._maskMap = [];
-    Shader3D.debugMode = false;
-    Shader3D.debugShaderVariantCollection = new ShaderVariantCollection();
-
-    exports.UniformBufferParamsType = void 0;
-    (function (UniformBufferParamsType) {
-        UniformBufferParamsType[UniformBufferParamsType["Number"] = 0] = "Number";
-        UniformBufferParamsType[UniformBufferParamsType["Vector2"] = 1] = "Vector2";
-        UniformBufferParamsType[UniformBufferParamsType["Vector3"] = 2] = "Vector3";
-        UniformBufferParamsType[UniformBufferParamsType["Vector4"] = 3] = "Vector4";
-        UniformBufferParamsType[UniformBufferParamsType["Matrix4x4"] = 4] = "Matrix4x4";
-        UniformBufferParamsType[UniformBufferParamsType["Vector4Array"] = 5] = "Vector4Array";
-        UniformBufferParamsType[UniformBufferParamsType["MatrixArray"] = 6] = "MatrixArray";
-    })(exports.UniformBufferParamsType || (exports.UniformBufferParamsType = {}));
-    class UnifromBufferData {
-        constructor(uniformParamsStat) {
-            this._uniformParamsState = new Map(uniformParamsStat);
-            this._createBuffer();
-            this._updateFlag = new Vector2();
-            this._resetUpdateFlag();
-        }
-        _createBuffer() {
-            var dataPos = 0;
-            this._layoutMap = {};
-            const elementSize = 4;
-            this._uniformParamsState.forEach((key, value) => {
-                dataPos += this._addUniformParams(value, key, dataPos);
-            });
-            this._bytelength = Math.ceil(dataPos / 4) * 4 * elementSize;
-            this._buffer = new Float32Array(dataPos);
-        }
-        _getArraySize(key) {
-            let left = key.indexOf("[");
-            let right = key.indexOf("]");
-            if (left != -1 && right != -1 && left < right) {
-                return parseFloat(key.substring(left + 1, right));
-            }
-            else
-                throw key + " is illegal ";
-        }
-        _addUniformParams(uniformID, value, offset) {
-            let size = 0;
-            let posAdd = 0;
-            let posG = offset % 4;
-            let offsetadd;
-            switch (value) {
-                case exports.UniformBufferParamsType.Number:
-                    size = 1;
-                    posAdd = 1;
-                    break;
-                case exports.UniformBufferParamsType.Vector2:
-                    size = 2;
-                    switch (posG) {
-                        case 0:
-                        case 2:
-                            posAdd = 2;
-                            break;
-                        case 1:
-                        case 3:
-                            offset += 1;
-                            posAdd = 3;
-                            break;
-                    }
-                    break;
-                case exports.UniformBufferParamsType.Vector3:
-                    size = 3;
-                    posAdd = 3;
-                    switch (posG) {
-                        case 1:
-                        case 2:
-                        case 3:
-                            offset += (4 - posG);
-                            posAdd = (4 - posG) + 3;
-                            break;
-                    }
-                    break;
-                case exports.UniformBufferParamsType.Vector4:
-                    size = 4;
-                    switch (posG) {
-                        case 0:
-                            posAdd = 4;
-                            break;
-                        case 1:
-                            offset += 3;
-                            posAdd = 7;
-                            break;
-                        case 2:
-                            offset += 2;
-                            posAdd = 6;
-                            break;
-                        case 3:
-                            offset += 1;
-                            posAdd = 5;
-                            break;
-                    }
-                    break;
-                case exports.UniformBufferParamsType.Matrix4x4:
-                    size = 16;
-                    offsetadd = posG ? 4 - posG : posG;
-                    offset += offsetadd;
-                    posAdd = size + offsetadd;
-                    break;
-                case exports.UniformBufferParamsType.Vector4Array:
-                    size = this._getArraySize(Shader3D.propertyIDToName(uniformID)) * 4;
-                    offsetadd = posG ? 4 - posG : posG;
-                    offset += offsetadd;
-                    posAdd = size + offsetadd;
-                    break;
-                case exports.UniformBufferParamsType.MatrixArray:
-                    size = this._getArraySize(Shader3D.propertyIDToName(uniformID)) * 16;
-                    offsetadd = posG ? 4 - posG : posG;
-                    offset += offsetadd;
-                    posAdd = size + offsetadd;
-                    break;
-                default:
-                    throw "Unifrom Buffer Params Type is illegal ";
-            }
-            const paramsInfo = new Vector2(offset, size);
-            this._layoutMap[uniformID] = paramsInfo;
-            return posAdd;
-        }
-        _getParamsInfo(key) {
-            return this._layoutMap[key];
-        }
-        _setUpdateFlag(min, max) {
-            if (min < this._updateFlag.x)
-                this._updateFlag.x = min;
-            if (max > this._updateFlag.y)
-                this._updateFlag.y = max;
-        }
-        destroy() {
-            delete this._buffer;
-            this._uniformParamsState.clear();
-            this._uniformParamsState = null;
-            this._layoutMap = null;
-            this._updateFlag = null;
-        }
-        _resetUpdateFlag() {
-            this._updateFlag.setValue(this._buffer.length, 0);
-        }
-        _has(uniformID) {
-            const info = this._getParamsInfo(uniformID);
-            return !!info;
-        }
-        _setData(uniformID, value) {
-            let uniformType = this._uniformParamsState.get(uniformID);
-            switch (uniformType) {
-                case exports.UniformBufferParamsType.Number:
-                    this.setNumberbyIndex(uniformID, value);
-                    break;
-                case exports.UniformBufferParamsType.Vector2:
-                    this.setVector2byIndex(uniformID, value);
-                    break;
-                case exports.UniformBufferParamsType.Vector3:
-                    this.setVector3byIndex(uniformID, value);
-                    break;
-                case exports.UniformBufferParamsType.Vector4:
-                    this.setVector4byIndex(uniformID, value);
-                    break;
-                case exports.UniformBufferParamsType.Matrix4x4:
-                    this.setMatrixbyIndex(uniformID, value);
-                    break;
-                case exports.UniformBufferParamsType.Vector4Array:
-                    this.setVector4ArraybyIndex(uniformID, value);
-                    break;
-                case exports.UniformBufferParamsType.MatrixArray:
-                    this.setMatrixArraybyIndex(uniformID, value);
-                    break;
-            }
-        }
-        getbyteLength() {
-            return this._bytelength;
-        }
-        setVector4Array(name, value) {
-            const uniformID = Shader3D.propertyNameToID(name);
-            this.setVector4ArraybyIndex(uniformID, value);
-        }
-        setVector4ArraybyIndex(uniformID, value) {
-            const info = this._getParamsInfo(uniformID);
-            if (!info)
-                return;
-            let pos = info.x;
-            let count = info.y / 4;
-            for (let i = 0; i < count; i++) {
-                let vec = value[i];
-                this._buffer[pos++] = vec.x;
-                this._buffer[pos++] = vec.y;
-                this._buffer[pos++] = vec.z;
-                this._buffer[pos++] = vec.w;
-            }
-            this._setUpdateFlag(info.x, pos);
-        }
-        setMatrixArray(name, value) {
-            const uniformID = Shader3D.propertyNameToID(name);
-            this.setMatrixArraybyIndex(uniformID, value);
-        }
-        setMatrixArraybyIndex(uniformID, value) {
-            const info = this._getParamsInfo(uniformID);
-            if (!info)
-                return;
-            let pos = info.x;
-            let count = info.y / 4;
-            for (let i = 0; i < count; i++) {
-                let mat = value[i];
-                this._buffer.set(mat.elements, pos);
-                pos += 16;
-            }
-            this._setUpdateFlag(info.x, pos);
-        }
-        setNumber(name, value) {
-            const uniformID = Shader3D.propertyNameToID(name);
-            this.setNumberbyIndex(uniformID, value);
-        }
-        setNumberbyIndex(uniformID, value) {
-            const info = this._getParamsInfo(uniformID);
-            if (!info)
-                return;
-            let pos = info.x;
-            this._buffer[pos++] = value;
-            this._setUpdateFlag(info.x, pos);
-        }
-        setVector2(name, value) {
-            const uniformID = Shader3D.propertyNameToID(name);
-            this.setVector2byIndex(uniformID, value);
-        }
-        setVector2byIndex(uniformID, value) {
-            const info = this._getParamsInfo(uniformID);
-            if (!info)
-                return;
-            let pos = info.x;
-            this._buffer[pos++] = value.x;
-            this._buffer[pos++] = value.y;
-            this._setUpdateFlag(info.x, pos);
-        }
-        setVector3(name, value) {
-            const uniformID = Shader3D.propertyNameToID(name);
-            this.setVector3byIndex(uniformID, value);
-        }
-        setVector3byIndex(uniformID, value) {
-            const info = this._getParamsInfo(uniformID);
-            if (!info)
-                return;
-            let pos = info.x;
-            this._buffer[pos++] = value.x;
-            this._buffer[pos++] = value.y;
-            this._buffer[pos++] = value.z;
-            this._setUpdateFlag(info.x, pos);
-        }
-        setVector4(name, value) {
-            const uniformID = Shader3D.propertyNameToID(name);
-            this.setVector4byIndex(uniformID, value);
-        }
-        setVector4byIndex(uniformID, value) {
-            const info = this._getParamsInfo(uniformID);
-            if (!info)
-                return;
-            let pos = info.x;
-            this._buffer[pos++] = value.x;
-            this._buffer[pos++] = value.y;
-            this._buffer[pos++] = value.z;
-            this._buffer[pos++] = value.w;
-            this._setUpdateFlag(info.x, pos);
-        }
-        setColor(name, value) {
-            const uniformID = Shader3D.propertyNameToID(name);
-            this.setColorbyIndex(uniformID, value);
-        }
-        setColorbyIndex(uniformID, value) {
-            const info = this._getParamsInfo(uniformID);
-            if (!info)
-                return;
-            let pos = info.x;
-            this._buffer[pos++] = Color.gammaToLinearSpace(value.r);
-            this._buffer[pos++] = Color.gammaToLinearSpace(value.g);
-            this._buffer[pos++] = Color.gammaToLinearSpace(value.b);
-            this._buffer[pos++] = Color.gammaToLinearSpace(value.a);
-            this._setUpdateFlag(info.x, pos);
-        }
-        setMatrix(name, value) {
-            const uniformID = Shader3D.propertyNameToID(name);
-            this.setMatrixbyIndex(uniformID, value);
-        }
-        setMatrixbyIndex(uniformID, value) {
-            const info = this._getParamsInfo(uniformID);
-            if (!info)
-                return;
-            let pos = info.x;
-            this._buffer.set(value.elements, pos);
-            pos += 16;
-            this._setUpdateFlag(info.x, pos);
-        }
-        clone() {
-            let ubd = new UnifromBufferData(this._uniformParamsState);
-            return ubd;
-        }
-    }
-
     class SubUniformBufferData extends UnifromBufferData {
         constructor(uniformParamsStat, bufferOffset) {
             super(uniformParamsStat);
@@ -38469,6 +38558,18 @@ ${uniformglsl}`;
     }
 
     class UniformBufferObject extends Buffer {
+        constructor(glPointer, name, bufferUsage, byteLength, isSingle) {
+            super(exports.BufferTargetType.UNIFORM_BUFFER, bufferUsage);
+            this._isSingle = false;
+            this._glPointer = glPointer;
+            this.byteLength = byteLength;
+            this._name = name;
+            this._isSingle = isSingle;
+            this.bind();
+            if (this._isSingle)
+                this._bindUniformBufferBase();
+            this._glBuffer.setDataLength(this.byteLength);
+        }
         static create(name, bufferUsage, bytelength, isSingle = false) {
             if (!UniformBufferObject._Map.get(name)) {
                 UniformBufferObject._Map.set(name, new UniformBufferBase(name, LayaGL.renderEngine.getUBOPointer(name), isSingle));
@@ -38489,18 +38590,6 @@ ${uniformglsl}`;
             if (!base)
                 return null;
             return base._mapArray[index];
-        }
-        constructor(glPointer, name, bufferUsage, byteLength, isSingle) {
-            super(exports.BufferTargetType.UNIFORM_BUFFER, bufferUsage);
-            this._isSingle = false;
-            this._glPointer = glPointer;
-            this.byteLength = byteLength;
-            this._name = name;
-            this._isSingle = isSingle;
-            this.bind();
-            if (this._isSingle)
-                this._bindUniformBufferBase();
-            this._glBuffer.setDataLength(this.byteLength);
         }
         _bindUniformBufferBase() {
             this._glBuffer.bindBufferBase(this._glPointer);
@@ -39044,11 +39133,6 @@ ${uniformglsl}`;
     UploadMemoryManager.UploadMemorySize = 1024 * 1024;
     UploadMemoryManager._instance = null;
 
-    class ShaderValue {
-        constructor() {
-        }
-    }
-
     class ArabicReshaper {
         characterMapContains(c) {
             for (var i = 0; i < ArabicReshaper.charsMap.length; ++i) {
@@ -39169,52 +39253,52 @@ ${uniformglsl}`;
         }
     }
     ArabicReshaper.charsMap = [[0x0621, 0xFE80, null, null, null],
-    [0x0622, 0xFE81, null, null, 0xFE82],
-    [0x0623, 0xFE83, null, null, 0xFE84],
-    [0x0624, 0xFE85, null, null, 0xFE86],
-    [0x0625, 0xFE87, null, null, 0xFE88],
-    [0x0626, 0xFE89, 0xFE8B, 0xFE8C, 0xFE8A],
-    [0x0627, 0xFE8D, null, null, 0xFE8E],
-    [0x0628, 0xFE8F, 0xFE91, 0xFE92, 0xFE90],
-    [0x0629, 0xFE93, null, null, 0xFE94],
-    [0x062A, 0xFE95, 0xFE97, 0xFE98, 0xFE96],
-    [0x062B, 0xFE99, 0xFE9B, 0xFE9C, 0xFE9A],
-    [0x062C, 0xFE9D, 0xFE9F, 0xFEA0, 0xFE9E],
-    [0x062D, 0xFEA1, 0xFEA3, 0xFEA4, 0xFEA2],
-    [0x062E, 0xFEA5, 0xFEA7, 0xFEA8, 0xFEA6],
-    [0x062F, 0xFEA9, null, null, 0xFEAA],
-    [0x0630, 0xFEAB, null, null, 0xFEAC],
-    [0x0631, 0xFEAD, null, null, 0xFEAE],
-    [0x0632, 0xFEAF, null, null, 0xFEB0],
-    [0x0633, 0xFEB1, 0xFEB3, 0xFEB4, 0xFEB2],
-    [0x0634, 0xFEB5, 0xFEB7, 0xFEB8, 0xFEB6],
-    [0x0635, 0xFEB9, 0xFEBB, 0xFEBC, 0xFEBA],
-    [0x0636, 0xFEBD, 0xFEBF, 0xFEC0, 0xFEBE],
-    [0x0637, 0xFEC1, 0xFEC3, 0xFEC4, 0xFEC2],
-    [0x0638, 0xFEC5, 0xFEC7, 0xFEC8, 0xFEC6],
-    [0x0639, 0xFEC9, 0xFECB, 0xFECC, 0xFECA],
-    [0x063A, 0xFECD, 0xFECF, 0xFED0, 0xFECE],
-    [0x0640, 0x0640, 0x0640, 0x0640, 0x0640],
-    [0x0641, 0xFED1, 0xFED3, 0xFED4, 0xFED2],
-    [0x0642, 0xFED5, 0xFED7, 0xFED8, 0xFED6],
-    [0x0643, 0xFED9, 0xFEDB, 0xFEDC, 0xFEDA],
-    [0x0644, 0xFEDD, 0xFEDF, 0xFEE0, 0xFEDE],
-    [0x0645, 0xFEE1, 0xFEE3, 0xFEE4, 0xFEE2],
-    [0x0646, 0xFEE5, 0xFEE7, 0xFEE8, 0xFEE6],
-    [0x0647, 0xFEE9, 0xFEEB, 0xFEEC, 0xFEEA],
-    [0x0648, 0xFEED, null, null, 0xFEEE],
-    [0x0649, 0xFEEF, null, null, 0xFEF0],
-    [0x064A, 0xFEF1, 0xFEF3, 0xFEF4, 0xFEF2],
-    [0x067E, 0xFB56, 0xFB58, 0xFB59, 0xFB57],
-    [0x06CC, 0xFBFC, 0xFBFE, 0xFBFF, 0xFBFD],
-    [0x0686, 0xFB7A, 0xFB7C, 0xFB7D, 0xFB7B],
-    [0x06A9, 0xFB8E, 0xFB90, 0xFB91, 0xFB8F],
-    [0x06AF, 0xFB92, 0xFB94, 0xFB95, 0xFB93],
-    [0x0698, 0xFB8A, null, null, 0xFB8B]];
+        [0x0622, 0xFE81, null, null, 0xFE82],
+        [0x0623, 0xFE83, null, null, 0xFE84],
+        [0x0624, 0xFE85, null, null, 0xFE86],
+        [0x0625, 0xFE87, null, null, 0xFE88],
+        [0x0626, 0xFE89, 0xFE8B, 0xFE8C, 0xFE8A],
+        [0x0627, 0xFE8D, null, null, 0xFE8E],
+        [0x0628, 0xFE8F, 0xFE91, 0xFE92, 0xFE90],
+        [0x0629, 0xFE93, null, null, 0xFE94],
+        [0x062A, 0xFE95, 0xFE97, 0xFE98, 0xFE96],
+        [0x062B, 0xFE99, 0xFE9B, 0xFE9C, 0xFE9A],
+        [0x062C, 0xFE9D, 0xFE9F, 0xFEA0, 0xFE9E],
+        [0x062D, 0xFEA1, 0xFEA3, 0xFEA4, 0xFEA2],
+        [0x062E, 0xFEA5, 0xFEA7, 0xFEA8, 0xFEA6],
+        [0x062F, 0xFEA9, null, null, 0xFEAA],
+        [0x0630, 0xFEAB, null, null, 0xFEAC],
+        [0x0631, 0xFEAD, null, null, 0xFEAE],
+        [0x0632, 0xFEAF, null, null, 0xFEB0],
+        [0x0633, 0xFEB1, 0xFEB3, 0xFEB4, 0xFEB2],
+        [0x0634, 0xFEB5, 0xFEB7, 0xFEB8, 0xFEB6],
+        [0x0635, 0xFEB9, 0xFEBB, 0xFEBC, 0xFEBA],
+        [0x0636, 0xFEBD, 0xFEBF, 0xFEC0, 0xFEBE],
+        [0x0637, 0xFEC1, 0xFEC3, 0xFEC4, 0xFEC2],
+        [0x0638, 0xFEC5, 0xFEC7, 0xFEC8, 0xFEC6],
+        [0x0639, 0xFEC9, 0xFECB, 0xFECC, 0xFECA],
+        [0x063A, 0xFECD, 0xFECF, 0xFED0, 0xFECE],
+        [0x0640, 0x0640, 0x0640, 0x0640, 0x0640],
+        [0x0641, 0xFED1, 0xFED3, 0xFED4, 0xFED2],
+        [0x0642, 0xFED5, 0xFED7, 0xFED8, 0xFED6],
+        [0x0643, 0xFED9, 0xFEDB, 0xFEDC, 0xFEDA],
+        [0x0644, 0xFEDD, 0xFEDF, 0xFEE0, 0xFEDE],
+        [0x0645, 0xFEE1, 0xFEE3, 0xFEE4, 0xFEE2],
+        [0x0646, 0xFEE5, 0xFEE7, 0xFEE8, 0xFEE6],
+        [0x0647, 0xFEE9, 0xFEEB, 0xFEEC, 0xFEEA],
+        [0x0648, 0xFEED, null, null, 0xFEEE],
+        [0x0649, 0xFEEF, null, null, 0xFEF0],
+        [0x064A, 0xFEF1, 0xFEF3, 0xFEF4, 0xFEF2],
+        [0x067E, 0xFB56, 0xFB58, 0xFB59, 0xFB57],
+        [0x06CC, 0xFBFC, 0xFBFE, 0xFBFF, 0xFBFD],
+        [0x0686, 0xFB7A, 0xFB7C, 0xFB7D, 0xFB7B],
+        [0x06A9, 0xFB8E, 0xFB90, 0xFB91, 0xFB8F],
+        [0x06AF, 0xFB92, 0xFB94, 0xFB95, 0xFB93],
+        [0x0698, 0xFB8A, null, null, 0xFB8B]];
     ArabicReshaper.combCharsMap = [[[0x0644, 0x0622], 0xFEF5, null, null, 0xFEF6],
-    [[0x0644, 0x0623], 0xFEF7, null, null, 0xFEF8],
-    [[0x0644, 0x0625], 0xFEF9, null, null, 0xFEFA],
-    [[0x0644, 0x0627], 0xFEFB, null, null, 0xFEFC]];
+        [[0x0644, 0x0623], 0xFEF7, null, null, 0xFEF8],
+        [[0x0644, 0x0625], 0xFEF9, null, null, 0xFEFA],
+        [[0x0644, 0x0627], 0xFEFB, null, null, 0xFEFC]];
     ArabicReshaper.transChars = [0x0610,
         0x0612,
         0x0613,
@@ -39254,6 +39338,11 @@ ${uniformglsl}`;
         0x06EB,
         0x06EC,
         0x06ED];
+
+    class ShaderValue {
+        constructor() {
+        }
+    }
 
     class MatirxArray {
         static ArrayMul(a, b, o) {

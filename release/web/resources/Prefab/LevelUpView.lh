@@ -1,0 +1,20 @@
+{
+  "_$ver": 1,
+  "_$id": "t9jmrvr5",
+  "_$type": "View",
+  "name": "LevelUpView",
+  "width": 1920,
+  "height": 1080,
+  "left": 0,
+  "right": 0,
+  "top": 0,
+  "bottom": 0,
+  "_$comp": [
+    {
+      "_$type": "f7577321-9089-4d76-ba3b-af9c8a8c0afe",
+      "scriptPath": "../src/Scene/LevelUpView.ts",
+      "depth": 2,
+      "isSingleton": true
+    }
+  ]
+}

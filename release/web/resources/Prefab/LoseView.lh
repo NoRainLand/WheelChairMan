@@ -1,0 +1,20 @@
+{
+  "_$ver": 1,
+  "_$id": "9grfybuo",
+  "_$type": "View",
+  "name": "LoseView",
+  "width": 1920,
+  "height": 1080,
+  "left": 0,
+  "right": 0,
+  "top": 0,
+  "bottom": 0,
+  "_$comp": [
+    {
+      "_$type": "9b8220cb-adbc-4d84-9618-c7c9f2bd85f3",
+      "scriptPath": "../src/Scene/LoseView.ts",
+      "depth": 2,
+      "isSingleton": true
+    }
+  ]
+}
