@@ -8,7 +8,7 @@
           4096,
           2048,
           1,
-          true,
+          false,
           false,
           true
         ],
@@ -26,10 +26,8 @@
     "materialRenderMode": 0,
     "s_Cull": 0,
     "s_Blend": 0,
-    "s_BlendSrc": 1,
-    "s_BlendDst": 0,
-    "s_DepthTest": 3,
-    "s_DepthWrite": false,
+    "s_DepthTest": 1,
+    "s_DepthWrite": true,
     "u_TintColor": [
       0.5271317829457365,
       0.5271317829457365,
@@ -37,7 +35,7 @@
       0.6078431372549019
     ],
     "u_Exposure": 1,
-    "u_Rotation": 0,
+    "u_Rotation": 14.632,
     "defines": []
   }
 }

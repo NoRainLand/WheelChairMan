@@ -26,8 +26,10 @@
     "materialRenderMode": 0,
     "s_Cull": 0,
     "s_Blend": 0,
-    "s_DepthTest": 1,
-    "s_DepthWrite": true,
+    "s_BlendSrc": 1,
+    "s_BlendDst": 0,
+    "s_DepthTest": 3,
+    "s_DepthWrite": false,
     "u_TintColor": [
       0.5387596899224807,
       0.5387596899224807,
@@ -35,7 +37,7 @@
       0.6078431372549019
     ],
     "u_Exposure": 1.5,
-    "u_Rotation": 0,
+    "u_Rotation": 71.512,
     "defines": []
   }
 }

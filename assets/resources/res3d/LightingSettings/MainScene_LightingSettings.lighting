@@ -1,5 +1,5 @@
 {
-  "max lightmap size": 1024,
+  "max lightmap size": 2048,
   "mode": "bake",
   "max sample": 1024,
   "denoise": {
@@ -20,7 +20,7 @@
   },
   "sample_clamp_direct": 0,
   "sample_clamp_indirect": 10,
-  "margin": 4,
+  "margin": 16,
   "margin high filter": false,
   "scene Module Scale": 1
 }

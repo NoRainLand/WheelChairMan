@@ -20,7 +20,7 @@ import SkyRenderer = Laya.SkyRenderer;
  * @Author: NoRain 
  * @Date: 2023-02-21 11:33:15 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-21 11:50:14
+ * @Last Modified time: 2023-02-21 17:33:52
  */
 
 const { regClass, property } = Laya;
@@ -33,9 +33,9 @@ export default class MainScene extends Script3d {
     onAwake(): void {
         this.$scene3d = this.owner as Scene3D;
         let skyRenderer = this.$scene3d.skyRenderer;
-        console.log(skyRenderer.material);
+        let mat = skyRenderer.material as Laya.SkyBoxMaterial;
         Timer.get(1, this, () => {
-            (skyRenderer.material as any).rotation += 0.1;
+            mat._shaderValues.setNumber(Laya.SkyBoxMaterial.ROTATION, mat._shaderValues.getNumber(Laya.SkyBoxMaterial.ROTATION) + 0.01);
         }).frameLoop().start();
     }
 }
