@@ -126,7 +126,8 @@ function __$decorate(assetId, codePath) {
         this.$onCompleted = onCompleted;
         this.$onProgress = _onProgress;
         this.load(ResUrl.AssetPath).then((path) => {
-          this.$dicAssetsPath = this.strParser(path.data);
+          this.$dicAssetsPath = this.stringParser(path.data, true);
+          console.log(this.$dicAssetsPath);
           for (let [, value] of this.$dicAssetsPath) {
             if (value && value["preload"] == 1) {
               this.$total_num++;
@@ -145,37 +146,59 @@ function __$decorate(assetId, codePath) {
      * $为key行 第一个key必须为 "id"
      * 然后通过id生成map
      * 暂时先这样吧,需要可以用正则表达式重写
-     * @param data 数据
+     * @param shotString 数据
      * @returns 返回一个以id作为key的map
      */
-    static strParser(data) {
-      if (data) {
-        let arr = data.split("\n");
-        let str = arr.find((item) => {
-          return item.indexOf("$") != -1;
-        });
-        let arr2 = str.replace("\r", "").replace("$", "").split("	");
-        arr2 = arr2.filter((item) => {
-          return item != "";
-        });
-        let map = /* @__PURE__ */ new Map();
-        arr.forEach((item, index) => {
-          if (item[0] != "#" && item[0] != "$" && item != "") {
-            let arr3 = item.replace("\r", "").split("\\").join("/").replace("assets/", "").split("	");
-            arr3 = arr3.filter((item2) => {
-              return item2 != "";
-            });
-            let data2 = {};
-            for (let i = 0; i < arr2.length; i++) {
-              if (isNaN(Number(arr3[i]))) {
-                data2[arr2[i]] = arr3[i];
-              } else {
-                data2[arr2[i]] = Number(arr3[i]);
+    static stringParser(shotString, $isUrl = false) {
+      if (shotString) {
+        let arr = shotString.split("\n");
+        let shotArr, keyList, typeList, map = /* @__PURE__ */ new Map();
+        for (let i = 0; i < arr.length; i++) {
+          let str = arr[i];
+          if (str.length) {
+            if ($isUrl) {
+              shotArr = str.replace("\r", "").split("\\").join("/").replace("assets/", "").split("	");
+            } else {
+              shotArr = str.replace("\r", "").split("\\n").join("\n").split("	");
+            }
+            if (i == 2) {
+              keyList = shotArr;
+              keyList = keyList.filter((item) => {
+                return item != "$";
+              });
+            } else if (i == 3) {
+              typeList = shotArr;
+              typeList = typeList.filter((item) => {
+                return item != "#";
+              });
+            } else if (i > 3) {
+              shotArr = shotArr.filter((item) => {
+                return item != "";
+              });
+              if (shotArr[0] != "#") {
+                let data = {}, id;
+                for (let j = 0; j < keyList.length; j++) {
+                  let key = keyList[j];
+                  let type = typeList[j];
+                  let shot = shotArr[j];
+                  if (j == 0) {
+                    id = Number(shot);
+                  }
+                  switch (type) {
+                    case "number":
+                      data[key] = Number(shot);
+                      break;
+                    default:
+                    case "string":
+                      data[key] = shot;
+                      break;
+                  }
+                }
+                map.set(id, data);
               }
             }
-            map.set(Number(data2["id"]), data2);
           }
-        });
+        }
         return map;
       }
     }
@@ -183,7 +206,7 @@ function __$decorate(assetId, codePath) {
     static getDataTableById(assetsId) {
       let data = this.getResById(assetsId);
       if (data && data.data) {
-        let obj = this.strParser(data.data);
+        let obj = this.stringParser(data.data);
         return obj;
       }
       return null;
@@ -653,6 +676,13 @@ function __$decorate(assetId, codePath) {
   ], MainGame);
   var MainGame_default = MainGame;
 
+  // E:/WheelChairMan/src/Enum/LanguageEnum.ts
+  var LanguageEnum = /* @__PURE__ */ ((LanguageEnum2) => {
+    LanguageEnum2[LanguageEnum2["ChineseSimplified"] = 1001] = "ChineseSimplified";
+    LanguageEnum2[LanguageEnum2["English"] = 1002] = "English";
+    return LanguageEnum2;
+  })(LanguageEnum || {});
+
   // E:/WheelChairMan/src/Mgr/LocalMgr.ts
   var LocalStorage = Laya.LocalStorage;
   var LocalMgr = class {
@@ -678,46 +708,54 @@ function __$decorate(assetId, codePath) {
   // E:/WheelChairMan/src/Localization/LocalizationMgr.ts
   var LocalizationMgr = class {
     /**初始化 */
-    static init(onProgress, complete) {
-      let txtRes = ResLoader.getResById(3002 /* Localization */);
-      this.$dataTableMap = ResLoader.strParser(txtRes.data);
-      for (let [key, value] of this.$dataTableMap) {
-        let data = ResLoader.getResById(value["pathId"]);
-        let dic = data.data[0].dic;
-        this.$TextResourceMap.set(key, dic);
+    static init() {
+      this.$localizationResMap = ResLoader.getDataTableById(3002 /* LocalizationRes */);
+      this.$localizationMap = ResLoader.getDataTableById(501 /* Localization */);
+      this.$localizationKeyMap = /* @__PURE__ */ new Map();
+      for (let [key, value] of this.$localizationMap) {
+        this.$localizationKeyMap.set(value["key"], value);
       }
     }
     /**获取语言对应国旗 */
     static getFlagSkinIdById(id) {
-      let data = this.$dataTableMap.get(id);
+      let data = this.$localizationResMap.get(id);
       return data && data["flagId"];
     }
     /**获取语言描述 */
     static getLanguageMsgById(id) {
-      let data = this.$dataTableMap.get(id);
+      let data = this.$localizationResMap.get(id);
       return data && data["msg"];
     }
-    /**获取语言对应key */
-    static getLanguageKeyById(id) {
-      let data = this.$dataTableMap.get(id);
-      return data && data["key"];
-    }
     /**通过key获取对应语言 */
-    static getLocalizationByKey(key, ...keys) {
-      let dic = this.$TextResourceMap.get(this.Language);
-      if (dic && dic[key]) {
-        let str = dic[key];
-        if (keys) {
+    static $getLocalizationByKey(key, ...keys) {
+      let language = LanguageEnum[this.Language];
+      let value = this.$localizationKeyMap.get(key)[language];
+      if (value) {
+        if (keys && keys.length) {
           for (let i = 0; i < keys.length; i++) {
-            let item = dic[keys[i]];
+            let item = this.$localizationKeyMap.get(keys[i])[language];
             item = item ? item : keys[i];
-            str = str.replace("$", item);
+            value = value.replace("$", item);
           }
         }
-        return str;
-      } else {
-        return null;
       }
+      return value;
+    }
+    /**通过枚举获取对应语言 */
+    static getLocalizationByEnum(lenum, ...lenums) {
+      var _a14;
+      let language = LanguageEnum[this.Language];
+      let value = this.$localizationMap.get(lenum)[language];
+      if (value) {
+        if (lenums && lenums.length) {
+          for (let i = 0; i < lenums.length; i++) {
+            let item = (_a14 = this.$localizationMap.get(lenums[i])) == null ? void 0 : _a14[language];
+            item = item ? item : lenums[i];
+            value = value.replace("$", item);
+          }
+        }
+      }
+      return value;
     }
     /**获取当前语言 */
     static get Language() {
@@ -740,8 +778,6 @@ function __$decorate(assetId, codePath) {
     }
   };
   __name(LocalizationMgr, "LocalizationMgr");
-  /**本地化对象map */
-  LocalizationMgr.$TextResourceMap = /* @__PURE__ */ new Map();
   /**持久化标志 */
   LocalizationMgr.$sign = "language_";
 
@@ -763,7 +799,7 @@ function __$decorate(assetId, codePath) {
     }
     changeLanguage() {
       if (this.localizationKey) {
-        let value = LocalizationMgr.getLocalizationByKey(this.localizationKey);
+        let value = LocalizationMgr.$getLocalizationByKey(this.localizationKey);
         if (value) {
           this.text.text = value;
         }
@@ -996,13 +1032,6 @@ function __$decorate(assetId, codePath) {
     regClass7()
   ], GameView);
 
-  // E:/WheelChairMan/src/Enum/LocalizationEnum.ts
-  var LocalizationEnum = /* @__PURE__ */ ((LocalizationEnum2) => {
-    LocalizationEnum2[LocalizationEnum2["ChineseSimplified"] = 1001] = "ChineseSimplified";
-    LocalizationEnum2[LocalizationEnum2["English"] = 1002] = "English";
-    return LocalizationEnum2;
-  })(LocalizationEnum || {});
-
   // E:/WheelChairMan/src/Scene/LanguageView.ts
   var __decorate9 = __$decorate("6bc1bf6a-a993-4ac9-b9f4-4785e0d68c2b", "../src/Scene/LanguageView.ts");
   var _a2;
@@ -1021,7 +1050,7 @@ function __$decorate(assetId, codePath) {
       this.$listLanguage.renderHandler = new Handler4(this, this.changeItem);
       this.$listLanguage.selectHandler = new Handler4(this, this.selectItem);
       let arr = [];
-      for (let i in LocalizationEnum) {
+      for (let i in LanguageEnum) {
         if (!isNaN(Number(i))) {
           arr.push(Number(i));
         }
@@ -1106,7 +1135,7 @@ function __$decorate(assetId, codePath) {
   var LevelMgr = class {
     /**初始化 */
     static init() {
-      this.$levelDataTable = ResLoader.strParser(ResLoader.getResById(3004 /* Level */).data);
+      this.$levelDataTable = ResLoader.stringParser(ResLoader.getResById(3004 /* Level */).data);
     }
     /**等级 */
     static get level() {
@@ -1248,6 +1277,7 @@ function __$decorate(assetId, codePath) {
   var __decorate12 = __$decorate("9797e892-adab-4c82-8f5e-800b37f590f9", "../src/Scene/LoadView.ts");
   var _a3;
   var _b3;
+  var _c2;
   var Image3 = Laya.Image;
   var Label2 = Laya.Label;
   var Handler5 = Laya.Handler;
@@ -1301,6 +1331,10 @@ function __$decorate(assetId, codePath) {
     property10(),
     __metadata("design:type", typeof (_b3 = typeof Label2 !== "undefined" && Label2) === "function" ? _b3 : Object)
   ], LoadView.prototype, "labelLoad", void 0);
+  __decorate12([
+    property10(),
+    __metadata("design:type", typeof (_c2 = typeof Label2 !== "undefined" && Label2) === "function" ? _c2 : Object)
+  ], LoadView.prototype, "testLabel", void 0);
   LoadView = __decorate12([
     regClass10(),
     __metadata("design:paramtypes", [])
@@ -1319,7 +1353,7 @@ function __$decorate(assetId, codePath) {
   var __decorate14 = __$decorate("d94dafff-05f0-4479-9a1a-ab9861a24025", "../src/Scene/LuckyBoxView.ts");
   var _a4;
   var _b4;
-  var _c2;
+  var _c3;
   var _d;
   var _e;
   var Text2 = Laya.Text;
@@ -1340,7 +1374,7 @@ function __$decorate(assetId, codePath) {
       if (this.$param == void 0) {
         this.$param = 0;
       }
-      this.txtMsg.text = LocalizationMgr.getLocalizationByKey(this.$luckyboxDataTable.get(this.$param)["localizationKey"]);
+      this.txtMsg.text = LocalizationMgr.$getLocalizationByKey(this.$luckyboxDataTable.get(this.$param)["localizationKey"]);
       this.imgBox.skin = ResLoader.getUrlById(this.$luckyboxDataTable.get(this.$param)["imgPath"]);
     }
     openLuckBox() {
@@ -1360,7 +1394,7 @@ function __$decorate(assetId, codePath) {
   ], LuckyBoxView.prototype, "imgBox", void 0);
   __decorate14([
     property12(),
-    __metadata("design:type", typeof (_c2 = typeof Image4 !== "undefined" && Image4) === "function" ? _c2 : Object)
+    __metadata("design:type", typeof (_c3 = typeof Image4 !== "undefined" && Image4) === "function" ? _c3 : Object)
   ], LuckyBoxView.prototype, "imgClose", void 0);
   __decorate14([
     property12(),
@@ -1379,7 +1413,7 @@ function __$decorate(assetId, codePath) {
   var __decorate15 = __$decorate("127f9431-d96d-491c-b782-2549a9c38d7b", "../src/Scene/MainView.ts");
   var _a5;
   var _b5;
-  var _c3;
+  var _c4;
   var _d2;
   var _e2;
   var _f;
@@ -1448,7 +1482,7 @@ function __$decorate(assetId, codePath) {
   ], MainView.prototype, "imgPlusGold", void 0);
   __decorate15([
     property13(),
-    __metadata("design:type", typeof (_c3 = typeof Text3 !== "undefined" && Text3) === "function" ? _c3 : Object)
+    __metadata("design:type", typeof (_c4 = typeof Text3 !== "undefined" && Text3) === "function" ? _c4 : Object)
   ], MainView.prototype, "txtDiamond", void 0);
   __decorate15([
     property13(),
@@ -1517,7 +1551,7 @@ function __$decorate(assetId, codePath) {
   var __decorate18 = __$decorate("df9b38f8-2d16-4280-849d-786074a729fe", "../src/Scene/PrivacyAgreementView.ts");
   var _a6;
   var _b6;
-  var _c4;
+  var _c5;
   var _d3;
   var Label4 = Laya.Label;
   var Image6 = Laya.Image;
@@ -1551,7 +1585,7 @@ function __$decorate(assetId, codePath) {
   ], PrivacyAgreementView.prototype, "imgCancel", void 0);
   __decorate18([
     property16(),
-    __metadata("design:type", typeof (_c4 = typeof Panel !== "undefined" && Panel) === "function" ? _c4 : Object)
+    __metadata("design:type", typeof (_c5 = typeof Panel !== "undefined" && Panel) === "function" ? _c5 : Object)
   ], PrivacyAgreementView.prototype, "panel", void 0);
   __decorate18([
     property16(),
@@ -1566,7 +1600,7 @@ function __$decorate(assetId, codePath) {
   var __decorate19 = __$decorate("731a1c9f-76c7-4237-ad93-f469eb850bb9", "../src/Scene/RankingView.ts");
   var _a7;
   var _b7;
-  var _c5;
+  var _c6;
   var _d4;
   var _e3;
   var _f2;
@@ -1651,7 +1685,7 @@ function __$decorate(assetId, codePath) {
   ], RankingView.prototype, "imgHead", void 0);
   __decorate19([
     property17(),
-    __metadata("design:type", typeof (_c5 = typeof Text4 !== "undefined" && Text4) === "function" ? _c5 : Object)
+    __metadata("design:type", typeof (_c6 = typeof Text4 !== "undefined" && Text4) === "function" ? _c6 : Object)
   ], RankingView.prototype, "txtName", void 0);
   __decorate19([
     property17(),
@@ -1718,7 +1752,7 @@ function __$decorate(assetId, codePath) {
   var __decorate20 = __$decorate("35b37bb8-b4f2-4360-8030-42b6c06ee038", "../src/Util/Slider.ts");
   var _a8;
   var _b8;
-  var _c6;
+  var _c7;
   var Image8 = Laya.Image;
   var { regClass: regClass18, property: property18 } = Laya;
   var Slider = /* @__PURE__ */ __name(class Slider2 extends Laya.Script {
@@ -1810,7 +1844,7 @@ function __$decorate(assetId, codePath) {
   ], Slider.prototype, "imgBar", void 0);
   __decorate20([
     property18(),
-    __metadata("design:type", typeof (_c6 = typeof Image8 !== "undefined" && Image8) === "function" ? _c6 : Object)
+    __metadata("design:type", typeof (_c7 = typeof Image8 !== "undefined" && Image8) === "function" ? _c7 : Object)
   ], Slider.prototype, "imgBg", void 0);
   __decorate20([
     property18(),
@@ -1882,7 +1916,7 @@ function __$decorate(assetId, codePath) {
   var __decorate22 = __$decorate("9811079c-9340-49a7-8d8a-71570d70a98d", "../src/Scene/SettingView.ts");
   var _a10;
   var _b9;
-  var _c7;
+  var _c8;
   var _d5;
   var _e4;
   var _f3;
@@ -1946,7 +1980,7 @@ function __$decorate(assetId, codePath) {
   ], SettingView.prototype, "sliderSfx", void 0);
   __decorate22([
     property20(),
-    __metadata("design:type", typeof (_c7 = typeof Box2 !== "undefined" && Box2) === "function" ? _c7 : Object)
+    __metadata("design:type", typeof (_c8 = typeof Box2 !== "undefined" && Box2) === "function" ? _c8 : Object)
   ], SettingView.prototype, "sliderBgm", void 0);
   __decorate22([
     property20(),
@@ -1998,7 +2032,7 @@ function __$decorate(assetId, codePath) {
   var __decorate23 = __$decorate("6101acc2-fac8-487c-9045-7d083746b9cd", "../src/Scene/ShopView.ts");
   var _a11;
   var _b10;
-  var _c8;
+  var _c9;
   var Image11 = Laya.Image;
   var List4 = Laya.List;
   var Handler7 = Laya.Handler;
@@ -2040,7 +2074,7 @@ function __$decorate(assetId, codePath) {
       let show = index == this.listTitle.selectedIndex;
       imgSelected.visible = show;
       imgUnSelected.visible = !show;
-      let str = LocalizationMgr.getLocalizationByKey(box.dataSource);
+      let str = LocalizationMgr.$getLocalizationByKey(box.dataSource);
       labelUnSelected.text = str;
       labelSelected.text = str;
     }
@@ -2106,13 +2140,13 @@ function __$decorate(assetId, codePath) {
             GameData.diamond -= obj["price"];
             this.getSomething(obj);
           } else {
-            UIBaseMgr.showTips(LocalizationMgr.getLocalizationByKey("YOUDONTHAVEENOUGHDIAMONDS" /* YOUDONTHAVEENOUGHDIAMONDS */, "DIAMOND" /* DIAMOND */));
+            UIBaseMgr.showTips(LocalizationMgr.getLocalizationByEnum(1026 /* YOUDONTHAVEENOUGHDIAMONDS */, 1023 /* DIAMOND */));
           }
           break;
         case 1003 /* key */:
           break;
         case 1005 /* dollar */:
-          UIBaseMgr.showTips(LocalizationMgr.getLocalizationByKey("NOTYETIMPLEMENTED" /* NOTYETIMPLEMENTED */));
+          UIBaseMgr.showTips(LocalizationMgr.getLocalizationByEnum(1027 /* NOTYETIMPLEMENTED */));
           break;
       }
     }
@@ -2120,11 +2154,11 @@ function __$decorate(assetId, codePath) {
       switch (obj["shopId"]) {
         case 1001 /* gold */:
           GameData.gold += obj["number"];
-          UIBaseMgr.showTips(LocalizationMgr.getLocalizationByKey("CONGRATULATIONSONGETTING" /* CONGRATULATIONSONGETTING */, obj["number"], "GOLD" /* GOLD */));
+          UIBaseMgr.showTips(LocalizationMgr.getLocalizationByEnum(1028 /* CONGRATULATIONSONGETTING */, obj["number"], 1022 /* GOLD */));
           break;
         case 1002 /* diamond */:
           GameData.diamond += obj["number"];
-          UIBaseMgr.showTips(LocalizationMgr.getLocalizationByKey("CONGRATULATIONSONGETTING" /* CONGRATULATIONSONGETTING */, obj["number"], "DIAMOND" /* DIAMOND */));
+          UIBaseMgr.showTips(LocalizationMgr.getLocalizationByEnum(1028 /* CONGRATULATIONSONGETTING */, obj["number"], 1023 /* DIAMOND */));
           break;
         case 1003 /* key */:
           GameData.key += obj["number"];
@@ -2142,7 +2176,7 @@ function __$decorate(assetId, codePath) {
   ], ShopView.prototype, "listTitle", void 0);
   __decorate23([
     property21(),
-    __metadata("design:type", typeof (_c8 = typeof List4 !== "undefined" && List4) === "function" ? _c8 : Object)
+    __metadata("design:type", typeof (_c9 = typeof List4 !== "undefined" && List4) === "function" ? _c9 : Object)
   ], ShopView.prototype, "listShop", void 0);
   ShopView = __decorate23([
     regClass21(),
@@ -2162,7 +2196,7 @@ function __$decorate(assetId, codePath) {
   var __decorate25 = __$decorate("2eee226a-dcc2-4965-9ad2-4c490d20fbdf", "../src/Scene/SureView.ts");
   var _a12;
   var _b11;
-  var _c9;
+  var _c10;
   var _d6;
   var Label6 = Laya.Label;
   var Image12 = Laya.Image;
@@ -2219,7 +2253,7 @@ function __$decorate(assetId, codePath) {
   ], SureView.prototype, "imgCancel", void 0);
   __decorate25([
     property23(),
-    __metadata("design:type", typeof (_c9 = typeof Label6 !== "undefined" && Label6) === "function" ? _c9 : Object)
+    __metadata("design:type", typeof (_c10 = typeof Label6 !== "undefined" && Label6) === "function" ? _c10 : Object)
   ], SureView.prototype, "txtTitle", void 0);
   __decorate25([
     property23(),

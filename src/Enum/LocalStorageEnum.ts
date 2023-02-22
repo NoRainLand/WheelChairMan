@@ -5,7 +5,7 @@
  * @Last Modified time: 2023-02-16 14:39:03
  */
 /**持久化枚举 */
-export enum LocalEnum {
+export enum LocalStorage {
 
     /**语言 */
     LANGUAGE = "LANGUAGE",

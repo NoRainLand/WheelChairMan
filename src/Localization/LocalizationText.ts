@@ -38,7 +38,7 @@ export default class LocalizationText extends Laya.Script {
     }
     changeLanguage() {
         if (this.localizationKey) {
-            let value = LocalizationMgr.getLocalizationByKey(this.localizationKey);
+            let value = LocalizationMgr.$getLocalizationByKey(this.localizationKey);
             if (value) {
                 this.text.text = value;
             }

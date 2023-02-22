@@ -5,7 +5,7 @@
  * @Last Modified time: 2023-02-18 10:16:17
  */
 import ProjectConfig from "../Config/ProjectConfig";
-import { LocalEnum } from "../Enum/LocalEnum";
+import { LocalStorage } from "../Enum/LocalStorageEnum";
 import LocalStorage = Laya.LocalStorage;
 /**持久化管理类 */
 export default class LocalMgr {
@@ -14,7 +14,7 @@ export default class LocalMgr {
     * @param key 键名。
     * @return 字符串型值。
     */
-    static getItem(key: LocalEnum): string {
+    static getItem(key: LocalStorage): string {
         return LocalStorage.getItem(`${ProjectConfig.projectName}_${key}`);
     }
     /**
@@ -22,7 +22,7 @@ export default class LocalMgr {
      * @param key 键名。
      * @param value 键值。
      */
-    static setItem(key: LocalEnum, value: string | number) {
+    static setItem(key: LocalStorage, value: string | number) {
         LocalStorage.setItem(`${ProjectConfig.projectName}_${key}`, typeof value === "string" ? value : value.toString());
     }
 

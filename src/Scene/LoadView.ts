@@ -27,6 +27,9 @@ export default class LoadView extends UIBase {
     @property()
     labelLoad: Label;
 
+    @property()
+    testLabel: Label;
+
     imgMask: Image;
 
     constructor() { super() }

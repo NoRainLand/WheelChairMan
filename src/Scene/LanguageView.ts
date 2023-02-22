@@ -1,4 +1,4 @@
-import { LocalizationEnum } from "../Enum/LocalizationEnum";
+import { LanguageEnum } from "../Enum/LanguageEnum";
 import LocalizationMgr from "../Localization/LocalizationMgr";
 import UIBase from "../UIBase/UIBase";
 import ResLoader from "../Util/ResLoader";
@@ -37,7 +37,7 @@ export default class LanguageView extends UIBase {
         this.$listLanguage.selectHandler = new Handler(this, this.selectItem);
 
         let arr = []
-        for (let i in LocalizationEnum) {
+        for (let i in LanguageEnum) {
             if (!isNaN(Number(i))) {
                 arr.push(Number(i));
             }

@@ -15,7 +15,7 @@ export default class LevelMgr {
 
     /**初始化 */
     static init() {
-        this.$levelDataTable = ResLoader.strParser(ResLoader.getResById(DataTableEnum.Level).data);
+        this.$levelDataTable = ResLoader.stringParser(ResLoader.getResById(DataTableEnum.Level).data);
     }
 
     /**等级 */

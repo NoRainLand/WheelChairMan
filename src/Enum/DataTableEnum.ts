@@ -6,10 +6,12 @@
  */
 /**配置表 */
 export enum DataTableEnum {
+    /**本地化配置表 */
+    Localization = 501,
     /**幸运宝箱表 */
     LuckyBox = 3001,
-    /**本地化枚举 */
-    Localization = 3002,
+    /**本地化资源枚举 */
+    LocalizationRes = 3002,
     /**货币配置 */
     Currency = 3003,
     /**等级配置 */

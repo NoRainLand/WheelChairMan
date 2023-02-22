@@ -2,7 +2,7 @@ import GameData from "../Data/GameData";
 import { CurrencyEnum } from "../Enum/CurrencyEnum";
 import { DataTableEnum } from "../Enum/DataTableEnum";
 import { EventEnum } from "../Enum/EventEnum";
-import { LocalizationKeyEnum } from "../Enum/LocalizationKeyEnum";
+import { LocalizationEnum } from "../Enum/LocalizationEnum";
 import LocalizationMgr from "../Localization/LocalizationMgr";
 import CurrencyMgr from "../Mgr/CurrencyMgr";
 import UIBase from "../UIBase/UIBase";
@@ -93,7 +93,7 @@ export default class ShopView extends UIBase {
         imgSelected.visible = show;
         imgUnSelected.visible = !show;
 
-        let str = LocalizationMgr.getLocalizationByKey(box.dataSource);
+        let str = LocalizationMgr.$getLocalizationByKey(box.dataSource);
 
         labelUnSelected.text = str;
         labelSelected.text = str;
@@ -173,14 +173,14 @@ export default class ShopView extends UIBase {
                     GameData.diamond -= obj["price"];
                     this.getSomething(obj);
                 } else {
-                    UIBaseMgr.showTips(LocalizationMgr.getLocalizationByKey(LocalizationKeyEnum.YOUDONTHAVEENOUGHDIAMONDS, LocalizationKeyEnum.DIAMOND));
+                    UIBaseMgr.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.YOUDONTHAVEENOUGHDIAMONDS, LocalizationEnum.DIAMOND));
                 }
                 break;
             case CurrencyEnum.key:
 
                 break;
             case CurrencyEnum.dollar:
-                UIBaseMgr.showTips(LocalizationMgr.getLocalizationByKey(LocalizationKeyEnum.NOTYETIMPLEMENTED));
+                UIBaseMgr.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.NOTYETIMPLEMENTED));
 
                 break;
         }
@@ -191,11 +191,11 @@ export default class ShopView extends UIBase {
         switch (obj["shopId"]) {
             case CurrencyEnum.gold:
                 GameData.gold += obj["number"];
-                UIBaseMgr.showTips(LocalizationMgr.getLocalizationByKey(LocalizationKeyEnum.CONGRATULATIONSONGETTING, obj["number"], LocalizationKeyEnum.GOLD));
+                UIBaseMgr.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.CONGRATULATIONSONGETTING, obj["number"], LocalizationEnum.GOLD));
                 break;
             case CurrencyEnum.diamond:
                 GameData.diamond += obj["number"];
-                UIBaseMgr.showTips(LocalizationMgr.getLocalizationByKey(LocalizationKeyEnum.CONGRATULATIONSONGETTING, obj["number"], LocalizationKeyEnum.DIAMOND));
+                UIBaseMgr.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.CONGRATULATIONSONGETTING, obj["number"], LocalizationEnum.DIAMOND));
                 break;
             case CurrencyEnum.key:
                 GameData.key += obj["number"];

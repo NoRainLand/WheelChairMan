@@ -52,7 +52,7 @@ export default class LuckyBoxView extends UIBase {
         if (this.$param == void 0) {
             this.$param = 0;
         }
-        this.txtMsg.text = LocalizationMgr.getLocalizationByKey(this.$luckyboxDataTable.get(this.$param)["localizationKey"]);
+        this.txtMsg.text = LocalizationMgr.$getLocalizationByKey(this.$luckyboxDataTable.get(this.$param)["localizationKey"]);
 
         this.imgBox.skin = ResLoader.getUrlById(this.$luckyboxDataTable.get(this.$param)["imgPath"]);
     }

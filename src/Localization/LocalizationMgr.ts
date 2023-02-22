@@ -8,8 +8,9 @@
 import ProjectConfig from "../Config/ProjectConfig";
 import { DataTableEnum } from "../Enum/DataTableEnum";
 import { EventEnum } from "../Enum/EventEnum";
-import { LocalEnum } from "../Enum/LocalEnum";
+import { LanguageEnum } from "../Enum/LanguageEnum";
 import { LocalizationEnum } from "../Enum/LocalizationEnum";
+import { LocalStorage } from "../Enum/LocalStorageEnum";
 import EventMgr from "../Mgr/EventMgr";
 import LocalMgr from "../Mgr/LocalMgr";
 import ResLoader from "../Util/ResLoader";
@@ -20,86 +21,106 @@ import Handler = Laya.Handler;
 /**本地化管理类 */
 export default class LocalizationMgr {
 
-    /**本地化对象map */
-    private static $TextResourceMap: Map<number, Object> = new Map();
+
 
     /**当前语言 */
     private static $language: number;
 
-    /**本地化表 */
-    private static $dataTableMap: Map<number, Object>;
+    /**本地配资源置化表 */
+    private static $localizationResMap: Map<number, Object>;
+
+    /**本地化数据表 */
+    private static $localizationMap: Map<number, Object>;
+
+    /**本地化数据表 */
+    private static $localizationKeyMap: Map<string, Object>;
 
     /**持久化标志 */
     private static readonly $sign: string = "language_"
 
 
     /**初始化 */
-    static init(onProgress?: Handler, complete?: Handler) {
+    static init() {
 
-        let txtRes: TextResource = ResLoader.getResById(DataTableEnum.Localization);
-        this.$dataTableMap = ResLoader.strParser(txtRes.data);
 
-        for (let [key, value] of this.$dataTableMap) {
-            let data = ResLoader.getResById(value["pathId"]);
-            let dic = data.data[0].dic;
-            this.$TextResourceMap.set(key, dic);
+        this.$localizationResMap = ResLoader.getDataTableById(DataTableEnum.LocalizationRes);
+
+        this.$localizationMap = ResLoader.getDataTableById(DataTableEnum.Localization);
+
+        this.$localizationKeyMap = new Map();
+        for (let [key, value] of this.$localizationMap) {
+            this.$localizationKeyMap.set(value["key"], value);
         }
+
 
     }
 
     /**获取语言对应国旗 */
-    static getFlagSkinIdById(id: LocalizationEnum): number {
-        let data = this.$dataTableMap.get(id);
+    static getFlagSkinIdById(id: LanguageEnum): number {
+        let data = this.$localizationResMap.get(id);
         return data && data["flagId"];
     }
     /**获取语言描述 */
-    static getLanguageMsgById(id: LocalizationEnum): string {
-        let data = this.$dataTableMap.get(id);
+    static getLanguageMsgById(id: LanguageEnum): string {
+        let data = this.$localizationResMap.get(id);
         return data && data["msg"];
-    }
-    /**获取语言对应key */
-    static getLanguageKeyById(id: LocalizationEnum): string {
-        let data = this.$dataTableMap.get(id);
-        return data && data["key"];
     }
 
 
     /**通过key获取对应语言 */
-    static getLocalizationByKey(key: string, ...keys: string[]): string {
-        let dic = this.$TextResourceMap.get(this.Language);
-        if (dic && dic[key]) {
-            let str: string = dic[key];
-            if (keys) {
+    static $getLocalizationByKey(key: string, ...keys: string[]): string {
+
+
+        let language = LanguageEnum[this.Language];
+        let value = this.$localizationKeyMap.get(key)?.[language];
+        if (value) {
+            if (keys && keys.length) {
                 for (let i = 0; i < keys.length; i++) {
-                    let item = dic[keys[i]];
+                    let item = this.$localizationKeyMap.get(keys[i])?.[language];
                     item = item ? item : keys[i];
-                    str = str.replace("$", item);
+                    value = value.replace("$", item);
                 }
             }
-            return str;
-        } else {
-            return null;
         }
+        return value;
     }
 
+
+    /**通过枚举获取对应语言 */
+    static getLocalizationByEnum(lenum: LocalizationEnum, ...lenums: LocalizationEnum[]): string {
+        let language = LanguageEnum[this.Language];
+        let value = this.$localizationMap.get(lenum)?.[language];
+        if (value) {
+            if (lenums && lenums.length) {
+                for (let i = 0; i < lenums.length; i++) {
+                    let item = this.$localizationMap.get(lenums[i])?.[language];
+                    item = item ? item : lenums[i];
+                    value = value.replace("$", item);
+                }
+            }
+        }
+        return value;
+    }
+
+
     /**获取当前语言 */
-    static get Language(): LocalizationEnum {
+    static get Language(): LanguageEnum {
         if (!this.$language) {
-            let language = LocalMgr.getItem(LocalEnum.LANGUAGE);
+            let language = LocalMgr.getItem(LocalStorage.LANGUAGE);
             if (language) {
                 this.$language = Number(language.substring(language.indexOf("_") + 1));
             } else {
                 this.$language = ProjectConfig.defaultLanguage;
-                LocalMgr.setItem(LocalEnum.LANGUAGE, this.$sign + this.$language);
+                LocalMgr.setItem(LocalStorage.LANGUAGE, this.$sign + this.$language);
             }
         }
         return this.$language;
     }
 
     /**修改当前语言 */
-    static set Language(language: LocalizationEnum) {
+    static set Language(language: LanguageEnum) {
         this.$language = language;
-        LocalMgr.setItem(LocalEnum.LANGUAGE, this.$sign + this.$language);
+        LocalMgr.setItem(LocalStorage.LANGUAGE, this.$sign + this.$language);
         EventMgr.event(EventEnum.LANGUAGECHANGE);
     }
 

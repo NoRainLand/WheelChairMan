@@ -93,8 +93,8 @@ export default class ResLoader {
             this.load(ResUrl.AssetPath).then((path: TextResource) => {
 
 
-                this.$dicAssetsPath = this.strParser(path.data);
-                // console.log(this.$dicAssetsPath)
+                this.$dicAssetsPath = this.stringParser(path.data, true);
+                console.log(this.$dicAssetsPath)
                 for (let [, value] of this.$dicAssetsPath) {
                     if (value && value["preload"] == 1) {
                         this.$total_num++;
@@ -106,7 +106,6 @@ export default class ResLoader {
             }).catch((err) => {
                 console.warn("无法加载配置文件");
             })
-
         }
     }
 
@@ -118,43 +117,64 @@ export default class ResLoader {
      * $为key行 第一个key必须为 "id"
      * 然后通过id生成map
      * 暂时先这样吧,需要可以用正则表达式重写
-     * @param data 数据
+     * @param shotString 数据
      * @returns 返回一个以id作为key的map
      */
-    static strParser(data: string): Map<number, Object> {
-        if (data) {
-            let arr: string[] = data.split("\n");
-            let str = arr.find((item) => {
-                return item.indexOf("$") != -1;
-            })
-            let arr2 = str.replace("\r", "").replace("$", "").split("\t");
-            arr2 = arr2.filter((item) => { return item != "" })
-            let map = new Map();
-
-            arr.forEach((item, index) => {
-                if (item[0] != "#" && item[0] != "$" && item != "") {//移除注释空行
-                    let arr3 = item.replace("\r", "").split("\\").join("/").replace("assets/", "").split("\t");
-                    arr3 = arr3.filter((item) => { return item != "" });
-                    let data = {};
-                    for (let i = 0; i < arr2.length; i++) {
-                        if (isNaN(Number(arr3[i]))) {
-                            data[arr2[i]] = arr3[i];
-                        } else {
-                            data[arr2[i]] = Number(arr3[i]);
+    static stringParser(shotString: string, $isUrl: boolean = false): Map<number, Object> {
+        if (shotString) {
+            let arr: string[] = shotString.split("\n");
+            let shotArr, keyList: Array<string>, typeList: Array<string>, map = new Map();
+            for (let i = 0; i < arr.length; i++) {
+                let str = arr[i];
+                if (str.length) {
+                    if ($isUrl) {
+                        shotArr = str.replace("\r", "").split("\\").join("/").replace("assets/", "").split("\t");
+                    } else {
+                        shotArr = str.replace("\r", "").split("\\n").join("\n").split("\t");
+                    }
+                    if (i == 2) {
+                        keyList = shotArr;
+                        keyList = keyList.filter((item) => { return item != "$" });
+                    } else if (i == 3) {
+                        typeList = shotArr;
+                        typeList = typeList.filter((item) => { return item != "#" });
+                    } else if (i > 3) {
+                        shotArr = shotArr.filter((item) => { return item != "" });
+                        if (shotArr[0] != "#") {
+                            let data = {}, id: number;
+                            for (let j = 0; j < keyList.length; j++) {
+                                let key = keyList[j];
+                                let type = typeList[j];
+                                let shot = shotArr[j];
+                                if (j == 0) {
+                                    id = Number(shot);
+                                }
+                                switch (type) {
+                                    case "number":
+                                        data[key] = Number(shot);
+                                        break;
+                                    default:
+                                    case "string":
+                                        data[key] = shot;
+                                        break;
+                                }
+                            }
+                            map.set(id, data);
                         }
                     }
-                    map.set(Number(data["id"]), data);
                 }
-            })
+            }
             return map;
         }
     }
+
+
 
     /**通过唯一id获取数据表 */
     static getDataTableById(assetsId: DataTableEnum): Map<number, Object> {
         let data = this.getResById(assetsId);
         if (data && data.data) {
-            let obj = this.strParser(data.data);
+            let obj = this.stringParser(data.data);
             return obj;
         }
         return null;

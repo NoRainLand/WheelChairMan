@@ -13,12 +13,18 @@
   "_$comp": [
     {
       "_$type": "9797e892-adab-4c82-8f5e-800b37f590f9",
-      "scriptPath": "../src/Game/Scene/LoadView.ts",
+      "scriptPath": "../src/Scene/LoadView.ts",
+      "depth": 2,
+      "isSingleton": true,
+      "AniType": 0,
       "imgLoad": {
         "_$ref": "apjzjnk2"
       },
       "labelLoad": {
         "_$ref": "e1c3gd8j"
+      },
+      "testLabel": {
+        "_$ref": "kszqpx2e"
       }
     }
   ],
@@ -92,7 +98,6 @@
       "color": "#FFFFFF",
       "align": "center",
       "valign": "middle",
-      "overflow": "visible",
       "leading": 0,
       "padding": "0,0,0,0"
     },
@@ -111,7 +116,6 @@
       "color": "rgba(78, 217, 70, 1)",
       "align": "center",
       "valign": "middle",
-      "overflow": "visible",
       "leading": 0,
       "padding": "0,0,0,0"
     },
@@ -124,6 +128,20 @@
       "left": 0,
       "top": 0,
       "skin": "res://39cc89d1-cffe-4108-be0c-405ff922c53e"
+    },
+    {
+      "_$id": "kszqpx2e",
+      "_$type": "Label",
+      "name": "Label",
+      "x": 257,
+      "y": 83,
+      "width": 973,
+      "height": 526,
+      "text": "",
+      "fontSize": 30,
+      "color": "rgba(9, 223, 18, 1)",
+      "leading": 0,
+      "padding": "0,0,0,0"
     }
   ]
 }
