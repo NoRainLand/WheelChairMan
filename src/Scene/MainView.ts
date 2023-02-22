@@ -1,8 +1,10 @@
 import GameData from "../Data/GameData";
 import { CurrencyEnum } from "../Enum/CurrencyEnum";
 import { EventEnum } from "../Enum/EventEnum";
+import { LocalStorageEnum } from "../Enum/LocalStorageEnum";
 import { SceneEnum } from "../Enum/SceneEnum";
 import LevelMgr from "../Mgr/LevelMgr";
+import LocalStorageMgr from "../Mgr/LocalMgr";
 import UIBase from "../UIBase/UIBase";
 import UIBaseMgr from "../UIBase/UIBaseMgr";
 import StringUtil from "../Util/StringUtil";
@@ -55,6 +57,12 @@ export default class MainView extends UIBase {
     @property()
     imgSettings: Image;
 
+    @property()
+    imgStart: Image;
+
+    @property()
+    Main: Box;
+
     constructor() { super() }
 
 
@@ -81,6 +89,7 @@ export default class MainView extends UIBase {
         this.regClick(this.imgShop, this.openShop, CurrencyEnum.diamond);
         this.regClick(this.imgRanking, this.openRanking);
         this.regClick(this.imgSettings, this.openSetting);
+        this.regClick(this.imgStart, this.checkFirstTime);
     }
 
 
@@ -107,6 +116,35 @@ export default class MainView extends UIBase {
     openRanking() {
         UIBaseMgr.open(SceneEnum.RankingView);
     }
+
+
+
+
+    checkFirstTime() {
+        let value = LocalStorageMgr.getItem(LocalStorageEnum.FIRSTTIME);
+        console.log(value)
+        if (value && Number(value) == 1) {
+            this.selectPlayer();
+        } else {
+            this.showGuide();
+        }
+    }
+
+    showGuide() {
+        
+    }
+
+
+    selectPlayer() {
+
+    }
+
+    selectWeapon() {
+
+    }
+
+
+
 
 
     onClosed(): void {

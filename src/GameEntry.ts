@@ -42,7 +42,7 @@ export class GameEntry extends Laya.Script {
     /**初始化 */
     init() {
         console.log(`当前引擎版本:${Laya.LayaEnv.version}, 当前项目名称:${ProjectConfig.projectName},当前项目版本:${ProjectConfig.projectVersion}/${ProjectConfig.projectVersionIndex}`);
-
+        // Laya.Shader3D.PERIOD_MATERIAL
         this.GameEntry = this.owner as Scene;
         this.UIBase = this.GameEntry.getChildByName("UIBase") as Box;
         UIBaseMgr.init(this.UIBase);

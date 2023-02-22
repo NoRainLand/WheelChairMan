@@ -86,8 +86,8 @@
           "transform": {
             "localPosition": {
               "_$type": "Vector3",
-              "x": 1.4673671926131013,
-              "y": 1.2283335490723184,
+              "x": 1.5252617061507847,
+              "y": 1.610755150558203,
               "z": 4.391789157407845
             },
             "localRotation": {
@@ -309,7 +309,6 @@
           "_$id": "j8fmpju8",
           "_$type": "Sprite3D",
           "name": "DirectionLight(1)",
-          "active": false,
           "isStatic": true,
           "transform": {
             "localPosition": {
@@ -1010,6 +1009,187 @@
                       ]
                     }
                   ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "jy4tgz8j",
+          "_$prefab": "fbaf6e10-03bb-4c26-a128-74504427b825",
+          "name": "Zombie_Bellboy_Male_01",
+          "active": true,
+          "layer": 0,
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 2.051509306785503,
+              "y": 0.25726179342681155,
+              "z": 3.2253207910780928
+            },
+            "localRotation": {
+              "_$type": "Quaternion",
+              "x": 0,
+              "y": 0.9975891378152586,
+              "z": 0,
+              "w": -0.0693967730734592
+            }
+          },
+          "_$child": [
+            {
+              "_$override": "#98",
+              "transform": {
+                "localPosition": {
+                  "_$type": "Vector3",
+                  "x": 13.197873930732186,
+                  "y": 0.000003985995988387003,
+                  "z": 0.0000037966229342600855
+                },
+                "localRotationEuler": {
+                  "_$type": "Vector3",
+                  "x": 0.342737808691795,
+                  "y": -27.432534655198836,
+                  "z": -79.75191755888939
+                }
+              }
+            },
+            {
+              "_$override": "#99",
+              "transform": {
+                "localPosition": {
+                  "_$type": "Vector3",
+                  "x": 33.947405620004815,
+                  "y": -0.14489420567042544,
+                  "z": -0.1436316204200807
+                },
+                "localRotationEuler": {
+                  "_$type": "Vector3",
+                  "x": -0.9343006267532507,
+                  "y": -19.987248941003177,
+                  "z": -4.854036934231582
+                }
+              }
+            },
+            {
+              "_$override": "#113",
+              "transform": {
+                "localPosition": {
+                  "_$type": "Vector3",
+                  "x": -13.19786181936388,
+                  "y": 0.0006451772806599365,
+                  "z": 0.000011031145220385952
+                },
+                "localRotationEuler": {
+                  "_$type": "Vector3",
+                  "x": 0.34273929566048855,
+                  "y": -27.43253469068095,
+                  "z": -73.15032618705125
+                }
+              }
+            },
+            {
+              "_$override": "#114",
+              "transform": {
+                "localPosition": {
+                  "_$type": "Vector3",
+                  "x": -33.94746054113557,
+                  "y": 0.1447261681450982,
+                  "z": 0.14360774752935868
+                },
+                "localRotationEuler": {
+                  "_$type": "Vector3",
+                  "x": -6.809111412406458,
+                  "y": -35.116638737125875,
+                  "z": -12.122391989584322
+                }
+              }
+            },
+            {
+              "_$override": "#132",
+              "transform": {
+                "localPosition": {
+                  "_$type": "Vector3",
+                  "x": -4.115765977107515,
+                  "y": -2.6920700431371642,
+                  "z": 9.896722590930096
+                },
+                "localRotationEuler": {
+                  "_$type": "Vector3",
+                  "x": -81.48154775002912,
+                  "y": 93.6130024984805,
+                  "z": -91.83471238017381
+                }
+              }
+            },
+            {
+              "_$override": "#133",
+              "transform": {
+                "localPosition": {
+                  "_$type": "Vector3",
+                  "x": -39.930924420957126,
+                  "y": -0.00004803341619208368,
+                  "z": 0.00001765729780345282
+                },
+                "localRotationEuler": {
+                  "_$type": "Vector3",
+                  "x": 80.14007615216123,
+                  "y": -10.527886671613844,
+                  "z": 16.622278223082862
+                }
+              }
+            },
+            {
+              "_$override": "#137",
+              "transform": {
+                "localPosition": {
+                  "_$type": "Vector3",
+                  "x": -4.115753828401523,
+                  "y": -2.6920706420858096,
+                  "z": -9.896699839919137
+                },
+                "localRotationEuler": {
+                  "_$type": "Vector3",
+                  "x": 73.3538759471696,
+                  "y": 89.11032397308009,
+                  "z": -89.05138533810674
+                }
+              }
+            },
+            {
+              "_$override": "#138",
+              "transform": {
+                "localPosition": {
+                  "_$type": "Vector3",
+                  "x": 39.93090595880744,
+                  "y": 0.000011049109843952465,
+                  "z": 0.00000825421102490509
+                },
+                "localRotationEuler": {
+                  "_$type": "Vector3",
+                  "x": 80.14007612407366,
+                  "y": -10.527886986803583,
+                  "z": 8.235143255527705
+                }
+              }
+            },
+            {
+              "_$override": "#142",
+              "transform": {
+                "localPosition": {
+                  "_$type": "Vector3"
+                }
+              },
+              "_$comp": [
+                {
+                  "_$override": "SkinnedMeshRenderer",
+                  "sharedMaterials": [
+                    {
+                      "_$uuid": "cbca3560-d449-464b-8e31-4b0daceddd63",
+                      "_$type": "Material"
+                    }
+                  ],
+                  "castShadow": true,
+                  "receiveShadow": true
                 }
               ]
             }

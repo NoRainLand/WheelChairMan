@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-06 19:04:56 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-16 15:55:38
+ * @Last Modified time: 2023-02-22 20:58:48
  */
 /**事件枚举 */
 export enum EventEnum {
@@ -17,7 +17,8 @@ export enum EventEnum {
     /**经验改变 */
     EXPERIENCECHANGE = "EXPERIENCECHANGE",
 
-
+    /**引导结束 */
+    GUIDFINISH = "GUIDFINISH",
 
 
 }

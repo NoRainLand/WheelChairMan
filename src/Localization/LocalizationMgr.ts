@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-10 09:48:50 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-18 10:09:57
+ * @Last Modified time: 2023-02-22 21:25:08
  */
 
 import ProjectConfig from "../Config/ProjectConfig";
@@ -10,9 +10,9 @@ import { DataTableEnum } from "../Enum/DataTableEnum";
 import { EventEnum } from "../Enum/EventEnum";
 import { LanguageEnum } from "../Enum/LanguageEnum";
 import { LocalizationEnum } from "../Enum/LocalizationEnum";
-import { LocalStorage } from "../Enum/LocalStorageEnum";
+import { LocalStorageEnum } from "../Enum/LocalStorageEnum";
 import EventMgr from "../Mgr/EventMgr";
-import LocalMgr from "../Mgr/LocalMgr";
+import LocalStorageMgr from "../Mgr/LocalMgr";
 import ResLoader from "../Util/ResLoader";
 import TextResource = Laya.TextResource;
 import ProgressCallback = Laya.ProgressCallback;
@@ -106,12 +106,12 @@ export default class LocalizationMgr {
     /**获取当前语言 */
     static get Language(): LanguageEnum {
         if (!this.$language) {
-            let language = LocalMgr.getItem(LocalStorage.LANGUAGE);
+            let language = LocalStorageMgr.getItem(LocalStorageEnum.LANGUAGE);
             if (language) {
                 this.$language = Number(language.substring(language.indexOf("_") + 1));
             } else {
                 this.$language = ProjectConfig.defaultLanguage;
-                LocalMgr.setItem(LocalStorage.LANGUAGE, this.$sign + this.$language);
+                LocalStorageMgr.setItem(LocalStorageEnum.LANGUAGE, this.$sign + this.$language);
             }
         }
         return this.$language;
@@ -120,7 +120,7 @@ export default class LocalizationMgr {
     /**修改当前语言 */
     static set Language(language: LanguageEnum) {
         this.$language = language;
-        LocalMgr.setItem(LocalStorage.LANGUAGE, this.$sign + this.$language);
+        LocalStorageMgr.setItem(LocalStorageEnum.LANGUAGE, this.$sign + this.$language);
         EventMgr.event(EventEnum.LANGUAGECHANGE);
     }
 

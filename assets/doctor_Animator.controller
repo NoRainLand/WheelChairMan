@@ -1,0 +1,51 @@
+{
+  "_$type": "Animator",
+  "enabled": true,
+  "controller": null,
+  "cullingMode": 0,
+  "controllerLayers": [
+    {
+      "_$type": "AnimatorControllerLayer",
+      "name": "Animation Base Layer",
+      "playOnWake": true,
+      "blendingMode": 0,
+      "defaultWeight": 1,
+      "states": [
+        {
+          "x": 10,
+          "y": 100,
+          "id": "-1",
+          "name": "进入",
+          "speed": 1,
+          "clipEnd": 1,
+          "soloTransitions": [
+            {
+              "id": "0"
+            }
+          ]
+        },
+        {
+          "x": 425,
+          "y": 100,
+          "id": "-2",
+          "name": "任何状态",
+          "speed": 1,
+          "clipEnd": 1
+        },
+        {
+          "x": 189,
+          "y": 125,
+          "id": "0",
+          "name": "Strafe",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "6e214d88-286d-4891-8f50-50705e56beb2@lani1"
+          }
+        }
+      ],
+      "defaultStateName": "Animation Base Layer"
+    }
+  ],
+  "layerW": 150
+}

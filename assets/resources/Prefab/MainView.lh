@@ -55,399 +55,417 @@
       },
       "imgSettings": {
         "_$ref": "d31imb56"
+      },
+      "imgStart": {
+        "_$ref": "ve72tsb8"
+      },
+      "Main": {
+        "_$ref": "27daa8ks"
       }
     }
   ],
   "_$child": [
     {
-      "_$id": "2nfh67lh",
-      "_$type": "Image",
-      "name": "Bg",
+      "_$id": "27daa8ks",
+      "_$type": "Box",
+      "name": "Main",
       "width": 1920,
       "height": 1080,
-      "visible": false,
+      "mouseEnabled": true,
       "left": 0,
       "right": 0,
       "top": 0,
       "bottom": 0,
-      "skin": "res://1695ecce-6081-4cb3-b8fb-1fe027c0753e"
-    },
-    {
-      "_$id": "y51d6oo0",
-      "_$type": "Image",
-      "name": "imgGold",
-      "x": 1057,
-      "y": 27,
-      "width": 410,
-      "height": 102,
-      "top": 27,
-      "skin": "res://091ef91a-263b-4ac5-9686-68b0543de830",
-      "sizeGrid": "0,31,0,25,0",
       "_$child": [
         {
-          "_$id": "8k1r93g3",
+          "_$id": "y51d6oo0",
           "_$type": "Image",
-          "name": "Image(1)",
-          "x": 14,
-          "y": 10.999999999999993,
-          "width": 97,
-          "height": 85,
-          "skin": "res://35fb525d-12c9-43f0-beab-e6368eda4e06"
-        },
-        {
-          "_$id": "iibb3hfk",
-          "_$type": "Text",
-          "name": "txtGold",
-          "x": 120,
-          "y": 29,
-          "width": 184,
-          "height": 48,
-          "fontSize": 40,
-          "color": "rgba(221, 198, 171, 1)",
-          "align": "right",
-          "valign": "middle",
-          "leading": 0
-        },
-        {
-          "_$id": "69hshsly",
-          "_$type": "Image",
-          "name": "imgPlusGold",
-          "x": 321,
-          "y": 13,
-          "width": 72,
-          "height": 72,
-          "skin": "res://b736808d-0b60-4225-b06a-1af455bad379"
-        }
-      ]
-    },
-    {
-      "_$id": "cmgcvq3k",
-      "_$type": "Image",
-      "name": "imgDiamond",
-      "x": 1485,
-      "y": 27,
-      "width": 410,
-      "height": 102,
-      "top": 27,
-      "skin": "res://091ef91a-263b-4ac5-9686-68b0543de830",
-      "sizeGrid": "0,31,0,25,0",
-      "_$child": [
-        {
-          "_$id": "jpkj4yqo",
-          "_$type": "Image",
-          "name": "Image(1)",
-          "x": 14,
-          "y": 10.999999999999993,
-          "width": 97,
-          "height": 85,
-          "skin": "res://4445cadf-3ba6-4ff1-8cf2-2d1519dba26a"
-        },
-        {
-          "_$id": "f8svjh7n",
-          "_$type": "Text",
-          "name": "txtDiamond",
-          "x": 120,
-          "y": 29,
-          "width": 184,
-          "height": 48,
-          "fontSize": 40,
-          "color": "rgba(221, 198, 171, 1)",
-          "align": "right",
-          "valign": "middle",
-          "leading": 0
-        },
-        {
-          "_$id": "07o9cep4",
-          "_$type": "Image",
-          "name": "imgPlusDiamond",
-          "x": 321,
-          "y": 13,
-          "width": 72,
-          "height": 72,
-          "skin": "res://b736808d-0b60-4225-b06a-1af455bad379"
-        }
-      ]
-    },
-    {
-      "_$id": "hkaes60x",
-      "_$type": "Image",
-      "name": "imgPlayer",
-      "x": 94,
-      "y": 27,
-      "width": 353,
-      "height": 98,
-      "mouseEnabled": true,
-      "top": 27,
-      "skin": "res://7dabd19e-7a00-4450-8168-ac14e6c0a716",
-      "sizeGrid": "0,78,0,89,0",
-      "_$child": [
-        {
-          "_$id": "q5ir1o97",
-          "_$type": "Image",
-          "name": "imgHeadgb",
-          "x": -51.999999999999936,
-          "y": 7.000000000000007,
-          "width": 120,
-          "height": 120,
-          "skin": "res://24cac554-0f99-4941-9b86-b4244400d9bb"
-        },
-        {
-          "_$id": "yj4rv54x",
-          "_$type": "Image",
-          "name": "imgHead",
-          "x": -52,
-          "y": 7,
-          "width": 120,
-          "height": 120,
-          "skin": "res://24cac554-0f99-4941-9b86-b4244400d9bb"
-        },
-        {
-          "_$id": "tk8tigio",
-          "_$type": "Image",
-          "name": "imgRing",
-          "x": -72,
-          "y": -9,
-          "width": 160,
-          "height": 160,
-          "mouseEnabled": true,
-          "skin": "res://20aa5084-f1af-4a4f-b18e-6883081ea45c"
-        },
-        {
-          "_$id": "yf8icwto",
-          "_$type": "Image",
-          "name": "imgLevel",
-          "x": 82,
-          "y": 60,
-          "width": 202,
-          "height": 14,
-          "mask": {
-            "_$ref": "boq4dyzx"
-          },
-          "skin": "res://09c0a554-6148-4010-a79d-13f897d5d9be",
+          "name": "imgGold",
+          "x": 1056.9999999999998,
+          "y": 27,
+          "width": 410,
+          "height": 102,
+          "top": 27,
+          "skin": "res://091ef91a-263b-4ac5-9686-68b0543de830",
+          "sizeGrid": "0,31,0,25,0",
           "_$child": [
             {
-              "_$id": "boq4dyzx",
+              "_$id": "8k1r93g3",
               "_$type": "Image",
-              "name": "Image",
-              "width": 202,
-              "height": 14,
-              "skin": "res://09c0a554-6148-4010-a79d-13f897d5d9be"
-            }
-          ]
-        },
-        {
-          "_$id": "uif75wl9",
-          "_$type": "Image",
-          "name": "imgMs",
-          "x": 76,
-          "y": 15,
-          "width": 251,
-          "height": 23,
-          "mask": {
-            "_$ref": "j8n8oz63"
-          },
-          "skin": "res://a0cf0241-7859-4882-9b14-ebc761b43f6e",
-          "_$child": [
+              "name": "Image(1)",
+              "x": 14,
+              "y": 10.999999999999993,
+              "width": 97,
+              "height": 85,
+              "skin": "res://35fb525d-12c9-43f0-beab-e6368eda4e06"
+            },
             {
-              "_$id": "j8n8oz63",
-              "_$type": "Image",
-              "name": "Image",
-              "width": 251,
-              "height": 23,
-              "skin": "res://a0cf0241-7859-4882-9b14-ebc761b43f6e"
-            }
-          ]
-        },
-        {
-          "_$id": "bgp5ftkc",
-          "_$type": "Image",
-          "name": "Image",
-          "x": 42,
-          "y": 77,
-          "width": 53,
-          "height": 62,
-          "skin": "res://22a0e1a8-5f80-4303-a5a4-2ae0bb7de203",
-          "_$child": [
-            {
-              "_$id": "puoav32y",
+              "_$id": "iibb3hfk",
               "_$type": "Text",
-              "name": "txtLevel",
-              "x": 1,
-              "y": 12,
-              "width": 52,
-              "height": 33,
-              "text": "99\n",
-              "fontSize": 36,
-              "color": "#FFFFFF",
-              "align": "center",
+              "name": "txtGold",
+              "x": 120,
+              "y": 29,
+              "width": 184,
+              "height": 48,
+              "fontSize": 40,
+              "color": "rgba(221, 198, 171, 1)",
+              "align": "right",
               "valign": "middle",
               "leading": 0
-            }
-          ]
-        },
-        {
-          "_$id": "kxz8vj59",
-          "_$type": "Label",
-          "name": "labelName",
-          "x": 100,
-          "y": 95,
-          "width": 191,
-          "height": 33,
-          "text": "username",
-          "fontSize": 32,
-          "color": "rgba(221, 198, 171, 1)",
-          "leading": 0,
-          "padding": "0,0,0,0"
-        }
-      ]
-    },
-    {
-      "_$id": "ulwkjjh1",
-      "_$type": "Image",
-      "name": "imgShop",
-      "x": 69,
-      "y": 859,
-      "width": 160,
-      "height": 164,
-      "mouseEnabled": true,
-      "bottom": 57,
-      "skin": "res://1b1b0b40-4c96-42db-9b3e-3da2031e9e19",
-      "sizeGrid": "0,37,0,32,0",
-      "_$child": [
-        {
-          "_$id": "2ri74rpl",
-          "_$type": "Image",
-          "name": "Image",
-          "x": 15,
-          "y": 28,
-          "width": 130,
-          "height": 108,
-          "centerX": 0,
-          "centerY": 0,
-          "skin": "res://045dc713-8aa4-4b77-ad12-260ebbae9737"
-        },
-        {
-          "_$id": "tlo3z3z1",
-          "_$type": "Label",
-          "name": "Label",
-          "x": 7,
-          "y": 163,
-          "width": 145,
-          "height": 45,
-          "text": "Shop",
-          "fontSize": 36,
-          "color": "rgba(178, 155, 123, 1)",
-          "align": "center",
-          "valign": "middle",
-          "leading": 0,
-          "padding": "0,0,0,0",
-          "_$comp": [
+            },
             {
-              "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
-              "scriptPath": "../src/Localization/LocalizationText.ts",
-              "localizationKey": "SHOP"
+              "_$id": "69hshsly",
+              "_$type": "Image",
+              "name": "imgPlusGold",
+              "x": 321,
+              "y": 13,
+              "width": 72,
+              "height": 72,
+              "skin": "res://b736808d-0b60-4225-b06a-1af455bad379"
             }
           ]
-        }
-      ]
-    },
-    {
-      "_$id": "mu88130u",
-      "_$type": "Image",
-      "name": "imgRanking",
-      "x": 291,
-      "y": 859,
-      "width": 160,
-      "height": 164,
-      "mouseEnabled": true,
-      "bottom": 57,
-      "skin": "res://1b1b0b40-4c96-42db-9b3e-3da2031e9e19",
-      "sizeGrid": "0,37,0,32,0",
-      "_$child": [
-        {
-          "_$id": "iv9rxr3m",
-          "_$type": "Image",
-          "name": "Image",
-          "x": 15,
-          "y": 28,
-          "width": 130,
-          "height": 108,
-          "centerX": 0,
-          "centerY": 0,
-          "skin": "res://68e9e4c7-da27-4431-a09d-c18d56b6026a"
         },
         {
-          "_$id": "w9xrw8jj",
-          "_$type": "Label",
-          "name": "Label",
-          "x": 7,
-          "y": 163,
-          "width": 145,
-          "height": 45,
-          "text": "Ranking\n",
-          "fontSize": 36,
-          "color": "rgba(178, 155, 123, 1)",
-          "align": "center",
-          "valign": "middle",
-          "leading": 0,
-          "padding": "0,0,0,0",
-          "_$comp": [
+          "_$id": "cmgcvq3k",
+          "_$type": "Image",
+          "name": "imgDiamond",
+          "x": 1485,
+          "y": 27,
+          "width": 410,
+          "height": 102,
+          "top": 27,
+          "skin": "res://091ef91a-263b-4ac5-9686-68b0543de830",
+          "sizeGrid": "0,31,0,25,0",
+          "_$child": [
             {
-              "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
-              "scriptPath": "../src/Localization/LocalizationText.ts",
-              "localizationKey": "RANKING"
+              "_$id": "jpkj4yqo",
+              "_$type": "Image",
+              "name": "Image(1)",
+              "x": 14,
+              "y": 10.999999999999993,
+              "width": 97,
+              "height": 85,
+              "skin": "res://4445cadf-3ba6-4ff1-8cf2-2d1519dba26a"
+            },
+            {
+              "_$id": "f8svjh7n",
+              "_$type": "Text",
+              "name": "txtDiamond",
+              "x": 120,
+              "y": 29,
+              "width": 184,
+              "height": 48,
+              "fontSize": 40,
+              "color": "rgba(221, 198, 171, 1)",
+              "align": "right",
+              "valign": "middle",
+              "leading": 0
+            },
+            {
+              "_$id": "07o9cep4",
+              "_$type": "Image",
+              "name": "imgPlusDiamond",
+              "x": 321,
+              "y": 13,
+              "width": 72,
+              "height": 72,
+              "skin": "res://b736808d-0b60-4225-b06a-1af455bad379"
             }
           ]
-        }
-      ]
-    },
-    {
-      "_$id": "d31imb56",
-      "_$type": "Image",
-      "name": "imgSettings",
-      "x": 511,
-      "y": 859,
-      "width": 160,
-      "height": 164,
-      "mouseEnabled": true,
-      "bottom": 57,
-      "skin": "res://1b1b0b40-4c96-42db-9b3e-3da2031e9e19",
-      "sizeGrid": "0,37,0,32,0",
-      "_$child": [
-        {
-          "_$id": "b5t7ztg9",
-          "_$type": "Image",
-          "name": "Image",
-          "x": 15,
-          "y": 28,
-          "width": 130,
-          "height": 108,
-          "centerX": 0,
-          "centerY": 0,
-          "skin": "res://d9aa3296-c0f3-4f6b-8cef-e355790e325c"
         },
         {
-          "_$id": "4pgolo9p",
-          "_$type": "Label",
-          "name": "Label",
-          "x": 7,
-          "y": 163,
-          "width": 145,
-          "height": 45,
-          "text": "Settings",
-          "fontSize": 36,
-          "color": "rgba(178, 155, 123, 1)",
-          "align": "center",
-          "valign": "middle",
-          "leading": 0,
-          "padding": "0,0,0,0",
-          "_$comp": [
+          "_$id": "hkaes60x",
+          "_$type": "Image",
+          "name": "imgPlayer",
+          "x": 93.99999999999997,
+          "y": 27,
+          "width": 353,
+          "height": 98,
+          "mouseEnabled": true,
+          "top": 27,
+          "skin": "res://7dabd19e-7a00-4450-8168-ac14e6c0a716",
+          "sizeGrid": "0,78,0,89,0",
+          "_$child": [
             {
-              "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
-              "scriptPath": "../src/Localization/LocalizationText.ts",
-              "localizationKey": "SETTING"
+              "_$id": "q5ir1o97",
+              "_$type": "Image",
+              "name": "imgHeadgb",
+              "x": -51.999999999999936,
+              "y": 7.000000000000007,
+              "width": 120,
+              "height": 120,
+              "skin": "res://24cac554-0f99-4941-9b86-b4244400d9bb"
+            },
+            {
+              "_$id": "yj4rv54x",
+              "_$type": "Image",
+              "name": "imgHead",
+              "x": -52,
+              "y": 7,
+              "width": 120,
+              "height": 120,
+              "skin": "res://24cac554-0f99-4941-9b86-b4244400d9bb"
+            },
+            {
+              "_$id": "tk8tigio",
+              "_$type": "Image",
+              "name": "imgRing",
+              "x": -72,
+              "y": -9,
+              "width": 160,
+              "height": 160,
+              "mouseEnabled": true,
+              "skin": "res://20aa5084-f1af-4a4f-b18e-6883081ea45c"
+            },
+            {
+              "_$id": "yf8icwto",
+              "_$type": "Image",
+              "name": "imgLevel",
+              "x": 82,
+              "y": 60,
+              "width": 202,
+              "height": 14,
+              "mask": {
+                "_$ref": "boq4dyzx"
+              },
+              "skin": "res://09c0a554-6148-4010-a79d-13f897d5d9be",
+              "_$child": [
+                {
+                  "_$id": "boq4dyzx",
+                  "_$type": "Image",
+                  "name": "Image",
+                  "width": 202,
+                  "height": 14,
+                  "skin": "res://09c0a554-6148-4010-a79d-13f897d5d9be"
+                }
+              ]
+            },
+            {
+              "_$id": "uif75wl9",
+              "_$type": "Image",
+              "name": "imgMs",
+              "x": 76,
+              "y": 15,
+              "width": 251,
+              "height": 23,
+              "mask": {
+                "_$ref": "j8n8oz63"
+              },
+              "skin": "res://a0cf0241-7859-4882-9b14-ebc761b43f6e",
+              "_$child": [
+                {
+                  "_$id": "j8n8oz63",
+                  "_$type": "Image",
+                  "name": "Image",
+                  "width": 251,
+                  "height": 23,
+                  "skin": "res://a0cf0241-7859-4882-9b14-ebc761b43f6e"
+                }
+              ]
+            },
+            {
+              "_$id": "bgp5ftkc",
+              "_$type": "Image",
+              "name": "Image",
+              "x": 42,
+              "y": 77,
+              "width": 53,
+              "height": 62,
+              "skin": "res://22a0e1a8-5f80-4303-a5a4-2ae0bb7de203",
+              "_$child": [
+                {
+                  "_$id": "puoav32y",
+                  "_$type": "Text",
+                  "name": "txtLevel",
+                  "x": 1,
+                  "y": 12,
+                  "width": 52,
+                  "height": 33,
+                  "text": "99\n",
+                  "fontSize": 36,
+                  "color": "#FFFFFF",
+                  "align": "center",
+                  "valign": "middle",
+                  "leading": 0
+                }
+              ]
+            },
+            {
+              "_$id": "kxz8vj59",
+              "_$type": "Label",
+              "name": "labelName",
+              "x": 100,
+              "y": 95,
+              "width": 191,
+              "height": 33,
+              "text": "username",
+              "fontSize": 32,
+              "color": "rgba(221, 198, 171, 1)",
+              "leading": 0,
+              "padding": "0,0,0,0"
             }
           ]
+        },
+        {
+          "_$id": "ulwkjjh1",
+          "_$type": "Image",
+          "name": "imgShop",
+          "x": 68.99999999999999,
+          "y": 859,
+          "width": 160,
+          "height": 164,
+          "mouseEnabled": true,
+          "bottom": 57,
+          "skin": "res://1b1b0b40-4c96-42db-9b3e-3da2031e9e19",
+          "sizeGrid": "0,37,0,32,0",
+          "_$child": [
+            {
+              "_$id": "2ri74rpl",
+              "_$type": "Image",
+              "name": "Image",
+              "x": 15,
+              "y": 28,
+              "width": 130,
+              "height": 108,
+              "centerX": 0,
+              "centerY": 0,
+              "skin": "res://045dc713-8aa4-4b77-ad12-260ebbae9737"
+            },
+            {
+              "_$id": "tlo3z3z1",
+              "_$type": "Label",
+              "name": "Label",
+              "x": 7,
+              "y": 163,
+              "width": 145,
+              "height": 45,
+              "text": "Shop",
+              "fontSize": 36,
+              "color": "rgba(178, 155, 123, 1)",
+              "align": "center",
+              "valign": "middle",
+              "leading": 0,
+              "padding": "0,0,0,0",
+              "_$comp": [
+                {
+                  "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                  "scriptPath": "../src/Localization/LocalizationText.ts",
+                  "localizationKey": "SHOP"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "mu88130u",
+          "_$type": "Image",
+          "name": "imgRanking",
+          "x": 290.99999999999994,
+          "y": 859,
+          "width": 160,
+          "height": 164,
+          "mouseEnabled": true,
+          "bottom": 57,
+          "skin": "res://1b1b0b40-4c96-42db-9b3e-3da2031e9e19",
+          "sizeGrid": "0,37,0,32,0",
+          "_$child": [
+            {
+              "_$id": "iv9rxr3m",
+              "_$type": "Image",
+              "name": "Image",
+              "x": 15,
+              "y": 28,
+              "width": 130,
+              "height": 108,
+              "centerX": 0,
+              "centerY": 0,
+              "skin": "res://68e9e4c7-da27-4431-a09d-c18d56b6026a"
+            },
+            {
+              "_$id": "w9xrw8jj",
+              "_$type": "Label",
+              "name": "Label",
+              "x": 7,
+              "y": 163,
+              "width": 145,
+              "height": 45,
+              "text": "Ranking\n",
+              "fontSize": 36,
+              "color": "rgba(178, 155, 123, 1)",
+              "align": "center",
+              "valign": "middle",
+              "leading": 0,
+              "padding": "0,0,0,0",
+              "_$comp": [
+                {
+                  "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                  "scriptPath": "../src/Localization/LocalizationText.ts",
+                  "localizationKey": "RANKING"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "d31imb56",
+          "_$type": "Image",
+          "name": "imgSettings",
+          "x": 511.00000000000006,
+          "y": 859,
+          "width": 160,
+          "height": 164,
+          "mouseEnabled": true,
+          "bottom": 57,
+          "skin": "res://1b1b0b40-4c96-42db-9b3e-3da2031e9e19",
+          "sizeGrid": "0,37,0,32,0",
+          "_$child": [
+            {
+              "_$id": "b5t7ztg9",
+              "_$type": "Image",
+              "name": "Image",
+              "x": 15,
+              "y": 28,
+              "width": 130,
+              "height": 108,
+              "centerX": 0,
+              "centerY": 0,
+              "skin": "res://d9aa3296-c0f3-4f6b-8cef-e355790e325c"
+            },
+            {
+              "_$id": "4pgolo9p",
+              "_$type": "Label",
+              "name": "Label",
+              "x": 7,
+              "y": 163,
+              "width": 145,
+              "height": 45,
+              "text": "Settings",
+              "fontSize": 36,
+              "color": "rgba(178, 155, 123, 1)",
+              "align": "center",
+              "valign": "middle",
+              "leading": 0,
+              "padding": "0,0,0,0",
+              "_$comp": [
+                {
+                  "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+                  "scriptPath": "../src/Localization/LocalizationText.ts",
+                  "localizationKey": "SETTING"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "ve72tsb8",
+          "_$type": "Image",
+          "name": "imgStart",
+          "x": 1504,
+          "y": 799.0000000000001,
+          "width": 377,
+          "height": 232,
+          "mouseEnabled": true,
+          "skin": "res://ff4546a5-5699-4ec8-b210-7f030d74645f"
         }
       ]
     }
