@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-10 09:48:50 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-22 21:25:08
+ * @Last Modified time: 2023-02-24 23:33:02
  */
 
 import ProjectConfig from "../Config/ProjectConfig";
@@ -43,9 +43,9 @@ export default class LocalizationMgr {
     static init() {
 
 
-        this.$localizationResMap = ResLoader.getDataTableById(DataTableEnum.LocalizationRes);
+        this.$localizationResMap = ResLoader.instance.getDataTableById(DataTableEnum.LocalizationRes);
 
-        this.$localizationMap = ResLoader.getDataTableById(DataTableEnum.Localization);
+        this.$localizationMap = ResLoader.instance.getDataTableById(DataTableEnum.Localization);
 
         this.$localizationKeyMap = new Map();
         for (let [key, value] of this.$localizationMap) {

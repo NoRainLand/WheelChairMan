@@ -16,7 +16,7 @@ import Panel = Laya.Panel;
  * @Author: NoRain 
  * @Date: 2023-02-14 10:37:38 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 17:45:16
+ * @Last Modified time: 2023-02-24 23:34:37
  */
 const { regClass, property } = Laya;
 /**隐私协议界面 */
@@ -39,7 +39,7 @@ export default class PrivacyAgreementView extends UIBase {
         this.regClick(this.imgSure, this.sure);
         this.regClick(this.imgCancel, this.cancel);
 
-        let data = ResLoader.getResById(AgreementEnum.PrivacyAgreement);
+        let data = ResLoader.instance.getResById(AgreementEnum.PrivacyAgreement);
         this.txtAgreement.text = data.data;
 
         this.txtAgreement.height = data.data.length / 0.9;

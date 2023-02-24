@@ -1,0 +1,9 @@
+{
+  "width": 256,
+  "height": 256,
+  "colorFormat": 0,
+  "depthFormat": 37,
+  "generateMipmap": false,
+  "multiSamples": 1,
+  "sRGB": false
+}

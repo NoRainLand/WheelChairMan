@@ -17,7 +17,7 @@ import Node = Laya.Node;
  * @Author: NoRain 
  * @Date: 2023-02-08 10:03:24 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-16 19:52:54
+ * @Last Modified time: 2023-02-24 23:38:28
  */
 const { regClass, property } = Laya;
 
@@ -169,7 +169,7 @@ export default class UIBase extends Laya.Script {
 
     /**关闭自身 */
     close() {
-        UIBaseMgr.close(this.$assetsId, this.id);
+        UIBaseMgr.instance.close(this.$assetsId, this.id);
     }
 
 

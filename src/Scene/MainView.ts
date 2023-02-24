@@ -3,6 +3,7 @@ import { CurrencyEnum } from "../Enum/CurrencyEnum";
 import { EventEnum } from "../Enum/EventEnum";
 import { LocalStorageEnum } from "../Enum/LocalStorageEnum";
 import { SceneEnum } from "../Enum/SceneEnum";
+import MainGame from "../Game/MainGame";
 import LevelMgr from "../Mgr/LevelMgr";
 import LocalStorageMgr from "../Mgr/LocalMgr";
 import UIBase from "../UIBase/UIBase";
@@ -22,7 +23,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-21 11:09:44
+ * @Last Modified time: 2023-02-24 23:51:23
  */
 const { regClass, property } = Laya;
 /**主界面 */
@@ -105,16 +106,16 @@ export default class MainView extends UIBase {
 
     }
     openShop(currency: CurrencyEnum) {
-        UIBaseMgr.open(SceneEnum.ShopView, currency);
+        UIBaseMgr.instance.open(SceneEnum.ShopView, currency);
     }
     openUserInfo() {
 
     }
     openSetting() {
-        UIBaseMgr.open(SceneEnum.SettingView);
+        UIBaseMgr.instance.open(SceneEnum.SettingView);
     }
     openRanking() {
-        UIBaseMgr.open(SceneEnum.RankingView);
+        UIBaseMgr.instance.open(SceneEnum.RankingView);
     }
 
 
@@ -123,20 +124,23 @@ export default class MainView extends UIBase {
     checkFirstTime() {
         let value = LocalStorageMgr.getItem(LocalStorageEnum.FIRSTTIME);
         console.log(value)
-        if (value && Number(value) == 1) {
-            this.selectPlayer();
-        } else {
-            this.showGuide();
-        }
+        // if (value && Number(value) == 1) {
+        //     this.selectPlayer();
+        // } else {
+        //     this.showGuide();
+        // }
+        this.selectPlayer();
     }
 
     showGuide() {
-        
+
     }
 
 
     selectPlayer() {
-
+        MainGame.instance.selectPlayerAndWeapon();
+        UIBaseMgr.instance.open(SceneEnum.SelectPlayerView);
+        this.close();
     }
 
     selectWeapon() {

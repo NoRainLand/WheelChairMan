@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-14 09:12:28 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 18:36:54
+ * @Last Modified time: 2023-02-24 22:22:08
  */
 /**界面枚举 */
 export enum SceneEnum {
@@ -42,5 +42,6 @@ export enum SceneEnum {
     ShopView = 1019,
     /**签到界面 */
     SignInView = 1020,
-
+    /**选择人物界面 */
+    SelectPlayerView = 1021,
 }

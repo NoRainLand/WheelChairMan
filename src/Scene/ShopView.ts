@@ -24,7 +24,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-14 10:37:38 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-18 11:20:47
+ * @Last Modified time: 2023-02-24 23:35:08
  */
 const { regClass, property } = Laya;
 /**商城界面 */
@@ -53,7 +53,7 @@ export default class ShopView extends UIBase {
 
     onOpened(param?: any): void {
         if (!this.$shopDataTable) {
-            this.$shopDataTable = ResLoader.getDataTableById(DataTableEnum.Shop);
+            this.$shopDataTable = ResLoader.instance.getDataTableById(DataTableEnum.Shop);
         }
         this.$titleSet = new Set();
         this.$shopList = [];
@@ -130,7 +130,7 @@ export default class ShopView extends UIBase {
         let data = box.dataSource;
 
         let imgItem = box.getChildByName("imgItem") as Image;
-        imgItem.skin = ResLoader.getUrlById(data["imgId"]);
+        imgItem.skin = ResLoader.instance.getUrlById(data["imgId"]);
         imgItem.height = imgItem.source.sourceHeight;
         imgItem.width = imgItem.source.sourceWidth;
         let imgBest = box.getChildByName("imgBest") as Image;
@@ -173,14 +173,14 @@ export default class ShopView extends UIBase {
                     GameData.diamond -= obj["price"];
                     this.getSomething(obj);
                 } else {
-                    UIBaseMgr.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.YOUDONTHAVEENOUGHDIAMONDS, LocalizationEnum.DIAMOND));
+                    UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.YOUDONTHAVEENOUGHDIAMONDS, LocalizationEnum.DIAMOND));
                 }
                 break;
             case CurrencyEnum.key:
 
                 break;
             case CurrencyEnum.dollar:
-                UIBaseMgr.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.NOTYETIMPLEMENTED));
+                UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.NOTYETIMPLEMENTED));
 
                 break;
         }
@@ -191,11 +191,11 @@ export default class ShopView extends UIBase {
         switch (obj["shopId"]) {
             case CurrencyEnum.gold:
                 GameData.gold += obj["number"];
-                UIBaseMgr.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.CONGRATULATIONSONGETTING, obj["number"], LocalizationEnum.GOLD));
+                UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.CONGRATULATIONSONGETTING, obj["number"], LocalizationEnum.GOLD));
                 break;
             case CurrencyEnum.diamond:
                 GameData.diamond += obj["number"];
-                UIBaseMgr.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.CONGRATULATIONSONGETTING, obj["number"], LocalizationEnum.DIAMOND));
+                UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.CONGRATULATIONSONGETTING, obj["number"], LocalizationEnum.DIAMOND));
                 break;
             case CurrencyEnum.key:
                 GameData.key += obj["number"];

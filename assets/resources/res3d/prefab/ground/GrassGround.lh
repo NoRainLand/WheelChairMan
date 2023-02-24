@@ -1,0 +1,52 @@
+{
+  "_$ver": 1,
+  "_$id": "2x0wab2x",
+  "_$type": "Sprite3D",
+  "name": "GrassGround",
+  "isStatic": true,
+  "transform": {
+    "localPosition": {
+      "_$type": "Vector3",
+      "x": -5,
+      "y": -0.11597979068756104
+    }
+  },
+  "_$comp": [
+    {
+      "_$type": "Animator",
+      "controller": {
+        "_$uuid": "e1981a2c-69ee-4fd2-9e28-bbba091050ed",
+        "_$type": "AnimationController"
+      },
+      "cullingMode": 0,
+      "controllerLayers": []
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "#44",
+      "_$type": "Sprite3D",
+      "name": "SM_Env_Grass_01",
+      "isStatic": true,
+      "_$comp": [
+        {
+          "_$type": "MeshFilter",
+          "sharedMesh": {
+            "_$uuid": "b18f79e1-968e-4bff-a58f-a587e172bf98@lm0",
+            "_$type": "Mesh"
+          }
+        },
+        {
+          "_$type": "MeshRenderer",
+          "receiveShadow": true,
+          "sharedMaterials": [
+            {
+              "_$uuid": "ddcb0be2-cb6c-4b22-a34e-6cef3621cfe5",
+              "_$type": "Material"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -22,7 +22,7 @@ import List = Laya.List;
  * @Author: NoRain 
  * @Date: 2023-02-10 18:36:22 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-16 16:48:29
+ * @Last Modified time: 2023-02-24 23:35:07
  */
 const { regClass, property } = Laya;
 /**设置界面 */
@@ -86,10 +86,10 @@ export default class SettingView extends UIBase {
         VibrateMgr.isVibrate = value;
     }
     changeLanguageIcon() {
-        this.imgLan.skin = ResLoader.getUrlById(LocalizationMgr.getFlagSkinIdById(LocalizationMgr.Language));
+        this.imgLan.skin = ResLoader.instance.getUrlById(LocalizationMgr.getFlagSkinIdById(LocalizationMgr.Language));
     }
     openPrivacyAgreement() {
-        UIBaseMgr.open(SceneEnum.PrivacyAgreementView);
+        UIBaseMgr.instance.open(SceneEnum.PrivacyAgreementView);
     }
 
 
@@ -100,7 +100,7 @@ export default class SettingView extends UIBase {
         console.log('support');
     }
     changeLanguage() {
-        UIBaseMgr.open(SceneEnum.LanguageView);
+        UIBaseMgr.instance.open(SceneEnum.LanguageView);
     }
 
     onClosed(): void {

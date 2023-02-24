@@ -6,7 +6,7 @@ import ResLoader from "../Util/ResLoader";
  * @Author: NoRain 
  * @Date: 2023-02-16 14:37:23 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-16 16:53:42
+ * @Last Modified time: 2023-02-24 23:33:44
  */
 export default class LevelMgr {
 
@@ -15,7 +15,7 @@ export default class LevelMgr {
 
     /**初始化 */
     static init() {
-        this.$levelDataTable = ResLoader.stringParser(ResLoader.getResById(DataTableEnum.Level).data);
+        this.$levelDataTable = ResLoader.instance.getDataTableById(DataTableEnum.Level);
     }
 
     /**等级 */

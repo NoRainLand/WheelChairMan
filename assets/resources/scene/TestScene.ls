@@ -124,6 +124,19 @@
       "right": 0,
       "top": 0,
       "bottom": 0
+    },
+    {
+      "_$id": "tdgoq5vi",
+      "_$prefab": "b8c831bb-4e51-4240-a669-e77e749f3097",
+      "name": "SelectPlayerView",
+      "active": true,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "bottom": 0
     }
   ]
 }

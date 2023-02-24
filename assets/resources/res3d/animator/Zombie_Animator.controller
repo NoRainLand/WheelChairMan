@@ -33,14 +33,25 @@
           "clipEnd": 1
         },
         {
-          "x": 189,
-          "y": 125,
+          "x": 162,
+          "y": 284,
           "id": "0",
-          "name": "Strafe",
+          "name": "ZombieIdle",
           "speed": 1,
           "clipEnd": 1,
           "clip": {
-            "_$uuid": "6e214d88-286d-4891-8f50-50705e56beb2@lani1"
+            "_$uuid": "402a5d00-ecb7-405a-b27d-7e864814fce4@lani0"
+          }
+        },
+        {
+          "x": 198,
+          "y": 154,
+          "id": "1",
+          "name": "ZombieWalk",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "402a5d00-ecb7-405a-b27d-7e864814fce4@lani1"
           }
         }
       ],

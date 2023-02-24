@@ -16,7 +16,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-11 15:50:45 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 16:24:04
+ * @Last Modified time: 2023-02-24 23:33:55
  */
 const { regClass, property } = Laya;
 /**语言面板 */
@@ -52,7 +52,7 @@ export default class LanguageView extends UIBase {
         let imgFlag = box.getChildByName("imgFlag") as Image;
         let imgSelect = box.getChildByName("imgSelect") as Image;
         labelLanguage.text = LocalizationMgr.getLanguageMsgById(box.dataSource);
-        imgFlag.skin = ResLoader.getUrlById(LocalizationMgr.getFlagSkinIdById(box.dataSource));
+        imgFlag.skin = ResLoader.instance.getUrlById(LocalizationMgr.getFlagSkinIdById(box.dataSource));
         if (index == this.$selectIndex) {
             imgSelect.visible = true;
         } else {

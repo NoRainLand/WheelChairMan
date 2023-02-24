@@ -59,7 +59,7 @@
     "u_TransmissionRate": 0,
     "u_BackDiffuse": 0,
     "u_BackScale": 0,
-    "u_AlbedoIntensity": 1,
+    "u_AlbedoIntensity": 0.74,
     "defines": [
       "DIFFUSEMAP"
     ]

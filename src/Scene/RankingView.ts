@@ -16,7 +16,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-14 10:37:38 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-18 16:00:40
+ * @Last Modified time: 2023-02-24 23:34:38
  */
 const { regClass, property } = Laya;
 /**排行榜 */
@@ -63,7 +63,7 @@ export default class RankingView extends UIBase {
             this.txtName.text = data.name.toString();
             this.txtRank.text = data.rank.toString();
         }
-        this.$rankingMap = ResLoader.getDataTableById(DataTableEnum.Ranking);
+        this.$rankingMap = ResLoader.instance.getDataTableById(DataTableEnum.Ranking);
         // console.log(this.$rankingMap);
 
     }
@@ -87,22 +87,22 @@ export default class RankingView extends UIBase {
             case 1:
                 let data1 = this.$rankingMap.get(RankingEnum.fist)
                 txtRank.color = data1["color"];
-                imgRank.skin = ResLoader.getUrlById(data1["imgId"]);
+                imgRank.skin = ResLoader.instance.getUrlById(data1["imgId"]);
                 break;
             case 2:
                 let data2 = this.$rankingMap.get(RankingEnum.second)
                 txtRank.color = data2["color"];
-                imgRank.skin = ResLoader.getUrlById(data2["imgId"]);
+                imgRank.skin = ResLoader.instance.getUrlById(data2["imgId"]);
                 break;
             case 3:
                 let data3 = this.$rankingMap.get(RankingEnum.third)
                 txtRank.color = data3["color"];
-                imgRank.skin = ResLoader.getUrlById(data3["imgId"]);
+                imgRank.skin = ResLoader.instance.getUrlById(data3["imgId"]);
                 break;
             default:
                 let data4 = this.$rankingMap.get(RankingEnum.default)
                 txtRank.color = data4["color"];
-                imgRank.skin = ResLoader.getUrlById(data4["imgId"]);
+                imgRank.skin = ResLoader.instance.getUrlById(data4["imgId"]);
 
                 break;
         }

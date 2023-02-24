@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-08 10:25:16 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-18 16:38:35
+ * @Last Modified time: 2023-02-24 23:31:29
  */
 import { SceneEnum } from "../Enum/SceneEnum";
 import SceneUrl from "../Url/SceneUrl";
@@ -24,36 +24,40 @@ import Handler = Laya.Handler;
 /**页面管理 */
 export default class UIBaseMgr {
 
+    private static _instance: UIBaseMgr;
+    public static get instance(): UIBaseMgr {
+        return this._instance ? this._instance : this._instance = new UIBaseMgr();
+    }
 
 
     /**层级根节点 */
-    private static $UIBase: Box;
+    private $UIBase: Box;
     /**调试界面 */
-    private static $DebugUI: Box;
+    private $DebugUI: Box;
     /**提示界面 */
-    private static $TipsUI: Box;
+    private $TipsUI: Box;
     /**主界面 */
-    private static $MainUI: Box;
+    private $MainUI: Box;
     /*3DUI界面 */
-    static $3DUI: Box;
+    $3DUI: Box;
 
     /**是否已经调用过openLoadView */
-    private static $isOpenLoadView: boolean = false;
+    private $isOpenLoadView: boolean = false;
 
 
 
 
     /**页面预制件池子 */
-    private static $scenePool: Map<number, PrefabImpl>;
+    private $scenePool: Map<number, PrefabImpl>;
     /**页面脚本池子 */
-    private static $sceneScriptPool: Map<number, UIBase[]>;
+    private $sceneScriptPool: Map<number, UIBase[]>;
 
 
     /**对象池标记 */
-    private static readonly $sign: string = "View_"
+    private readonly $sign: string = "View_"
 
     /**初始化 */
-    static init(UIBase: Box) {
+    init(UIBase: Box) {
         this.$UIBase = UIBase;
         this.$DebugUI = this.$UIBase.getChildByName("DebugUI") as Box;
         this.$TipsUI = this.$UIBase.getChildByName("TipsUI") as Box;
@@ -65,11 +69,11 @@ export default class UIBaseMgr {
     }
 
     /**加载load界面 */
-    static openLoadView() {
+    openLoadView() {
         if (!this.$isOpenLoadView) {
             this.$isOpenLoadView = true;
-            ResLoader.load(SceneUrl.LoadView, Handler.create(this, () => {
-                this.initScene(ResLoader.getResClose(SceneUrl.LoadView), SceneEnum.LoadView);
+            ResLoader.instance.load(SceneUrl.LoadView, Handler.create(this, () => {
+                this.initScene(ResLoader.instance.getResClose(SceneUrl.LoadView), SceneEnum.LoadView);
             }))
         }
     }
@@ -82,7 +86,7 @@ export default class UIBaseMgr {
      * @param caller 作用域
      * @param callback 回调
      */
-    static open(sceneId: SceneEnum, param?: any, caller?: any, callback?: Function) {
+    open(sceneId: SceneEnum, param?: any, caller?: any, callback?: Function) {
         let scripts = this.$sceneScriptPool.get(sceneId);
         if (scripts && scripts[0] && scripts[0].isSingleton) {
             console.log("这个页面已经存在并且不允许重复打开");
@@ -103,7 +107,7 @@ export default class UIBaseMgr {
     }
 
     /**初始化界面 */
-    private static initScene(scene: Scene, sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
+    private initScene(scene: Scene, sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
         let base: UIBase = scene.getComponent(UIBase);
         if (base) {
             switch (base.depth) {
@@ -152,7 +156,7 @@ export default class UIBaseMgr {
 
 
     /**关闭页面 */
-    static close(sceneName: SceneEnum, id: number) {
+    close(sceneName: SceneEnum, id: number) {
         let scripts = this.$sceneScriptPool.get(sceneName);
         if (scripts && scripts.length > 0) {
             let arr = [];
@@ -167,12 +171,12 @@ export default class UIBaseMgr {
                     arr.push(script);
                 }
             }
-            this.$sceneScriptPool.set(sceneName,arr);
+            this.$sceneScriptPool.set(sceneName, arr);
         }
     }
 
     /**是否打开某个界面 */
-    static isOpen(sceneName: SceneEnum): boolean {
+    isOpen(sceneName: SceneEnum): boolean {
         let arr = this.$sceneScriptPool.get(sceneName);
         if (arr && arr.length > 0) {
             return true;
@@ -181,19 +185,19 @@ export default class UIBaseMgr {
     }
 
     /**加载场景 */
-    private static loadScene(sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
-        this.$scenePool.set(sceneName, ResLoader.getResById(sceneName));
+    private loadScene(sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
+        this.$scenePool.set(sceneName, ResLoader.instance.getResById(sceneName));
         if (this.$scenePool.get(sceneName)) {
             this.open(sceneName, param, caller, callback);
         }
     }
 
-    static initDebugScene() {
+    initDebugScene() {
         this.open(SceneEnum.DebugView);
     }
 
     /**打开一个调试界面 */
-    static showDebug() {
+    showDebug() {
         this.open(SceneEnum.DebugView);
     }
 
@@ -201,7 +205,7 @@ export default class UIBaseMgr {
      * 打开一个提示面板
      * @param msg 信息
      */
-    static showTips(msg: string) {
+    showTips(msg: string) {
         this.open(SceneEnum.TipsView, msg);
     }
     /**
@@ -212,7 +216,7 @@ export default class UIBaseMgr {
      * @param sureCallback 确认回调
      * @param cancelCallBack 取消回调
      */
-    static showSureDialog(title: string, msg: string, caller: any, sureCallback: Function, cancelCallBack?: Function) {
+    showSureDialog(title: string, msg: string, caller: any, sureCallback: Function, cancelCallBack?: Function) {
         let data = { title: title, msg: msg, caller: caller, sureCallback: sureCallback, cancelCallBack: cancelCallBack };
         this.open(SceneEnum.SureView, data);
     }

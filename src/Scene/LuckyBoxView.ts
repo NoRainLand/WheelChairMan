@@ -16,7 +16,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-13 10:40:07 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 19:09:28
+ * @Last Modified time: 2023-02-24 23:34:28
  */
 const { regClass, property } = Laya;
 /**幸运宝箱界面 */
@@ -44,7 +44,7 @@ export default class LuckyBoxView extends UIBase {
     onOpened(param?: any): void {
         this.regClick(this.imgClose, this.close);
         this.regClick(this.imgOpen, this.openLuckBox);
-        this.$luckyboxDataTable = ResLoader.strParser(ResLoader.getResById(DataTableEnum.LuckyBox).data);
+        this.$luckyboxDataTable = ResLoader.instance.getDataTableById(DataTableEnum.LuckyBox);
         this.initLuckBox();
     }
 
@@ -54,14 +54,14 @@ export default class LuckyBoxView extends UIBase {
         }
         this.txtMsg.text = LocalizationMgr.$getLocalizationByKey(this.$luckyboxDataTable.get(this.$param)["localizationKey"]);
 
-        this.imgBox.skin = ResLoader.getUrlById(this.$luckyboxDataTable.get(this.$param)["imgPath"]);
+        this.imgBox.skin = ResLoader.instance.getUrlById(this.$luckyboxDataTable.get(this.$param)["imgPath"]);
     }
 
 
     openLuckBox() {
         switch (this.$param) {
             case 0:
-            
+
                 break;
         }
     }

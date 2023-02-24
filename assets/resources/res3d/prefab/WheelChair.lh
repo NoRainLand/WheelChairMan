@@ -1,0 +1,194 @@
+{
+  "_$ver": 1,
+  "_$id": "tzxk8a4o",
+  "_$type": "Sprite3D",
+  "name": "WheelChair",
+  "_$child": [
+    {
+      "_$id": "#39",
+      "_$type": "Sprite3D",
+      "name": "wheelchair",
+      "transform": {
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 6.717943534795253e-8,
+          "w": 0.9999999999999978
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "MeshFilter",
+          "sharedMesh": {
+            "_$uuid": "c4c8716b-0afe-4d43-8306-f35beff66c42@lm0",
+            "_$type": "Mesh"
+          }
+        },
+        {
+          "_$type": "MeshRenderer",
+          "receiveShadow": true,
+          "castShadow": true,
+          "sharedMaterials": [
+            {
+              "_$uuid": "14b65c0e-aed6-4513-b46f-b595d30be26c",
+              "_$type": "Material"
+            }
+          ]
+        }
+      ],
+      "_$child": [
+        {
+          "_$id": "#40",
+          "_$type": "Sprite3D",
+          "name": "wheelchairL",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 0.3385170102119446,
+              "y": 0.3610279858112335,
+              "z": -3.7715352618761244e-7
+            },
+            "localRotation": {
+              "_$type": "Quaternion",
+              "x": -0.7071068407911908,
+              "w": 0.7071067215818992
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "c4c8716b-0afe-4d43-8306-f35beff66c42@lm2",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "14b65c0e-aed6-4513-b46f-b595d30be26c",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#41",
+          "_$type": "Sprite3D",
+          "name": "wheelchairR",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": -0.3349677324295044,
+              "y": 0.3610282838344574,
+              "z": -3.794229996856302e-7
+            },
+            "localRotation": {
+              "_$type": "Quaternion",
+              "x": -0.7071068407911908,
+              "w": 0.7071067215818992
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "c4c8716b-0afe-4d43-8306-f35beff66c42@lm4",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "14b65c0e-aed6-4513-b46f-b595d30be26c",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#42",
+          "_$type": "Sprite3D",
+          "name": "wheelchairL.001",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 0.3385170102119446,
+              "y": 0.3610279858112335,
+              "z": -3.7715352618761244e-7
+            },
+            "localRotation": {
+              "_$type": "Quaternion",
+              "x": -0.7071068407911908,
+              "w": 0.7071067215818992
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "c4c8716b-0afe-4d43-8306-f35beff66c42@lm1",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "14b65c0e-aed6-4513-b46f-b595d30be26c",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#43",
+          "_$type": "Sprite3D",
+          "name": "wheelchairR.001",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": -0.3349677324295044,
+              "y": 0.3610282838344574,
+              "z": -3.794229996856302e-7
+            },
+            "localRotation": {
+              "_$type": "Quaternion",
+              "x": -0.7071068407911908,
+              "w": 0.7071067215818992
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "c4c8716b-0afe-4d43-8306-f35beff66c42@lm3",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "14b65c0e-aed6-4513-b46f-b595d30be26c",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

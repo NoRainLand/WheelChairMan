@@ -1,12 +1,11 @@
-import { DataTableEnum } from "../Enum/DataTableEnum";
 import { Scene3dEnum } from "../Enum/Scene3dEnum";
-import ResLoader from "../Util/ResLoader";
+import Scene3dMgr from "../UIBase/Scene3dMgr";
 
 /*
  * @Author: NoRain 
  * @Date: 2023-02-20 15:26:58 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-21 11:30:10
+ * @Last Modified time: 2023-02-24 23:51:08
  */
 const { regClass, property } = Laya;
 /**主游戏逻辑 */
@@ -23,21 +22,27 @@ export default class MainGame {
     init() {
         if (!this.$isInit) {
             this.$isInit = true;
-            this.$scene3dMap = ResLoader.getDataTableById(DataTableEnum.Scene3d);
             this.addEvent();
             this.reset();
         }
     }
 
     addEvent() {
-
+        // EventMgr.on(EventEnum.)
     }
 
 
 
 
     reset() {
-        Laya.Scene.open(ResLoader.getUrlById(this.$scene3dMap.get(Scene3dEnum.MainScene)["path"]), false);
+        Scene3dMgr.instance.open(Scene3dEnum.MainScene);
+
+    }
+
+
+    selectPlayerAndWeapon() {
+        Scene3dMgr.instance.close(Scene3dEnum.MainScene);
+        Scene3dMgr.instance.open(Scene3dEnum.SelectPlayerScene);
     }
 
     gameStart() {

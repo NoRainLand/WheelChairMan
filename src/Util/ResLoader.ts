@@ -15,10 +15,16 @@ import TextResource = Laya.TextResource;
  * @Author: NoRain 
  * @Date: 2023-02-12 15:09:35 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-21 11:28:55
+ * @Last Modified time: 2023-02-24 23:18:52
  */
 /**资源加载器 */
 export default class ResLoader {
+
+    private static _instance: ResLoader;
+    public static get instance(): ResLoader {
+        return this._instance ? this._instance : this._instance = new ResLoader();
+    }
+
 
     /**
      * 基础加载器
@@ -26,7 +32,7 @@ export default class ResLoader {
      * @param onCompleted 加载完成回调
      * @param _onProgress 加载进度
      */
-    static load(url: string | string[], onCompleted?: Handler, _onProgress?: Handler): Promise<any> {
+    load(url: string | string[], onCompleted?: Handler, _onProgress?: Handler): Promise<any> {
         if (!url || url.length == 0) {
             onCompleted && onCompleted.run();
             _onProgress && (_onProgress.args = [1], _onProgress.run());
@@ -38,14 +44,14 @@ export default class ResLoader {
         }
     }
     /**获取缓存 */
-    static getRes(url: string): any {
+    getRes(url: string): any {
         if (url) {
             return Laya.loader.getRes(url);
         }
     }
 
     /**获取克隆 */
-    static getResClose(url: string): any {
+    getResClose(url: string): any {
         if (url) {
             let obj = Laya.loader.getRes(url);
             if (obj && obj.create) {
@@ -58,21 +64,21 @@ export default class ResLoader {
 
 
     /**总资源加载数量 */
-    private static $total_num: number = 0;
+    private $total_num: number = 0;
     /**当前已经完成加载数量 */
-    private static $now_num: number = 0;
+    private $now_num: number = 0;
     /**完成回调 */
-    private static $onCompleted: Handler;
+    private $onCompleted: Handler;
     /**进度 */
-    private static $onProgress: Handler;
+    private $onProgress: Handler;
     /**是否进行预加载了 */
-    private static isLoad: boolean = false;
+    private isLoad: boolean = false;
 
     /**游戏所有资源地址 */
-    private static $dicAssetsPath: Map<number, Object> = new Map();
+    private $dicAssetsPath: Map<number, Object> = new Map();
 
     /**加载完成一个 */
-    private static $load_one_onCompleted() {
+    private $load_one_onCompleted() {
         this.$now_num++;
         this.$onProgress && (this.$onProgress.args = [1], this.$onProgress.run());
         if (this.$now_num == this.$total_num) {
@@ -85,7 +91,7 @@ export default class ResLoader {
      * @param onCompleted 完成回调
      * @param _onProgress 进度回调
      */
-    static preloadRes(onCompleted: Handler, _onProgress: Handler) {
+    preloadRes(onCompleted: Handler, _onProgress: Handler) {
         if (!this.isLoad) {
             this.isLoad = true;
             this.$onCompleted = onCompleted;
@@ -120,7 +126,7 @@ export default class ResLoader {
      * @param shotString 数据
      * @returns 返回一个以id作为key的map
      */
-    static stringParser(shotString: string, $isUrl: boolean = false): Map<number, Object> {
+    stringParser(shotString: string, $isUrl: boolean = false): Map<number, Object> {
         if (shotString) {
             let arr: string[] = shotString.split("\n");
             let shotArr, keyList: Array<string>, typeList: Array<string>, map = new Map();
@@ -171,7 +177,7 @@ export default class ResLoader {
 
 
     /**通过唯一id获取数据表 */
-    static getDataTableById(assetsId: DataTableEnum): Map<number, Object> {
+    getDataTableById(assetsId: DataTableEnum): Map<number, Object> {
         let data = this.getResById(assetsId);
         if (data && data.data) {
             let obj = this.stringParser(data.data);
@@ -182,7 +188,7 @@ export default class ResLoader {
 
 
     /**通过唯一Id获取资源 */
-    static getResById(assetsId: number): any {
+    getResById(assetsId: number): any {
         let obj = this.$dicAssetsPath.get(assetsId);
         if (obj && obj["path"]) {
             return this.getRes(obj['path']);
@@ -191,7 +197,7 @@ export default class ResLoader {
 
 
     /**通过唯一id获取url */
-    static getUrlById(assetsId: number): string {
+    getUrlById(assetsId: number): string {
         let obj = this.$dicAssetsPath.get(assetsId);
         if (obj && obj["path"]) {
             return obj["path"];

@@ -8,4 +8,6 @@
 export enum Scene3dEnum {
     /**主场景 */
     MainScene = 1001,
+    /**主选择人物武器场景 */
+    SelectPlayerScene = 1002,
 }

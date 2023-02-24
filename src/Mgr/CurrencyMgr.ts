@@ -15,7 +15,7 @@ export default class CurrencyMgr {
 
     /**初始化 */
     static init() {
-        this.$currencyMap = ResLoader.getDataTableById(DataTableEnum.Currency);
+        this.$currencyMap = ResLoader.instance. getDataTableById(DataTableEnum.Currency);
     }
 
 
@@ -32,7 +32,7 @@ export default class CurrencyMgr {
     static getImgUrlById(id: CurrencyEnum): string {
         let data = this.$currencyMap.get(id);
         if (data && data["imgId"]) {
-            return ResLoader.getUrlById(data["imgId"]);
+            return ResLoader.instance. getUrlById(data["imgId"]);
         }
         return "";
     }

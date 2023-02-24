@@ -3,6 +3,7 @@ import MainGame from "../Game/MainGame";
 import LocalizationMgr from "../Localization/LocalizationMgr";
 import CurrencyMgr from "../Mgr/CurrencyMgr";
 import LevelMgr from "../Mgr/LevelMgr";
+import Scene3dMgr from "../UIBase/Scene3dMgr";
 import UIBase from "../UIBase/UIBase";
 import UIBaseMgr from "../UIBase/UIBaseMgr";
 import ResLoader from "../Util/ResLoader";
@@ -14,7 +15,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-21 11:08:31
+ * @Last Modified time: 2023-02-24 23:37:55
  */
 const { regClass, property } = Laya;
 
@@ -52,7 +53,7 @@ export default class LoadView extends UIBase {
 
     /**开始预加载全局资源 */
     startPreLoad() {
-        ResLoader.preloadRes(Handler.create(this, this.onCompleted), Handler.create(this, this._onProgress));
+        ResLoader.instance.preloadRes(Handler.create(this, this.onCompleted), Handler.create(this, this._onProgress));
     }
 
     /**刷新进度条 */
@@ -75,13 +76,14 @@ export default class LoadView extends UIBase {
         LocalizationMgr.init();
         LevelMgr.init();
         CurrencyMgr.init();
+        Scene3dMgr.instance.init();
         MainGame.instance.init();
     }
 
     /**打开页面 */
     openScene() {
-        UIBaseMgr.showDebug();
-        UIBaseMgr.open(SceneEnum.MainView);
+        UIBaseMgr.instance.showDebug();
+        UIBaseMgr.instance.open(SceneEnum.MainView);
         this.close();
     }
 
