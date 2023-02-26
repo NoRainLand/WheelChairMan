@@ -37,31 +37,19 @@
       },
       "labelDic": {
         "_$ref": "4har2aw4"
+      },
+      "imgUnlock": {
+        "_$ref": "cecxri9j"
+      },
+      "labelUnlock": {
+        "_$ref": "ndsnaaky"
+      },
+      "imgCurrency": {
+        "_$ref": "kuevpomp"
       }
     }
   ],
   "_$child": [
-    {
-      "_$id": "ieeka4b9",
-      "_$type": "Image",
-      "name": "Image",
-      "width": 1920,
-      "height": 123,
-      "left": 0,
-      "right": 0,
-      "skin": "res://a0036cad-8855-471e-b8b2-4eca2bf5e0cd"
-    },
-    {
-      "_$id": "l0cvwu9n",
-      "_$type": "Image",
-      "name": "imgBack",
-      "x": 23.00000000000002,
-      "y": 19.000000000000036,
-      "width": 71,
-      "height": 67,
-      "mouseEnabled": true,
-      "skin": "res://3e2f87b6-228b-4175-adbf-8a636b12fc77"
-    },
     {
       "_$id": "44yzknug",
       "_$type": "Image",
@@ -90,27 +78,37 @@
       "_$id": "3cmkwohl",
       "_$type": "Image",
       "name": "imgSelect",
-      "x": 800,
-      "y": 890.9999999999998,
-      "width": 320,
+      "x": 773,
+      "y": 874,
+      "width": 374,
       "height": 133,
       "mouseEnabled": true,
-      "skin": "res://9554605f-8645-4148-ad18-ce84e8b52ae2",
+      "bottom": 73,
+      "skin": "res://1825f732-4466-4a6d-a492-ead9c35c12f7",
       "sizeGrid": "0,41,0,33,0",
       "_$child": [
         {
           "_$id": "tj3r6uic",
           "_$type": "Label",
           "name": "labeSelect",
-          "width": 309,
-          "height": 117,
-          "text": "解锁1000",
+          "x": 19,
+          "y": 18,
+          "width": 336,
+          "height": 98,
+          "text": "STARTFIGHTING",
           "fontSize": 40,
-          "color": "rgba(18, 73, 43, 1)",
+          "color": "rgba(131, 2, 51, 1)",
           "align": "center",
           "valign": "middle",
           "leading": 0,
-          "padding": "0,0,0,0"
+          "padding": "0,0,0,0",
+          "_$comp": [
+            {
+              "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+              "scriptPath": "../src/Localization/LocalizationText.ts",
+              "localizationKey": "STARTFIGHTING"
+            }
+          ]
         }
       ]
     },
@@ -148,11 +146,75 @@
       "_$id": "lyqpewym",
       "_$type": "Image",
       "name": "imgLock",
-      "x": 827.9999999999999,
-      "y": 146.9999999999999,
+      "x": 688,
+      "y": 298.99999999999983,
       "width": 74,
       "height": 92,
       "skin": "res://c27e14f4-028e-4be1-86b3-853f5c705018"
+    },
+    {
+      "_$id": "cecxri9j",
+      "_$type": "Image",
+      "name": "imgUnlock",
+      "x": 773,
+      "y": 874,
+      "width": 374,
+      "height": 133,
+      "mouseEnabled": true,
+      "bottom": 73,
+      "skin": "res://9554605f-8645-4148-ad18-ce84e8b52ae2",
+      "sizeGrid": "0,41,0,33,0",
+      "_$child": [
+        {
+          "_$id": "ndsnaaky",
+          "_$type": "Label",
+          "name": "labelUnlock",
+          "x": 23,
+          "y": 15,
+          "width": 243,
+          "height": 98,
+          "text": "Unlock1000",
+          "fontSize": 40,
+          "color": "rgba(7, 92, 35, 1)",
+          "align": "center",
+          "valign": "middle",
+          "leading": 0,
+          "padding": "0,0,0,0"
+        },
+        {
+          "_$id": "kuevpomp",
+          "_$type": "Image",
+          "name": "imgCurrency",
+          "x": 267,
+          "y": 28.999999999999886,
+          "width": 97,
+          "height": 85,
+          "scaleX": 0.7,
+          "scaleY": 0.7,
+          "skin": "res://35fb525d-12c9-43f0-beab-e6368eda4e06"
+        }
+      ]
+    },
+    {
+      "_$id": "ieeka4b9",
+      "_$type": "Image",
+      "name": "Image",
+      "width": 1920,
+      "height": 123,
+      "left": 0,
+      "right": 0,
+      "skin": "res://a0036cad-8855-471e-b8b2-4eca2bf5e0cd"
+    },
+    {
+      "_$id": "l0cvwu9n",
+      "_$type": "Image",
+      "name": "imgBack",
+      "x": 23.00000000000002,
+      "y": 19.000000000000036,
+      "width": 71,
+      "height": 67,
+      "mouseEnabled": true,
+      "skin": "res://3e2f87b6-228b-4175-adbf-8a636b12fc77"
     }
   ]
 }

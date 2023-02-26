@@ -1,0 +1,163 @@
+{
+  "_$ver": 1,
+  "_$id": "3noa3r9y",
+  "_$type": "Sprite3D",
+  "name": "SM_Env_Skyline_01",
+  "isStatic": true,
+  "transform": {
+    "localPosition": {
+      "_$type": "Vector3",
+      "x": 1.1964621648985485e-7,
+      "y": -31.195710922245418,
+      "z": 1.1943111419677734
+    },
+    "localScale": {
+      "_$type": "Vector3",
+      "x": 100,
+      "y": 200,
+      "z": 100
+    }
+  },
+  "_$comp": [
+    {
+      "_$type": "Animator",
+      "enabled": false,
+      "cullingMode": 0,
+      "controllerLayers": [
+        {
+          "_$type": "AnimatorControllerLayer",
+          "name": "BaseLayer",
+          "states": [
+            {
+              "_$type": "AnimatorState",
+              "name": "BaseLayer",
+              "clipStart": 0,
+              "clip": {
+                "_$uuid": "c069a249-a187-4e27-8024-b1eb48302538@lani0",
+                "_$type": "AnimationClip"
+              },
+              "soloTransitions": []
+            }
+          ],
+          "defaultStateName": "BaseLayer"
+        }
+      ]
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "#44",
+      "_$type": "Sprite3D",
+      "name": "SM_Env_Skyline_01",
+      "isStatic": true,
+      "transform": {
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 0.009999999776482582,
+          "y": 0.009999999776482582,
+          "z": 0.009999999776482582
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "MeshFilter",
+          "sharedMesh": {
+            "_$uuid": "c069a249-a187-4e27-8024-b1eb48302538@lm0",
+            "_$type": "Mesh"
+          }
+        },
+        {
+          "_$type": "MeshRenderer",
+          "receiveShadow": true,
+          "castShadow": true,
+          "sharedMaterials": [
+            {
+              "_$uuid": "02f85e6d-524b-4ead-9748-b28d9c6f2723",
+              "_$type": "Material"
+            }
+          ]
+        }
+      ],
+      "_$child": [
+        {
+          "_$id": "#45",
+          "_$type": "Sprite3D",
+          "name": "SM_Env_Skyline_04",
+          "isStatic": true,
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "c069a249-a187-4e27-8024-b1eb48302538@lm3",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "02f85e6d-524b-4ead-9748-b28d9c6f2723",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#46",
+          "_$type": "Sprite3D",
+          "name": "SM_Env_Skyline_03",
+          "isStatic": true,
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "c069a249-a187-4e27-8024-b1eb48302538@lm2",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "02f85e6d-524b-4ead-9748-b28d9c6f2723",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#47",
+          "_$type": "Sprite3D",
+          "name": "SM_Env_Skyline_02",
+          "isStatic": true,
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "c069a249-a187-4e27-8024-b1eb48302538@lm1",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "02f85e6d-524b-4ead-9748-b28d9c6f2723",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

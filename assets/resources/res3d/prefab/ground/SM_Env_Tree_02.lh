@@ -1,0 +1,92 @@
+{
+  "_$ver": 1,
+  "_$id": "9t354ak4",
+  "_$type": "Sprite3D",
+  "name": "SM_Env_Tree_02",
+  "isStatic": true,
+  "transform": {
+    "localPosition": {
+      "_$type": "Vector3",
+      "x": -1.6114198264221324,
+      "y": -0.4099595546722412,
+      "z": 0.07000101221092957
+    },
+    "localRotation": {
+      "_$type": "Quaternion",
+      "y": 0.6142730907601412,
+      "w": 0.7890935115485258
+    },
+    "localScale": {
+      "_$type": "Vector3",
+      "x": 100,
+      "y": 100,
+      "z": 100
+    }
+  },
+  "_$comp": [
+    {
+      "_$type": "Animator",
+      "enabled": false,
+      "controller": {
+        "_$uuid": "b49543e6-97a8-43ed-ac82-a5018300746b",
+        "_$type": "AnimationController"
+      },
+      "cullingMode": 0,
+      "controllerLayers": [
+        {
+          "_$type": "AnimatorControllerLayer",
+          "name": "BaseLayer",
+          "states": [
+            {
+              "_$type": "AnimatorState",
+              "name": "BaseLayer",
+              "clipStart": 0,
+              "clip": {
+                "_$uuid": "ba53afe6-defb-4cb5-962f-a51d76035d7d@lani0",
+                "_$type": "AnimationClip"
+              },
+              "soloTransitions": []
+            }
+          ],
+          "defaultStateName": "BaseLayer"
+        }
+      ]
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "#44",
+      "_$type": "Sprite3D",
+      "name": "SM_Env_Tree_02",
+      "isStatic": true,
+      "transform": {
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 0.009999999776482582,
+          "y": 0.009999999776482582,
+          "z": 0.009999999776482582
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "MeshFilter",
+          "sharedMesh": {
+            "_$uuid": "ba53afe6-defb-4cb5-962f-a51d76035d7d@lm0",
+            "_$type": "Mesh"
+          }
+        },
+        {
+          "_$type": "MeshRenderer",
+          "receiveShadow": true,
+          "castShadow": true,
+          "sharedMaterials": [
+            {
+              "_$uuid": "84be5ea9-39cc-46ff-a60e-a71975f51ecb",
+              "_$type": "Material"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

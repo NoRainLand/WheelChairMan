@@ -211,13 +211,13 @@ function __$decorate(assetId, codePath) {
     }
     /**获取克隆 */
     getResCloneById(id) {
-      var _a16, _b13;
+      var _a17, _b13;
       if (id) {
         let url = this.getUrlById(id);
         if (url) {
           let obj = Laya.loader.getRes(url);
           if (obj === null || obj === void 0 ? void 0 : obj.create) {
-            return (_a16 = obj === null || obj === void 0 ? void 0 : obj.create) === null || _a16 === void 0 ? void 0 : _a16.call(obj);
+            return (_a17 = obj === null || obj === void 0 ? void 0 : obj.create) === null || _a17 === void 0 ? void 0 : _a17.call(obj);
           } else if (obj === null || obj === void 0 ? void 0 : obj.clone) {
             return (_b13 = obj === null || obj === void 0 ? void 0 : obj.clone) === null || _b13 === void 0 ? void 0 : _b13.call(obj);
           } else {
@@ -895,11 +895,11 @@ function __$decorate(assetId, codePath) {
       Laya.stage.setChildIndex(this.$scene3d, 0);
       this.$scene3d.enableFog = true;
       this.$scene3d.fogStart = 200;
-      this.$scene3d.fogRange = 200;
+      this.$scene3d.fogRange = 400;
       this.$scene3d.fogColor = new Laya.Color(0.34, 0.34, 0.34);
-      this.$scene3d.sceneReflectionProb.ambientIntensity = 1;
+      this.$scene3d.sceneReflectionProb.ambientIntensity = 0.7;
       this.$scene3d.sceneReflectionProb.ambientMode = 0;
-      this.$scene3d.sceneReflectionProb.ambientColor = new Laya.Color(1, 1, 1);
+      this.$scene3d.sceneReflectionProb.ambientColor = new Laya.Color(0.7, 0.7, 0.7, 0.7);
       this.$scene3d.skyRenderer.material = ResLoader.instance.getResCloneById(5103 /* SkyBox3 */);
       this.rotSkyBox();
     }
@@ -911,13 +911,13 @@ function __$decorate(assetId, codePath) {
     }
     /**打开某个场景 */
     open(sceneId, param) {
-      var _a16;
+      var _a17;
       let sceneScript;
       sceneScript = this.$scene3dPool.get(sceneId);
       if (sceneScript) {
         this.initScene(sceneScript, param);
       } else {
-        let id = (_a16 = this.$scene3dMap.get(sceneId)) == null ? void 0 : _a16["path"];
+        let id = (_a17 = this.$scene3dMap.get(sceneId)) == null ? void 0 : _a17["path"];
         if (id) {
           let scene = ResLoader.instance.getResCloneById(id);
           scene && this.$scene3d.addChild(scene);
@@ -934,9 +934,9 @@ function __$decorate(assetId, codePath) {
     }
     /**初始化一下 */
     initScene(sceneScript, param) {
-      var _a16;
+      var _a17;
       this.$scene3d.addChild(sceneScript.owner);
-      sceneScript.owner.name = (_a16 = this.$scene3dMap.get(sceneScript.sceneId)) == null ? void 0 : _a16["key"];
+      sceneScript.owner.name = (_a17 = this.$scene3dMap.get(sceneScript.sceneId)) == null ? void 0 : _a17["key"];
       sceneScript.$param = param;
       sceneScript.onOpened(param);
       sceneScript.addEvent();
@@ -995,32 +995,27 @@ function __$decorate(assetId, codePath) {
     init() {
       this.$playerMap = ResLoader.instance.getDataTableById(3008 /* Player */);
     }
-    /**获取当前选择的玩家id */
-    get selectedPlayerId() {
-      var _a16;
-      if (!this.$selectedPlayerId) {
-        let id = Number((_a16 = LocalStorageMgr.getItem("PLAYERID" /* PLAYERID */)) == null ? void 0 : _a16.replace(this.$sign, ""));
-        if (isNaN(id)) {
-          this.$selectedPlayerId = 1001;
-          LocalStorageMgr.setItem("PLAYERID" /* PLAYERID */, this.$sign + this.$selectedPlayerId);
-        } else {
-          {
-            this.$selectedPlayerId = id;
-          }
-        }
-      }
-      return this.$selectedPlayerId;
-    }
-    set selectedPlayerId(value) {
-      if (value) {
-        this.$selectedPlayerId = value;
-        LocalStorageMgr.setItem("PLAYERID" /* PLAYERID */, this.$sign + this.$selectedPlayerId);
-      }
-    }
-    /**获取当前选择的玩家数据 */
-    getSelectedPlayerData() {
-      return this.$playerMap.get(this.selectedPlayerId);
-    }
+    // /**获取当前选择的玩家id */
+    // get selectedPlayerId(): number {
+    //     if (!this.$selectedPlayerId) {
+    //         let id = Number(LocalStorageMgr.getItem(LocalStorageEnum.PLAYERID)?.replace(this.$sign, ""));
+    //         if (isNaN(id)) {
+    //             this.$selectedPlayerId = 1001;
+    //             LocalStorageMgr.setItem(LocalStorageEnum.PLAYERID, this.$sign + this.$selectedPlayerId);
+    //         } else {
+    //             {
+    //                 this.$selectedPlayerId = id
+    //             }
+    //         }
+    //     }
+    //     return this.$selectedPlayerId
+    // }
+    // set selectedPlayerId(value: number) {
+    //     if (value) {
+    //         this.$selectedPlayerId = value;
+    //         LocalStorageMgr.setItem(LocalStorageEnum.PLAYERID, this.$sign + this.$selectedPlayerId);
+    //     }
+    // }
     /**获取已经解锁的人物 */
     getUnlockList() {
       let str = LocalStorageMgr.getItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */);
@@ -1039,7 +1034,20 @@ function __$decorate(assetId, codePath) {
         LocalStorageMgr.setItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */, JSON.stringify(this.$unlockList));
       }
     }
+    /**是否已经解锁 */
+    isUnlock(playerId) {
+      let arr = this.getUnlockList();
+      return arr.indexOf(playerId) != -1;
+    }
+    /**获取当前选择的玩家数据 */
+    getSelectedPlayerData(playerId) {
+      return this.$playerMap.get(playerId);
+    }
     /**获取当前人物 */
+    getSelectPlayer(playerId) {
+      let playerData = this.getSelectedPlayerData(playerId);
+      return ResLoader.instance.getResCloneById(playerData == null ? void 0 : playerData["path"]);
+    }
   };
   __name(PlayerMgr, "PlayerMgr");
 
@@ -1065,12 +1073,17 @@ function __$decorate(assetId, codePath) {
     addEvent() {
     }
     reset() {
-      Scene3dMgr.instance.open(1001 /* MainScene */);
+      this.goToMain();
     }
     /**开始选择玩家 */
     selectPlayerAndWeapon() {
       Scene3dMgr.instance.open(1002 /* SelectPlayerScene */);
       Scene3dMgr.instance.close(1001 /* MainScene */);
+    }
+    /**返回主页 */
+    goToMain() {
+      Scene3dMgr.instance.close(1002 /* SelectPlayerScene */);
+      Scene3dMgr.instance.open(1001 /* MainScene */);
     }
     gameStart() {
       Scene3dMgr.instance.close(1002 /* SelectPlayerScene */);
@@ -1118,9 +1131,9 @@ function __$decorate(assetId, codePath) {
     }
     /**通过key获取对应语言,一般来说是内部调用 */
     static $getLocalizationByKey(key, ...keys) {
-      var _a16, _b13;
+      var _a17, _b13;
       let language = LanguageEnum[this.Language];
-      let value = (_a16 = this.$localizationKeyMap.get(key)) == null ? void 0 : _a16[language];
+      let value = (_a17 = this.$localizationKeyMap.get(key)) == null ? void 0 : _a17[language];
       if (value) {
         if (keys && keys.length) {
           for (let i = 0; i < keys.length; i++) {
@@ -1134,9 +1147,9 @@ function __$decorate(assetId, codePath) {
     }
     /**通过枚举获取对应语言 */
     static getLocalizationByEnum(lenum, ...lenums) {
-      var _a16, _b13;
+      var _a17, _b13;
       let language = LanguageEnum[this.Language];
-      let value = (_a16 = this.$localizationMap.get(lenum)) == null ? void 0 : _a16[language];
+      let value = (_a17 = this.$localizationMap.get(lenum)) == null ? void 0 : _a17[language];
       if (value) {
         if (lenums && lenums.length) {
           for (let i = 0; i < lenums.length; i++) {
@@ -1209,41 +1222,13 @@ function __$decorate(assetId, codePath) {
     __metadata("design:paramtypes", [])
   ], LocalizationText);
 
-  // E:/WheelChairMan/src/Scene3d/MainScene.ts
-  var __decorate7 = __$decorate("71c8c727-1736-44b1-984f-02439872df63", "../src/Scene3d/MainScene.ts");
-  var { regClass: regClass6, property: property6 } = Laya;
-  var MainScene = /* @__PURE__ */ __name(class MainScene2 extends Scene3d_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-    }
-  }, "MainScene");
-  MainScene = __decorate7([
-    regClass6(),
-    __metadata("design:paramtypes", [])
-  ], MainScene);
-
-  // E:/WheelChairMan/src/Scene3d/SelectPlayerScene.ts
-  var __decorate8 = __$decorate("34405a80-13b4-48be-ac44-94bb920f1518", "../src/Scene3d/SelectPlayerScene.ts");
-  var { regClass: regClass7, property: property7 } = Laya;
-  var SelectPlayerScene = /* @__PURE__ */ __name(class SelectPlayerScene2 extends Scene3d_default {
-    constructor() {
-      super();
-    }
-  }, "SelectPlayerScene");
-  SelectPlayerScene = __decorate8([
-    regClass7(),
-    __metadata("design:paramtypes", [])
-  ], SelectPlayerScene);
-
   // E:/WheelChairMan/src/Scene/CompleteView.ts
-  var __decorate9 = __$decorate("f5f376ef-5874-4c8a-9a28-8088976bd468", "../src/Scene/CompleteView.ts");
-  var { regClass: regClass8, property: property8 } = Laya;
+  var __decorate7 = __$decorate("f5f376ef-5874-4c8a-9a28-8088976bd468", "../src/Scene/CompleteView.ts");
+  var { regClass: regClass6, property: property6 } = Laya;
   var CompleteView = /* @__PURE__ */ __name(class CompleteView2 extends UIBase_default {
   }, "CompleteView");
-  CompleteView = __decorate9([
-    regClass8()
+  CompleteView = __decorate7([
+    regClass6()
   ], CompleteView);
 
   // E:/WheelChairMan/src/Data/GameData.ts
@@ -1367,7 +1352,7 @@ function __$decorate(assetId, codePath) {
   GameData.$key = -1;
 
   // E:/WheelChairMan/src/Scene/DebugView.ts
-  var __decorate10 = __$decorate("5ca51831-1d23-46b6-a853-a10d5da54d6c", "../src/Scene/DebugView.ts");
+  var __decorate8 = __$decorate("5ca51831-1d23-46b6-a853-a10d5da54d6c", "../src/Scene/DebugView.ts");
   var _a;
   var _b;
   var _c;
@@ -1375,7 +1360,7 @@ function __$decorate(assetId, codePath) {
   var Image = Laya.Image;
   var List = Laya.List;
   var Handler3 = Laya.Handler;
-  var { regClass: regClass9, property: property9 } = Laya;
+  var { regClass: regClass7, property: property7 } = Laya;
   var DebugView = /* @__PURE__ */ __name(class DebugView2 extends UIBase_default {
     constructor() {
       super();
@@ -1425,37 +1410,37 @@ function __$decorate(assetId, codePath) {
       this.listCommand.selectedIndex = -1;
     }
   }, "DebugView");
-  __decorate10([
-    property9(),
+  __decorate8([
+    property7(),
     __metadata("design:type", typeof (_a = typeof Image !== "undefined" && Image) === "function" ? _a : Object)
   ], DebugView.prototype, "imgShow", void 0);
-  __decorate10([
-    property9(),
+  __decorate8([
+    property7(),
     __metadata("design:type", typeof (_b = typeof Box !== "undefined" && Box) === "function" ? _b : Object)
   ], DebugView.prototype, "MainPanel", void 0);
-  __decorate10([
-    property9(),
+  __decorate8([
+    property7(),
     __metadata("design:type", typeof (_c = typeof List !== "undefined" && List) === "function" ? _c : Object)
   ], DebugView.prototype, "listCommand", void 0);
-  DebugView = __decorate10([
-    regClass9(),
+  DebugView = __decorate8([
+    regClass7(),
     __metadata("design:paramtypes", [])
   ], DebugView);
 
   // E:/WheelChairMan/src/Scene/GameView.ts
-  var __decorate11 = __$decorate("ddf0e22e-43aa-4145-b2f5-8a127efb5611", "../src/Scene/GameView.ts");
-  var { regClass: regClass10, property: property10 } = Laya;
+  var __decorate9 = __$decorate("ddf0e22e-43aa-4145-b2f5-8a127efb5611", "../src/Scene/GameView.ts");
+  var { regClass: regClass8, property: property8 } = Laya;
   var GameView = /* @__PURE__ */ __name(class GameView2 extends UIBase_default {
   }, "GameView");
-  GameView = __decorate11([
-    regClass10()
+  GameView = __decorate9([
+    regClass8()
   ], GameView);
 
   // E:/WheelChairMan/src/Scene/GuideView.ts
-  var __decorate12 = __$decorate("a7a26e14-76d9-4f1c-9471-21fbc179af77", "../src/Scene/GuideView.ts");
+  var __decorate10 = __$decorate("a7a26e14-76d9-4f1c-9471-21fbc179af77", "../src/Scene/GuideView.ts");
   var _a2;
   var Image2 = Laya.Image;
-  var { regClass: regClass11, property: property11 } = Laya;
+  var { regClass: regClass9, property: property9 } = Laya;
   var GuideView = /* @__PURE__ */ __name(class GuideView2 extends UIBase_default {
     constructor() {
       super();
@@ -1473,23 +1458,23 @@ function __$decorate(assetId, codePath) {
       LocalStorageMgr.setItem("FIRESTTIME" /* FIRSTTIME */, "1");
     }
   }, "GuideView");
-  __decorate12([
-    property11(),
+  __decorate10([
+    property9(),
     __metadata("design:type", typeof (_a2 = typeof Image2 !== "undefined" && Image2) === "function" ? _a2 : Object)
   ], GuideView.prototype, "imgSkip", void 0);
-  GuideView = __decorate12([
-    regClass11(),
+  GuideView = __decorate10([
+    regClass9(),
     __metadata("design:paramtypes", [])
   ], GuideView);
 
   // E:/WheelChairMan/src/Scene/LanguageView.ts
-  var __decorate13 = __$decorate("6bc1bf6a-a993-4ac9-b9f4-4785e0d68c2b", "../src/Scene/LanguageView.ts");
+  var __decorate11 = __$decorate("6bc1bf6a-a993-4ac9-b9f4-4785e0d68c2b", "../src/Scene/LanguageView.ts");
   var _a3;
   var _b2;
   var Image3 = Laya.Image;
   var List2 = Laya.List;
   var Handler4 = Laya.Handler;
-  var { regClass: regClass12, property: property12 } = Laya;
+  var { regClass: regClass10, property: property10 } = Laya;
   var LanguageView = /* @__PURE__ */ __name(class LanguageView2 extends UIBase_default {
     constructor() {
       super();
@@ -1534,26 +1519,26 @@ function __$decorate(assetId, codePath) {
       }
     }
   }, "LanguageView");
-  __decorate13([
-    property12(),
+  __decorate11([
+    property10(),
     __metadata("design:type", typeof (_a3 = typeof List2 !== "undefined" && List2) === "function" ? _a3 : Object)
   ], LanguageView.prototype, "$listLanguage", void 0);
-  __decorate13([
-    property12(),
+  __decorate11([
+    property10(),
     __metadata("design:type", typeof (_b2 = typeof Image3 !== "undefined" && Image3) === "function" ? _b2 : Object)
   ], LanguageView.prototype, "$imgClose", void 0);
-  LanguageView = __decorate13([
-    regClass12(),
+  LanguageView = __decorate11([
+    regClass10(),
     __metadata("design:paramtypes", [])
   ], LanguageView);
 
   // E:/WheelChairMan/src/Scene/LevelUpView.ts
-  var __decorate14 = __$decorate("f7577321-9089-4d76-ba3b-af9c8a8c0afe", "../src/Scene/LevelUpView.ts");
-  var { regClass: regClass13, property: property13 } = Laya;
+  var __decorate12 = __$decorate("f7577321-9089-4d76-ba3b-af9c8a8c0afe", "../src/Scene/LevelUpView.ts");
+  var { regClass: regClass11, property: property11 } = Laya;
   var LevelUpView = /* @__PURE__ */ __name(class LevelUpView2 extends UIBase_default {
   }, "LevelUpView");
-  LevelUpView = __decorate14([
-    regClass13()
+  LevelUpView = __decorate12([
+    regClass11()
   ], LevelUpView);
 
   // E:/WheelChairMan/src/Mgr/CurrencyMgr.ts
@@ -1606,7 +1591,7 @@ function __$decorate(assetId, codePath) {
   LevelMgr.$levelDataTable = /* @__PURE__ */ new Map();
 
   // E:/WheelChairMan/src/Util/StringUtil.ts
-  var __decorate15 = __$decorate("9f8ef9b7-13a5-4980-a9d8-46f8659dff82", "../src/Util/StringUtil.ts");
+  var __decorate13 = __$decorate("9f8ef9b7-13a5-4980-a9d8-46f8659dff82", "../src/Util/StringUtil.ts");
   var StringUtil = class {
     /**小数转百分比，默认保留两位小数 */
     static num2percentage(num, d = 2) {
@@ -1724,14 +1709,14 @@ function __$decorate(assetId, codePath) {
   StringUtil._colorDic = {};
 
   // E:/WheelChairMan/src/Scene/LoadView.ts
-  var __decorate16 = __$decorate("9797e892-adab-4c82-8f5e-800b37f590f9", "../src/Scene/LoadView.ts");
+  var __decorate14 = __$decorate("9797e892-adab-4c82-8f5e-800b37f590f9", "../src/Scene/LoadView.ts");
   var _a4;
   var _b3;
   var _c2;
   var Image4 = Laya.Image;
   var Label2 = Laya.Label;
   var Handler5 = Laya.Handler;
-  var { regClass: regClass14, property: property14 } = Laya;
+  var { regClass: regClass12, property: property12 } = Laya;
   var LoadView = /* @__PURE__ */ __name(class LoadView2 extends UIBase_default {
     constructor() {
       super();
@@ -1773,34 +1758,34 @@ function __$decorate(assetId, codePath) {
       this.close();
     }
   }, "LoadView");
-  __decorate16([
-    property14(),
+  __decorate14([
+    property12(),
     __metadata("design:type", typeof (_a4 = typeof Image4 !== "undefined" && Image4) === "function" ? _a4 : Object)
   ], LoadView.prototype, "imgLoad", void 0);
-  __decorate16([
-    property14(),
+  __decorate14([
+    property12(),
     __metadata("design:type", typeof (_b3 = typeof Label2 !== "undefined" && Label2) === "function" ? _b3 : Object)
   ], LoadView.prototype, "labelLoad", void 0);
-  __decorate16([
-    property14(),
+  __decorate14([
+    property12(),
     __metadata("design:type", typeof (_c2 = typeof Label2 !== "undefined" && Label2) === "function" ? _c2 : Object)
   ], LoadView.prototype, "testLabel", void 0);
-  LoadView = __decorate16([
-    regClass14(),
+  LoadView = __decorate14([
+    regClass12(),
     __metadata("design:paramtypes", [])
   ], LoadView);
 
   // E:/WheelChairMan/src/Scene/LoseView.ts
-  var __decorate17 = __$decorate("9b8220cb-adbc-4d84-9618-c7c9f2bd85f3", "../src/Scene/LoseView.ts");
-  var { regClass: regClass15, property: property15 } = Laya;
+  var __decorate15 = __$decorate("9b8220cb-adbc-4d84-9618-c7c9f2bd85f3", "../src/Scene/LoseView.ts");
+  var { regClass: regClass13, property: property13 } = Laya;
   var LoseView = /* @__PURE__ */ __name(class LoseView2 extends UIBase_default {
   }, "LoseView");
-  LoseView = __decorate17([
-    regClass15()
+  LoseView = __decorate15([
+    regClass13()
   ], LoseView);
 
   // E:/WheelChairMan/src/Scene/LuckyBoxView.ts
-  var __decorate18 = __$decorate("d94dafff-05f0-4479-9a1a-ab9861a24025", "../src/Scene/LuckyBoxView.ts");
+  var __decorate16 = __$decorate("d94dafff-05f0-4479-9a1a-ab9861a24025", "../src/Scene/LuckyBoxView.ts");
   var _a5;
   var _b4;
   var _c3;
@@ -1808,7 +1793,7 @@ function __$decorate(assetId, codePath) {
   var _e;
   var Text2 = Laya.Text;
   var Image5 = Laya.Image;
-  var { regClass: regClass16, property: property16 } = Laya;
+  var { regClass: regClass14, property: property14 } = Laya;
   var LuckyBoxView = /* @__PURE__ */ __name(class LuckyBoxView2 extends UIBase_default {
     constructor() {
       super();
@@ -1834,33 +1819,33 @@ function __$decorate(assetId, codePath) {
       }
     }
   }, "LuckyBoxView");
-  __decorate18([
-    property16(),
+  __decorate16([
+    property14(),
     __metadata("design:type", typeof (_a5 = typeof Image5 !== "undefined" && Image5) === "function" ? _a5 : Object)
   ], LuckyBoxView.prototype, "imgLight", void 0);
-  __decorate18([
-    property16(),
+  __decorate16([
+    property14(),
     __metadata("design:type", typeof (_b4 = typeof Image5 !== "undefined" && Image5) === "function" ? _b4 : Object)
   ], LuckyBoxView.prototype, "imgBox", void 0);
-  __decorate18([
-    property16(),
+  __decorate16([
+    property14(),
     __metadata("design:type", typeof (_c3 = typeof Image5 !== "undefined" && Image5) === "function" ? _c3 : Object)
   ], LuckyBoxView.prototype, "imgClose", void 0);
-  __decorate18([
-    property16(),
+  __decorate16([
+    property14(),
     __metadata("design:type", typeof (_d = typeof Image5 !== "undefined" && Image5) === "function" ? _d : Object)
   ], LuckyBoxView.prototype, "imgOpen", void 0);
-  __decorate18([
-    property16(),
+  __decorate16([
+    property14(),
     __metadata("design:type", typeof (_e = typeof Text2 !== "undefined" && Text2) === "function" ? _e : Object)
   ], LuckyBoxView.prototype, "txtMsg", void 0);
-  LuckyBoxView = __decorate18([
-    regClass16(),
+  LuckyBoxView = __decorate16([
+    regClass14(),
     __metadata("design:paramtypes", [])
   ], LuckyBoxView);
 
   // E:/WheelChairMan/src/Scene/MainView.ts
-  var __decorate19 = __$decorate("127f9431-d96d-491c-b782-2549a9c38d7b", "../src/Scene/MainView.ts");
+  var __decorate17 = __$decorate("127f9431-d96d-491c-b782-2549a9c38d7b", "../src/Scene/MainView.ts");
   var _a6;
   var _b5;
   var _c4;
@@ -1880,7 +1865,7 @@ function __$decorate(assetId, codePath) {
   var Box2 = Laya.Box;
   var Label3 = Laya.Label;
   var Image6 = Laya.Image;
-  var { regClass: regClass17, property: property17 } = Laya;
+  var { regClass: regClass15, property: property15 } = Laya;
   var MainView = /* @__PURE__ */ __name(class MainView2 extends UIBase_default {
     constructor() {
       super();
@@ -1940,91 +1925,91 @@ function __$decorate(assetId, codePath) {
     onClosed() {
     }
   }, "MainView");
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_a6 = typeof Text3 !== "undefined" && Text3) === "function" ? _a6 : Object)
   ], MainView.prototype, "txtGold", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_b5 = typeof Image6 !== "undefined" && Image6) === "function" ? _b5 : Object)
   ], MainView.prototype, "imgPlusGold", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_c4 = typeof Text3 !== "undefined" && Text3) === "function" ? _c4 : Object)
   ], MainView.prototype, "txtDiamond", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_d2 = typeof Image6 !== "undefined" && Image6) === "function" ? _d2 : Object)
   ], MainView.prototype, "imgPlusDiamond", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_e2 = typeof Image6 !== "undefined" && Image6) === "function" ? _e2 : Object)
   ], MainView.prototype, "imgHead", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_f = typeof Image6 !== "undefined" && Image6) === "function" ? _f : Object)
   ], MainView.prototype, "imgRing", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_g = typeof Image6 !== "undefined" && Image6) === "function" ? _g : Object)
   ], MainView.prototype, "imgLevel", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_h = typeof Image6 !== "undefined" && Image6) === "function" ? _h : Object)
   ], MainView.prototype, "imgMs", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_j = typeof Text3 !== "undefined" && Text3) === "function" ? _j : Object)
   ], MainView.prototype, "txtLevel", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_k = typeof Label3 !== "undefined" && Label3) === "function" ? _k : Object)
   ], MainView.prototype, "labelName", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_l = typeof Image6 !== "undefined" && Image6) === "function" ? _l : Object)
   ], MainView.prototype, "imgShop", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_m = typeof Image6 !== "undefined" && Image6) === "function" ? _m : Object)
   ], MainView.prototype, "imgRanking", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_o = typeof Image6 !== "undefined" && Image6) === "function" ? _o : Object)
   ], MainView.prototype, "imgSettings", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_p = typeof Image6 !== "undefined" && Image6) === "function" ? _p : Object)
   ], MainView.prototype, "imgStart", void 0);
-  __decorate19([
-    property17(),
+  __decorate17([
+    property15(),
     __metadata("design:type", typeof (_q = typeof Box2 !== "undefined" && Box2) === "function" ? _q : Object)
   ], MainView.prototype, "Main", void 0);
-  MainView = __decorate19([
-    regClass17(),
+  MainView = __decorate17([
+    regClass15(),
     __metadata("design:paramtypes", [])
   ], MainView);
 
   // E:/WheelChairMan/src/Scene/MyInfoView.ts
-  var __decorate20 = __$decorate("dd16d8bf-53b3-41cc-81c1-44f39afec08e", "../src/Scene/MyInfoView.ts");
-  var { regClass: regClass18, property: property18 } = Laya;
+  var __decorate18 = __$decorate("dd16d8bf-53b3-41cc-81c1-44f39afec08e", "../src/Scene/MyInfoView.ts");
+  var { regClass: regClass16, property: property16 } = Laya;
   var MyInfoView = /* @__PURE__ */ __name(class MyInfoView2 extends UIBase_default {
   }, "MyInfoView");
-  MyInfoView = __decorate20([
-    regClass18()
+  MyInfoView = __decorate18([
+    regClass16()
   ], MyInfoView);
 
   // E:/WheelChairMan/src/Scene/PauseView.ts
-  var __decorate21 = __$decorate("352c01f5-c61a-4387-bd3b-63f412ac12c7", "../src/Scene/PauseView.ts");
-  var { regClass: regClass19, property: property19 } = Laya;
+  var __decorate19 = __$decorate("352c01f5-c61a-4387-bd3b-63f412ac12c7", "../src/Scene/PauseView.ts");
+  var { regClass: regClass17, property: property17 } = Laya;
   var PauseView = /* @__PURE__ */ __name(class PauseView2 extends UIBase_default {
   }, "PauseView");
-  PauseView = __decorate21([
-    regClass19()
+  PauseView = __decorate19([
+    regClass17()
   ], PauseView);
 
   // E:/WheelChairMan/src/Scene/PrivacyAgreementView.ts
-  var __decorate22 = __$decorate("df9b38f8-2d16-4280-849d-786074a729fe", "../src/Scene/PrivacyAgreementView.ts");
+  var __decorate20 = __$decorate("df9b38f8-2d16-4280-849d-786074a729fe", "../src/Scene/PrivacyAgreementView.ts");
   var _a7;
   var _b6;
   var _c5;
@@ -2032,7 +2017,7 @@ function __$decorate(assetId, codePath) {
   var Label4 = Laya.Label;
   var Image7 = Laya.Image;
   var Panel = Laya.Panel;
-  var { regClass: regClass20, property: property20 } = Laya;
+  var { regClass: regClass18, property: property18 } = Laya;
   var PrivacyAgreementView = /* @__PURE__ */ __name(class PrivacyAgreementView2 extends UIBase_default {
     constructor() {
       super();
@@ -2051,29 +2036,29 @@ function __$decorate(assetId, codePath) {
       this.close();
     }
   }, "PrivacyAgreementView");
-  __decorate22([
-    property20(),
+  __decorate20([
+    property18(),
     __metadata("design:type", typeof (_a7 = typeof Image7 !== "undefined" && Image7) === "function" ? _a7 : Object)
   ], PrivacyAgreementView.prototype, "imgSure", void 0);
-  __decorate22([
-    property20(),
+  __decorate20([
+    property18(),
     __metadata("design:type", typeof (_b6 = typeof Image7 !== "undefined" && Image7) === "function" ? _b6 : Object)
   ], PrivacyAgreementView.prototype, "imgCancel", void 0);
-  __decorate22([
-    property20(),
+  __decorate20([
+    property18(),
     __metadata("design:type", typeof (_c5 = typeof Panel !== "undefined" && Panel) === "function" ? _c5 : Object)
   ], PrivacyAgreementView.prototype, "panel", void 0);
-  __decorate22([
-    property20(),
+  __decorate20([
+    property18(),
     __metadata("design:type", typeof (_d3 = typeof Label4 !== "undefined" && Label4) === "function" ? _d3 : Object)
   ], PrivacyAgreementView.prototype, "txtAgreement", void 0);
-  PrivacyAgreementView = __decorate22([
-    regClass20(),
+  PrivacyAgreementView = __decorate20([
+    regClass18(),
     __metadata("design:paramtypes", [])
   ], PrivacyAgreementView);
 
   // E:/WheelChairMan/src/Scene/RankingView.ts
-  var __decorate23 = __$decorate("731a1c9f-76c7-4237-ad93-f469eb850bb9", "../src/Scene/RankingView.ts");
+  var __decorate21 = __$decorate("731a1c9f-76c7-4237-ad93-f469eb850bb9", "../src/Scene/RankingView.ts");
   var _a8;
   var _b7;
   var _c6;
@@ -2084,7 +2069,7 @@ function __$decorate(assetId, codePath) {
   var Image8 = Laya.Image;
   var List3 = Laya.List;
   var Handler6 = Laya.Handler;
-  var { regClass: regClass21, property: property21 } = Laya;
+  var { regClass: regClass19, property: property19 } = Laya;
   var RankingView = /* @__PURE__ */ __name(class RankingView2 extends UIBase_default {
     constructor() {
       super();
@@ -2151,37 +2136,48 @@ function __$decorate(assetId, codePath) {
       }
     }
   }, "RankingView");
-  __decorate23([
-    property21(),
+  __decorate21([
+    property19(),
     __metadata("design:type", typeof (_a8 = typeof Image8 !== "undefined" && Image8) === "function" ? _a8 : Object)
   ], RankingView.prototype, "imgClose", void 0);
-  __decorate23([
-    property21(),
+  __decorate21([
+    property19(),
     __metadata("design:type", typeof (_b7 = typeof Image8 !== "undefined" && Image8) === "function" ? _b7 : Object)
   ], RankingView.prototype, "imgHead", void 0);
-  __decorate23([
-    property21(),
+  __decorate21([
+    property19(),
     __metadata("design:type", typeof (_c6 = typeof Text4 !== "undefined" && Text4) === "function" ? _c6 : Object)
   ], RankingView.prototype, "txtName", void 0);
-  __decorate23([
-    property21(),
+  __decorate21([
+    property19(),
     __metadata("design:type", typeof (_d4 = typeof Text4 !== "undefined" && Text4) === "function" ? _d4 : Object)
   ], RankingView.prototype, "txtLV", void 0);
-  __decorate23([
-    property21(),
+  __decorate21([
+    property19(),
     __metadata("design:type", typeof (_e3 = typeof Text4 !== "undefined" && Text4) === "function" ? _e3 : Object)
   ], RankingView.prototype, "txtRank", void 0);
-  __decorate23([
-    property21(),
+  __decorate21([
+    property19(),
     __metadata("design:type", typeof (_f2 = typeof List3 !== "undefined" && List3) === "function" ? _f2 : Object)
   ], RankingView.prototype, "listRanking", void 0);
-  RankingView = __decorate23([
-    regClass21(),
+  RankingView = __decorate21([
+    regClass19(),
     __metadata("design:paramtypes", [])
   ], RankingView);
 
+  // E:/WheelChairMan/src/Enum/PlayerEnum.ts
+  var PlayerEnum = /* @__PURE__ */ ((PlayerEnum2) => {
+    PlayerEnum2[PlayerEnum2["BusinessMan"] = 1001] = "BusinessMan";
+    PlayerEnum2[PlayerEnum2["BombDisEX"] = 1002] = "BombDisEX";
+    PlayerEnum2[PlayerEnum2["GreatMagician"] = 1003] = "GreatMagician";
+    PlayerEnum2[PlayerEnum2["Kingsman"] = 1004] = "Kingsman";
+    PlayerEnum2[PlayerEnum2["ScoutRobot"] = 1005] = "ScoutRobot";
+    PlayerEnum2[PlayerEnum2["RookiePirate"] = 1006] = "RookiePirate";
+    return PlayerEnum2;
+  })(PlayerEnum || {});
+
   // E:/WheelChairMan/src/Scene/SelectPlayerView.ts
-  var __decorate24 = __$decorate("cdfd211f-d5a7-4c9b-9ffb-7956585db6fc", "../src/Scene/SelectPlayerView.ts");
+  var __decorate22 = __$decorate("cdfd211f-d5a7-4c9b-9ffb-7956585db6fc", "../src/Scene/SelectPlayerView.ts");
   var _a9;
   var _b8;
   var _c7;
@@ -2189,18 +2185,31 @@ function __$decorate(assetId, codePath) {
   var _e4;
   var _f3;
   var _g2;
+  var _h2;
+  var _j2;
+  var _k2;
   var Label5 = Laya.Label;
   var Image9 = Laya.Image;
-  var { regClass: regClass22, property: property22 } = Laya;
+  var { regClass: regClass20, property: property20 } = Laya;
   var SelectPlayerView = /* @__PURE__ */ __name(class SelectPlayerView2 extends UIBase_default {
     constructor() {
       super();
       this.$viewIndex = 0;
+      this.$selectIndex = 0;
     }
     onOpened(param) {
       this.$viewIndex = 0;
-      this.$playerData = PlayerMgr.instance.getSelectedPlayerData();
-      this.changeData();
+      this.$selectIndex = 0;
+      if (!this.$playerList) {
+        this.$playerList = [];
+        for (let item in PlayerEnum) {
+          if (!isNaN(Number(item))) {
+            this.$playerList.push(Number(item));
+          }
+        }
+      }
+      this.changeNexPrev();
+      this.showPlayer();
     }
     addEvent() {
       this.regClick(this.imgBack, this.goBack);
@@ -2209,50 +2218,95 @@ function __$decorate(assetId, codePath) {
       this.regClick(this.imgSelect, this.selectPlayer);
     }
     changeData() {
-      console.log(this.$playerData);
+      this.$playerData = PlayerMgr.instance.getSelectedPlayerData(this.$playerList[this.$selectIndex]);
       this.labelName.text = LocalizationMgr.getLocalizationByEnum(this.$playerData.localizationKey);
       this.labelDic.text = LocalizationMgr.getLocalizationByEnum(this.$playerData.descriptionKey);
+      if (PlayerMgr.instance.isUnlock(this.$playerList[this.$selectIndex])) {
+        this.imgLock.visible = false;
+        this.imgSelect.visible = true;
+        this.imgUnlock.visible = false;
+      } else {
+        this.imgLock.visible = true;
+        this.imgSelect.visible = false;
+        this.imgUnlock.visible = true;
+        this.labelUnlock.text = LocalizationMgr.getLocalizationByEnum(1030 /* UNLOCK */, this.$playerData.unlockPrice);
+        this.imgCurrency.skin = CurrencyMgr.getImgUrlById(this.$playerData["currency"]);
+      }
+    }
+    changeNexPrev() {
+      if (this.$selectIndex <= 0) {
+        this.imgPrev.visible = false;
+      } else if (this.$selectIndex >= this.$playerList.length - 1) {
+        this.imgNext.visible = false;
+      } else {
+        this.imgPrev.visible = true;
+        this.imgNext.visible = true;
+      }
+      this.changeData();
     }
     goBack() {
+      this.close();
+      UIBaseMgr.instance.open(1013 /* MainView */);
+      MainGame_default.instance.goToMain();
+    }
+    showPlayer() {
+      EventMgr.event("SHOWPLAYER" /* SHOWPLAYER */, this.$playerList[this.$selectIndex]);
     }
     nextItem() {
+      this.$selectIndex++;
+      this.changeNexPrev();
+      this.showPlayer();
     }
     prevItem() {
+      this.$selectIndex--;
+      this.changeNexPrev();
+      this.showPlayer();
     }
     selectPlayer() {
-      console.log();
     }
   }, "SelectPlayerView");
-  __decorate24([
-    property22(),
+  __decorate22([
+    property20(),
     __metadata("design:type", typeof (_a9 = typeof Image9 !== "undefined" && Image9) === "function" ? _a9 : Object)
   ], SelectPlayerView.prototype, "imgBack", void 0);
-  __decorate24([
-    property22(),
+  __decorate22([
+    property20(),
     __metadata("design:type", typeof (_b8 = typeof Image9 !== "undefined" && Image9) === "function" ? _b8 : Object)
   ], SelectPlayerView.prototype, "imgNext", void 0);
-  __decorate24([
-    property22(),
+  __decorate22([
+    property20(),
     __metadata("design:type", typeof (_c7 = typeof Image9 !== "undefined" && Image9) === "function" ? _c7 : Object)
   ], SelectPlayerView.prototype, "imgPrev", void 0);
-  __decorate24([
-    property22(),
+  __decorate22([
+    property20(),
     __metadata("design:type", typeof (_d5 = typeof Image9 !== "undefined" && Image9) === "function" ? _d5 : Object)
   ], SelectPlayerView.prototype, "imgLock", void 0);
-  __decorate24([
-    property22(),
+  __decorate22([
+    property20(),
     __metadata("design:type", typeof (_e4 = typeof Image9 !== "undefined" && Image9) === "function" ? _e4 : Object)
   ], SelectPlayerView.prototype, "imgSelect", void 0);
-  __decorate24([
-    property22(),
+  __decorate22([
+    property20(),
     __metadata("design:type", typeof (_f3 = typeof Label5 !== "undefined" && Label5) === "function" ? _f3 : Object)
   ], SelectPlayerView.prototype, "labelName", void 0);
-  __decorate24([
-    property22(),
+  __decorate22([
+    property20(),
     __metadata("design:type", typeof (_g2 = typeof Label5 !== "undefined" && Label5) === "function" ? _g2 : Object)
   ], SelectPlayerView.prototype, "labelDic", void 0);
-  SelectPlayerView = __decorate24([
-    regClass22(),
+  __decorate22([
+    property20(),
+    __metadata("design:type", typeof (_h2 = typeof Image9 !== "undefined" && Image9) === "function" ? _h2 : Object)
+  ], SelectPlayerView.prototype, "imgUnlock", void 0);
+  __decorate22([
+    property20(),
+    __metadata("design:type", typeof (_j2 = typeof Label5 !== "undefined" && Label5) === "function" ? _j2 : Object)
+  ], SelectPlayerView.prototype, "labelUnlock", void 0);
+  __decorate22([
+    property20(),
+    __metadata("design:type", typeof (_k2 = typeof Image9 !== "undefined" && Image9) === "function" ? _k2 : Object)
+  ], SelectPlayerView.prototype, "imgCurrency", void 0);
+  SelectPlayerView = __decorate22([
+    regClass20(),
     __metadata("design:paramtypes", [])
   ], SelectPlayerView);
 
@@ -2301,12 +2355,12 @@ function __$decorate(assetId, codePath) {
   VibrateMgr.$isVibrate = -1;
 
   // E:/WheelChairMan/src/Util/Slider.ts
-  var __decorate25 = __$decorate("35b37bb8-b4f2-4360-8030-42b6c06ee038", "../src/Util/Slider.ts");
+  var __decorate23 = __$decorate("35b37bb8-b4f2-4360-8030-42b6c06ee038", "../src/Util/Slider.ts");
   var _a10;
   var _b9;
   var _c8;
   var Image10 = Laya.Image;
-  var { regClass: regClass23, property: property23 } = Laya;
+  var { regClass: regClass21, property: property21 } = Laya;
   var Slider = /* @__PURE__ */ __name(class Slider2 extends Laya.Script {
     constructor() {
       super();
@@ -2382,37 +2436,37 @@ function __$decorate(assetId, codePath) {
     onDisable() {
     }
   }, "Slider");
-  __decorate25([
-    property23(),
+  __decorate23([
+    property21(),
     __metadata("design:type", Boolean)
   ], Slider.prototype, "isH", void 0);
-  __decorate25([
-    property23(),
+  __decorate23([
+    property21(),
     __metadata("design:type", typeof (_a10 = typeof Image10 !== "undefined" && Image10) === "function" ? _a10 : Object)
   ], Slider.prototype, "imgLoad", void 0);
-  __decorate25([
-    property23(),
+  __decorate23([
+    property21(),
     __metadata("design:type", typeof (_b9 = typeof Image10 !== "undefined" && Image10) === "function" ? _b9 : Object)
   ], Slider.prototype, "imgBar", void 0);
-  __decorate25([
-    property23(),
+  __decorate23([
+    property21(),
     __metadata("design:type", typeof (_c8 = typeof Image10 !== "undefined" && Image10) === "function" ? _c8 : Object)
   ], Slider.prototype, "imgBg", void 0);
-  __decorate25([
-    property23(),
+  __decorate23([
+    property21(),
     __metadata("design:type", Number)
   ], Slider.prototype, "value", void 0);
-  Slider = __decorate25([
-    regClass23(),
+  Slider = __decorate23([
+    regClass21(),
     __metadata("design:paramtypes", [])
   ], Slider);
   var Slider_default = Slider;
 
   // E:/WheelChairMan/src/Util/Toggle.ts
-  var __decorate26 = __$decorate("0f5a24a0-2f83-4219-9165-99195082aa4a", "../src/Util/Toggle.ts");
+  var __decorate24 = __$decorate("0f5a24a0-2f83-4219-9165-99195082aa4a", "../src/Util/Toggle.ts");
   var _a11;
   var Image11 = Laya.Image;
-  var { regClass: regClass24, property: property24 } = Laya;
+  var { regClass: regClass22, property: property22 } = Laya;
   var Toggle = /* @__PURE__ */ __name(class Toggle2 extends Laya.Script {
     constructor() {
       super();
@@ -2450,22 +2504,22 @@ function __$decorate(assetId, codePath) {
       this.$imgBg.off(Laya.Event.CLICK, this, this.changeValue);
     }
   }, "Toggle");
-  __decorate26([
-    property24(),
+  __decorate24([
+    property22(),
     __metadata("design:type", Boolean)
   ], Toggle.prototype, "isON", void 0);
-  __decorate26([
-    property24(),
+  __decorate24([
+    property22(),
     __metadata("design:type", typeof (_a11 = typeof Image11 !== "undefined" && Image11) === "function" ? _a11 : Object)
   ], Toggle.prototype, "imgItem", void 0);
-  Toggle = __decorate26([
-    regClass24(),
+  Toggle = __decorate24([
+    regClass22(),
     __metadata("design:paramtypes", [])
   ], Toggle);
   var Toggle_default = Toggle;
 
   // E:/WheelChairMan/src/Scene/SettingView.ts
-  var __decorate27 = __$decorate("9811079c-9340-49a7-8d8a-71570d70a98d", "../src/Scene/SettingView.ts");
+  var __decorate25 = __$decorate("9811079c-9340-49a7-8d8a-71570d70a98d", "../src/Scene/SettingView.ts");
   var _a12;
   var _b10;
   var _c9;
@@ -2473,11 +2527,11 @@ function __$decorate(assetId, codePath) {
   var _e5;
   var _f4;
   var _g3;
-  var _h2;
+  var _h3;
   var Box3 = Laya.Box;
   var Label6 = Laya.Label;
   var Image12 = Laya.Image;
-  var { regClass: regClass25, property: property25 } = Laya;
+  var { regClass: regClass23, property: property23 } = Laya;
   var SettingView = /* @__PURE__ */ __name(class SettingView2 extends UIBase_default {
     constructor() {
       super();
@@ -2522,40 +2576,40 @@ function __$decorate(assetId, codePath) {
     onClosed() {
     }
   }, "SettingView");
-  __decorate27([
-    property25(),
+  __decorate25([
+    property23(),
     __metadata("design:type", typeof (_a12 = typeof Image12 !== "undefined" && Image12) === "function" ? _a12 : Object)
   ], SettingView.prototype, "imgClose", void 0);
-  __decorate27([
-    property25(),
+  __decorate25([
+    property23(),
     __metadata("design:type", typeof (_b10 = typeof Box3 !== "undefined" && Box3) === "function" ? _b10 : Object)
   ], SettingView.prototype, "sliderSfx", void 0);
-  __decorate27([
-    property25(),
+  __decorate25([
+    property23(),
     __metadata("design:type", typeof (_c9 = typeof Box3 !== "undefined" && Box3) === "function" ? _c9 : Object)
   ], SettingView.prototype, "sliderBgm", void 0);
-  __decorate27([
-    property25(),
+  __decorate25([
+    property23(),
     __metadata("design:type", typeof (_d6 = typeof Image12 !== "undefined" && Image12) === "function" ? _d6 : Object)
   ], SettingView.prototype, "toggleShake", void 0);
-  __decorate27([
-    property25(),
+  __decorate25([
+    property23(),
     __metadata("design:type", typeof (_e5 = typeof Image12 !== "undefined" && Image12) === "function" ? _e5 : Object)
   ], SettingView.prototype, "imgLanguage", void 0);
-  __decorate27([
-    property25(),
+  __decorate25([
+    property23(),
     __metadata("design:type", typeof (_f4 = typeof Image12 !== "undefined" && Image12) === "function" ? _f4 : Object)
   ], SettingView.prototype, "imgLan", void 0);
-  __decorate27([
-    property25(),
+  __decorate25([
+    property23(),
     __metadata("design:type", typeof (_g3 = typeof Image12 !== "undefined" && Image12) === "function" ? _g3 : Object)
   ], SettingView.prototype, "imgSupport", void 0);
-  __decorate27([
-    property25(),
-    __metadata("design:type", typeof (_h2 = typeof Label6 !== "undefined" && Label6) === "function" ? _h2 : Object)
+  __decorate25([
+    property23(),
+    __metadata("design:type", typeof (_h3 = typeof Label6 !== "undefined" && Label6) === "function" ? _h3 : Object)
   ], SettingView.prototype, "txtAgreement", void 0);
-  SettingView = __decorate27([
-    regClass25(),
+  SettingView = __decorate25([
+    regClass23(),
     __metadata("design:paramtypes", [])
   ], SettingView);
 
@@ -2581,14 +2635,14 @@ function __$decorate(assetId, codePath) {
   __name(ObjUtil, "ObjUtil");
 
   // E:/WheelChairMan/src/Scene/ShopView.ts
-  var __decorate28 = __$decorate("6101acc2-fac8-487c-9045-7d083746b9cd", "../src/Scene/ShopView.ts");
+  var __decorate26 = __$decorate("6101acc2-fac8-487c-9045-7d083746b9cd", "../src/Scene/ShopView.ts");
   var _a13;
   var _b11;
   var _c10;
   var Image13 = Laya.Image;
   var List4 = Laya.List;
   var Handler7 = Laya.Handler;
-  var { regClass: regClass26, property: property26 } = Laya;
+  var { regClass: regClass24, property: property24 } = Laya;
   var ShopView = /* @__PURE__ */ __name(class ShopView2 extends UIBase_default {
     constructor() {
       super();
@@ -2718,41 +2772,41 @@ function __$decorate(assetId, codePath) {
       }
     }
   }, "ShopView");
-  __decorate28([
-    property26(),
+  __decorate26([
+    property24(),
     __metadata("design:type", typeof (_a13 = typeof Image13 !== "undefined" && Image13) === "function" ? _a13 : Object)
   ], ShopView.prototype, "imgClose", void 0);
-  __decorate28([
-    property26(),
+  __decorate26([
+    property24(),
     __metadata("design:type", typeof (_b11 = typeof List4 !== "undefined" && List4) === "function" ? _b11 : Object)
   ], ShopView.prototype, "listTitle", void 0);
-  __decorate28([
-    property26(),
+  __decorate26([
+    property24(),
     __metadata("design:type", typeof (_c10 = typeof List4 !== "undefined" && List4) === "function" ? _c10 : Object)
   ], ShopView.prototype, "listShop", void 0);
-  ShopView = __decorate28([
-    regClass26(),
+  ShopView = __decorate26([
+    regClass24(),
     __metadata("design:paramtypes", [])
   ], ShopView);
 
   // E:/WheelChairMan/src/Scene/SignInView.ts
-  var __decorate29 = __$decorate("658fcc51-8109-42a6-a372-0d6e36f801cc", "../src/Scene/SignInView.ts");
-  var { regClass: regClass27, property: property27 } = Laya;
+  var __decorate27 = __$decorate("658fcc51-8109-42a6-a372-0d6e36f801cc", "../src/Scene/SignInView.ts");
+  var { regClass: regClass25, property: property25 } = Laya;
   var SignInView = /* @__PURE__ */ __name(class SignInView2 extends UIBase_default {
   }, "SignInView");
-  SignInView = __decorate29([
-    regClass27()
+  SignInView = __decorate27([
+    regClass25()
   ], SignInView);
 
   // E:/WheelChairMan/src/Scene/SureView.ts
-  var __decorate30 = __$decorate("2eee226a-dcc2-4965-9ad2-4c490d20fbdf", "../src/Scene/SureView.ts");
+  var __decorate28 = __$decorate("2eee226a-dcc2-4965-9ad2-4c490d20fbdf", "../src/Scene/SureView.ts");
   var _a14;
   var _b12;
   var _c11;
   var _d7;
   var Label7 = Laya.Label;
   var Image14 = Laya.Image;
-  var { regClass: regClass28, property: property28 } = Laya;
+  var { regClass: regClass26, property: property26 } = Laya;
   var SureView = /* @__PURE__ */ __name(class SureView2 extends UIBase_default {
     constructor() {
       super();
@@ -2795,32 +2849,32 @@ function __$decorate(assetId, codePath) {
       this.imgSure.centerX = 180;
     }
   }, "SureView");
-  __decorate30([
-    property28(),
+  __decorate28([
+    property26(),
     __metadata("design:type", typeof (_a14 = typeof Image14 !== "undefined" && Image14) === "function" ? _a14 : Object)
   ], SureView.prototype, "imgSure", void 0);
-  __decorate30([
-    property28(),
+  __decorate28([
+    property26(),
     __metadata("design:type", typeof (_b12 = typeof Image14 !== "undefined" && Image14) === "function" ? _b12 : Object)
   ], SureView.prototype, "imgCancel", void 0);
-  __decorate30([
-    property28(),
+  __decorate28([
+    property26(),
     __metadata("design:type", typeof (_c11 = typeof Label7 !== "undefined" && Label7) === "function" ? _c11 : Object)
   ], SureView.prototype, "txtTitle", void 0);
-  __decorate30([
-    property28(),
+  __decorate28([
+    property26(),
     __metadata("design:type", typeof (_d7 = typeof Label7 !== "undefined" && Label7) === "function" ? _d7 : Object)
   ], SureView.prototype, "txtMsg", void 0);
-  SureView = __decorate30([
-    regClass28(),
+  SureView = __decorate28([
+    regClass26(),
     __metadata("design:paramtypes", [])
   ], SureView);
 
   // E:/WheelChairMan/src/Scene/TipsView.ts
-  var __decorate31 = __$decorate("a1b11e33-3318-4f7e-af1d-2bbf5fa13333", "../src/Scene/TipsView.ts");
+  var __decorate29 = __$decorate("a1b11e33-3318-4f7e-af1d-2bbf5fa13333", "../src/Scene/TipsView.ts");
   var _a15;
   var Text5 = Laya.Text;
-  var { regClass: regClass29, property: property29 } = Laya;
+  var { regClass: regClass27, property: property27 } = Laya;
   var TipsView = /* @__PURE__ */ __name(class TipsView2 extends UIBase_default {
     constructor() {
       super();
@@ -2837,14 +2891,236 @@ function __$decorate(assetId, codePath) {
       }).once().start();
     }
   }, "TipsView");
-  __decorate31([
-    property29(),
+  __decorate29([
+    property27(),
     __metadata("design:type", typeof (_a15 = typeof Text5 !== "undefined" && Text5) === "function" ? _a15 : Object)
   ], TipsView.prototype, "txtMsg", void 0);
-  TipsView = __decorate31([
-    regClass29(),
+  TipsView = __decorate29([
+    regClass27(),
     __metadata("design:paramtypes", [])
   ], TipsView);
+
+  // E:/WheelChairMan/src/Scene3d/MainScene.ts
+  var __decorate30 = __$decorate("71c8c727-1736-44b1-984f-02439872df63", "../src/Scene3d/MainScene.ts");
+  var { regClass: regClass28, property: property28 } = Laya;
+  var MainScene = /* @__PURE__ */ __name(class MainScene2 extends Scene3d_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+    }
+  }, "MainScene");
+  MainScene = __decorate30([
+    regClass28(),
+    __metadata("design:paramtypes", [])
+  ], MainScene);
+
+  // E:/WheelChairMan/src/Util/Sprite3d.ts
+  var Vector3 = Laya.Vector3;
+  var _Sprite3d = class {
+    static get instance() {
+      return this._instance ? this._instance : this._instance = new _Sprite3d();
+    }
+    constructor() {
+    }
+    /**零向量 */
+    static get ZERO() {
+      if (!this._ZERO) {
+        this._ZERO = new Vector3(0, 0, 0);
+        Object.freeze(this._ZERO);
+      }
+      return this._ZERO;
+    }
+    /**一向量 */
+    static get ONE() {
+      if (!this._ONE) {
+        this._ONE = new Vector3(1, 1, 1);
+        Object.freeze(this._ONE);
+      }
+      return this._ONE;
+    }
+    /**X向量 */
+    static get UnitX() {
+      if (!this._UnitX) {
+        this._UnitX = new Vector3(1, 0, 0);
+        Object.freeze(this._UnitX);
+      }
+      return this._UnitX;
+    }
+    /**Y向量 */
+    static get UnitY() {
+      if (!this._UnitY) {
+        this._UnitY = new Vector3(0, 1, 0);
+        Object.freeze(this._UnitY);
+      }
+      return this._UnitY;
+    }
+    /**上向量 */
+    static get DOWN() {
+      if (!this._DOWN) {
+        this._DOWN = new Vector3(0, -1, 0);
+        Object.freeze(this._DOWN);
+      }
+      return this._DOWN;
+    }
+    /**Z向量 */
+    static get UnitZ() {
+      if (!this._UnitZ) {
+        this._UnitZ = new Vector3(0, 0, 1);
+        Object.freeze(this._UnitZ);
+      }
+      return this._UnitZ;
+    }
+    /**
+    * 世界坐标转局部坐标
+    * @param {Vector3} pos2world 世界坐标
+    * @param {Sprite3D} sp3d 局部空间
+    * @returns {Vector3} 局部坐标
+    */
+    static positionWorld2local(pos2world, sp3d) {
+      let pos2local = new Vector3(0, 0, 0);
+      let m = new Laya.Matrix4x4();
+      sp3d.transform.worldMatrix.invert(m);
+      Vector3.transformCoordinate(pos2world, m, pos2local);
+      return pos2local;
+    }
+    //步骤1：获取目标节点的所有子节点，将所有子节点放入数组并返回
+    static getChildNodesArray(target) {
+      let nodeArray = [];
+      for (let i = 0; i < target.numChildren; i++) {
+        let node = target.getChildAt(i);
+        if (node) {
+          nodeArray.push(node);
+        }
+      }
+      return nodeArray;
+    }
+    //步骤二：递归获取目标节点的所有子孙节点，并将他们全部放入数组并返回
+    static FindAndGetAllChildren(parentNode, outNodesArray) {
+      if (parentNode.numChildren > 0) {
+        let nodeArray = this.getChildNodesArray(parentNode);
+        nodeArray.forEach((node) => {
+          outNodesArray.push(node);
+          if (this.getChildNodesArray(node).length > 0) {
+            this.FindAndGetAllChildren(node, outNodesArray);
+          } else {
+            return outNodesArray;
+          }
+        });
+      }
+      return null;
+    }
+    //第三步：构建一个数组来存放获取的所有节点并返回此数组
+    static getAllChildrenArray(parentNode) {
+      let allChildrenArray = [];
+      this.FindAndGetAllChildren(parentNode, allChildrenArray);
+      return allChildrenArray;
+    }
+    //最后一步：将所有节点封装到字典里，方便获取
+    static getAllChildrenMap(parentNode) {
+      let obj = parentNode;
+      let id = obj.id;
+      let map = this.nodeDic[id];
+      if (!map) {
+        let allChildrenArray = this.getAllChildrenArray(parentNode);
+        map = /* @__PURE__ */ new Map();
+        for (let i = 0; i < allChildrenArray.length; i++) {
+          if (!map.has(allChildrenArray[i].name)) {
+            map.set(allChildrenArray[i].name, allChildrenArray[i]);
+          }
+        }
+        if (!this.nodeDic) {
+          this.nodeDic = new Array();
+        }
+        this.nodeDic[id] = map;
+      }
+      return map;
+    }
+    //为了方便获取各种类型的节点，可以在写一个泛型方法来获取
+    static getNodeByMap(nodeName, map) {
+      if (!map.has(nodeName)) {
+        return null;
+      }
+      return map.get(nodeName);
+    }
+    /**获取某个节点 */
+    static getNodeByName(nodeName, parentNode) {
+      let id = parentNode.id;
+      let map = this.nodeDic[id];
+      if (!map) {
+        let allChildrenArray = this.getAllChildrenArray(parentNode);
+        map = /* @__PURE__ */ new Map();
+        for (let i = 0; i < allChildrenArray.length; i++) {
+          if (!map.has(allChildrenArray[i].name)) {
+            map.set(allChildrenArray[i].name, allChildrenArray[i]);
+          }
+        }
+        this.nodeDic[id] = map;
+      }
+      if (!map.has(nodeName)) {
+        return null;
+      }
+      return map.get(nodeName);
+    }
+    /**清除拖尾
+    * @param trail 拖尾
+    * @param active 清理之后是否展示
+    */
+    static clearTrail(trail, active = false) {
+      if (trail && trail instanceof Laya.TrailSprite3D) {
+        trail.active = true;
+        let bt = trail.trailFilter.time;
+        trail.trailFilter.time = 1e-3;
+        Laya.timer.frameOnce(1, this, () => {
+          trail.trailFilter.time = bt;
+          trail.active = active;
+        });
+      }
+    }
+  };
+  var Sprite3d = _Sprite3d;
+  __name(Sprite3d, "Sprite3d");
+  Sprite3d.nodeDic = {};
+
+  // E:/WheelChairMan/src/Scene3d/SelectPlayerScene.ts
+  var __decorate31 = __$decorate("34405a80-13b4-48be-ac44-94bb920f1518", "../src/Scene3d/SelectPlayerScene.ts");
+  var _a16;
+  var Sprite3D = Laya.Sprite3D;
+  var { regClass: regClass29, property: property29 } = Laya;
+  var SelectPlayerScene = /* @__PURE__ */ __name(class SelectPlayerScene2 extends Scene3d_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+      if (!this.$playerList) {
+        this.$playerList = [];
+        this.$playerList = [];
+        for (let item in PlayerEnum) {
+          if (!isNaN(Number(item))) {
+            this.$playerList.push(Number(item));
+          }
+        }
+      }
+    }
+    addEvent() {
+      this.regEvent("SHOWPLAYER" /* SHOWPLAYER */, this.showPlayer);
+    }
+    showPlayer(playerId) {
+      var _a17;
+      (_a17 = this.$playerObj) === null || _a17 === void 0 ? void 0 : _a17.removeSelf();
+      this.$playerObj = PlayerMgr.instance.getSelectPlayer(playerId);
+      this.$playerObj && this.playerStage.addChild(this.$playerObj);
+      this.$playerObj && (this.$playerObj.transform.position = Sprite3d.ZERO);
+    }
+  }, "SelectPlayerScene");
+  __decorate31([
+    property29(),
+    __metadata("design:type", typeof (_a16 = typeof Sprite3D !== "undefined" && Sprite3D) === "function" ? _a16 : Object)
+  ], SelectPlayerScene.prototype, "playerStage", void 0);
+  SelectPlayerScene = __decorate31([
+    regClass29(),
+    __metadata("design:paramtypes", [])
+  ], SelectPlayerScene);
 
   // E:/WheelChairMan/src/Util/Base64.ts
   var __decorate32 = __$decorate("fe62c9ad-c7c3-4baa-8f7c-216a9f051006", "../src/Util/Base64.ts");
@@ -2951,7 +3227,7 @@ function __$decorate(assetId, codePath) {
   Base64._keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
   // E:/WheelChairMan/src/Script3d/Script3d.ts
-  var Vector3 = Laya.Vector3;
+  var Vector32 = Laya.Vector3;
   var Script3d = class extends Laya.Script {
     constructor() {
       super();
@@ -3084,181 +3360,14 @@ function __$decorate(assetId, codePath) {
     * @returns {Vector3} 局部坐标
     */
     positionWorld2local(pos2world, sp3d) {
-      let pos2local = new Vector3(0, 0, 0);
-      let m = new Laya.Matrix4x4();
-      sp3d.transform.worldMatrix.invert(m);
-      Vector3.transformCoordinate(pos2world, m, pos2local);
-      return pos2local;
-    }
-  };
-  __name(Script3d, "Script3d");
-
-  // E:/WheelChairMan/src/Util/Sprite3d.ts
-  var Vector32 = Laya.Vector3;
-  var _Sprite3d = class {
-    static get instance() {
-      return this._instance ? this._instance : this._instance = new _Sprite3d();
-    }
-    constructor() {
-    }
-    /**零向量 */
-    static get ZERO() {
-      if (!this._ZERO) {
-        this._ZERO = new Vector32(0, 0, 0);
-        Object.freeze(this._ZERO);
-      }
-      return this._ZERO;
-    }
-    /**一向量 */
-    static get ONE() {
-      if (!this._ONE) {
-        this._ONE = new Vector32(1, 1, 1);
-        Object.freeze(this._ONE);
-      }
-      return this._ONE;
-    }
-    /**X向量 */
-    static get UnitX() {
-      if (!this._UnitX) {
-        this._UnitX = new Vector32(1, 0, 0);
-        Object.freeze(this._UnitX);
-      }
-      return this._UnitX;
-    }
-    /**Y向量 */
-    static get UnitY() {
-      if (!this._UnitY) {
-        this._UnitY = new Vector32(0, 1, 0);
-        Object.freeze(this._UnitY);
-      }
-      return this._UnitY;
-    }
-    /**上向量 */
-    static get DOWN() {
-      if (!this._DOWN) {
-        this._DOWN = new Vector32(0, -1, 0);
-        Object.freeze(this._DOWN);
-      }
-      return this._DOWN;
-    }
-    /**Z向量 */
-    static get UnitZ() {
-      if (!this._UnitZ) {
-        this._UnitZ = new Vector32(0, 0, 1);
-        Object.freeze(this._UnitZ);
-      }
-      return this._UnitZ;
-    }
-    /**
-    * 世界坐标转局部坐标
-    * @param {Vector3} pos2world 世界坐标
-    * @param {Sprite3D} sp3d 局部空间
-    * @returns {Vector3} 局部坐标
-    */
-    static positionWorld2local(pos2world, sp3d) {
       let pos2local = new Vector32(0, 0, 0);
       let m = new Laya.Matrix4x4();
       sp3d.transform.worldMatrix.invert(m);
       Vector32.transformCoordinate(pos2world, m, pos2local);
       return pos2local;
     }
-    //步骤1：获取目标节点的所有子节点，将所有子节点放入数组并返回
-    static getChildNodesArray(target) {
-      let nodeArray = [];
-      for (let i = 0; i < target.numChildren; i++) {
-        let node = target.getChildAt(i);
-        if (node) {
-          nodeArray.push(node);
-        }
-      }
-      return nodeArray;
-    }
-    //步骤二：递归获取目标节点的所有子孙节点，并将他们全部放入数组并返回
-    static FindAndGetAllChildren(parentNode, outNodesArray) {
-      if (parentNode.numChildren > 0) {
-        let nodeArray = this.getChildNodesArray(parentNode);
-        nodeArray.forEach((node) => {
-          outNodesArray.push(node);
-          if (this.getChildNodesArray(node).length > 0) {
-            this.FindAndGetAllChildren(node, outNodesArray);
-          } else {
-            return outNodesArray;
-          }
-        });
-      }
-      return null;
-    }
-    //第三步：构建一个数组来存放获取的所有节点并返回此数组
-    static getAllChildrenArray(parentNode) {
-      let allChildrenArray = [];
-      this.FindAndGetAllChildren(parentNode, allChildrenArray);
-      return allChildrenArray;
-    }
-    //最后一步：将所有节点封装到字典里，方便获取
-    static getAllChildrenMap(parentNode) {
-      let obj = parentNode;
-      let id = obj.id;
-      let map = this.nodeDic[id];
-      if (!map) {
-        let allChildrenArray = this.getAllChildrenArray(parentNode);
-        map = /* @__PURE__ */ new Map();
-        for (let i = 0; i < allChildrenArray.length; i++) {
-          if (!map.has(allChildrenArray[i].name)) {
-            map.set(allChildrenArray[i].name, allChildrenArray[i]);
-          }
-        }
-        if (!this.nodeDic) {
-          this.nodeDic = new Array();
-        }
-        this.nodeDic[id] = map;
-      }
-      return map;
-    }
-    //为了方便获取各种类型的节点，可以在写一个泛型方法来获取
-    static getNodeByMap(nodeName, map) {
-      if (!map.has(nodeName)) {
-        return null;
-      }
-      return map.get(nodeName);
-    }
-    /**获取某个节点 */
-    static getNodeByName(nodeName, parentNode) {
-      let id = parentNode.id;
-      let map = this.nodeDic[id];
-      if (!map) {
-        let allChildrenArray = this.getAllChildrenArray(parentNode);
-        map = /* @__PURE__ */ new Map();
-        for (let i = 0; i < allChildrenArray.length; i++) {
-          if (!map.has(allChildrenArray[i].name)) {
-            map.set(allChildrenArray[i].name, allChildrenArray[i]);
-          }
-        }
-        this.nodeDic[id] = map;
-      }
-      if (!map.has(nodeName)) {
-        return null;
-      }
-      return map.get(nodeName);
-    }
-    /**清除拖尾
-    * @param trail 拖尾
-    * @param active 清理之后是否展示
-    */
-    static clearTrail(trail, active = false) {
-      if (trail && trail instanceof Laya.TrailSprite3D) {
-        trail.active = true;
-        let bt = trail.trailFilter.time;
-        trail.trailFilter.time = 1e-3;
-        Laya.timer.frameOnce(1, this, () => {
-          trail.trailFilter.time = bt;
-          trail.active = active;
-        });
-      }
-    }
   };
-  var Sprite3d = _Sprite3d;
-  __name(Sprite3d, "Sprite3d");
-  Sprite3d.nodeDic = {};
+  __name(Script3d, "Script3d");
 
   // E:/WheelChairMan/src/Util/PlayerController.ts
   var __decorate33 = __$decorate("f3ea911e-7d9e-4e77-b857-d99a7338285a", "../src/Util/PlayerController.ts");
@@ -3268,10 +3377,7 @@ function __$decorate(assetId, codePath) {
   var PlayerController = /* @__PURE__ */ __name(class PlayerController2 extends Script3d {
     constructor() {
       super();
-      this.jumpSpeed = 10;
       this.friction = 0.5;
-      this.maxSlope = 60;
-      this.fallSpeed = 55;
       this.stepHeight = 0.1;
       this.jumpAllTimes = 1;
       this.moveSpeed = 10;
@@ -3284,10 +3390,7 @@ function __$decorate(assetId, codePath) {
       }
     }
     onStart() {
-      this.characterController.jumpSpeed = this.jumpSpeed;
       this.characterController.friction = this.friction;
-      this.characterController.maxSlope = this.maxSlope;
-      this.characterController.fallSpeed = this.fallSpeed;
       this.characterController.stepHeight = this.stepHeight;
     }
     update(time) {
@@ -3325,19 +3428,7 @@ function __$decorate(assetId, codePath) {
   __decorate33([
     property30(),
     __metadata("design:type", Number)
-  ], PlayerController.prototype, "jumpSpeed", void 0);
-  __decorate33([
-    property30(),
-    __metadata("design:type", Number)
   ], PlayerController.prototype, "friction", void 0);
-  __decorate33([
-    property30(),
-    __metadata("design:type", Number)
-  ], PlayerController.prototype, "maxSlope", void 0);
-  __decorate33([
-    property30(),
-    __metadata("design:type", Number)
-  ], PlayerController.prototype, "fallSpeed", void 0);
   __decorate33([
     property30(),
     __metadata("design:type", Number)

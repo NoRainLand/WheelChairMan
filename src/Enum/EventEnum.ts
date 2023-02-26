@@ -20,5 +20,6 @@ export enum EventEnum {
     /**引导结束 */
     GUIDFINISH = "GUIDFINISH",
 
-
+    /**显示玩家 */
+    SHOWPLAYER = "SHOWPLAYER",
 }

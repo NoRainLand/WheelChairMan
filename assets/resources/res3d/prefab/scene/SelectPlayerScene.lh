@@ -12,7 +12,10 @@
   "_$comp": [
     {
       "_$type": "34405a80-13b4-48be-ac44-94bb920f1518",
-      "scriptPath": "../src/Scene3d/SelectPlayerScene.ts"
+      "scriptPath": "../src/Scene3d/SelectPlayerScene.ts",
+      "playerStage": {
+        "_$ref": "ppdroll8"
+      }
     }
   ],
   "_$child": [
@@ -92,33 +95,6 @@
       ]
     },
     {
-      "_$id": "9peti6xs",
-      "_$type": "Sprite3D",
-      "name": "Sprite3D",
-      "transform": {
-        "localPosition": {
-          "_$type": "Vector3",
-          "x": 0.1590355630171416,
-          "y": -0.046926215291023254,
-          "z": -0.5794664025306702
-        }
-      },
-      "_$comp": [
-        {
-          "_$type": "PhysicsCollider",
-          "colliderShape": {
-            "_$type": "BoxColliderShape",
-            "localOffset": {
-              "_$type": "Vector3",
-              "y": -0.32
-            },
-            "sizeX": 10,
-            "sizeZ": 10
-          }
-        }
-      ]
-    },
-    {
       "_$id": "c98woa5z",
       "_$type": "Sprite3D",
       "name": "Plane",
@@ -127,7 +103,7 @@
           "_$type": "Vector3",
           "x": 1.2988491053831694,
           "y": 0.9416595101356506,
-          "z": -1.0062193228080591
+          "z": -2.766218172836634
         },
         "localScale": {
           "_$type": "Vector3",
@@ -154,6 +130,215 @@
           ]
         }
       ]
+    },
+    {
+      "_$id": "qm6j2jbb",
+      "_$prefab": "637d9e33-7419-4786-b207-998a59e7eeb2",
+      "name": "GrassGround(1)",
+      "active": true,
+      "layer": 0,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": -1,
+          "y": -0.264331579208374,
+          "z": 2
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "w": 1
+        }
+      }
+    },
+    {
+      "_$id": "nk2kj966",
+      "_$prefab": "637d9e33-7419-4786-b207-998a59e7eeb2",
+      "name": "GrassGround",
+      "active": true,
+      "layer": 0,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": -6.000000119661081,
+          "y": -0.264331579208374,
+          "z": 2
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "w": 1
+        }
+      }
+    },
+    {
+      "_$id": "bgj91bpq",
+      "_$type": "Sprite3D",
+      "name": "PointLight",
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 0.18146064832330921,
+          "y": 1.2235313653945923,
+          "z": -0.2539633810520172
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "PointLightCom",
+          "intensity": 0.6,
+          "lightmapBakedType": 0,
+          "shadowMode": 0,
+          "shadowStrength": 1,
+          "shadowDistance": 50,
+          "shadowDepthBias": 1,
+          "shadowNormalBias": 1,
+          "shadowNearPlane": 0.1,
+          "range": 6,
+          "power": 10,
+          "radius": 0.25,
+          "maxBounces": 1024
+        }
+      ]
+    },
+    {
+      "_$id": "ppdroll8",
+      "_$type": "Sprite3D",
+      "name": "playerStage",
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 0.18146064633342274,
+          "y": -0.1483517802725549,
+          "z": -0.2539633858152186
+        }
+      }
+    },
+    {
+      "_$id": "b4w7mqki",
+      "_$prefab": "637d9e33-7419-4786-b207-998a59e7eeb2",
+      "name": "GrassGround(2)",
+      "active": true,
+      "layer": 0,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 4,
+          "y": -0.264331579208374,
+          "z": 2
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "w": 1
+        }
+      }
+    },
+    {
+      "_$id": "af5ypbrn",
+      "_$prefab": "8a0c4110-bd55-4533-88c8-9e4821617841",
+      "name": "SM_Env_Tree_01",
+      "active": true,
+      "layer": 0,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": -3.6652635001196887,
+          "y": -1.2446017718472238,
+          "z": -0.2246167429861538
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": -0.020768158475607527,
+          "y": 0.3010513776596784,
+          "z": 0.0656135072953505,
+          "w": 0.9511212431983342
+        }
+      }
+    },
+    {
+      "_$id": "9ildfifg",
+      "_$prefab": "4afbf900-1d85-40ff-a56e-14e5def72e60",
+      "name": "SM_Env_Tree_03",
+      "active": true,
+      "layer": 0,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 1.4402077618539573,
+          "y": -0.35552578440695815,
+          "z": -0.5998674321564792
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 0,
+          "y": -0.8501653556164334,
+          "z": 0,
+          "w": 0.5265157814439976
+        },
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 150,
+          "y": 150,
+          "z": 150
+        }
+      }
+    },
+    {
+      "_$id": "pu5pqsge",
+      "_$prefab": "b23bc697-5a77-472a-98dc-2925b7ad5f8c",
+      "name": "WheelChair",
+      "active": true,
+      "layer": 0,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 2.231536035794229,
+          "y": 0.5402066037507857,
+          "z": -1.8184749267185545
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 0.5065990534103417,
+          "y": 0.14111272428948246,
+          "z": 0.5664498529504777,
+          "w": 0.6344912625243381
+        }
+      }
+    },
+    {
+      "_$id": "q7s57lnw",
+      "_$prefab": "e350f460-4e86-47ec-9307-31232de5dde3",
+      "name": "SM_Env_WaterEdge_Rock_01",
+      "active": true,
+      "layer": 0,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 3.223836285492939,
+          "y": -0.12731142342090607,
+          "z": -0.25104308128356934
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "w": 1
+        },
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 50,
+          "y": 50,
+          "z": 50
+        }
+      }
     }
   ]
 }

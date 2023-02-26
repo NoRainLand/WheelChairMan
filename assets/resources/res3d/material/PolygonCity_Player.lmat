@@ -49,9 +49,9 @@
     "s_DepthTest": 1,
     "s_DepthWrite": true,
     "u_AlbedoColor": [
-      0.7054263565891472,
-      0.7054263565891472,
-      0.7054263565891472,
+      1,
+      1,
+      1,
       1
     ],
     "u_TilingOffset": [

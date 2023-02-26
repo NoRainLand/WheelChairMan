@@ -49,9 +49,9 @@
     "s_DepthTest": 1,
     "s_DepthWrite": true,
     "u_AlbedoColor": [
-      0.6627906976744187,
-      0.6627906976744187,
-      0.6627906976744187,
+      1,
+      1,
+      1,
       1
     ],
     "u_TilingOffset": [
@@ -61,9 +61,9 @@
       0
     ],
     "u_NormalScale": 1,
-    "u_Smoothness": 0.361,
-    "u_SmoothnessScale": 0.784,
-    "u_OcclusionStrength": 0.799,
+    "u_Smoothness": 0.634,
+    "u_SmoothnessScale": 0.337,
+    "u_OcclusionStrength": 0.757,
     "u_EmissionColor": [
       1,
       1,
@@ -78,8 +78,8 @@
       0
     ],
     "u_DetailNormalScale": 1,
-    "u_Metallic": 0.386,
-    "u_AlphaTestValue": 0.405,
+    "u_Metallic": 0.584,
+    "u_AlphaTestValue": 0.571,
     "defines": [
       "ALBEDOTEXTURE",
       "SMOOTHNESSSOURCE_ALBEDOTEXTURE_ALPHA"

@@ -41,12 +41,12 @@ export default class Scene3dMgr {
         Laya.stage.setChildIndex(this.$scene3d, 0);
         this.$scene3d.enableFog = true;
         this.$scene3d.fogStart = 200;
-        this.$scene3d.fogRange = 200;
+        this.$scene3d.fogRange = 400;
         this.$scene3d.fogColor = new Laya.Color(0.34, 0.34, 0.34);
 
-        this.$scene3d.sceneReflectionProb.ambientIntensity = 1;
+        this.$scene3d.sceneReflectionProb.ambientIntensity = 0.7;
         this.$scene3d.sceneReflectionProb.ambientMode = 0;
-        this.$scene3d.sceneReflectionProb.ambientColor = new Laya.Color(1, 1, 1);
+        this.$scene3d.sceneReflectionProb.ambientColor = new Laya.Color(0.7, 0.7, 0.7, 0.7);
 
 
         this.$scene3d.skyRenderer.material = ResLoader.instance.getResCloneById(SkyBoxEnum.SkyBox3);

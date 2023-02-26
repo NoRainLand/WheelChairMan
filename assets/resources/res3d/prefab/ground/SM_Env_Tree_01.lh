@@ -1,0 +1,94 @@
+{
+  "_$ver": 1,
+  "_$id": "84nzqn38",
+  "_$type": "Sprite3D",
+  "name": "SM_Env_Tree_01",
+  "isStatic": true,
+  "transform": {
+    "localPosition": {
+      "_$type": "Vector3",
+      "x": 1.3405558051036346,
+      "y": -0.7597535977113067,
+      "z": -0.17774266004562378
+    },
+    "localRotation": {
+      "_$type": "Quaternion",
+      "z": 0.06882186241544358,
+      "w": 0.9976289647226919
+    },
+    "localScale": {
+      "_$type": "Vector3",
+      "x": 100,
+      "y": 100,
+      "z": 100
+    }
+  },
+  "_$comp": [
+    {
+      "_$type": "Animator",
+      "enabled": false,
+      "cullingMode": 0,
+      "controllerLayers": [
+        {
+          "_$type": "AnimatorControllerLayer",
+          "name": "BaseLayer",
+          "states": [
+            {
+              "_$type": "AnimatorState",
+              "name": "BaseLayer",
+              "clipStart": 0,
+              "clip": {
+                "_$uuid": "28a940bc-8d4c-4748-95b1-ab776dcfe95c@lani0",
+                "_$type": "AnimationClip"
+              },
+              "soloTransitions": []
+            }
+          ],
+          "defaultStateName": "BaseLayer"
+        }
+      ]
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "#44",
+      "_$type": "Sprite3D",
+      "name": "SM_Env_Tree_01",
+      "isStatic": true,
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 0.02816630892876519,
+          "y": 1.4115164592709561e-10,
+          "z": 1.1788903186982225e-11
+        },
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 0.009999999776482582,
+          "y": 0.009999999776482582,
+          "z": 0.009999999776482582
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "MeshFilter",
+          "sharedMesh": {
+            "_$uuid": "28a940bc-8d4c-4748-95b1-ab776dcfe95c@lm0",
+            "_$type": "Mesh"
+          }
+        },
+        {
+          "_$type": "MeshRenderer",
+          "receiveShadow": true,
+          "castShadow": true,
+          "sharedMaterials": [
+            {
+              "_$uuid": "84be5ea9-39cc-46ff-a60e-a71975f51ecb",
+              "_$type": "Material"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

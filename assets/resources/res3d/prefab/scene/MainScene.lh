@@ -72,11 +72,11 @@
           "_$type": "DirectionLightCom",
           "color": {
             "_$type": "Color",
-            "r": 0.6162790697674418,
-            "g": 0.6162790697674418,
-            "b": 0.6162790697674418
+            "r": 0.9186046511627908,
+            "g": 0.9186046511627908,
+            "b": 0.9186046511627908
           },
-          "intensity": 1.28,
+          "intensity": 3.62,
           "lightmapBakedType": 0,
           "shadowMode": 3,
           "shadowStrength": 1,
@@ -382,8 +382,8 @@
           ]
         },
         {
-          "_$id": "3noa3r9y",
-          "_$prefab": "c069a249-a187-4e27-8024-b1eb48302538",
+          "_$id": "3z0nvom6",
+          "_$prefab": "610c0bf1-8b2c-4223-99f1-8c8f3ab45ce4",
           "name": "SM_Env_Skyline_01",
           "active": true,
           "layer": 0,
@@ -400,87 +400,12 @@
               "y": 0,
               "z": 0,
               "w": 1
-            },
-            "localScale": {
-              "_$type": "Vector3",
-              "x": 100,
-              "y": 200,
-              "z": 100
             }
-          },
-          "isStatic": true,
-          "_$comp": [
-            {
-              "_$override": "Animator",
-              "enabled": false
-            }
-          ],
-          "_$child": [
-            {
-              "_$override": "#44",
-              "isStatic": true,
-              "_$comp": [
-                {
-                  "_$override": "MeshRenderer",
-                  "sharedMaterials": [
-                    {
-                      "_$uuid": "02f85e6d-524b-4ead-9748-b28d9c6f2723",
-                      "_$type": "Material"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "_$override": "#45",
-              "isStatic": true,
-              "_$comp": [
-                {
-                  "_$override": "MeshRenderer",
-                  "sharedMaterials": [
-                    {
-                      "_$uuid": "02f85e6d-524b-4ead-9748-b28d9c6f2723",
-                      "_$type": "Material"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "_$override": "#46",
-              "isStatic": true,
-              "_$comp": [
-                {
-                  "_$override": "MeshRenderer",
-                  "sharedMaterials": [
-                    {
-                      "_$uuid": "02f85e6d-524b-4ead-9748-b28d9c6f2723",
-                      "_$type": "Material"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "_$override": "#47",
-              "isStatic": true,
-              "_$comp": [
-                {
-                  "_$override": "MeshRenderer",
-                  "sharedMaterials": [
-                    {
-                      "_$uuid": "02f85e6d-524b-4ead-9748-b28d9c6f2723",
-                      "_$type": "Material"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+          }
         },
         {
-          "_$id": "8r61k940",
-          "_$prefab": "2fd941ba-4a89-418a-8374-4a8657476b58",
+          "_$id": "n4so49oa",
+          "_$prefab": "e350f460-4e86-47ec-9307-31232de5dde3",
           "name": "SM_Env_WaterEdge_Rock_01",
           "active": true,
           "layer": 0,
@@ -497,50 +422,12 @@
               "y": 0,
               "z": 0,
               "w": 1
-            },
-            "localScale": {
-              "_$type": "Vector3",
-              "x": 100,
-              "y": 100,
-              "z": 100
             }
-          },
-          "isStatic": true,
-          "_$comp": [
-            {
-              "_$override": "Animator",
-              "enabled": false
-            }
-          ],
-          "_$child": [
-            {
-              "_$override": "#44",
-              "transform": {
-                "localPosition": {
-                  "_$type": "Vector3",
-                  "x": -0.006861342520226722,
-                  "y": 0.0012280179709901287,
-                  "z": -0.002567767737138655
-                }
-              },
-              "isStatic": true,
-              "_$comp": [
-                {
-                  "_$override": "MeshRenderer",
-                  "sharedMaterials": [
-                    {
-                      "_$uuid": "84be5ea9-39cc-46ff-a60e-a71975f51ecb",
-                      "_$type": "Material"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+          }
         },
         {
-          "_$id": "84nzqn38",
-          "_$prefab": "28a940bc-8d4c-4748-95b1-ab776dcfe95c",
+          "_$id": "ulz1urow",
+          "_$prefab": "8a0c4110-bd55-4533-88c8-9e4821617841",
           "name": "SM_Env_Tree_01",
           "active": true,
           "layer": 0,
@@ -557,59 +444,21 @@
               "y": 0,
               "z": 0.06882186241544358,
               "w": 0.9976289647226919
-            },
-            "localScale": {
-              "_$type": "Vector3",
-              "x": 100,
-              "y": 100,
-              "z": 100
             }
-          },
-          "isStatic": true,
-          "_$comp": [
-            {
-              "_$override": "Animator",
-              "enabled": false
-            }
-          ],
-          "_$child": [
-            {
-              "_$override": "#44",
-              "transform": {
-                "localPosition": {
-                  "_$type": "Vector3",
-                  "x": 0.02816630892876519,
-                  "y": 1.4115164592709561e-10,
-                  "z": 1.1788903186982225e-11
-                }
-              },
-              "isStatic": true,
-              "_$comp": [
-                {
-                  "_$override": "MeshRenderer",
-                  "sharedMaterials": [
-                    {
-                      "_$uuid": "84be5ea9-39cc-46ff-a60e-a71975f51ecb",
-                      "_$type": "Material"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+          }
         },
         {
-          "_$id": "9t354ak4",
-          "_$prefab": "ba53afe6-defb-4cb5-962f-a51d76035d7d",
+          "_$id": "co77ajtt",
+          "_$prefab": "bd70cf4a-d1f0-4dac-b741-c150889b1b59",
           "name": "SM_Env_Tree_02",
           "active": true,
           "layer": 0,
           "transform": {
             "localPosition": {
               "_$type": "Vector3",
-              "x": -1.1137644590729747,
-              "y": -0.4099595511759493,
-              "z": 1.4912078716955277
+              "x": -1.6114198264221324,
+              "y": -0.4099595546722412,
+              "z": 0.07000101221092957
             },
             "localRotation": {
               "_$type": "Quaternion",
@@ -617,42 +466,12 @@
               "y": 0.6142730907601412,
               "z": 0,
               "w": 0.7890935115485258
-            },
-            "localScale": {
-              "_$type": "Vector3",
-              "x": 100,
-              "y": 100,
-              "z": 100
             }
-          },
-          "isStatic": true,
-          "_$comp": [
-            {
-              "_$override": "Animator",
-              "enabled": false
-            }
-          ],
-          "_$child": [
-            {
-              "_$override": "#44",
-              "isStatic": true,
-              "_$comp": [
-                {
-                  "_$override": "MeshRenderer",
-                  "sharedMaterials": [
-                    {
-                      "_$uuid": "84be5ea9-39cc-46ff-a60e-a71975f51ecb",
-                      "_$type": "Material"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+          }
         },
         {
-          "_$id": "9k41vyw9",
-          "_$prefab": "b73593e2-c0d7-486d-99f3-a58ae62a608d",
+          "_$id": "wvpeca5f",
+          "_$prefab": "4afbf900-1d85-40ff-a56e-14e5def72e60",
           "name": "SM_Env_Tree_03",
           "active": true,
           "layer": 0,
@@ -669,38 +488,8 @@
               "y": 0,
               "z": 0,
               "w": 1
-            },
-            "localScale": {
-              "_$type": "Vector3",
-              "x": 100,
-              "y": 100,
-              "z": 100
             }
-          },
-          "isStatic": true,
-          "_$comp": [
-            {
-              "_$override": "Animator",
-              "enabled": false
-            }
-          ],
-          "_$child": [
-            {
-              "_$override": "#44",
-              "isStatic": true,
-              "_$comp": [
-                {
-                  "_$override": "MeshRenderer",
-                  "sharedMaterials": [
-                    {
-                      "_$uuid": "84be5ea9-39cc-46ff-a60e-a71975f51ecb",
-                      "_$type": "Material"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+          }
         },
         {
           "_$id": "ebqzvyoq",
@@ -815,32 +604,6 @@
         {
           "_$override": "#149",
           "active": false
-        }
-      ]
-    },
-    {
-      "_$id": "as8am2co",
-      "_$type": "Sprite3D",
-      "name": "Ground",
-      "transform": {
-        "localPosition": {
-          "_$type": "Vector3",
-          "y": 0.28318422956078804
-        }
-      },
-      "_$comp": [
-        {
-          "_$type": "PhysicsCollider",
-          "colliderShape": {
-            "_$type": "BoxColliderShape",
-            "localOffset": {
-              "_$type": "Vector3",
-              "y": -5
-            },
-            "sizeX": 10,
-            "sizeY": 10,
-            "sizeZ": 10
-          }
         }
       ]
     }

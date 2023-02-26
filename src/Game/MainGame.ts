@@ -37,7 +37,7 @@ export default class MainGame {
 
 
     reset() {
-        Scene3dMgr.instance.open(Scene3dEnum.MainScene);
+        this.goToMain();
 
     }
 
@@ -46,6 +46,12 @@ export default class MainGame {
         Scene3dMgr.instance.open(Scene3dEnum.SelectPlayerScene);
         Scene3dMgr.instance.close(Scene3dEnum.MainScene);
     }
+    /**返回主页 */
+    goToMain(){
+        Scene3dMgr.instance.close(Scene3dEnum.SelectPlayerScene);
+        Scene3dMgr.instance.open(Scene3dEnum.MainScene);
+    }
+
 
     gameStart() {
         Scene3dMgr.instance.close(Scene3dEnum.SelectPlayerScene);

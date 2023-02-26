@@ -34,6 +34,9 @@ export enum LocalizationEnum {
     YOUDONTHAVEENOUGHDIAMONDS = 1026,
     NOTYETIMPLEMENTED = 1027,
     CONGRATULATIONSONGETTING = 1028,
+    STARTFIGHTING = 1029,
+    UNLOCK = 1030,
+
 
 
     //--------------------人物------------

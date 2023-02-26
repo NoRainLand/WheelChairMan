@@ -32,13 +32,7 @@ export default class PlayerController extends Script3d {
     characterController: CharacterController;
 
     @property()
-    jumpSpeed: number = 10;
-    @property()
     friction: number = 0.5;
-    @property()
-    maxSlope: number = 60;
-    @property()
-    fallSpeed: number = 55;
     @property()
     stepHeight: number = 0.1;
     @property()
@@ -60,11 +54,9 @@ export default class PlayerController extends Script3d {
 
 
     onStart(): void {
-        this.characterController.jumpSpeed = this.jumpSpeed;
         this.characterController.friction = this.friction;
-        this.characterController.maxSlope = this.maxSlope;
-        this.characterController.fallSpeed = this.fallSpeed;
         this.characterController.stepHeight = this.stepHeight;
+        // Laya.Loader.createNodes()
 
 
 

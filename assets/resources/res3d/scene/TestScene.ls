@@ -57,8 +57,13 @@
             "localPosition": {
               "_$type": "Vector3",
               "x": -5.635611057281494,
-              "y": 4.591152846023184,
-              "z": 12.563598194960537
+              "y": 8.925015330431831,
+              "z": 9.090217548142132
+            },
+            "localRotation": {
+              "_$type": "Quaternion",
+              "x": -0.5498805982007205,
+              "w": 0.83524327457479
             }
           },
           "orthographicVerticalSize": 10,
@@ -102,13 +107,7 @@
           "_$comp": [
             {
               "_$type": "DirectionLightCom",
-              "color": {
-                "_$type": "Color",
-                "r": 0.6,
-                "g": 0.6,
-                "b": 0.6
-              },
-              "intensity": 1,
+              "intensity": 2.72,
               "lightmapBakedType": 0,
               "shadowMode": 3,
               "shadowStrength": 1,
@@ -211,12 +210,34 @@
               },
               "sharedMaterials": [
                 {
-                  "_$uuid": "6f90bbb0-bcb2-4311-8a9d-3d8277522098",
+                  "_$uuid": "9324af99-30e4-414a-acb2-4b80543f74ea",
                   "_$type": "Material"
                 }
               ]
             }
           ]
+        },
+        {
+          "_$id": "527b38tp",
+          "_$prefab": "bca80fa9-121e-42a7-95a8-3365c3b71fdc",
+          "name": "Zombie",
+          "active": true,
+          "layer": 0,
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 0,
+              "y": 0,
+              "z": 0
+            },
+            "localRotation": {
+              "_$type": "Quaternion",
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "w": 1
+            }
+          }
         }
       ]
     }
