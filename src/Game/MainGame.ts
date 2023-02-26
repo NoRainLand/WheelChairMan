@@ -1,11 +1,12 @@
 import { Scene3dEnum } from "../Enum/Scene3dEnum";
-import Scene3dMgr from "../UIBase/Scene3dMgr";
+import Scene3dMgr from "../Scene3dBase/Scene3dMgr";
+import PlayerMgr from "./Player/PlayerMgr";
 
 /*
  * @Author: NoRain 
  * @Date: 2023-02-20 15:26:58 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-24 23:51:08
+ * @Last Modified time: 2023-02-25 17:14:31
  */
 const { regClass, property } = Laya;
 /**主游戏逻辑 */
@@ -24,11 +25,12 @@ export default class MainGame {
             this.$isInit = true;
             this.addEvent();
             this.reset();
+            PlayerMgr.instance.init();
         }
     }
 
     addEvent() {
-        // EventMgr.on(EventEnum.)
+
     }
 
 
@@ -39,14 +41,15 @@ export default class MainGame {
 
     }
 
-
+    /**开始选择玩家 */
     selectPlayerAndWeapon() {
-        Scene3dMgr.instance.close(Scene3dEnum.MainScene);
         Scene3dMgr.instance.open(Scene3dEnum.SelectPlayerScene);
+        Scene3dMgr.instance.close(Scene3dEnum.MainScene);
     }
 
     gameStart() {
-
+        Scene3dMgr.instance.close(Scene3dEnum.SelectPlayerScene);
+        Scene3dMgr.instance.close(Scene3dEnum.GameScene);
     }
     gameOver() {
 

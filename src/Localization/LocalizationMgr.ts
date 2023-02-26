@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-10 09:48:50 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-24 23:33:02
+ * @Last Modified time: 2023-02-25 16:41:41
  */
 
 import ProjectConfig from "../Config/ProjectConfig";
@@ -67,10 +67,8 @@ export default class LocalizationMgr {
     }
 
 
-    /**通过key获取对应语言 */
+    /**通过key获取对应语言,一般来说是内部调用 */
     static $getLocalizationByKey(key: string, ...keys: string[]): string {
-
-
         let language = LanguageEnum[this.Language];
         let value = this.$localizationKeyMap.get(key)?.[language];
         if (value) {

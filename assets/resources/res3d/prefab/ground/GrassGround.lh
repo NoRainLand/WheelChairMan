@@ -15,7 +15,7 @@
     {
       "_$type": "Animator",
       "controller": {
-        "_$uuid": "e1981a2c-69ee-4fd2-9e28-bbba091050ed",
+        "_$uuid": "",
         "_$type": "AnimationController"
       },
       "cullingMode": 0,

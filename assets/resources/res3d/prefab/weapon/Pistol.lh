@@ -1,8 +1,16 @@
 {
   "_$ver": 1,
-  "_$id": "yt6z02xv",
+  "_$id": "2k1rygtc",
   "_$type": "Sprite3D",
   "name": "Pistol",
+  "transform": {
+    "localPosition": {
+      "_$type": "Vector3",
+      "x": -2.8414425648504347,
+      "y": 3.559555768966675,
+      "z": 5.095305442810059
+    }
+  },
   "_$child": [
     {
       "_$id": "#42",
@@ -20,7 +28,7 @@
         {
           "_$type": "MeshFilter",
           "sharedMesh": {
-            "_$uuid": "f55af52e-e0a1-4fea-8198-32d4b8b5dc7e@lm0",
+            "_$uuid": "ed1d2b98-d97b-490a-8ce8-2e97fdf3d5e4@lm0",
             "_$type": "Mesh"
           }
         },
@@ -45,7 +53,7 @@
             {
               "_$type": "MeshFilter",
               "sharedMesh": {
-                "_$uuid": "f55af52e-e0a1-4fea-8198-32d4b8b5dc7e@lm1",
+                "_$uuid": "ed1d2b98-d97b-490a-8ce8-2e97fdf3d5e4@lm1",
                 "_$type": "Mesh"
               }
             },
@@ -70,14 +78,20 @@
             {
               "_$type": "MeshFilter",
               "sharedMesh": {
-                "_$uuid": "f55af52e-e0a1-4fea-8198-32d4b8b5dc7e@lm2",
+                "_$uuid": "ed1d2b98-d97b-490a-8ce8-2e97fdf3d5e4@lm2",
                 "_$type": "Mesh"
               }
             },
             {
               "_$type": "MeshRenderer",
               "receiveShadow": true,
-              "castShadow": true
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "8f525afa-32fc-4c15-93dc-e2ff9475ce63",
+                  "_$type": "Material"
+                }
+              ]
             }
           ]
         },
@@ -96,7 +110,7 @@
             {
               "_$type": "MeshFilter",
               "sharedMesh": {
-                "_$uuid": "f55af52e-e0a1-4fea-8198-32d4b8b5dc7e@lm3",
+                "_$uuid": "ed1d2b98-d97b-490a-8ce8-2e97fdf3d5e4@lm3",
                 "_$type": "Mesh"
               }
             },

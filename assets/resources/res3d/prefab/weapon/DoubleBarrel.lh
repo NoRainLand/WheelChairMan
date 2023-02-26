@@ -1,0 +1,117 @@
+{
+  "_$ver": 1,
+  "_$id": "b9088pj6",
+  "_$type": "Sprite3D",
+  "name": "DoubleBarrel",
+  "transform": {
+    "localPosition": {
+      "_$type": "Vector3",
+      "x": -5.084739413343083,
+      "y": 3.559555768966675,
+      "z": 5.095305442810059
+    }
+  },
+  "_$child": [
+    {
+      "_$id": "#42",
+      "_$type": "Sprite3D",
+      "name": "DoubleBarrel",
+      "transform": {
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 0.009999999776482582,
+          "y": 0.009999999776482582,
+          "z": 0.009999999776482582
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "MeshFilter",
+          "sharedMesh": {
+            "_$uuid": "c0c5345e-119b-488b-85be-ec79d8281ab1@lm0",
+            "_$type": "Mesh"
+          }
+        },
+        {
+          "_$type": "MeshRenderer",
+          "receiveShadow": true,
+          "castShadow": true,
+          "sharedMaterials": [
+            {
+              "_$uuid": "4c1be71b-66b4-40f3-8a3c-a12a764da552",
+              "_$type": "Material"
+            }
+          ]
+        }
+      ],
+      "_$child": [
+        {
+          "_$id": "#43",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_Rifle_DoubleBarrel_01_Trigger_L",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 6.379843711853027,
+              "y": 2.201223373413086,
+              "z": 7.68967866897583
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "c0c5345e-119b-488b-85be-ec79d8281ab1@lm1",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "4c1be71b-66b4-40f3-8a3c-a12a764da552",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#44",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_Rifle_DoubleBarrel_01_Trigger_R",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": -5.962076187133789,
+              "y": 2.201223373413086,
+              "z": 7.689720153808594
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "c0c5345e-119b-488b-85be-ec79d8281ab1@lm2",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "4c1be71b-66b4-40f3-8a3c-a12a764da552",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -15,7 +15,7 @@ import TextResource = Laya.TextResource;
  * @Author: NoRain 
  * @Date: 2023-02-12 15:09:35 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-24 23:18:52
+ * @Last Modified time: 2023-02-25 14:02:21
  */
 /**资源加载器 */
 export default class ResLoader {
@@ -51,11 +51,30 @@ export default class ResLoader {
     }
 
     /**获取克隆 */
-    getResClose(url: string): any {
+    getResCloneByUrl(url: string): any {
         if (url) {
             let obj = Laya.loader.getRes(url);
             if (obj && obj.create) {
                 return obj.create();
+            }
+        }
+        return null;
+    }
+    /**获取克隆 */
+    getResCloneById(id: number): any {
+        if (id) {
+            let url = this.getUrlById(id);
+            if (url) {
+                let obj = Laya.loader.getRes(url);
+                if (obj?.create) {
+                    return obj?.create?.();
+                } else if (obj?.clone) {
+                    return obj?.clone?.();
+                } else {
+                    console.log('无法获取克隆')
+                    return obj;
+                }
+
             }
         }
         return null;

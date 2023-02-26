@@ -48,7 +48,7 @@ export default class UIBase extends Laya.Script {
     isOpen: boolean = false;
 
     /**事件 */
-    private $event: Map<string, Function>;
+    $event: Map<string, Function>;
 
     /**资源的唯一ID */
     $assetsId: number;
@@ -99,14 +99,7 @@ export default class UIBase extends Laya.Script {
 
     }
 
-    onDisable(): void {
-        let self = this, events = self.$event;
-        for (let name in events) {
-            EventMgr.off(name, self, events.get(name));
-        }
-        self.$event = null;
-        self.$param = null;
-    }
+
     /**
      * 注册监听事件，不需要销毁
      * @param event 事件枚举

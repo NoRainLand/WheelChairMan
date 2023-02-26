@@ -1,0 +1,64 @@
+{
+  "_$ver": 1,
+  "_$id": "wmyyns2v",
+  "_$type": "Sprite3D",
+  "name": "WizardStaff",
+  "transform": {
+    "localPosition": {
+      "_$type": "Vector3",
+      "x": -1.4316117619163602,
+      "y": 3.559555768966675,
+      "z": 5.095305442810059
+    }
+  },
+  "_$child": [
+    {
+      "_$id": "#42",
+      "_$type": "Sprite3D",
+      "name": "WizardStaff",
+      "transform": {
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 0.009999999776482582,
+          "y": 0.009999999776482582,
+          "z": 0.009999999776482582
+        }
+      },
+      "_$child": [
+        {
+          "_$id": "#43",
+          "_$type": "Sprite3D",
+          "name": "WizardStaff_1",
+          "transform": {
+            "localScale": {
+              "_$type": "Vector3",
+              "x": 0.010000002570450306,
+              "y": 0.01000000350177288,
+              "z": 0.010000004433095455
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "f5c42cc9-8fb1-40a5-861d-a61b0b23aecc@lm0",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "3ff6a23e-6f6f-4e3e-8c31-030778f23525",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

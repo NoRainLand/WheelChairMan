@@ -1,0 +1,150 @@
+{
+  "_$ver": 1,
+  "_$id": "oguz0di2",
+  "_$type": "Sprite3D",
+  "name": "Revolver",
+  "transform": {
+    "localPosition": {
+      "_$type": "Vector3",
+      "x": -3.95098734251716,
+      "y": 3.559555768966675,
+      "z": 5.095305442810059
+    }
+  },
+  "_$child": [
+    {
+      "_$id": "#42",
+      "_$type": "Sprite3D",
+      "name": "Revolver",
+      "transform": {
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 0.009999999776482582,
+          "y": 0.009999999776482582,
+          "z": 0.009999999776482582
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "MeshFilter",
+          "sharedMesh": {
+            "_$uuid": "8f7aab82-fd42-49b2-9c53-66b661d90aa0@lm0",
+            "_$type": "Mesh"
+          }
+        },
+        {
+          "_$type": "MeshRenderer",
+          "receiveShadow": true,
+          "castShadow": true,
+          "sharedMaterials": [
+            {
+              "_$uuid": "32d0b7a4-2033-469c-95d0-44a30efbc526",
+              "_$type": "Material"
+            }
+          ]
+        }
+      ],
+      "_$child": [
+        {
+          "_$id": "#43",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_Revolver_Cylinder_01",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 0.000001716613724056515,
+              "y": 10.044864654541016,
+              "z": 14.02739429473877
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "8f7aab82-fd42-49b2-9c53-66b661d90aa0@lm1",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "32d0b7a4-2033-469c-95d0-44a30efbc526",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#44",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_Revolver_Hammer_01",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": -3.4106052671737525e-14,
+              "y": 9.07858943939209,
+              "z": 6.119381427764893
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "8f7aab82-fd42-49b2-9c53-66b661d90aa0@lm2",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "32d0b7a4-2033-469c-95d0-44a30efbc526",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#45",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_Revolver_Trigger_01",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": -3.4106052671737525e-14,
+              "y": 3.5905890464782715,
+              "z": 10.691378593444824
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "8f7aab82-fd42-49b2-9c53-66b661d90aa0@lm3",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "32d0b7a4-2033-469c-95d0-44a30efbc526",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

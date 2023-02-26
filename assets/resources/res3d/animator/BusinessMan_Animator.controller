@@ -6,7 +6,7 @@
   "controllerLayers": [
     {
       "_$type": "AnimatorControllerLayer",
-      "name": "Animation Base Layer",
+      "name": "main",
       "playOnWake": true,
       "blendingMode": 0,
       "defaultWeight": 1,
@@ -33,51 +33,131 @@
           "clipEnd": 1
         },
         {
-          "x": 154,
-          "y": 158,
+          "x": 181,
+          "y": 120,
           "id": "0",
-          "name": "player1Idle",
+          "name": "idle",
           "speed": 1,
           "clipEnd": 1,
           "clip": {
-            "_$uuid": "d4605ea4-2109-47aa-aa87-51d5ebc24b22@lani2"
+            "_$uuid": "d141b363-8fd9-444b-9413-99242b48d833@lani1"
           }
         },
         {
-          "x": 157,
-          "y": 282,
+          "x": 325,
+          "y": 265,
           "id": "1",
-          "name": "PistolRun",
-          "speed": 1,
-          "clipEnd": 1,
-          "clip": {
-            "_$uuid": "d4605ea4-2109-47aa-aa87-51d5ebc24b22@lani1"
-          }
-        },
-        {
-          "x": 168,
-          "y": 369,
-          "id": "2",
-          "name": "Running",
-          "speed": 1,
-          "clipEnd": 1,
-          "clip": {
-            "_$uuid": "d4605ea4-2109-47aa-aa87-51d5ebc24b22@lani3"
-          }
-        },
-        {
-          "x": 172,
-          "y": 232,
-          "id": "3",
           "name": "death",
           "speed": 1,
           "clipEnd": 1,
           "clip": {
-            "_$uuid": "d4605ea4-2109-47aa-aa87-51d5ebc24b22@lani0"
+            "_$uuid": "d141b363-8fd9-444b-9413-99242b48d833@lani0"
           }
         }
       ],
       "defaultStateName": "Animation Base Layer"
+    },
+    {
+      "playOnWake": false,
+      "blendingMode": 0,
+      "name": "up",
+      "states": [
+        {
+          "x": 10,
+          "y": 100,
+          "id": "-1",
+          "name": "进入",
+          "speed": 1,
+          "clipEnd": 1,
+          "soloTransitions": [
+            {
+              "id": "0"
+            }
+          ]
+        },
+        {
+          "x": 425,
+          "y": 100,
+          "id": "-2",
+          "name": "任何状态",
+          "speed": 1,
+          "clipEnd": 1
+        },
+        {
+          "x": 211,
+          "y": 281,
+          "id": "0",
+          "name": "shoot",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "d141b363-8fd9-444b-9413-99242b48d833@lani4"
+          }
+        },
+        {
+          "x": 189,
+          "y": 207,
+          "id": "1",
+          "name": "runUp",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "d141b363-8fd9-444b-9413-99242b48d833@lani3"
+          }
+        }
+      ],
+      "defaultWeight": 1
+    },
+    {
+      "playOnWake": false,
+      "blendingMode": 0,
+      "name": "down",
+      "states": [
+        {
+          "x": 10,
+          "y": 100,
+          "id": "-1",
+          "name": "进入",
+          "speed": 1,
+          "clipEnd": 1,
+          "soloTransitions": [
+            {
+              "id": "0"
+            }
+          ]
+        },
+        {
+          "x": 425,
+          "y": 100,
+          "id": "-2",
+          "name": "任何状态",
+          "speed": 1,
+          "clipEnd": 1
+        },
+        {
+          "x": 89,
+          "y": 313,
+          "id": "0",
+          "name": "stand",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "d141b363-8fd9-444b-9413-99242b48d833@lani5"
+          }
+        },
+        {
+          "x": 123,
+          "y": 244,
+          "id": "1",
+          "name": "runDown",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "d141b363-8fd9-444b-9413-99242b48d833@lani2"
+          }
+        }
+      ],
+      "defaultWeight": 1
     }
   ],
   "layerW": 150

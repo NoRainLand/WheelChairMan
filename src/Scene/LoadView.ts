@@ -3,7 +3,7 @@ import MainGame from "../Game/MainGame";
 import LocalizationMgr from "../Localization/LocalizationMgr";
 import CurrencyMgr from "../Mgr/CurrencyMgr";
 import LevelMgr from "../Mgr/LevelMgr";
-import Scene3dMgr from "../UIBase/Scene3dMgr";
+import Scene3dMgr from "../Scene3dBase/Scene3dMgr";
 import UIBase from "../UIBase/UIBase";
 import UIBaseMgr from "../UIBase/UIBaseMgr";
 import ResLoader from "../Util/ResLoader";
@@ -82,7 +82,7 @@ export default class LoadView extends UIBase {
 
     /**打开页面 */
     openScene() {
-        UIBaseMgr.instance.showDebug();
+        // UIBaseMgr.instance.showDebug();
         UIBaseMgr.instance.open(SceneEnum.MainView);
         this.close();
     }

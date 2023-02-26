@@ -1,0 +1,216 @@
+{
+  "_$ver": 1,
+  "_$id": "yhbtup3b",
+  "_$type": "Sprite3D",
+  "name": "RPG",
+  "transform": {
+    "localPosition": {
+      "_$type": "Vector3",
+      "x": -3.4363655543621654,
+      "y": 3.559555768966675,
+      "z": 5.095305442810059
+    }
+  },
+  "_$child": [
+    {
+      "_$id": "#42",
+      "_$type": "Sprite3D",
+      "name": "RPG",
+      "transform": {
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 0.009999999776482582,
+          "y": 0.009999999776482582,
+          "z": 0.009999999776482582
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "MeshFilter",
+          "sharedMesh": {
+            "_$uuid": "0fcacfb1-80e1-4aab-a454-90f74fc0ad2e@lm0",
+            "_$type": "Mesh"
+          }
+        },
+        {
+          "_$type": "MeshRenderer",
+          "receiveShadow": true,
+          "castShadow": true,
+          "sharedMaterials": [
+            {
+              "_$uuid": "8f525afa-32fc-4c15-93dc-e2ff9475ce63",
+              "_$type": "Material"
+            }
+          ]
+        }
+      ],
+      "_$child": [
+        {
+          "_$id": "#43",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_RPG_Rocket_01",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 0.000003814697265625,
+              "y": 8.791877746582031,
+              "z": 25.986083984375
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "0fcacfb1-80e1-4aab-a454-90f74fc0ad2e@lm1",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "8f525afa-32fc-4c15-93dc-e2ff9475ce63",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#44",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_RPG_Sight_01",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 4.76837158203125e-7,
+              "y": 15.29692268371582,
+              "z": -21.98925018310547
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "0fcacfb1-80e1-4aab-a454-90f74fc0ad2e@lm2",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "8f525afa-32fc-4c15-93dc-e2ff9475ce63",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#45",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_RPG_Sight_02",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 4.76837158203125e-7,
+              "y": 14.518417358398438,
+              "z": 21.517536163330078
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "0fcacfb1-80e1-4aab-a454-90f74fc0ad2e@lm3",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "8f525afa-32fc-4c15-93dc-e2ff9475ce63",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#46",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_RPG_Trigger_01",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 4.76837158203125e-7,
+              "y": -121.82351684570312,
+              "z": 320.1040954589844
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "0fcacfb1-80e1-4aab-a454-90f74fc0ad2e@lm4",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "8f525afa-32fc-4c15-93dc-e2ff9475ce63",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#47",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_RPG_Trigger_02",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 4.76837158203125e-7,
+              "y": -121.82351684570312,
+              "z": 320.1040954589844
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "0fcacfb1-80e1-4aab-a454-90f74fc0ad2e@lm5",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "8f525afa-32fc-4c15-93dc-e2ff9475ce63",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

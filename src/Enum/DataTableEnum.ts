@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-14 14:23:36 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-18 15:43:35
+ * @Last Modified time: 2023-02-25 11:44:17
  */
 /**配置表 */
 export enum DataTableEnum {
@@ -22,4 +22,13 @@ export enum DataTableEnum {
     Ranking = 3006,
     /**3D场景配置表 */
     Scene3d = 3007,
+    /**玩家表 */
+    Player = 3008,
+    /**武器配置表 */
+    Weapon = 3009,
+    /**敌人配置表 */
+    Enemy = 3010,
+    /**子弹配置表 */
+    Bullet = 3011,
+
 }

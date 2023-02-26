@@ -1,0 +1,43 @@
+{
+  "version": "LAYAMATERIAL:04",
+  "props": {
+    "textures": [
+      {
+        "path": "res://262c917f-325f-4fbb-91b8-76ac682b0377",
+        "constructParams": [
+          1920,
+          1080,
+          1,
+          false,
+          false,
+          true
+        ],
+        "propertyParams": {
+          "filterMode": 1,
+          "wrapModeU": 0,
+          "wrapModeV": 0,
+          "anisoLevel": 1
+        },
+        "name": "u_AlbedoTexture"
+      }
+    ],
+    "type": "Unlit",
+    "renderQueue": 2000,
+    "materialRenderMode": 0,
+    "s_Cull": 2,
+    "s_Blend": 0,
+    "s_BlendSrc": 1,
+    "s_BlendDst": 0,
+    "s_DepthTest": 1,
+    "s_DepthWrite": true,
+    "u_AlbedoColor": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "defines": [
+      "ALBEDOTEXTURE"
+    ]
+  }
+}

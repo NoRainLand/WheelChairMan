@@ -1,0 +1,159 @@
+{
+  "_$ver": 1,
+  "_$id": "5eycmtsp",
+  "_$type": "Sprite3D",
+  "name": "SelectPlayerScene",
+  "transform": {
+    "localPosition": {
+      "_$type": "Vector3",
+      "x": 1.1966108104388695e-7
+    }
+  },
+  "_$comp": [
+    {
+      "_$type": "34405a80-13b4-48be-ac44-94bb920f1518",
+      "scriptPath": "../src/Scene3d/SelectPlayerScene.ts"
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "30ar9xkf",
+      "_$type": "Camera",
+      "name": "Camera",
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 1.1888178588714209,
+          "y": 0.8490187651304928,
+          "z": 2.7068252471857592
+        }
+      },
+      "orthographicVerticalSize": 10,
+      "fieldOfView": 60,
+      "nearPlane": 0.3,
+      "farPlane": 1000,
+      "clearFlag": 0,
+      "clearColor": {
+        "_$type": "Color",
+        "r": 0.39215686274509803,
+        "g": 0.5843137254901961,
+        "b": 0.9294117647058824
+      },
+      "fxaa": true,
+      "cullingMask": 2147483647,
+      "normalizedViewport": {
+        "_$type": "Viewport",
+        "width": 1,
+        "height": 1
+      },
+      "depthTextureFormat": 35
+    },
+    {
+      "_$id": "6ni3p096l5",
+      "_$type": "Sprite3D",
+      "name": "Direction Light",
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 4.999999880338919,
+          "y": 5,
+          "z": 5
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": -0.40821789367673483,
+          "y": 0.23456971600980447,
+          "z": 0.109381654946615,
+          "w": 0.875426098065593
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "DirectionLightCom",
+          "color": {
+            "_$type": "Color",
+            "r": 0.6,
+            "g": 0.6,
+            "b": 0.6
+          },
+          "intensity": 1,
+          "lightmapBakedType": 1,
+          "shadowMode": 0,
+          "shadowStrength": 1,
+          "shadowDistance": 50,
+          "shadowDepthBias": 1,
+          "shadowNormalBias": 1,
+          "shadowNearPlane": 0.1,
+          "shadowCascadesMode": 0,
+          "strength": null,
+          "angle": null,
+          "maxBounces": null
+        }
+      ]
+    },
+    {
+      "_$id": "9peti6xs",
+      "_$type": "Sprite3D",
+      "name": "Sprite3D",
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 0.1590355630171416,
+          "y": -0.046926215291023254,
+          "z": -0.5794664025306702
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "PhysicsCollider",
+          "colliderShape": {
+            "_$type": "BoxColliderShape",
+            "localOffset": {
+              "_$type": "Vector3",
+              "y": -0.32
+            },
+            "sizeX": 10,
+            "sizeZ": 10
+          }
+        }
+      ]
+    },
+    {
+      "_$id": "c98woa5z",
+      "_$type": "Sprite3D",
+      "name": "Plane",
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 1.2988491053831694,
+          "y": 0.9416595101356506,
+          "z": -1.0062193228080591
+        },
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 16,
+          "y": 9,
+          "z": 1
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "MeshFilter",
+          "sharedMesh": {
+            "_$uuid": "4a4afb22-ef83-40a2-a6a8-212a2d20c52f",
+            "_$type": "Mesh"
+          }
+        },
+        {
+          "_$type": "MeshRenderer",
+          "sharedMaterials": [
+            {
+              "_$uuid": "9324af99-30e4-414a-acb2-4b80543f74ea",
+              "_$type": "Material"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

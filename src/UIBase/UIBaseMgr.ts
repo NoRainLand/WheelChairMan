@@ -2,9 +2,10 @@
  * @Author: NoRain 
  * @Date: 2023-02-08 10:25:16 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-24 23:31:29
+ * @Last Modified time: 2023-02-25 15:46:01
  */
 import { SceneEnum } from "../Enum/SceneEnum";
+import EventMgr from "../Mgr/EventMgr";
 import SceneUrl from "../Url/SceneUrl";
 import ResLoader from "../Util/ResLoader";
 import UIBase from "./UIBase";
@@ -73,7 +74,7 @@ export default class UIBaseMgr {
         if (!this.$isOpenLoadView) {
             this.$isOpenLoadView = true;
             ResLoader.instance.load(SceneUrl.LoadView, Handler.create(this, () => {
-                this.initScene(ResLoader.instance.getResClose(SceneUrl.LoadView), SceneEnum.LoadView);
+                this.initScene(ResLoader.instance.getResCloneByUrl(SceneUrl.LoadView), SceneEnum.LoadView);
             }))
         }
     }
@@ -166,6 +167,12 @@ export default class UIBaseMgr {
                     script.isOpen = false;
                     script.owner.removeSelf();
                     script.onClosed();
+                    let events = script.$event;
+                    for (let name in events) {
+                        EventMgr.off(name, script, events.get(name));
+                    }
+                    script.$event = null;
+                    script.$param = null;
                     Pool.recover(this.$sign + sceneName, script.owner);
                 } else {
                     arr.push(script);

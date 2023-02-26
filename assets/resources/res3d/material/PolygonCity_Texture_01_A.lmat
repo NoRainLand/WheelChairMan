@@ -61,7 +61,7 @@
       0
     ],
     "u_NormalScale": 1,
-    "u_Smoothness": 0.344,
+    "u_Smoothness": 0.5,
     "u_SmoothnessScale": 1,
     "u_OcclusionStrength": 1,
     "u_EmissionColor": [
@@ -79,7 +79,7 @@
     ],
     "u_DetailNormalScale": 1,
     "u_Metallic": 0,
-    "u_AlphaTestValue": 0.722,
+    "u_AlphaTestValue": 0.5,
     "defines": [
       "ALBEDOTEXTURE"
     ]

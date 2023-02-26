@@ -1,0 +1,164 @@
+{
+  "_$type": "Animator",
+  "enabled": true,
+  "controller": null,
+  "cullingMode": 0,
+  "controllerLayers": [
+    {
+      "_$type": "AnimatorControllerLayer",
+      "name": "main",
+      "playOnWake": true,
+      "blendingMode": 0,
+      "defaultWeight": 1,
+      "states": [
+        {
+          "x": 10,
+          "y": 100,
+          "id": "-1",
+          "name": "进入",
+          "speed": 1,
+          "clipEnd": 1,
+          "soloTransitions": [
+            {
+              "id": "0"
+            }
+          ]
+        },
+        {
+          "x": 425,
+          "y": 100,
+          "id": "-2",
+          "name": "任何状态",
+          "speed": 1,
+          "clipEnd": 1
+        },
+        {
+          "x": 194,
+          "y": 231,
+          "id": "0",
+          "name": "idle",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "0d896e70-5c1d-4504-9fc1-ec0de1cb2473@lani1"
+          }
+        },
+        {
+          "x": 178,
+          "y": 352,
+          "id": "1",
+          "name": "death",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "0d896e70-5c1d-4504-9fc1-ec0de1cb2473@lani0"
+          }
+        }
+      ],
+      "defaultStateName": "Animation Base Layer"
+    },
+    {
+      "playOnWake": false,
+      "blendingMode": 0,
+      "name": "up",
+      "states": [
+        {
+          "x": 10,
+          "y": 100,
+          "id": "-1",
+          "name": "进入",
+          "speed": 1,
+          "clipEnd": 1,
+          "soloTransitions": [
+            {
+              "id": "0"
+            }
+          ]
+        },
+        {
+          "x": 425,
+          "y": 100,
+          "id": "-2",
+          "name": "任何状态",
+          "speed": 1,
+          "clipEnd": 1
+        },
+        {
+          "x": 257,
+          "y": 297,
+          "id": "0",
+          "name": "runUp",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "0d896e70-5c1d-4504-9fc1-ec0de1cb2473@lani3"
+          }
+        },
+        {
+          "x": 154,
+          "y": 294,
+          "id": "1",
+          "name": "shoot",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "0d896e70-5c1d-4504-9fc1-ec0de1cb2473@lani4"
+          }
+        }
+      ],
+      "defaultWeight": 1
+    },
+    {
+      "playOnWake": false,
+      "blendingMode": 0,
+      "name": "down",
+      "states": [
+        {
+          "x": 10,
+          "y": 100,
+          "id": "-1",
+          "name": "进入",
+          "speed": 1,
+          "clipEnd": 1,
+          "soloTransitions": [
+            {
+              "id": "0"
+            }
+          ]
+        },
+        {
+          "x": 425,
+          "y": 100,
+          "id": "-2",
+          "name": "任何状态",
+          "speed": 1,
+          "clipEnd": 1
+        },
+        {
+          "x": 189,
+          "y": 357,
+          "id": "0",
+          "name": "stand",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "0d896e70-5c1d-4504-9fc1-ec0de1cb2473@lani5"
+          }
+        },
+        {
+          "x": 288,
+          "y": 204,
+          "id": "1",
+          "name": "runDown",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "0d896e70-5c1d-4504-9fc1-ec0de1cb2473@lani2"
+          }
+        }
+      ],
+      "defaultWeight": 1
+    }
+  ],
+  "layerW": 150
+}

@@ -1,0 +1,181 @@
+{
+  "_$ver": 1,
+  "_$id": "o4xn6k3n",
+  "_$type": "Sprite3D",
+  "name": "SMG",
+  "transform": {
+    "localPosition": {
+      "_$type": "Vector3",
+      "x": -2.062815861484176,
+      "y": 3.559555768966675,
+      "z": 5.095305442810059
+    }
+  },
+  "_$child": [
+    {
+      "_$id": "#42",
+      "_$type": "Sprite3D",
+      "name": "SMG",
+      "transform": {
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 0.009999999776482582,
+          "y": 0.009999999776482582,
+          "z": 0.009999999776482582
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "MeshFilter",
+          "sharedMesh": {
+            "_$uuid": "609cc8c9-6736-46de-9393-58baaaed5326@lm0",
+            "_$type": "Mesh"
+          }
+        },
+        {
+          "_$type": "MeshRenderer",
+          "receiveShadow": true,
+          "castShadow": true,
+          "sharedMaterials": [
+            {
+              "_$uuid": "8146bace-20e7-4dc1-b1d2-a5919af653b1",
+              "_$type": "Material"
+            }
+          ]
+        }
+      ],
+      "_$child": [
+        {
+          "_$id": "#43",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_SMG_Mag_01",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "y": 3.8328490257263184,
+              "z": 16.235698699951172
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "609cc8c9-6736-46de-9393-58baaaed5326@lm1",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "8146bace-20e7-4dc1-b1d2-a5919af653b1",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#44",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_SMG_Silencer_01",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": -0.06842086464166641,
+              "y": 8.310775756835938,
+              "z": 38.08938980102539
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "609cc8c9-6736-46de-9393-58baaaed5326@lm2",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "8146bace-20e7-4dc1-b1d2-a5919af653b1",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#45",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_SMG_Slide_01",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 1.7406169176101685,
+              "y": 11.461532592773438,
+              "z": 28.630002975463867
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "609cc8c9-6736-46de-9393-58baaaed5326@lm3",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "8146bace-20e7-4dc1-b1d2-a5919af653b1",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "_$id": "#46",
+          "_$type": "Sprite3D",
+          "name": "SM_Wep_SMG_Trigger_01",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "y": 1.2401626110076904,
+              "z": 4.676750659942627
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "609cc8c9-6736-46de-9393-58baaaed5326@lm4",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "receiveShadow": true,
+              "castShadow": true,
+              "sharedMaterials": [
+                {
+                  "_$uuid": "8146bace-20e7-4dc1-b1d2-a5919af653b1",
+                  "_$type": "Material"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

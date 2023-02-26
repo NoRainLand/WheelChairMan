@@ -38,18 +38,10 @@
       },
       "lightmaps": [
         {
-          "_$type": "Lightmap",
-          "lightmapColor": {
-            "_$uuid": "c9fd1c4f-9fce-40ce-acf0-da164dc86e6a",
-            "_$type": "Texture2D"
-          }
+          "_$type": "Lightmap"
         },
         {
-          "_$type": "Lightmap",
-          "lightmapColor": {
-            "_$uuid": "926bea5d-fd7f-4626-b793-d2816ab6de4c",
-            "_$type": "Texture2D"
-          }
+          "_$type": "Lightmap"
         }
       ],
       "lightingSettings": {
@@ -65,8 +57,8 @@
             "localPosition": {
               "_$type": "Vector3",
               "x": -5.635611057281494,
-              "y": 2.177386522293091,
-              "z": 9.223833458043199
+              "y": 4.591152846023184,
+              "z": 12.563598194960537
             }
           },
           "orthographicVerticalSize": 10,
@@ -80,7 +72,7 @@
             "g": 0.5843,
             "b": 0.9294
           },
-          "cullingMask": 0,
+          "cullingMask": 2147483647,
           "normalizedViewport": {
             "_$type": "Viewport",
             "width": 1,

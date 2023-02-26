@@ -1,6 +1,6 @@
-import { PlayerEnum } from "../Enum/PlayerEnum";
+import PlayerMgr from "../Game/Player/PlayerMgr";
+import LocalizationMgr from "../Localization/LocalizationMgr";
 import UIBase from "../UIBase/UIBase";
-import ResLoader from "../Util/ResLoader";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
 import Box = Laya.Box;
@@ -15,7 +15,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-24 20:04:35 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-24 23:34:39
+ * @Last Modified time: 2023-02-25 16:41:57
  */
 const { regClass, property } = Laya;
 /**选择玩家界面 */
@@ -28,33 +28,43 @@ export default class SelectPlayerView extends UIBase {
     @property()
     imgPrev: Image;
     @property()
-    spriteHead: Sprite;
-    @property()
     imgLock: Image;
     @property()
     imgSelect: Image;
+    @property()
+    labelName: Label;
+    @property()
+    labelDic: Label;
 
     private $viewIndex: number = 0;
 
-    private $playerMap: Map<number, Object>;
-    private $weaponMap: Map<number, Object>;
+
+    private $playerData: any;
 
     constructor() { super() }
 
     onOpened(param?: any): void {
         this.$viewIndex = 0;
-        // this.$playerMap = 
+        this.$playerData = PlayerMgr.instance.getSelectedPlayerData();
+        this.changeData();
     }
 
     addEvent(): void {
         this.regClick(this.imgBack, this.goBack);
         this.regClick(this.imgNext, this.nextItem);
         this.regClick(this.imgPrev, this.prevItem);
+        this.regClick(this.imgSelect, this.selectPlayer);
+        // this.regEvent(EventEnum.LANGUAGECHANGE)
     }
 
+    changeData() {
+        console.log(this.$playerData);
+        this.labelName.text = LocalizationMgr.getLocalizationByEnum(this.$playerData.localizationKey);
+        this.labelDic.text = LocalizationMgr.getLocalizationByEnum(this.$playerData.descriptionKey);
+    }
 
     goBack() {
-        console.log(ResLoader.instance.getResById(PlayerEnum.BusinessMan));
+
     }
 
     nextItem() {
@@ -64,6 +74,8 @@ export default class SelectPlayerView extends UIBase {
     prevItem() {
 
     }
-
+    selectPlayer() {
+        console.log()
+    }
 
 }
