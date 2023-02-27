@@ -46,7 +46,7 @@
             "localPosition": {
               "_$type": "Vector3",
               "y": 1.1617331635975896,
-              "z": 2.5629908992120765
+              "z": 5.359639442872519
             }
           },
           "orthographicVerticalSize": 10,
@@ -112,31 +112,6 @@
           ]
         }
       ]
-    },
-    {
-      "_$id": "fit4bm1q",
-      "_$type": "View",
-      "name": "GuideView",
-      "width": 1920,
-      "height": 1080,
-      "mouseEnabled": true,
-      "left": 0,
-      "right": 0,
-      "top": 0,
-      "bottom": 0
-    },
-    {
-      "_$id": "tdgoq5vi",
-      "_$prefab": "b8c831bb-4e51-4240-a669-e77e749f3097",
-      "name": "SelectPlayerView",
-      "active": true,
-      "x": 0,
-      "y": 0,
-      "visible": true,
-      "left": 0,
-      "right": 0,
-      "top": 0,
-      "bottom": 0
     }
   ]
 }
