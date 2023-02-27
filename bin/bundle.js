@@ -211,15 +211,15 @@ function __$decorate(assetId, codePath) {
     }
     /**获取克隆 */
     getResCloneById(id) {
-      var _a17, _b13;
+      var _a20, _b15;
       if (id) {
         let url = this.getUrlById(id);
         if (url) {
           let obj = Laya.loader.getRes(url);
           if (obj === null || obj === void 0 ? void 0 : obj.create) {
-            return (_a17 = obj === null || obj === void 0 ? void 0 : obj.create) === null || _a17 === void 0 ? void 0 : _a17.call(obj);
+            return (_a20 = obj === null || obj === void 0 ? void 0 : obj.create) === null || _a20 === void 0 ? void 0 : _a20.call(obj);
           } else if (obj === null || obj === void 0 ? void 0 : obj.clone) {
-            return (_b13 = obj === null || obj === void 0 ? void 0 : obj.clone) === null || _b13 === void 0 ? void 0 : _b13.call(obj);
+            return (_b15 = obj === null || obj === void 0 ? void 0 : obj.clone) === null || _b15 === void 0 ? void 0 : _b15.call(obj);
           } else {
             console.log("\u65E0\u6CD5\u83B7\u53D6\u514B\u9686");
             return obj;
@@ -911,13 +911,13 @@ function __$decorate(assetId, codePath) {
     }
     /**打开某个场景 */
     open(sceneId, param) {
-      var _a17;
+      var _a20;
       let sceneScript;
       sceneScript = this.$scene3dPool.get(sceneId);
       if (sceneScript) {
         this.initScene(sceneScript, param);
       } else {
-        let id = (_a17 = this.$scene3dMap.get(sceneId)) == null ? void 0 : _a17["path"];
+        let id = (_a20 = this.$scene3dMap.get(sceneId)) == null ? void 0 : _a20["path"];
         if (id) {
           let scene = ResLoader.instance.getResCloneById(id);
           scene && this.$scene3d.addChild(scene);
@@ -934,9 +934,9 @@ function __$decorate(assetId, codePath) {
     }
     /**初始化一下 */
     initScene(sceneScript, param) {
-      var _a17;
+      var _a20;
       this.$scene3d.addChild(sceneScript.owner);
-      sceneScript.owner.name = (_a17 = this.$scene3dMap.get(sceneScript.sceneId)) == null ? void 0 : _a17["key"];
+      sceneScript.owner.name = (_a20 = this.$scene3dMap.get(sceneScript.sceneId)) == null ? void 0 : _a20["key"];
       sceneScript.$param = param;
       sceneScript.onOpened(param);
       sceneScript.addEvent();
@@ -983,253 +983,6 @@ function __$decorate(assetId, codePath) {
     }
   };
   __name(LocalStorageMgr, "LocalStorageMgr");
-
-  // E:/WheelChairMan/src/Game/Player/PlayerMgr.ts
-  var PlayerMgr = class {
-    constructor() {
-      this.$sign = "playerId_";
-    }
-    static get instance() {
-      return this._instance ? this._instance : this._instance = new PlayerMgr();
-    }
-    init() {
-      this.$playerMap = ResLoader.instance.getDataTableById(3008 /* Player */);
-    }
-    // /**获取当前选择的玩家id */
-    // get selectedPlayerId(): number {
-    //     if (!this.$selectedPlayerId) {
-    //         let id = Number(LocalStorageMgr.getItem(LocalStorageEnum.PLAYERID)?.replace(this.$sign, ""));
-    //         if (isNaN(id)) {
-    //             this.$selectedPlayerId = 1001;
-    //             LocalStorageMgr.setItem(LocalStorageEnum.PLAYERID, this.$sign + this.$selectedPlayerId);
-    //         } else {
-    //             {
-    //                 this.$selectedPlayerId = id
-    //             }
-    //         }
-    //     }
-    //     return this.$selectedPlayerId
-    // }
-    // set selectedPlayerId(value: number) {
-    //     if (value) {
-    //         this.$selectedPlayerId = value;
-    //         LocalStorageMgr.setItem(LocalStorageEnum.PLAYERID, this.$sign + this.$selectedPlayerId);
-    //     }
-    // }
-    /**获取已经解锁的人物 */
-    getUnlockList() {
-      let str = LocalStorageMgr.getItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */);
-      if (str) {
-        this.$unlockList = JSON.parse(str);
-      } else {
-        this.$unlockList = [1001];
-        LocalStorageMgr.setItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */, JSON.stringify(this.$unlockList));
-      }
-      return this.$unlockList;
-    }
-    /**解锁人物 */
-    unlockPlayer(playerId) {
-      if (playerId && this.$unlockList.indexOf(playerId) == -1) {
-        this.$unlockList.push(playerId);
-        LocalStorageMgr.setItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */, JSON.stringify(this.$unlockList));
-      }
-    }
-    /**是否已经解锁 */
-    isUnlock(playerId) {
-      let arr = this.getUnlockList();
-      return arr.indexOf(playerId) != -1;
-    }
-    /**获取当前选择的玩家数据 */
-    getSelectedPlayerData(playerId) {
-      return this.$playerMap.get(playerId);
-    }
-    /**获取当前人物 */
-    getSelectPlayer(playerId) {
-      let playerData = this.getSelectedPlayerData(playerId);
-      return ResLoader.instance.getResCloneById(playerData == null ? void 0 : playerData["path"]);
-    }
-  };
-  __name(PlayerMgr, "PlayerMgr");
-
-  // E:/WheelChairMan/src/Game/MainGame.ts
-  var __decorate5 = __$decorate("17be9e1a-ac52-43f3-8894-fa783a42a738", "../src/Game/MainGame.ts");
-  var MainGame_1;
-  var { regClass: regClass4, property: property4 } = Laya;
-  var MainGame = MainGame_1 = /* @__PURE__ */ __name(class MainGame2 {
-    constructor() {
-      this.$isInit = false;
-    }
-    static get instance() {
-      return this._instance ? this._instance : this._instance = new MainGame_1();
-    }
-    init() {
-      if (!this.$isInit) {
-        this.$isInit = true;
-        this.addEvent();
-        this.reset();
-        PlayerMgr.instance.init();
-      }
-    }
-    addEvent() {
-    }
-    reset() {
-      this.goToMain();
-    }
-    /**开始选择玩家 */
-    selectPlayerAndWeapon() {
-      Scene3dMgr.instance.open(1002 /* SelectPlayerScene */);
-      Scene3dMgr.instance.close(1001 /* MainScene */);
-    }
-    /**返回主页 */
-    goToMain() {
-      Scene3dMgr.instance.close(1002 /* SelectPlayerScene */);
-      Scene3dMgr.instance.open(1001 /* MainScene */);
-    }
-    gameStart() {
-      Scene3dMgr.instance.close(1002 /* SelectPlayerScene */);
-      Scene3dMgr.instance.close(1003 /* GameScene */);
-    }
-    gameOver() {
-    }
-    gameWin() {
-    }
-    gameLose() {
-    }
-  }, "MainGame");
-  MainGame = MainGame_1 = __decorate5([
-    regClass4()
-  ], MainGame);
-  var MainGame_default = MainGame;
-
-  // E:/WheelChairMan/src/Enum/LanguageEnum.ts
-  var LanguageEnum = /* @__PURE__ */ ((LanguageEnum2) => {
-    LanguageEnum2[LanguageEnum2["ChineseSimplified"] = 1001] = "ChineseSimplified";
-    LanguageEnum2[LanguageEnum2["English"] = 1002] = "English";
-    return LanguageEnum2;
-  })(LanguageEnum || {});
-
-  // E:/WheelChairMan/src/Localization/LocalizationMgr.ts
-  var LocalizationMgr = class {
-    /**初始化 */
-    static init() {
-      this.$localizationResMap = ResLoader.instance.getDataTableById(3002 /* LocalizationRes */);
-      this.$localizationMap = ResLoader.instance.getDataTableById(501 /* Localization */);
-      this.$localizationKeyMap = /* @__PURE__ */ new Map();
-      for (let [key, value] of this.$localizationMap) {
-        this.$localizationKeyMap.set(value["key"], value);
-      }
-    }
-    /**获取语言对应国旗 */
-    static getFlagSkinIdById(id) {
-      let data = this.$localizationResMap.get(id);
-      return data && data["flagId"];
-    }
-    /**获取语言描述 */
-    static getLanguageMsgById(id) {
-      let data = this.$localizationResMap.get(id);
-      return data && data["msg"];
-    }
-    /**通过key获取对应语言,一般来说是内部调用 */
-    static $getLocalizationByKey(key, ...keys) {
-      var _a17, _b13;
-      let language = LanguageEnum[this.Language];
-      let value = (_a17 = this.$localizationKeyMap.get(key)) == null ? void 0 : _a17[language];
-      if (value) {
-        if (keys && keys.length) {
-          for (let i = 0; i < keys.length; i++) {
-            let item = (_b13 = this.$localizationKeyMap.get(keys[i])) == null ? void 0 : _b13[language];
-            item = item ? item : keys[i];
-            value = value.replace("$", item);
-          }
-        }
-      }
-      return value;
-    }
-    /**通过枚举获取对应语言 */
-    static getLocalizationByEnum(lenum, ...lenums) {
-      var _a17, _b13;
-      let language = LanguageEnum[this.Language];
-      let value = (_a17 = this.$localizationMap.get(lenum)) == null ? void 0 : _a17[language];
-      if (value) {
-        if (lenums && lenums.length) {
-          for (let i = 0; i < lenums.length; i++) {
-            let item = (_b13 = this.$localizationMap.get(lenums[i])) == null ? void 0 : _b13[language];
-            item = item ? item : lenums[i];
-            value = value.replace("$", item);
-          }
-        }
-      }
-      return value;
-    }
-    /**获取当前语言 */
-    static get Language() {
-      if (!this.$language) {
-        let language = LocalStorageMgr.getItem("LANGUAGE" /* LANGUAGE */);
-        if (language) {
-          this.$language = Number(language.substring(language.indexOf("_") + 1));
-        } else {
-          this.$language = ProjectConfig.defaultLanguage;
-          LocalStorageMgr.setItem("LANGUAGE" /* LANGUAGE */, this.$sign + this.$language);
-        }
-      }
-      return this.$language;
-    }
-    /**修改当前语言 */
-    static set Language(language) {
-      this.$language = language;
-      LocalStorageMgr.setItem("LANGUAGE" /* LANGUAGE */, this.$sign + this.$language);
-      EventMgr.event("LANGUAGECHANGE" /* LANGUAGECHANGE */);
-    }
-  };
-  __name(LocalizationMgr, "LocalizationMgr");
-  /**持久化标志 */
-  LocalizationMgr.$sign = "language_";
-
-  // E:/WheelChairMan/src/Localization/LocalizationText.ts
-  var __decorate6 = __$decorate("5a62e727-31ad-49bf-b53f-96fbff2b0a39", "../src/Localization/LocalizationText.ts");
-  var Text = Laya.Text;
-  var Label = Laya.Label;
-  var { regClass: regClass5, property: property5 } = Laya;
-  var LocalizationText = /* @__PURE__ */ __name(class LocalizationText2 extends Laya.Script {
-    constructor() {
-      super();
-    }
-    onEnable() {
-      if (this.owner instanceof Text || this.owner instanceof Label) {
-        this.text = this.owner;
-        EventMgr.on("LANGUAGECHANGE" /* LANGUAGECHANGE */, this, this.changeLanguage);
-        this.changeLanguage();
-      }
-    }
-    changeLanguage() {
-      if (this.localizationKey) {
-        let value = LocalizationMgr.$getLocalizationByKey(this.localizationKey);
-        if (value) {
-          this.text.text = value;
-        }
-      }
-    }
-    onDisable() {
-      EventMgr.offAllCaller(this);
-    }
-  }, "LocalizationText");
-  __decorate6([
-    property5(),
-    __metadata("design:type", String)
-  ], LocalizationText.prototype, "localizationKey", void 0);
-  LocalizationText = __decorate6([
-    regClass5(),
-    __metadata("design:paramtypes", [])
-  ], LocalizationText);
-
-  // E:/WheelChairMan/src/Scene/CompleteView.ts
-  var __decorate7 = __$decorate("f5f376ef-5874-4c8a-9a28-8088976bd468", "../src/Scene/CompleteView.ts");
-  var { regClass: regClass6, property: property6 } = Laya;
-  var CompleteView = /* @__PURE__ */ __name(class CompleteView2 extends UIBase_default {
-  }, "CompleteView");
-  CompleteView = __decorate7([
-    regClass6()
-  ], CompleteView);
 
   // E:/WheelChairMan/src/Data/GameData.ts
   var GameData = class {
@@ -1351,1569 +1104,89 @@ function __$decorate(assetId, codePath) {
   GameData.$experience = -1;
   GameData.$key = -1;
 
-  // E:/WheelChairMan/src/Scene/DebugView.ts
-  var __decorate8 = __$decorate("5ca51831-1d23-46b6-a853-a10d5da54d6c", "../src/Scene/DebugView.ts");
-  var _a;
-  var _b;
-  var _c;
-  var Box = Laya.Box;
-  var Image = Laya.Image;
-  var List = Laya.List;
-  var Handler3 = Laya.Handler;
-  var { regClass: regClass7, property: property7 } = Laya;
-  var DebugView = /* @__PURE__ */ __name(class DebugView2 extends UIBase_default {
-    constructor() {
-      super();
-      this.commandList = [
-        "\u6DFB\u52A05000\u91D1\u5E01",
-        "\u6DFB\u52A05000\u94BB\u77F3",
-        "\u6E05\u96F6\u91D1\u5E01\u94BB\u77F3",
-        "\u6E38\u620F\u7ACB\u523B\u80DC\u5229(\u5FC5\u987B\u5148\u5F00\u59CB\u6E38\u620F)",
-        "\u6E38\u620F\u7ACB\u523B\u5931\u8D25(\u5FC5\u987B\u5148\u5F00\u59CB\u6E38\u620F)",
-        "\u9501\u5B9A\u989D\u5916\u76AE\u80A4"
-      ];
-    }
-    onOpened(param) {
-      this.regClick(this.imgShow, this.showHidePanel);
-      this.listCommand.renderHandler = new Handler3(this, this.changeItem);
-      this.listCommand.selectHandler = new Handler3(this, this.selectItem);
-      this.listCommand.array = this.commandList;
-    }
-    showHidePanel() {
-      this.MainPanel.visible = !this.MainPanel.visible;
-    }
-    changeItem(box, index) {
-      let Label8 = box.getChildByName("Label");
-      Label8.text = box.dataSource;
-    }
-    selectItem(index) {
-      switch (index) {
-        case 0:
-          GameData.gold += 5e3;
-          EventMgr.event("GOLDCHANGE" /* GOLDCHANGE */);
-          break;
-        case 1:
-          GameData.diamond += 5e3;
-          EventMgr.event("DIAMONDCHANGE" /* DIAMONDCHANGE */);
-          break;
-        case 2:
-          GameData.diamond = 0;
-          GameData.gold = 0;
-          EventMgr.event("DIAMONDCHANGE" /* DIAMONDCHANGE */);
-          EventMgr.event("GOLDCHANGE" /* GOLDCHANGE */);
-          break;
-        case 3:
-          break;
-        case 4:
-          break;
-      }
-      this.listCommand.selectedIndex = -1;
-    }
-  }, "DebugView");
-  __decorate8([
-    property7(),
-    __metadata("design:type", typeof (_a = typeof Image !== "undefined" && Image) === "function" ? _a : Object)
-  ], DebugView.prototype, "imgShow", void 0);
-  __decorate8([
-    property7(),
-    __metadata("design:type", typeof (_b = typeof Box !== "undefined" && Box) === "function" ? _b : Object)
-  ], DebugView.prototype, "MainPanel", void 0);
-  __decorate8([
-    property7(),
-    __metadata("design:type", typeof (_c = typeof List !== "undefined" && List) === "function" ? _c : Object)
-  ], DebugView.prototype, "listCommand", void 0);
-  DebugView = __decorate8([
-    regClass7(),
-    __metadata("design:paramtypes", [])
-  ], DebugView);
+  // E:/WheelChairMan/src/Enum/LanguageEnum.ts
+  var LanguageEnum = /* @__PURE__ */ ((LanguageEnum2) => {
+    LanguageEnum2[LanguageEnum2["ChineseSimplified"] = 1001] = "ChineseSimplified";
+    LanguageEnum2[LanguageEnum2["English"] = 1002] = "English";
+    return LanguageEnum2;
+  })(LanguageEnum || {});
 
-  // E:/WheelChairMan/src/Scene/GameView.ts
-  var __decorate9 = __$decorate("ddf0e22e-43aa-4145-b2f5-8a127efb5611", "../src/Scene/GameView.ts");
-  var { regClass: regClass8, property: property8 } = Laya;
-  var GameView = /* @__PURE__ */ __name(class GameView2 extends UIBase_default {
-  }, "GameView");
-  GameView = __decorate9([
-    regClass8()
-  ], GameView);
-
-  // E:/WheelChairMan/src/Scene/GuideView.ts
-  var __decorate10 = __$decorate("a7a26e14-76d9-4f1c-9471-21fbc179af77", "../src/Scene/GuideView.ts");
-  var _a2;
-  var Image2 = Laya.Image;
-  var { regClass: regClass9, property: property9 } = Laya;
-  var GuideView = /* @__PURE__ */ __name(class GuideView2 extends UIBase_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-    }
-    addEvent() {
-      this.imgSkip.on(Laya.Event.MOUSE_DOWN, this, this.skipGuide);
-    }
-    skipGuide() {
-    }
-    onClosed() {
-      this.imgSkip.off(Laya.Event.MOUSE_DOWN, this, this.skipGuide);
-      EventMgr.event("GUIDFINISH" /* GUIDFINISH */);
-      LocalStorageMgr.setItem("FIRESTTIME" /* FIRSTTIME */, "1");
-    }
-  }, "GuideView");
-  __decorate10([
-    property9(),
-    __metadata("design:type", typeof (_a2 = typeof Image2 !== "undefined" && Image2) === "function" ? _a2 : Object)
-  ], GuideView.prototype, "imgSkip", void 0);
-  GuideView = __decorate10([
-    regClass9(),
-    __metadata("design:paramtypes", [])
-  ], GuideView);
-
-  // E:/WheelChairMan/src/Scene/LanguageView.ts
-  var __decorate11 = __$decorate("6bc1bf6a-a993-4ac9-b9f4-4785e0d68c2b", "../src/Scene/LanguageView.ts");
-  var _a3;
-  var _b2;
-  var Image3 = Laya.Image;
-  var List2 = Laya.List;
-  var Handler4 = Laya.Handler;
-  var { regClass: regClass10, property: property10 } = Laya;
-  var LanguageView = /* @__PURE__ */ __name(class LanguageView2 extends UIBase_default {
-    constructor() {
-      super();
-      this.$selectIndex = 0;
-    }
-    onOpened(param) {
-      this.regClick(this.$imgClose, this.close);
-      this.$listLanguage.renderHandler = new Handler4(this, this.changeItem);
-      this.$listLanguage.selectHandler = new Handler4(this, this.selectItem);
-      let arr = [];
-      for (let i in LanguageEnum) {
-        if (!isNaN(Number(i))) {
-          arr.push(Number(i));
-        }
-      }
-      this.$selectIndex = arr.indexOf(LocalizationMgr.Language);
-      this.$listLanguage.array = arr;
-      this.$listLanguage.selectedIndex = this.$selectIndex;
-    }
-    changeItem(box, index) {
-      let labelLanguage = box.getChildByName("labelLanguage");
-      let imgFlag = box.getChildByName("imgFlag");
-      let imgSelect = box.getChildByName("imgSelect");
-      labelLanguage.text = LocalizationMgr.getLanguageMsgById(box.dataSource);
-      imgFlag.skin = ResLoader.instance.getUrlById(LocalizationMgr.getFlagSkinIdById(box.dataSource));
-      if (index == this.$selectIndex) {
-        imgSelect.visible = true;
-      } else {
-        imgSelect.visible = false;
-      }
-    }
-    selectItem(index) {
-      if (index != this.$selectIndex) {
-        let oldBox = this.$listLanguage.getCell(this.$selectIndex);
-        let oldSelect = oldBox.getChildByName("imgSelect");
-        oldSelect.visible = false;
-        this.$selectIndex = index;
-        LocalizationMgr.Language = this.$listLanguage.array[index];
-        let newBox = this.$listLanguage.getCell(this.$selectIndex);
-        let newSelect = newBox.getChildByName("imgSelect");
-        newSelect.visible = true;
-      }
-    }
-  }, "LanguageView");
-  __decorate11([
-    property10(),
-    __metadata("design:type", typeof (_a3 = typeof List2 !== "undefined" && List2) === "function" ? _a3 : Object)
-  ], LanguageView.prototype, "$listLanguage", void 0);
-  __decorate11([
-    property10(),
-    __metadata("design:type", typeof (_b2 = typeof Image3 !== "undefined" && Image3) === "function" ? _b2 : Object)
-  ], LanguageView.prototype, "$imgClose", void 0);
-  LanguageView = __decorate11([
-    regClass10(),
-    __metadata("design:paramtypes", [])
-  ], LanguageView);
-
-  // E:/WheelChairMan/src/Scene/LevelUpView.ts
-  var __decorate12 = __$decorate("f7577321-9089-4d76-ba3b-af9c8a8c0afe", "../src/Scene/LevelUpView.ts");
-  var { regClass: regClass11, property: property11 } = Laya;
-  var LevelUpView = /* @__PURE__ */ __name(class LevelUpView2 extends UIBase_default {
-  }, "LevelUpView");
-  LevelUpView = __decorate12([
-    regClass11()
-  ], LevelUpView);
-
-  // E:/WheelChairMan/src/Mgr/CurrencyMgr.ts
-  var CurrencyMgr = class {
+  // E:/WheelChairMan/src/Localization/LocalizationMgr.ts
+  var LocalizationMgr = class {
     /**初始化 */
     static init() {
-      this.$currencyMap = ResLoader.instance.getDataTableById(3003 /* Currency */);
-    }
-    /**获取对应颜色 */
-    static getColorById(id) {
-      let data = this.$currencyMap.get(id);
-      if (data && data["color"]) {
-        return "#" + data["color"];
-      }
-      return "#fff";
-    }
-    /**获取对应图标 */
-    static getImgUrlById(id) {
-      let data = this.$currencyMap.get(id);
-      if (data && data["imgId"]) {
-        return ResLoader.instance.getUrlById(data["imgId"]);
-      }
-      return "";
-    }
-  };
-  __name(CurrencyMgr, "CurrencyMgr");
-
-  // E:/WheelChairMan/src/Mgr/LevelMgr.ts
-  var LevelMgr = class {
-    /**初始化 */
-    static init() {
-      this.$levelDataTable = ResLoader.instance.getDataTableById(3004 /* Level */);
-    }
-    /**等级 */
-    static get level() {
-      for (let [, value] of this.$levelDataTable) {
-        let minEx = value["minEx"];
-        let maxEx = value["maxEx"];
-        if (!isNaN(minEx) && !isNaN(maxEx)) {
-          if (GameData.experience > minEx && GameData.experience <= maxEx) {
-            return value["level"];
-          }
-        }
-      }
-      return 1;
-    }
-  };
-  __name(LevelMgr, "LevelMgr");
-  /**经验表 */
-  LevelMgr.$levelDataTable = /* @__PURE__ */ new Map();
-
-  // E:/WheelChairMan/src/Util/StringUtil.ts
-  var __decorate13 = __$decorate("9f8ef9b7-13a5-4980-a9d8-46f8659dff82", "../src/Util/StringUtil.ts");
-  var StringUtil = class {
-    /**小数转百分比，默认保留两位小数 */
-    static num2percentage(num, d = 2) {
-      num = num * 100;
-      return num.toFixed(d) + "%";
-    }
-    /**获取随机整数  */
-    static randNum(min, max) {
-      let range = max - min;
-      let rand = Math.random();
-      let num = min + Math.round(rand * range);
-      return num;
-    }
-    /**随机排序数组 */
-    static shuffle(arr) {
-      let i = arr.length, t, j;
-      while (--i) {
-        j = Math.floor(Math.random() * i);
-        t = arr[i];
-        arr[i] = arr[j];
-        arr[j] = t;
+      this.$localizationResMap = ResLoader.instance.getDataTableById(3002 /* LocalizationRes */);
+      this.$localizationMap = ResLoader.instance.getDataTableById(501 /* Localization */);
+      this.$localizationKeyMap = /* @__PURE__ */ new Map();
+      for (let [key, value] of this.$localizationMap) {
+        this.$localizationKeyMap.set(value["key"], value);
       }
     }
-    /**
-     * RGB转16色
-     * @param str RGB(23, 245, 56)
-     * @returns string
-     */
-    static colorHex(str) {
-      let reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
-      if (/^(rgb|RGB)/.test(str)) {
-        let aColor = str.replace(/(?:\(|\)|rgb|RGB)*/g, "").split(",");
-        let strHex = "#";
-        for (let i = 0; i < aColor.length; i++) {
-          let hex = Number(aColor[i]).toString(16);
-          if (hex.length < 2) {
-            hex = "0" + hex;
-          }
-          strHex += hex;
-        }
-        if (strHex.length !== 7) {
-          strHex = str;
-        }
-        return strHex;
-      } else if (reg.test(str)) {
-        let aNum = str.replace(/#/, "").split("");
-        if (aNum.length === 6) {
-          return str;
-        } else if (aNum.length === 3) {
-          let numHex = "#";
-          for (let i = 0; i < aNum.length; i += 1) {
-            numHex += aNum[i] + aNum[i];
-          }
-          return numHex;
-        }
-      }
-      return str;
+    /**获取语言对应国旗 */
+    static getFlagSkinIdById(id) {
+      let data = this.$localizationResMap.get(id);
+      return data && data["flagId"];
     }
-    /**
-     * 16色 转 RGB
-     * @param str #34538b
-     * @returns v3
-     */
-    static colorRgb(str) {
-      str = str.toLowerCase();
-      let color = this._colorDic[str];
-      if (color) {
-        return color;
-      }
-      var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
-      if (str && reg.test(str)) {
-        if (str.length === 4) {
-          var sColorNew = "#";
-          for (var i = 1; i < 4; i += 1) {
-            sColorNew += str.slice(i, i + 1).concat(str.slice(i, i + 1));
-          }
-          str = sColorNew;
-        }
-        var sColorChange = [];
-        for (var i = 1; i < 7; i += 2) {
-          sColorChange.push(parseInt("0x" + str.slice(i, i + 2)));
-        }
-        this._colorDic[str] = sColorChange;
-        return sColorChange;
-      } else {
-        console.log("\u8F6C\u6362\u9519\u8BEF");
-        return [0, 0, 0];
-      }
+    /**获取语言描述 */
+    static getLanguageMsgById(id) {
+      let data = this.$localizationResMap.get(id);
+      return data && data["msg"];
     }
-    /**
-     * 格式化单位
-     * @param num
-     * @returns
-     */
-    static formatToUnitEN(num) {
-      num = Math.round(num);
-      let result = "";
-      if (("" + num).length > 15) {
-        result = (num / 1e15).toFixed(2) + "MB";
-      } else if (("" + num).length > 12) {
-        result = (num / 1e12).toFixed(2) + "KB";
-      } else if (("" + num).length > 9) {
-        result = (num / 1e9).toFixed(2) + "B";
-      } else if (("" + num).length > 6) {
-        result = (num / 1e6).toFixed(2) + "M";
-      } else if (("" + num).length > 3) {
-        result = (num / 1e3).toFixed(2) + "K";
-      } else {
-        result = "" + num.toFixed(0);
-      }
-      return result;
-    }
-  };
-  __name(StringUtil, "StringUtil");
-  StringUtil._colorDic = {};
-
-  // E:/WheelChairMan/src/Scene/LoadView.ts
-  var __decorate14 = __$decorate("9797e892-adab-4c82-8f5e-800b37f590f9", "../src/Scene/LoadView.ts");
-  var _a4;
-  var _b3;
-  var _c2;
-  var Image4 = Laya.Image;
-  var Label2 = Laya.Label;
-  var Handler5 = Laya.Handler;
-  var { regClass: regClass12, property: property12 } = Laya;
-  var LoadView = /* @__PURE__ */ __name(class LoadView2 extends UIBase_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-      this.imgMask = this.imgLoad.mask;
-      this.checkVersion();
-    }
-    /**请求版本 */
-    checkVersion() {
-      this.startPreLoad();
-    }
-    /**开始预加载全局资源 */
-    startPreLoad() {
-      ResLoader.instance.preloadRes(Handler5.create(this, this.onCompleted), Handler5.create(this, this._onProgress));
-    }
-    /**刷新进度条 */
-    _onProgress(value) {
-      this.imgMask.width = this.imgLoad.width * value;
-      this.labelLoad.text = "Loading\u2026" + StringUtil.num2percentage(value);
-    }
-    /**加载完成可以进入主界面 */
-    onCompleted() {
-      console.log("load_conCompleted");
-      this.initData();
-      this.openScene();
-    }
-    /**初始化数据 */
-    initData() {
-      LocalizationMgr.init();
-      LevelMgr.init();
-      CurrencyMgr.init();
-      Scene3dMgr.instance.init();
-      MainGame_default.instance.init();
-    }
-    /**打开页面 */
-    openScene() {
-      UIBaseMgr.instance.open(1013 /* MainView */);
-      this.close();
-    }
-  }, "LoadView");
-  __decorate14([
-    property12(),
-    __metadata("design:type", typeof (_a4 = typeof Image4 !== "undefined" && Image4) === "function" ? _a4 : Object)
-  ], LoadView.prototype, "imgLoad", void 0);
-  __decorate14([
-    property12(),
-    __metadata("design:type", typeof (_b3 = typeof Label2 !== "undefined" && Label2) === "function" ? _b3 : Object)
-  ], LoadView.prototype, "labelLoad", void 0);
-  __decorate14([
-    property12(),
-    __metadata("design:type", typeof (_c2 = typeof Label2 !== "undefined" && Label2) === "function" ? _c2 : Object)
-  ], LoadView.prototype, "testLabel", void 0);
-  LoadView = __decorate14([
-    regClass12(),
-    __metadata("design:paramtypes", [])
-  ], LoadView);
-
-  // E:/WheelChairMan/src/Scene/LoseView.ts
-  var __decorate15 = __$decorate("9b8220cb-adbc-4d84-9618-c7c9f2bd85f3", "../src/Scene/LoseView.ts");
-  var { regClass: regClass13, property: property13 } = Laya;
-  var LoseView = /* @__PURE__ */ __name(class LoseView2 extends UIBase_default {
-  }, "LoseView");
-  LoseView = __decorate15([
-    regClass13()
-  ], LoseView);
-
-  // E:/WheelChairMan/src/Scene/LuckyBoxView.ts
-  var __decorate16 = __$decorate("d94dafff-05f0-4479-9a1a-ab9861a24025", "../src/Scene/LuckyBoxView.ts");
-  var _a5;
-  var _b4;
-  var _c3;
-  var _d;
-  var _e;
-  var Text2 = Laya.Text;
-  var Image5 = Laya.Image;
-  var { regClass: regClass14, property: property14 } = Laya;
-  var LuckyBoxView = /* @__PURE__ */ __name(class LuckyBoxView2 extends UIBase_default {
-    constructor() {
-      super();
-      this.$luckyboxDataTable = /* @__PURE__ */ new Map();
-    }
-    onOpened(param) {
-      this.regClick(this.imgClose, this.close);
-      this.regClick(this.imgOpen, this.openLuckBox);
-      this.$luckyboxDataTable = ResLoader.instance.getDataTableById(3001 /* LuckyBox */);
-      this.initLuckBox();
-    }
-    initLuckBox() {
-      if (this.$param == void 0) {
-        this.$param = 0;
-      }
-      this.txtMsg.text = LocalizationMgr.$getLocalizationByKey(this.$luckyboxDataTable.get(this.$param)["localizationKey"]);
-      this.imgBox.skin = ResLoader.instance.getUrlById(this.$luckyboxDataTable.get(this.$param)["imgPath"]);
-    }
-    openLuckBox() {
-      switch (this.$param) {
-        case 0:
-          break;
-      }
-    }
-  }, "LuckyBoxView");
-  __decorate16([
-    property14(),
-    __metadata("design:type", typeof (_a5 = typeof Image5 !== "undefined" && Image5) === "function" ? _a5 : Object)
-  ], LuckyBoxView.prototype, "imgLight", void 0);
-  __decorate16([
-    property14(),
-    __metadata("design:type", typeof (_b4 = typeof Image5 !== "undefined" && Image5) === "function" ? _b4 : Object)
-  ], LuckyBoxView.prototype, "imgBox", void 0);
-  __decorate16([
-    property14(),
-    __metadata("design:type", typeof (_c3 = typeof Image5 !== "undefined" && Image5) === "function" ? _c3 : Object)
-  ], LuckyBoxView.prototype, "imgClose", void 0);
-  __decorate16([
-    property14(),
-    __metadata("design:type", typeof (_d = typeof Image5 !== "undefined" && Image5) === "function" ? _d : Object)
-  ], LuckyBoxView.prototype, "imgOpen", void 0);
-  __decorate16([
-    property14(),
-    __metadata("design:type", typeof (_e = typeof Text2 !== "undefined" && Text2) === "function" ? _e : Object)
-  ], LuckyBoxView.prototype, "txtMsg", void 0);
-  LuckyBoxView = __decorate16([
-    regClass14(),
-    __metadata("design:paramtypes", [])
-  ], LuckyBoxView);
-
-  // E:/WheelChairMan/src/Scene/MainView.ts
-  var __decorate17 = __$decorate("127f9431-d96d-491c-b782-2549a9c38d7b", "../src/Scene/MainView.ts");
-  var _a6;
-  var _b5;
-  var _c4;
-  var _d2;
-  var _e2;
-  var _f;
-  var _g;
-  var _h;
-  var _j;
-  var _k;
-  var _l;
-  var _m;
-  var _o;
-  var _p;
-  var _q;
-  var Text3 = Laya.Text;
-  var Box2 = Laya.Box;
-  var Label3 = Laya.Label;
-  var Image6 = Laya.Image;
-  var { regClass: regClass15, property: property15 } = Laya;
-  var MainView = /* @__PURE__ */ __name(class MainView2 extends UIBase_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-      this.labelName.text = GameData.userName;
-      this.imgHead.skin = GameData.userHead;
-      this.imgLevelMask = this.imgLevel.mask;
-      this.imgMsMask = this.imgMs.mask;
-    }
-    addEvent() {
-      this.regEvent("GOLDCHANGE" /* GOLDCHANGE */, this.changeGold, true);
-      this.regEvent("DIAMONDCHANGE" /* DIAMONDCHANGE */, this.changeDiamond, true);
-      this.regEvent("EXPERIENCECHANGE" /* EXPERIENCECHANGE */, this.changeExperience, true);
-      this.regClick(this.imgPlusGold, this.openShop, 1001 /* gold */);
-      this.regClick(this.imgPlusDiamond, this.openShop, 1002 /* diamond */);
-      this.regClick(this.imgRing, this.openUserInfo);
-      this.regClick(this.imgShop, this.openShop, 1002 /* diamond */);
-      this.regClick(this.imgRanking, this.openRanking);
-      this.regClick(this.imgSettings, this.openSetting);
-      this.regClick(this.imgStart, this.checkFirstTime);
-    }
-    changeGold() {
-      this.txtGold.text = StringUtil.formatToUnitEN(GameData.gold);
-    }
-    changeDiamond() {
-      this.txtDiamond.text = StringUtil.formatToUnitEN(GameData.diamond);
-    }
-    changeExperience() {
-      this.txtLevel.text = LevelMgr.level.toString();
-    }
-    openShop(currency) {
-      UIBaseMgr.instance.open(1019 /* ShopView */, currency);
-    }
-    openUserInfo() {
-    }
-    openSetting() {
-      UIBaseMgr.instance.open(1018 /* SettingView */);
-    }
-    openRanking() {
-      UIBaseMgr.instance.open(1017 /* RankingView */);
-    }
-    checkFirstTime() {
-      let value = LocalStorageMgr.getItem("FIRESTTIME" /* FIRSTTIME */);
-      console.log(value);
-      this.selectPlayer();
-    }
-    showGuide() {
-    }
-    selectPlayer() {
-      MainGame_default.instance.selectPlayerAndWeapon();
-      UIBaseMgr.instance.open(1021 /* SelectPlayerView */);
-      this.close();
-    }
-    selectWeapon() {
-    }
-    onClosed() {
-    }
-  }, "MainView");
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_a6 = typeof Text3 !== "undefined" && Text3) === "function" ? _a6 : Object)
-  ], MainView.prototype, "txtGold", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_b5 = typeof Image6 !== "undefined" && Image6) === "function" ? _b5 : Object)
-  ], MainView.prototype, "imgPlusGold", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_c4 = typeof Text3 !== "undefined" && Text3) === "function" ? _c4 : Object)
-  ], MainView.prototype, "txtDiamond", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_d2 = typeof Image6 !== "undefined" && Image6) === "function" ? _d2 : Object)
-  ], MainView.prototype, "imgPlusDiamond", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_e2 = typeof Image6 !== "undefined" && Image6) === "function" ? _e2 : Object)
-  ], MainView.prototype, "imgHead", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_f = typeof Image6 !== "undefined" && Image6) === "function" ? _f : Object)
-  ], MainView.prototype, "imgRing", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_g = typeof Image6 !== "undefined" && Image6) === "function" ? _g : Object)
-  ], MainView.prototype, "imgLevel", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_h = typeof Image6 !== "undefined" && Image6) === "function" ? _h : Object)
-  ], MainView.prototype, "imgMs", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_j = typeof Text3 !== "undefined" && Text3) === "function" ? _j : Object)
-  ], MainView.prototype, "txtLevel", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_k = typeof Label3 !== "undefined" && Label3) === "function" ? _k : Object)
-  ], MainView.prototype, "labelName", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_l = typeof Image6 !== "undefined" && Image6) === "function" ? _l : Object)
-  ], MainView.prototype, "imgShop", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_m = typeof Image6 !== "undefined" && Image6) === "function" ? _m : Object)
-  ], MainView.prototype, "imgRanking", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_o = typeof Image6 !== "undefined" && Image6) === "function" ? _o : Object)
-  ], MainView.prototype, "imgSettings", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_p = typeof Image6 !== "undefined" && Image6) === "function" ? _p : Object)
-  ], MainView.prototype, "imgStart", void 0);
-  __decorate17([
-    property15(),
-    __metadata("design:type", typeof (_q = typeof Box2 !== "undefined" && Box2) === "function" ? _q : Object)
-  ], MainView.prototype, "Main", void 0);
-  MainView = __decorate17([
-    regClass15(),
-    __metadata("design:paramtypes", [])
-  ], MainView);
-
-  // E:/WheelChairMan/src/Scene/MyInfoView.ts
-  var __decorate18 = __$decorate("dd16d8bf-53b3-41cc-81c1-44f39afec08e", "../src/Scene/MyInfoView.ts");
-  var { regClass: regClass16, property: property16 } = Laya;
-  var MyInfoView = /* @__PURE__ */ __name(class MyInfoView2 extends UIBase_default {
-  }, "MyInfoView");
-  MyInfoView = __decorate18([
-    regClass16()
-  ], MyInfoView);
-
-  // E:/WheelChairMan/src/Scene/PauseView.ts
-  var __decorate19 = __$decorate("352c01f5-c61a-4387-bd3b-63f412ac12c7", "../src/Scene/PauseView.ts");
-  var { regClass: regClass17, property: property17 } = Laya;
-  var PauseView = /* @__PURE__ */ __name(class PauseView2 extends UIBase_default {
-  }, "PauseView");
-  PauseView = __decorate19([
-    regClass17()
-  ], PauseView);
-
-  // E:/WheelChairMan/src/Scene/PrivacyAgreementView.ts
-  var __decorate20 = __$decorate("df9b38f8-2d16-4280-849d-786074a729fe", "../src/Scene/PrivacyAgreementView.ts");
-  var _a7;
-  var _b6;
-  var _c5;
-  var _d3;
-  var Label4 = Laya.Label;
-  var Image7 = Laya.Image;
-  var Panel = Laya.Panel;
-  var { regClass: regClass18, property: property18 } = Laya;
-  var PrivacyAgreementView = /* @__PURE__ */ __name(class PrivacyAgreementView2 extends UIBase_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-      this.regClick(this.imgSure, this.sure);
-      this.regClick(this.imgCancel, this.cancel);
-      let data = ResLoader.instance.getResById(4001 /* PrivacyAgreement */);
-      this.txtAgreement.text = data.data;
-      this.txtAgreement.height = data.data.length / 0.9;
-    }
-    sure() {
-      this.close();
-    }
-    cancel() {
-      this.close();
-    }
-  }, "PrivacyAgreementView");
-  __decorate20([
-    property18(),
-    __metadata("design:type", typeof (_a7 = typeof Image7 !== "undefined" && Image7) === "function" ? _a7 : Object)
-  ], PrivacyAgreementView.prototype, "imgSure", void 0);
-  __decorate20([
-    property18(),
-    __metadata("design:type", typeof (_b6 = typeof Image7 !== "undefined" && Image7) === "function" ? _b6 : Object)
-  ], PrivacyAgreementView.prototype, "imgCancel", void 0);
-  __decorate20([
-    property18(),
-    __metadata("design:type", typeof (_c5 = typeof Panel !== "undefined" && Panel) === "function" ? _c5 : Object)
-  ], PrivacyAgreementView.prototype, "panel", void 0);
-  __decorate20([
-    property18(),
-    __metadata("design:type", typeof (_d3 = typeof Label4 !== "undefined" && Label4) === "function" ? _d3 : Object)
-  ], PrivacyAgreementView.prototype, "txtAgreement", void 0);
-  PrivacyAgreementView = __decorate20([
-    regClass18(),
-    __metadata("design:paramtypes", [])
-  ], PrivacyAgreementView);
-
-  // E:/WheelChairMan/src/Scene/RankingView.ts
-  var __decorate21 = __$decorate("731a1c9f-76c7-4237-ad93-f469eb850bb9", "../src/Scene/RankingView.ts");
-  var _a8;
-  var _b7;
-  var _c6;
-  var _d4;
-  var _e3;
-  var _f2;
-  var Text4 = Laya.Text;
-  var Image8 = Laya.Image;
-  var List3 = Laya.List;
-  var Handler6 = Laya.Handler;
-  var { regClass: regClass19, property: property19 } = Laya;
-  var RankingView = /* @__PURE__ */ __name(class RankingView2 extends UIBase_default {
-    constructor() {
-      super();
-      this.rankingList = [
-        { "head": "", "name": "\u5F20\u4E09", "rank": 1, "lv": "100", "UID": "12324" },
-        { "head": "", "name": "\u674E\u56DB", "rank": 2, "lv": "99", "UID": "12324" },
-        { "head": "", "name": "\u738B\u9EBB\u5B50\u4E94", "rank": 3, "lv": "80", "UID": "12324" },
-        { "head": "", "name": "\u7231\u4E3D\u4E1D", "rank": 4, "lv": "77", "UID": "12324" },
-        { "head": "", "name": "\u8428\u9876\u9876", "rank": 5, "lv": "76", "UID": "12324" },
-        { "head": "", "name": "\u8C46\u8150\u4EE8", "rank": 6, "lv": "75", "UID": "12324" },
-        { "head": "", "name": "s'd''j", "rank": 7, "lv": "30", "UID": "12324" },
-        { "head": "", "name": "NoRainLand", "rank": 8, "lv": "22", "UID": "654" },
-        { "head": "", "name": "\u5F00\u82B1\u7ED3\u679C", "rank": 9, "lv": "11", "UID": "12324" },
-        { "head": "", "name": "323", "rank": 10, "lv": "2", "UID": "12324" }
-      ];
-    }
-    onOpened(param) {
-      let data = this.rankingList.find((value) => {
-        console.log(value);
-        return value.UID == "654";
-      });
-      if (data) {
-        this.txtLV.text = data.lv.toString();
-        this.txtName.text = data.name.toString();
-        this.txtRank.text = data.rank.toString();
-      }
-      this.$rankingMap = ResLoader.instance.getDataTableById(3006 /* Ranking */);
-    }
-    addEvent() {
-      this.regClick(this.imgClose, this.close);
-      this.listRanking.renderHandler = new Handler6(this, this.changeItem);
-      this.listRanking.array = this.rankingList;
-    }
-    changeItem(box, index) {
-      let txtLV = box.getChildByName("txtLV");
-      let txtName = box.getChildByName("txtName");
-      let txtRank = box.getChildByName("txtRank");
-      let data = box.dataSource;
-      txtLV.text = "LV" + data.lv.toString();
-      txtName.text = data.name.toString();
-      txtRank.text = data.rank.toString();
-      let imgRank = box.getChildByName("imgRank");
-      switch (data.rank) {
-        case 1:
-          let data1 = this.$rankingMap.get(1001 /* fist */);
-          txtRank.color = data1["color"];
-          imgRank.skin = ResLoader.instance.getUrlById(data1["imgId"]);
-          break;
-        case 2:
-          let data2 = this.$rankingMap.get(1002 /* second */);
-          txtRank.color = data2["color"];
-          imgRank.skin = ResLoader.instance.getUrlById(data2["imgId"]);
-          break;
-        case 3:
-          let data3 = this.$rankingMap.get(1003 /* third */);
-          txtRank.color = data3["color"];
-          imgRank.skin = ResLoader.instance.getUrlById(data3["imgId"]);
-          break;
-        default:
-          let data4 = this.$rankingMap.get(1004 /* default */);
-          txtRank.color = data4["color"];
-          imgRank.skin = ResLoader.instance.getUrlById(data4["imgId"]);
-          break;
-      }
-    }
-  }, "RankingView");
-  __decorate21([
-    property19(),
-    __metadata("design:type", typeof (_a8 = typeof Image8 !== "undefined" && Image8) === "function" ? _a8 : Object)
-  ], RankingView.prototype, "imgClose", void 0);
-  __decorate21([
-    property19(),
-    __metadata("design:type", typeof (_b7 = typeof Image8 !== "undefined" && Image8) === "function" ? _b7 : Object)
-  ], RankingView.prototype, "imgHead", void 0);
-  __decorate21([
-    property19(),
-    __metadata("design:type", typeof (_c6 = typeof Text4 !== "undefined" && Text4) === "function" ? _c6 : Object)
-  ], RankingView.prototype, "txtName", void 0);
-  __decorate21([
-    property19(),
-    __metadata("design:type", typeof (_d4 = typeof Text4 !== "undefined" && Text4) === "function" ? _d4 : Object)
-  ], RankingView.prototype, "txtLV", void 0);
-  __decorate21([
-    property19(),
-    __metadata("design:type", typeof (_e3 = typeof Text4 !== "undefined" && Text4) === "function" ? _e3 : Object)
-  ], RankingView.prototype, "txtRank", void 0);
-  __decorate21([
-    property19(),
-    __metadata("design:type", typeof (_f2 = typeof List3 !== "undefined" && List3) === "function" ? _f2 : Object)
-  ], RankingView.prototype, "listRanking", void 0);
-  RankingView = __decorate21([
-    regClass19(),
-    __metadata("design:paramtypes", [])
-  ], RankingView);
-
-  // E:/WheelChairMan/src/Enum/PlayerEnum.ts
-  var PlayerEnum = /* @__PURE__ */ ((PlayerEnum2) => {
-    PlayerEnum2[PlayerEnum2["BusinessMan"] = 1001] = "BusinessMan";
-    PlayerEnum2[PlayerEnum2["BombDisEX"] = 1002] = "BombDisEX";
-    PlayerEnum2[PlayerEnum2["GreatMagician"] = 1003] = "GreatMagician";
-    PlayerEnum2[PlayerEnum2["Kingsman"] = 1004] = "Kingsman";
-    PlayerEnum2[PlayerEnum2["ScoutRobot"] = 1005] = "ScoutRobot";
-    PlayerEnum2[PlayerEnum2["RookiePirate"] = 1006] = "RookiePirate";
-    return PlayerEnum2;
-  })(PlayerEnum || {});
-
-  // E:/WheelChairMan/src/Scene/SelectPlayerView.ts
-  var __decorate22 = __$decorate("cdfd211f-d5a7-4c9b-9ffb-7956585db6fc", "../src/Scene/SelectPlayerView.ts");
-  var _a9;
-  var _b8;
-  var _c7;
-  var _d5;
-  var _e4;
-  var _f3;
-  var _g2;
-  var _h2;
-  var _j2;
-  var _k2;
-  var Label5 = Laya.Label;
-  var Image9 = Laya.Image;
-  var { regClass: regClass20, property: property20 } = Laya;
-  var SelectPlayerView = /* @__PURE__ */ __name(class SelectPlayerView2 extends UIBase_default {
-    constructor() {
-      super();
-      this.$viewIndex = 0;
-      this.$selectIndex = 0;
-    }
-    onOpened(param) {
-      this.$viewIndex = 0;
-      this.$selectIndex = 0;
-      if (!this.$playerList) {
-        this.$playerList = [];
-        for (let item in PlayerEnum) {
-          if (!isNaN(Number(item))) {
-            this.$playerList.push(Number(item));
-          }
-        }
-      }
-      this.changeNexPrev();
-      this.showPlayer();
-    }
-    addEvent() {
-      this.regClick(this.imgBack, this.goBack);
-      this.regClick(this.imgNext, this.nextItem);
-      this.regClick(this.imgPrev, this.prevItem);
-      this.regClick(this.imgSelect, this.selectPlayer);
-    }
-    changeData() {
-      this.$playerData = PlayerMgr.instance.getSelectedPlayerData(this.$playerList[this.$selectIndex]);
-      this.labelName.text = LocalizationMgr.getLocalizationByEnum(this.$playerData.localizationKey);
-      this.labelDic.text = LocalizationMgr.getLocalizationByEnum(this.$playerData.descriptionKey);
-      if (PlayerMgr.instance.isUnlock(this.$playerList[this.$selectIndex])) {
-        this.imgLock.visible = false;
-        this.imgSelect.visible = true;
-        this.imgUnlock.visible = false;
-      } else {
-        this.imgLock.visible = true;
-        this.imgSelect.visible = false;
-        this.imgUnlock.visible = true;
-        this.labelUnlock.text = LocalizationMgr.getLocalizationByEnum(1030 /* UNLOCK */, this.$playerData.unlockPrice);
-        this.imgCurrency.skin = CurrencyMgr.getImgUrlById(this.$playerData["currency"]);
-      }
-    }
-    changeNexPrev() {
-      if (this.$selectIndex <= 0) {
-        this.imgPrev.visible = false;
-      } else if (this.$selectIndex >= this.$playerList.length - 1) {
-        this.imgNext.visible = false;
-      } else {
-        this.imgPrev.visible = true;
-        this.imgNext.visible = true;
-      }
-      this.changeData();
-    }
-    goBack() {
-      this.close();
-      UIBaseMgr.instance.open(1013 /* MainView */);
-      MainGame_default.instance.goToMain();
-    }
-    showPlayer() {
-      EventMgr.event("SHOWPLAYER" /* SHOWPLAYER */, this.$playerList[this.$selectIndex]);
-    }
-    nextItem() {
-      this.$selectIndex++;
-      this.changeNexPrev();
-      this.showPlayer();
-    }
-    prevItem() {
-      this.$selectIndex--;
-      this.changeNexPrev();
-      this.showPlayer();
-    }
-    selectPlayer() {
-    }
-  }, "SelectPlayerView");
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_a9 = typeof Image9 !== "undefined" && Image9) === "function" ? _a9 : Object)
-  ], SelectPlayerView.prototype, "imgBack", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_b8 = typeof Image9 !== "undefined" && Image9) === "function" ? _b8 : Object)
-  ], SelectPlayerView.prototype, "imgNext", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_c7 = typeof Image9 !== "undefined" && Image9) === "function" ? _c7 : Object)
-  ], SelectPlayerView.prototype, "imgPrev", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_d5 = typeof Image9 !== "undefined" && Image9) === "function" ? _d5 : Object)
-  ], SelectPlayerView.prototype, "imgLock", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_e4 = typeof Image9 !== "undefined" && Image9) === "function" ? _e4 : Object)
-  ], SelectPlayerView.prototype, "imgSelect", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_f3 = typeof Label5 !== "undefined" && Label5) === "function" ? _f3 : Object)
-  ], SelectPlayerView.prototype, "labelName", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_g2 = typeof Label5 !== "undefined" && Label5) === "function" ? _g2 : Object)
-  ], SelectPlayerView.prototype, "labelDic", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_h2 = typeof Image9 !== "undefined" && Image9) === "function" ? _h2 : Object)
-  ], SelectPlayerView.prototype, "imgUnlock", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_j2 = typeof Label5 !== "undefined" && Label5) === "function" ? _j2 : Object)
-  ], SelectPlayerView.prototype, "labelUnlock", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_k2 = typeof Image9 !== "undefined" && Image9) === "function" ? _k2 : Object)
-  ], SelectPlayerView.prototype, "imgCurrency", void 0);
-  SelectPlayerView = __decorate22([
-    regClass20(),
-    __metadata("design:paramtypes", [])
-  ], SelectPlayerView);
-
-  // E:/WheelChairMan/src/Mgr/SoundMgr.ts
-  var SoundManager = Laya.SoundManager;
-  var SoundMgr = class {
-    /**修改音乐音量 */
-    static changeMusicVolume(value) {
-      SoundManager.musicVolume = value;
-    }
-    /**修改音效音量 */
-    static changeSoundVolume(value) {
-      SoundManager.soundVolume = value;
-    }
-    /**播放音效 */
-    static playSound(soundEnum, loopTimes) {
-      SoundManager.playSound(this.$soundBaseUrl + soundEnum + this.$soundUrlStuff, loopTimes);
-    }
-  };
-  __name(SoundMgr, "SoundMgr");
-  /**音乐路径 */
-  SoundMgr.$musicBaseUrl = "";
-  /**音乐后缀 */
-  SoundMgr.$musicUrlStuff = ".mp3";
-  /**声音路径 */
-  SoundMgr.$soundBaseUrl = "";
-  /**声音后缀 */
-  SoundMgr.$soundUrlStuff = ".mp3";
-
-  // E:/WheelChairMan/src/Mgr/VibrateMgr.ts
-  var VibrateMgr = class {
-    /**是否震动 */
-    static get isVibrate() {
-      return !!this.$isVibrate;
-    }
-    static set isVibrate(value) {
+    /**通过key获取对应语言,一般来说是内部调用 */
+    static $getLocalizationByKey(key, ...keys) {
+      var _a20, _b15;
+      let language = LanguageEnum[this.Language];
+      let value = (_a20 = this.$localizationKeyMap.get(key)) == null ? void 0 : _a20[language];
       if (value) {
-        this.$isVibrate = 1;
-      } else {
-        this.$isVibrate = 0;
-      }
-    }
-  };
-  __name(VibrateMgr, "VibrateMgr");
-  /**震动 */
-  VibrateMgr.$isVibrate = -1;
-
-  // E:/WheelChairMan/src/Util/Slider.ts
-  var __decorate23 = __$decorate("35b37bb8-b4f2-4360-8030-42b6c06ee038", "../src/Util/Slider.ts");
-  var _a10;
-  var _b9;
-  var _c8;
-  var Image10 = Laya.Image;
-  var { regClass: regClass21, property: property21 } = Laya;
-  var Slider = /* @__PURE__ */ __name(class Slider2 extends Laya.Script {
-    constructor() {
-      super();
-      this.isH = false;
-      this.value = 0.7;
-      this.$isTouch = false;
-    }
-    onAwake() {
-      this.$isTouch = false;
-      this.$slider = this.owner;
-      this.$imgMask = this.imgLoad.mask;
-      this.$offX = this.imgLoad.width * this.value;
-      this.$offY = this.imgLoad.height * this.value;
-      this.changeMask();
-    }
-    onMouseDown(evt) {
-      if (evt.target == this.imgBar) {
-        this.$isTouch = true;
-        if (this.isH) {
-          this.$start = Laya.stage.mouseX;
-        } else {
-          this.$start = Laya.stage.mouseY;
-        }
-      }
-    }
-    onMouseMove(evt) {
-      if (evt.target == this.imgBar && this.$isTouch) {
-        if (this.isH) {
-          this.$offX += Laya.stage.mouseX - this.$start;
-          this.$offX = this.$offX > this.imgLoad.width ? this.imgLoad.width : this.$offX;
-          this.$offX = this.$offX < 0 ? 0 : this.$offX;
-          this.value = this.$offX / this.imgLoad.width;
-          this.$start = Laya.stage.mouseX;
-        } else {
-          this.$offY += Laya.stage.mouseY - this.$start;
-          this.$offY = this.$offY > this.imgLoad.height ? this.imgLoad.height : this.$offY;
-          this.$offY = this.$offY < 0 ? 0 : this.$offY;
-          this.value = this.$offX / this.imgLoad.height;
-          this.$start = Laya.stage.mouseY;
-        }
-        this.valueChange();
-      }
-    }
-    onMouseUp(evt) {
-      this.$isTouch = false;
-    }
-    onMouseOver(evt) {
-      this.$isTouch = false;
-    }
-    onMouseOut(evt) {
-      this.$isTouch = false;
-    }
-    /**初始化 */
-    init(caller, callback) {
-      this.$caller = caller;
-      this.$callback = callback;
-    }
-    changeMask() {
-      if (this.isH) {
-        this.$imgMask.width = this.imgLoad.width * this.value;
-        this.imgBar.x = this.imgLoad.width * this.value + this.imgBg.x;
-      } else {
-        this.$imgMask.height = this.imgLoad.height * this.value;
-        this.imgBar.y = this.imgLoad.height * this.value + this.imgBg.y;
-      }
-    }
-    valueChange() {
-      this.changeMask();
-      if (this.$caller && this.$callback) {
-        this.$callback.call(this.$caller, this.value);
-      }
-    }
-    onDisable() {
-    }
-  }, "Slider");
-  __decorate23([
-    property21(),
-    __metadata("design:type", Boolean)
-  ], Slider.prototype, "isH", void 0);
-  __decorate23([
-    property21(),
-    __metadata("design:type", typeof (_a10 = typeof Image10 !== "undefined" && Image10) === "function" ? _a10 : Object)
-  ], Slider.prototype, "imgLoad", void 0);
-  __decorate23([
-    property21(),
-    __metadata("design:type", typeof (_b9 = typeof Image10 !== "undefined" && Image10) === "function" ? _b9 : Object)
-  ], Slider.prototype, "imgBar", void 0);
-  __decorate23([
-    property21(),
-    __metadata("design:type", typeof (_c8 = typeof Image10 !== "undefined" && Image10) === "function" ? _c8 : Object)
-  ], Slider.prototype, "imgBg", void 0);
-  __decorate23([
-    property21(),
-    __metadata("design:type", Number)
-  ], Slider.prototype, "value", void 0);
-  Slider = __decorate23([
-    regClass21(),
-    __metadata("design:paramtypes", [])
-  ], Slider);
-  var Slider_default = Slider;
-
-  // E:/WheelChairMan/src/Util/Toggle.ts
-  var __decorate24 = __$decorate("0f5a24a0-2f83-4219-9165-99195082aa4a", "../src/Util/Toggle.ts");
-  var _a11;
-  var Image11 = Laya.Image;
-  var { regClass: regClass22, property: property22 } = Laya;
-  var Toggle = /* @__PURE__ */ __name(class Toggle2 extends Laya.Script {
-    constructor() {
-      super();
-      this.isON = false;
-    }
-    onEnable() {
-      this.$imgBg = this.owner;
-      this.$imgBg.on(Laya.Event.CLICK, this, this.changeValue);
-      this.changeItem();
-    }
-    init(caller, callback, isON) {
-      if (isON != void 0) {
-        this.isON = isON;
-      }
-      this.$caller = caller;
-      this.$callback = callback;
-    }
-    changeItem() {
-      if (this.isON) {
-        this.imgItem.x = 85;
-        this.imgItem.gray = false;
-      } else {
-        this.imgItem.x = 5;
-        this.imgItem.gray = true;
-      }
-    }
-    changeValue() {
-      this.isON = !this.isON;
-      this.changeItem();
-      if (this.$caller && this.$callback) {
-        this.$callback.call(this.$caller, this.isON);
-      }
-    }
-    onDisable() {
-      this.$imgBg.off(Laya.Event.CLICK, this, this.changeValue);
-    }
-  }, "Toggle");
-  __decorate24([
-    property22(),
-    __metadata("design:type", Boolean)
-  ], Toggle.prototype, "isON", void 0);
-  __decorate24([
-    property22(),
-    __metadata("design:type", typeof (_a11 = typeof Image11 !== "undefined" && Image11) === "function" ? _a11 : Object)
-  ], Toggle.prototype, "imgItem", void 0);
-  Toggle = __decorate24([
-    regClass22(),
-    __metadata("design:paramtypes", [])
-  ], Toggle);
-  var Toggle_default = Toggle;
-
-  // E:/WheelChairMan/src/Scene/SettingView.ts
-  var __decorate25 = __$decorate("9811079c-9340-49a7-8d8a-71570d70a98d", "../src/Scene/SettingView.ts");
-  var _a12;
-  var _b10;
-  var _c9;
-  var _d6;
-  var _e5;
-  var _f4;
-  var _g3;
-  var _h3;
-  var Box3 = Laya.Box;
-  var Label6 = Laya.Label;
-  var Image12 = Laya.Image;
-  var { regClass: regClass23, property: property23 } = Laya;
-  var SettingView = /* @__PURE__ */ __name(class SettingView2 extends UIBase_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-      this.$sliderBgm = this.sliderBgm.getComponent(Slider_default);
-      this.$sliderSfx = this.sliderSfx.getComponent(Slider_default);
-      this.$toggleShake = this.toggleShake.getComponent(Toggle_default);
-      this.$sliderBgm.init(this, this.bgmChange);
-      this.$sliderSfx.init(this, this.sfxChange);
-      this.$toggleShake.init(this, this.shakeChange);
-    }
-    addEvent() {
-      this.regClick(this.imgClose, this.close);
-      this.regClick(this.imgSupport, this.getSupport);
-      this.regClick(this.imgLanguage, this.changeLanguage);
-      this.regClick(this.txtAgreement, this.openPrivacyAgreement);
-      this.regEvent("LANGUAGECHANGE" /* LANGUAGECHANGE */, this.changeLanguageIcon, true);
-    }
-    bgmChange(value) {
-      SoundMgr.changeMusicVolume(value);
-    }
-    sfxChange(value) {
-      SoundMgr.changeSoundVolume(value);
-    }
-    shakeChange(value) {
-      VibrateMgr.isVibrate = value;
-    }
-    changeLanguageIcon() {
-      this.imgLan.skin = ResLoader.instance.getUrlById(LocalizationMgr.getFlagSkinIdById(LocalizationMgr.Language));
-    }
-    openPrivacyAgreement() {
-      UIBaseMgr.instance.open(1016 /* PrivacyAgreementView */);
-    }
-    getSupport() {
-      Laya.Browser.window.open(ProjectConfig.support);
-      console.log("support");
-    }
-    changeLanguage() {
-      UIBaseMgr.instance.open(1009 /* LanguageView */);
-    }
-    onClosed() {
-    }
-  }, "SettingView");
-  __decorate25([
-    property23(),
-    __metadata("design:type", typeof (_a12 = typeof Image12 !== "undefined" && Image12) === "function" ? _a12 : Object)
-  ], SettingView.prototype, "imgClose", void 0);
-  __decorate25([
-    property23(),
-    __metadata("design:type", typeof (_b10 = typeof Box3 !== "undefined" && Box3) === "function" ? _b10 : Object)
-  ], SettingView.prototype, "sliderSfx", void 0);
-  __decorate25([
-    property23(),
-    __metadata("design:type", typeof (_c9 = typeof Box3 !== "undefined" && Box3) === "function" ? _c9 : Object)
-  ], SettingView.prototype, "sliderBgm", void 0);
-  __decorate25([
-    property23(),
-    __metadata("design:type", typeof (_d6 = typeof Image12 !== "undefined" && Image12) === "function" ? _d6 : Object)
-  ], SettingView.prototype, "toggleShake", void 0);
-  __decorate25([
-    property23(),
-    __metadata("design:type", typeof (_e5 = typeof Image12 !== "undefined" && Image12) === "function" ? _e5 : Object)
-  ], SettingView.prototype, "imgLanguage", void 0);
-  __decorate25([
-    property23(),
-    __metadata("design:type", typeof (_f4 = typeof Image12 !== "undefined" && Image12) === "function" ? _f4 : Object)
-  ], SettingView.prototype, "imgLan", void 0);
-  __decorate25([
-    property23(),
-    __metadata("design:type", typeof (_g3 = typeof Image12 !== "undefined" && Image12) === "function" ? _g3 : Object)
-  ], SettingView.prototype, "imgSupport", void 0);
-  __decorate25([
-    property23(),
-    __metadata("design:type", typeof (_h3 = typeof Label6 !== "undefined" && Label6) === "function" ? _h3 : Object)
-  ], SettingView.prototype, "txtAgreement", void 0);
-  SettingView = __decorate25([
-    regClass23(),
-    __metadata("design:paramtypes", [])
-  ], SettingView);
-
-  // E:/WheelChairMan/src/Util/ObjUtil.ts
-  var ObjUtil = class {
-    /**数组去重 */
-    static clearList(arr) {
-      arr.every((item) => {
-      });
-    }
-    /**Set转List */
-    static set2List(_set) {
-      if (_set && _set.size) {
-        let arr = [];
-        for (let item of _set) {
-          arr.push(item);
-        }
-        return arr;
-      }
-      return null;
-    }
-  };
-  __name(ObjUtil, "ObjUtil");
-
-  // E:/WheelChairMan/src/Scene/ShopView.ts
-  var __decorate26 = __$decorate("6101acc2-fac8-487c-9045-7d083746b9cd", "../src/Scene/ShopView.ts");
-  var _a13;
-  var _b11;
-  var _c10;
-  var Image13 = Laya.Image;
-  var List4 = Laya.List;
-  var Handler7 = Laya.Handler;
-  var { regClass: regClass24, property: property24 } = Laya;
-  var ShopView = /* @__PURE__ */ __name(class ShopView2 extends UIBase_default {
-    constructor() {
-      super();
-      this.$titleSelectedIndex = 0;
-    }
-    onOpened(param) {
-      if (!this.$shopDataTable) {
-        this.$shopDataTable = ResLoader.instance.getDataTableById(3005 /* Shop */);
-      }
-      this.$titleSet = /* @__PURE__ */ new Set();
-      this.$shopList = [];
-      if (this.$shopDataTable) {
-        for (let [key, value] of this.$shopDataTable) {
-          this.$titleSet.add(value["localizationKey"]);
-          if (value["page"] && this.$shopList[value["page"] - 1]) {
-            this.$shopList[value["page"] - 1].push(value);
-          } else {
-            this.$shopList[value["page"] - 1] = [value];
+        if (keys && keys.length) {
+          for (let i = 0; i < keys.length; i++) {
+            let item = (_b15 = this.$localizationKeyMap.get(keys[i])) == null ? void 0 : _b15[language];
+            item = item ? item : keys[i];
+            value = value.replace("$", item);
           }
         }
       }
+      return value;
     }
-    addEvent() {
-      this.regClick(this.imgClose, this.close);
-      this.listTitle.renderHandler = new Handler7(this, this.changeTitleItem);
-      this.listTitle.selectHandler = new Handler7(this, this.selectTitleItem);
-      this.listShop.renderHandler = new Handler7(this, this.changeShopItem);
-      this.regEvent("LANGUAGECHANGE" /* LANGUAGECHANGE */, this.changeLanguage, true);
-    }
-    changeTitleItem(box, index) {
-      let imgUnSelected = box.getChildByName("imgUnSelected");
-      let labelUnSelected = imgUnSelected.getChildByName("labelUnSelected");
-      let imgSelected = box.getChildByName("imgSelected");
-      let labelSelected = imgSelected.getChildByName("labelSelected");
-      let show = index == this.listTitle.selectedIndex;
-      imgSelected.visible = show;
-      imgUnSelected.visible = !show;
-      let str = LocalizationMgr.$getLocalizationByKey(box.dataSource);
-      labelUnSelected.text = str;
-      labelSelected.text = str;
-    }
-    selectTitleItem(index) {
-      this.$titleSelectedIndex = index;
-      this.listShop.array = this.$shopList[this.$titleSelectedIndex];
-    }
-    changeLanguage() {
-      let index = 0;
-      switch (this.$param) {
-        case 1001 /* gold */:
-          index = 0;
-          break;
-        case 1002 /* diamond */:
-          index = 1;
-          break;
-      }
-      this.listTitle.array = ObjUtil.set2List(this.$titleSet);
-      this.listTitle.width = this.listTitle.array.length * 328;
-      this.listTitle.centerX = 0;
-      this.listTitle.selectedIndex = index;
-      this.listShop.array = this.$shopList[this.$titleSelectedIndex];
-      this.listShop.selectedIndex = index;
-    }
-    changeShopItem(box, index) {
-      let data = box.dataSource;
-      let imgItem = box.getChildByName("imgItem");
-      imgItem.skin = ResLoader.instance.getUrlById(data["imgId"]);
-      imgItem.height = imgItem.source.sourceHeight;
-      imgItem.width = imgItem.source.sourceWidth;
-      let imgBest = box.getChildByName("imgBest");
-      imgBest.visible = !!data["isBest"];
-      let imgHot = box.getChildByName("imgHot");
-      imgHot.visible = !!data["isHot"];
-      let labelNum = box.getChildByName("labelNum");
-      labelNum.text = data["number"];
-      labelNum.color = CurrencyMgr.getColorById(data["shopId"]);
-      let bonus = data["bonus"];
-      if (bonus) {
-        let labelBonus = box.getChildByName("labelBonus");
-        labelBonus.text = "+" + StringUtil.num2percentage(data["bonus"], 0);
-      }
-      let imgBuy = box.getChildByName("imgBuy");
-      imgBuy.offAll();
-      imgBuy.on(Laya.Event.CLICK, this, () => {
-        this.buySomething(data);
-      });
-      let imgCurrency = imgBuy.getChildByName("imgCurrency");
-      imgCurrency.skin = CurrencyMgr.getImgUrlById(data["priceId"]);
-      imgCurrency.height = imgCurrency.source.sourceHeight;
-      imgCurrency.width = imgCurrency.source.sourceWidth;
-      let txtPrice = imgBuy.getChildByName("txtPrice");
-      txtPrice.text = data["price"].toFixed(2);
-      txtPrice.color = CurrencyMgr.getColorById(data["priceId"]);
-    }
-    buySomething(obj) {
-      console.log(obj);
-      switch (obj["priceId"]) {
-        case 1001 /* gold */:
-          break;
-        case 1002 /* diamond */:
-          if (GameData.diamond >= obj["price"]) {
-            GameData.diamond -= obj["price"];
-            this.getSomething(obj);
-          } else {
-            UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1026 /* YOUDONTHAVEENOUGHDIAMONDS */, 1023 /* DIAMOND */));
+    /**通过枚举获取对应语言 */
+    static getLocalizationByEnum(lenum, ...lenums) {
+      var _a20, _b15;
+      let language = LanguageEnum[this.Language];
+      let value = (_a20 = this.$localizationMap.get(lenum)) == null ? void 0 : _a20[language];
+      if (value) {
+        if (lenums && lenums.length) {
+          for (let i = 0; i < lenums.length; i++) {
+            let item = (_b15 = this.$localizationMap.get(lenums[i])) == null ? void 0 : _b15[language];
+            item = item ? item : lenums[i];
+            value = value.replace("$", item);
           }
-          break;
-        case 1003 /* key */:
-          break;
-        case 1005 /* dollar */:
-          UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1027 /* NOTYETIMPLEMENTED */));
-          break;
+        }
       }
+      return value;
     }
-    getSomething(obj) {
-      switch (obj["shopId"]) {
-        case 1001 /* gold */:
-          GameData.gold += obj["number"];
-          UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1028 /* CONGRATULATIONSONGETTING */, obj["number"], 1022 /* GOLD */));
-          break;
-        case 1002 /* diamond */:
-          GameData.diamond += obj["number"];
-          UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1028 /* CONGRATULATIONSONGETTING */, obj["number"], 1023 /* DIAMOND */));
-          break;
-        case 1003 /* key */:
-          GameData.key += obj["number"];
-          break;
+    /**获取当前语言 */
+    static get Language() {
+      if (!this.$language) {
+        let language = LocalStorageMgr.getItem("LANGUAGE" /* LANGUAGE */);
+        if (language) {
+          this.$language = Number(language.substring(language.indexOf("_") + 1));
+        } else {
+          this.$language = ProjectConfig.defaultLanguage;
+          LocalStorageMgr.setItem("LANGUAGE" /* LANGUAGE */, this.$sign + this.$language);
+        }
       }
+      return this.$language;
     }
-  }, "ShopView");
-  __decorate26([
-    property24(),
-    __metadata("design:type", typeof (_a13 = typeof Image13 !== "undefined" && Image13) === "function" ? _a13 : Object)
-  ], ShopView.prototype, "imgClose", void 0);
-  __decorate26([
-    property24(),
-    __metadata("design:type", typeof (_b11 = typeof List4 !== "undefined" && List4) === "function" ? _b11 : Object)
-  ], ShopView.prototype, "listTitle", void 0);
-  __decorate26([
-    property24(),
-    __metadata("design:type", typeof (_c10 = typeof List4 !== "undefined" && List4) === "function" ? _c10 : Object)
-  ], ShopView.prototype, "listShop", void 0);
-  ShopView = __decorate26([
-    regClass24(),
-    __metadata("design:paramtypes", [])
-  ], ShopView);
-
-  // E:/WheelChairMan/src/Scene/SignInView.ts
-  var __decorate27 = __$decorate("658fcc51-8109-42a6-a372-0d6e36f801cc", "../src/Scene/SignInView.ts");
-  var { regClass: regClass25, property: property25 } = Laya;
-  var SignInView = /* @__PURE__ */ __name(class SignInView2 extends UIBase_default {
-  }, "SignInView");
-  SignInView = __decorate27([
-    regClass25()
-  ], SignInView);
-
-  // E:/WheelChairMan/src/Scene/SureView.ts
-  var __decorate28 = __$decorate("2eee226a-dcc2-4965-9ad2-4c490d20fbdf", "../src/Scene/SureView.ts");
-  var _a14;
-  var _b12;
-  var _c11;
-  var _d7;
-  var Label7 = Laya.Label;
-  var Image14 = Laya.Image;
-  var { regClass: regClass26, property: property26 } = Laya;
-  var SureView = /* @__PURE__ */ __name(class SureView2 extends UIBase_default {
-    constructor() {
-      super();
+    /**修改当前语言 */
+    static set Language(language) {
+      this.$language = language;
+      LocalStorageMgr.setItem("LANGUAGE" /* LANGUAGE */, this.$sign + this.$language);
+      EventMgr.event("LANGUAGECHANGE" /* LANGUAGECHANGE */);
     }
-    onOpened(param) {
-      this.regClick(this.imgSure, this.sureClick);
-      this.regClick(this.imgCancel, this.cancelClick);
-      this.txtTitle.text = param.title;
-      this.txtMsg.text = param.msg;
-      this.caller = param.caller;
-      this.sureCallback = param.sureCallback;
-      this.cancelCallback = param.cancelCallBack;
-      if (!this.cancelCallback) {
-        this.imgSure.centerX = 0;
-        this.imgSure.visible = true;
-      } else {
-        this.imgSure.centerX = 180;
-        this.imgSure.visible = true;
-        this.imgCancel.visible = true;
-      }
-    }
-    sureClick() {
-      if (this.caller && this.sureCallback) {
-        this.sureCallback.call(this.caller);
-      }
-      this.close();
-    }
-    cancelClick() {
-      if (this.caller && this.cancelCallback) {
-        this.cancelCallback.call(this.caller);
-      }
-      this.close();
-    }
-    onClosed() {
-      this.caller = null;
-      this.sureCallback = null;
-      this.cancelCallback = null;
-      this.imgSure.visible = false;
-      this.imgCancel.visible = false;
-      this.imgSure.centerX = 180;
-    }
-  }, "SureView");
-  __decorate28([
-    property26(),
-    __metadata("design:type", typeof (_a14 = typeof Image14 !== "undefined" && Image14) === "function" ? _a14 : Object)
-  ], SureView.prototype, "imgSure", void 0);
-  __decorate28([
-    property26(),
-    __metadata("design:type", typeof (_b12 = typeof Image14 !== "undefined" && Image14) === "function" ? _b12 : Object)
-  ], SureView.prototype, "imgCancel", void 0);
-  __decorate28([
-    property26(),
-    __metadata("design:type", typeof (_c11 = typeof Label7 !== "undefined" && Label7) === "function" ? _c11 : Object)
-  ], SureView.prototype, "txtTitle", void 0);
-  __decorate28([
-    property26(),
-    __metadata("design:type", typeof (_d7 = typeof Label7 !== "undefined" && Label7) === "function" ? _d7 : Object)
-  ], SureView.prototype, "txtMsg", void 0);
-  SureView = __decorate28([
-    regClass26(),
-    __metadata("design:paramtypes", [])
-  ], SureView);
-
-  // E:/WheelChairMan/src/Scene/TipsView.ts
-  var __decorate29 = __$decorate("a1b11e33-3318-4f7e-af1d-2bbf5fa13333", "../src/Scene/TipsView.ts");
-  var _a15;
-  var Text5 = Laya.Text;
-  var { regClass: regClass27, property: property27 } = Laya;
-  var TipsView = /* @__PURE__ */ __name(class TipsView2 extends UIBase_default {
-    constructor() {
-      super();
-    }
-    onEnable() {
-      let img = this.owner;
-      img.centerX = 0;
-      img.centerY = 200;
-    }
-    onOpened(param) {
-      this.txtMsg.text = param;
-      Timer.get(1500, this, () => {
-        this.close();
-      }).once().start();
-    }
-  }, "TipsView");
-  __decorate29([
-    property27(),
-    __metadata("design:type", typeof (_a15 = typeof Text5 !== "undefined" && Text5) === "function" ? _a15 : Object)
-  ], TipsView.prototype, "txtMsg", void 0);
-  TipsView = __decorate29([
-    regClass27(),
-    __metadata("design:paramtypes", [])
-  ], TipsView);
-
-  // E:/WheelChairMan/src/Scene3d/MainScene.ts
-  var __decorate30 = __$decorate("71c8c727-1736-44b1-984f-02439872df63", "../src/Scene3d/MainScene.ts");
-  var { regClass: regClass28, property: property28 } = Laya;
-  var MainScene = /* @__PURE__ */ __name(class MainScene2 extends Scene3d_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-    }
-  }, "MainScene");
-  MainScene = __decorate30([
-    regClass28(),
-    __metadata("design:paramtypes", [])
-  ], MainScene);
+  };
+  __name(LocalizationMgr, "LocalizationMgr");
+  /**持久化标志 */
+  LocalizationMgr.$sign = "language_";
 
   // E:/WheelChairMan/src/Util/Sprite3d.ts
   var Vector3 = Laya.Vector3;
@@ -3082,150 +1355,6 @@ function __$decorate(assetId, codePath) {
   __name(Sprite3d, "Sprite3d");
   Sprite3d.nodeDic = {};
 
-  // E:/WheelChairMan/src/Scene3d/SelectPlayerScene.ts
-  var __decorate31 = __$decorate("34405a80-13b4-48be-ac44-94bb920f1518", "../src/Scene3d/SelectPlayerScene.ts");
-  var _a16;
-  var Sprite3D = Laya.Sprite3D;
-  var { regClass: regClass29, property: property29 } = Laya;
-  var SelectPlayerScene = /* @__PURE__ */ __name(class SelectPlayerScene2 extends Scene3d_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-      if (!this.$playerList) {
-        this.$playerList = [];
-        this.$playerList = [];
-        for (let item in PlayerEnum) {
-          if (!isNaN(Number(item))) {
-            this.$playerList.push(Number(item));
-          }
-        }
-      }
-    }
-    addEvent() {
-      this.regEvent("SHOWPLAYER" /* SHOWPLAYER */, this.showPlayer);
-    }
-    showPlayer(playerId) {
-      var _a17;
-      (_a17 = this.$playerObj) === null || _a17 === void 0 ? void 0 : _a17.removeSelf();
-      this.$playerObj = PlayerMgr.instance.getSelectPlayer(playerId);
-      this.$playerObj && this.playerStage.addChild(this.$playerObj);
-      this.$playerObj && (this.$playerObj.transform.position = Sprite3d.ZERO);
-    }
-  }, "SelectPlayerScene");
-  __decorate31([
-    property29(),
-    __metadata("design:type", typeof (_a16 = typeof Sprite3D !== "undefined" && Sprite3D) === "function" ? _a16 : Object)
-  ], SelectPlayerScene.prototype, "playerStage", void 0);
-  SelectPlayerScene = __decorate31([
-    regClass29(),
-    __metadata("design:paramtypes", [])
-  ], SelectPlayerScene);
-
-  // E:/WheelChairMan/src/Util/Base64.ts
-  var __decorate32 = __$decorate("fe62c9ad-c7c3-4baa-8f7c-216a9f051006", "../src/Util/Base64.ts");
-  var Base64 = class {
-    /**
-     * 编码
-     * @param input 输入
-     */
-    static encode(input) {
-      let output = "";
-      let chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-      let i = 0;
-      input = this._utf8_encode(input);
-      while (i < input.length) {
-        chr1 = input.charCodeAt(i++);
-        chr2 = input.charCodeAt(i++);
-        chr3 = input.charCodeAt(i++);
-        enc1 = chr1 >> 2;
-        enc2 = (chr1 & 3) << 4 | chr2 >> 4;
-        enc3 = (chr2 & 15) << 2 | chr3 >> 6;
-        enc4 = chr3 & 63;
-        if (isNaN(chr2)) {
-          enc3 = enc4 = 64;
-        } else if (isNaN(chr3)) {
-          enc4 = 64;
-        }
-        output = output + this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) + this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
-      }
-      return output;
-    }
-    /**
-     * 译码
-     * @param input 输入
-     */
-    static decode(input) {
-      let output = "";
-      let chr1, chr2, chr3;
-      let enc1, enc2, enc3, enc4;
-      let i = 0;
-      input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-      while (i < input.length) {
-        enc1 = this._keyStr.indexOf(input.charAt(i++));
-        enc2 = this._keyStr.indexOf(input.charAt(i++));
-        enc3 = this._keyStr.indexOf(input.charAt(i++));
-        enc4 = this._keyStr.indexOf(input.charAt(i++));
-        chr1 = enc1 << 2 | enc2 >> 4;
-        chr2 = (enc2 & 15) << 4 | enc3 >> 2;
-        chr3 = (enc3 & 3) << 6 | enc4;
-        output = output + String.fromCharCode(chr1);
-        if (enc3 !== 64) {
-          output = output + String.fromCharCode(chr2);
-        }
-        if (enc4 !== 64) {
-          output = output + String.fromCharCode(chr3);
-        }
-      }
-      output = this._utf8_decode(output);
-      return output;
-    }
-    // 
-    static _utf8_encode(string) {
-      string = string.replace(/\r\n/g, "\n");
-      let utftext = "";
-      for (let n = 0; n < string.length; n++) {
-        const c = string.charCodeAt(n);
-        if (c < 128) {
-          utftext += String.fromCharCode(c);
-        } else if (c > 127 && c < 2048) {
-          utftext += String.fromCharCode(c >> 6 | 192);
-          utftext += String.fromCharCode(c & 63 | 128);
-        } else {
-          utftext += String.fromCharCode(c >> 12 | 224);
-          utftext += String.fromCharCode(c >> 6 & 63 | 128);
-          utftext += String.fromCharCode(c & 63 | 128);
-        }
-      }
-      return utftext;
-    }
-    // 
-    static _utf8_decode(utftext) {
-      let string = "";
-      let i = 0;
-      let c = 0, c2 = 0, c3 = 0;
-      while (i < utftext.length) {
-        c = utftext.charCodeAt(i);
-        if (c < 128) {
-          string += String.fromCharCode(c);
-          i++;
-        } else if (c > 191 && c < 224) {
-          c2 = utftext.charCodeAt(i + 1);
-          string += String.fromCharCode((c & 31) << 6 | c2 & 63);
-          i += 2;
-        } else {
-          c2 = utftext.charCodeAt(i + 1);
-          c3 = utftext.charCodeAt(i + 2);
-          string += String.fromCharCode((c & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
-          i += 3;
-        }
-      }
-      return string;
-    }
-  };
-  __name(Base64, "Base64");
-  Base64._keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-
   // E:/WheelChairMan/src/Script3d/Script3d.ts
   var Vector32 = Laya.Vector3;
   var Script3d = class extends Laya.Script {
@@ -3370,10 +1499,10 @@ function __$decorate(assetId, codePath) {
   __name(Script3d, "Script3d");
 
   // E:/WheelChairMan/src/Util/PlayerController.ts
-  var __decorate33 = __$decorate("f3ea911e-7d9e-4e77-b857-d99a7338285a", "../src/Util/PlayerController.ts");
+  var __decorate5 = __$decorate("f3ea911e-7d9e-4e77-b857-d99a7338285a", "../src/Util/PlayerController.ts");
   var Vector33 = Laya.Vector3;
   var CharacterController = Laya.CharacterController;
-  var { regClass: regClass30, property: property30 } = Laya;
+  var { regClass: regClass4, property: property4 } = Laya;
   var PlayerController = /* @__PURE__ */ __name(class PlayerController2 extends Script3d {
     constructor() {
       super();
@@ -3425,30 +1554,129 @@ function __$decorate(assetId, codePath) {
     onDisable() {
     }
   }, "PlayerController");
-  __decorate33([
-    property30(),
+  __decorate5([
+    property4(),
     __metadata("design:type", Number)
   ], PlayerController.prototype, "friction", void 0);
-  __decorate33([
-    property30(),
+  __decorate5([
+    property4(),
     __metadata("design:type", Number)
   ], PlayerController.prototype, "stepHeight", void 0);
-  __decorate33([
-    property30(),
+  __decorate5([
+    property4(),
     __metadata("design:type", Number)
   ], PlayerController.prototype, "jumpAllTimes", void 0);
-  __decorate33([
-    property30(),
+  __decorate5([
+    property4(),
     __metadata("design:type", Number)
   ], PlayerController.prototype, "moveSpeed", void 0);
-  PlayerController = __decorate33([
-    regClass30(),
+  PlayerController = __decorate5([
+    regClass4(),
     __metadata("design:paramtypes", [])
   ], PlayerController);
   var PlayerController_default = PlayerController;
 
   // E:/WheelChairMan/src/Game/BaseItem/BaseItem.ts
+  var Vector34 = Laya.Vector3;
+  var Quaternion = Laya.Quaternion;
+  var Pool3 = Laya.Pool;
   var BaseItem = class extends Script3d {
+    constructor() {
+      super();
+      /**序号 */
+      this.index = -1;
+      /**对象类型 */
+      this.objType = -1;
+    }
+    onAwake() {
+      this.$events = {};
+      this.objName = "";
+      this.addEvent();
+    }
+    addEvent() {
+    }
+    /**初始化位置
+         * @param data 数据
+         * @param isRotPoint 是否为旋转节点
+         * @param isLocalPos 是否为本地节点
+         * @param lscale 是否修正缩放
+         */
+    initPos(data, isRotPoint = false, isLocalPos = false, lscale = 1) {
+      this.posData = data;
+      let pos = new Vector34(this.posData.x, this.posData.y, this.posData.z);
+      let rot = new Quaternion(this.posData.rotX, this.posData.rotY, this.posData.rotZ, this.posData.rotW);
+      let scale = new Vector34(this.posData.scaleX * lscale, this.posData.scaleY * lscale, this.posData.scaleZ * lscale);
+      if (isLocalPos) {
+        pos && (this.localPosition = pos);
+      } else {
+        pos && (this.position = pos);
+      }
+      if (isRotPoint) {
+        let rotPoint = this.obj.getChildAt(0);
+        rotPoint && (rotPoint.transform.rotation = rot);
+      } else {
+        rot && (this.rotation = rot);
+      }
+      scale && (this.localScale = scale);
+      this.initOthers();
+    }
+    initOthers() {
+    }
+    /**
+     * 注册自身事件
+     * 回收对象的时候会自动移除
+     * @param eventName 
+     * @param func 
+     */
+    regEvent(eventName, func) {
+      var self = this;
+      self.$events[eventName] = func;
+      EventMgr.on(eventName, self, func);
+    }
+    /**移除监听 */
+    unRegEvent() {
+      var self = this, eventMgr = EventMgr, events = self.$events;
+      for (let name in events) {
+        eventMgr.off(name, self, events[name]);
+      }
+      self.$events = null;
+    }
+    /**清理回收对象 */
+    clear(isDestroy = false) {
+      this.clearOthers();
+      this.unRegEvent();
+      Laya.timer.clearAll(this);
+      this.index = -1;
+      this.objData = null;
+      this.posData = null;
+      if (this.obj) {
+        this.obj.removeSelf();
+        if (isDestroy) {
+          this.obj.destroy(true);
+        } else {
+          if (this.objName != "") {
+            Pool3.recover(this.objName, this.obj);
+            this.objName = "";
+          } else {
+            Pool3.recover(this.obj.name, this.obj);
+          }
+        }
+        this.destroy();
+      } else {
+        this.destroy();
+      }
+    }
+    /**额外清理
+     */
+    clearOthers() {
+    }
+  };
+  __name(BaseItem, "BaseItem");
+
+  // E:/WheelChairMan/src/Game/Player/PlayerItem.ts
+  var __decorate6 = __$decorate("778295ff-e54e-4576-82ea-f69285cd3b58", "../src/Game/Player/PlayerItem.ts");
+  var { regClass: regClass5, property: property5 } = Laya;
+  var PlayerItem = /* @__PURE__ */ __name(class PlayerItem2 extends BaseItem {
     constructor() {
       super(...arguments);
       this.$health = 0;
@@ -3472,18 +1700,2149 @@ function __$decorate(assetId, codePath) {
       }
       return this.$playerController;
     }
-  };
-  __name(BaseItem, "BaseItem");
-
-  // E:/WheelChairMan/src/Game/Player/PlayerItem.ts
-  var __decorate34 = __$decorate("778295ff-e54e-4576-82ea-f69285cd3b58", "../src/Game/Player/PlayerItem.ts");
-  var { regClass: regClass31, property: property31 } = Laya;
-  var PlayerItem = /* @__PURE__ */ __name(class PlayerItem2 extends BaseItem {
     reset() {
     }
   }, "PlayerItem");
-  PlayerItem = __decorate34([
-    regClass31()
+  PlayerItem = __decorate6([
+    regClass5()
   ], PlayerItem);
+  var PlayerItem_default = PlayerItem;
+
+  // E:/WheelChairMan/src/Game/Player/PlayerMgr.ts
+  var PlayerMgr = class {
+    constructor() {
+      this.$sign = "playerId_";
+    }
+    static get instance() {
+      return this._instance ? this._instance : this._instance = new PlayerMgr();
+    }
+    init() {
+      this.$playerMap = ResLoader.instance.getDataTableById(3008 /* Player */);
+    }
+    // /**获取当前选择的玩家id */
+    // get selectedPlayerId(): number {
+    //     if (!this.$selectedPlayerId) {
+    //         let id = Number(LocalStorageMgr.getItem(LocalStorageEnum.PLAYERID)?.replace(this.$sign, ""));
+    //         if (isNaN(id)) {
+    //             this.$selectedPlayerId = 1001;
+    //             LocalStorageMgr.setItem(LocalStorageEnum.PLAYERID, this.$sign + this.$selectedPlayerId);
+    //         } else {
+    //             {
+    //                 this.$selectedPlayerId = id
+    //             }
+    //         }
+    //     }
+    //     return this.$selectedPlayerId
+    // }
+    // set selectedPlayerId(value: number) {
+    //     if (value) {
+    //         this.$selectedPlayerId = value;
+    //         LocalStorageMgr.setItem(LocalStorageEnum.PLAYERID, this.$sign + this.$selectedPlayerId);
+    //     }
+    // }
+    /**获取已经解锁的人物 */
+    getUnlockList() {
+      let str = LocalStorageMgr.getItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */);
+      if (str) {
+        this.$unlockList = JSON.parse(str);
+      } else {
+        this.$unlockList = [1001];
+        LocalStorageMgr.setItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */, JSON.stringify(this.$unlockList));
+      }
+      return this.$unlockList;
+    }
+    /**解锁人物 */
+    unlockPlayer(playerId) {
+      if (playerId && this.$unlockList.indexOf(playerId) == -1) {
+        let data = this.getSelectedPlayerData(playerId);
+        switch (data["currency"]) {
+          case 1001 /* gold */:
+            if (GameData.gold >= data["unlockPrice"]) {
+              GameData.gold -= data["unlockPrice"];
+              this.$unlockList.push(playerId);
+              LocalStorageMgr.setItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */, JSON.stringify(this.$unlockList));
+              UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1031 /* CONGRATULATIONSUNLOCK */));
+              EventMgr.event("UNLOCKPLAYER" /* UNLOCKPLAYER */, playerId);
+            } else {
+              UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1026 /* YOUDONTHAVEENOUGHDIAMONDS */, 1022 /* GOLD */));
+            }
+            break;
+          case 1002 /* diamond */:
+            if (GameData.diamond >= data["unlockPrice"]) {
+              GameData.diamond -= data["unlockPrice"];
+              this.$unlockList.push(playerId);
+              LocalStorageMgr.setItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */, JSON.stringify(this.$unlockList));
+              UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1031 /* CONGRATULATIONSUNLOCK */));
+              EventMgr.event("UNLOCKPLAYER" /* UNLOCKPLAYER */, playerId);
+            } else {
+              UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1026 /* YOUDONTHAVEENOUGHDIAMONDS */, 1023 /* DIAMOND */));
+            }
+            break;
+        }
+      }
+    }
+    /**是否已经解锁 */
+    isUnlock(playerId) {
+      let arr = this.getUnlockList();
+      return arr.indexOf(playerId) != -1;
+    }
+    /**获取当前选择的玩家数据 */
+    getSelectedPlayerData(playerId) {
+      return this.$playerMap.get(playerId);
+    }
+    setSelectedPlayerId(playerId) {
+      this.$selectedPlayerId = playerId;
+    }
+    /**获取当前人物 */
+    getSelectPlayer(playerId) {
+      let obj;
+      if (this.playerPool) {
+        obj = this.playerPool.get(playerId);
+      } else {
+        this.playerPool = /* @__PURE__ */ new Map();
+      }
+      if (!obj) {
+        let playerData = this.getSelectedPlayerData(playerId);
+        obj = ResLoader.instance.getResCloneById(playerData == null ? void 0 : playerData["path"]);
+        this.playerPool.set(playerId, obj);
+      }
+      return obj;
+    }
+    gameStart(stage) {
+      this.$playerStage = stage;
+      let obj = this.getSelectPlayer(this.$selectedPlayerId);
+      if (obj && this.$playerStage) {
+        this.$playerStage.addChild(obj);
+        this.$playerItem = obj.getComponent(PlayerItem_default);
+        this.$playerItem.position = Sprite3d.ZERO;
+      }
+    }
+  };
+  __name(PlayerMgr, "PlayerMgr");
+
+  // E:/WheelChairMan/src/Game/MainGame.ts
+  var __decorate7 = __$decorate("17be9e1a-ac52-43f3-8894-fa783a42a738", "../src/Game/MainGame.ts");
+  var MainGame_1;
+  var { regClass: regClass6, property: property6 } = Laya;
+  var MainGame = MainGame_1 = /* @__PURE__ */ __name(class MainGame2 {
+    constructor() {
+      this.$isInit = false;
+    }
+    static get instance() {
+      return this._instance ? this._instance : this._instance = new MainGame_1();
+    }
+    init() {
+      if (!this.$isInit) {
+        this.$isInit = true;
+        this.addEvent();
+        this.reset();
+        PlayerMgr.instance.init();
+      }
+    }
+    /**获取当前游戏的流程 */
+    getGameSetp() {
+      return this.$gameSetp;
+    }
+    addEvent() {
+      EventMgr.on("GAMESCENELOADED" /* GAMESCENELOADED */, this, this.gameStart);
+    }
+    reset() {
+      this.$gameSetp = 1001 /* ResetGame */;
+      this.goToMain();
+      this.$gameScene = null;
+    }
+    /**开始选择玩家 */
+    selectPlayerAndWeapon() {
+      this.$gameSetp = 1002 /* SelectPlayer */;
+      Scene3dMgr.instance.open(1002 /* SelectPlayerScene */);
+      Scene3dMgr.instance.close(1001 /* MainScene */);
+    }
+    /**返回主页 */
+    goToMain() {
+      Scene3dMgr.instance.close(1002 /* SelectPlayerScene */);
+      Scene3dMgr.instance.open(1001 /* MainScene */);
+    }
+    loadGameScene() {
+      this.$gameSetp = 1004 /* LoadGameScene */;
+      Scene3dMgr.instance.close(1002 /* SelectPlayerScene */);
+      Scene3dMgr.instance.open(1003 /* GameScene */);
+    }
+    /**游戏开始 */
+    gameStart(gameScene) {
+      this.$gameSetp = 1005 /* GameStart */;
+      this.$gameScene = gameScene;
+      PlayerMgr.instance.gameStart(this.$gameScene.playerStage);
+    }
+    /**游戏暂停 */
+    gamePause() {
+      this.$gameSetp = 1006 /* GamePause */;
+    }
+    /**游戏继续*/
+    gameResume() {
+      this.$gameSetp = 1005 /* GameStart */;
+    }
+    gameWin() {
+      this.$gameSetp = 1009 /* GameWin */;
+      this.gameOver();
+    }
+    gameLose() {
+      this.$gameSetp = 1008 /* GameLose */;
+      this.gameOver();
+    }
+    gameOver() {
+    }
+  }, "MainGame");
+  MainGame = MainGame_1 = __decorate7([
+    regClass6()
+  ], MainGame);
+  var MainGame_default = MainGame;
+
+  // E:/WheelChairMan/src/Localization/LocalizationText.ts
+  var __decorate8 = __$decorate("5a62e727-31ad-49bf-b53f-96fbff2b0a39", "../src/Localization/LocalizationText.ts");
+  var Text = Laya.Text;
+  var Label = Laya.Label;
+  var { regClass: regClass7, property: property7 } = Laya;
+  var LocalizationText = /* @__PURE__ */ __name(class LocalizationText2 extends Laya.Script {
+    constructor() {
+      super();
+    }
+    onEnable() {
+      if (this.owner instanceof Text || this.owner instanceof Label) {
+        this.text = this.owner;
+        EventMgr.on("LANGUAGECHANGE" /* LANGUAGECHANGE */, this, this.changeLanguage);
+        this.changeLanguage();
+      }
+    }
+    changeLanguage() {
+      if (this.localizationKey) {
+        let value = LocalizationMgr.$getLocalizationByKey(this.localizationKey);
+        if (value) {
+          this.text.text = value;
+        }
+      }
+    }
+    onDisable() {
+      EventMgr.offAllCaller(this);
+    }
+  }, "LocalizationText");
+  __decorate8([
+    property7(),
+    __metadata("design:type", String)
+  ], LocalizationText.prototype, "localizationKey", void 0);
+  LocalizationText = __decorate8([
+    regClass7(),
+    __metadata("design:paramtypes", [])
+  ], LocalizationText);
+
+  // E:/WheelChairMan/src/Scene/CompleteView.ts
+  var __decorate9 = __$decorate("f5f376ef-5874-4c8a-9a28-8088976bd468", "../src/Scene/CompleteView.ts");
+  var { regClass: regClass8, property: property8 } = Laya;
+  var CompleteView = /* @__PURE__ */ __name(class CompleteView2 extends UIBase_default {
+  }, "CompleteView");
+  CompleteView = __decorate9([
+    regClass8()
+  ], CompleteView);
+
+  // E:/WheelChairMan/src/Scene/DebugView.ts
+  var __decorate10 = __$decorate("5ca51831-1d23-46b6-a853-a10d5da54d6c", "../src/Scene/DebugView.ts");
+  var _a;
+  var _b;
+  var _c;
+  var Box = Laya.Box;
+  var Image = Laya.Image;
+  var List = Laya.List;
+  var Handler3 = Laya.Handler;
+  var { regClass: regClass9, property: property9 } = Laya;
+  var DebugView = /* @__PURE__ */ __name(class DebugView2 extends UIBase_default {
+    constructor() {
+      super();
+      this.commandList = [
+        "\u6DFB\u52A05000\u91D1\u5E01",
+        "\u6DFB\u52A05000\u94BB\u77F3",
+        "\u6E05\u96F6\u91D1\u5E01\u94BB\u77F3",
+        "\u6E38\u620F\u7ACB\u523B\u80DC\u5229(\u5FC5\u987B\u5148\u5F00\u59CB\u6E38\u620F)",
+        "\u6E38\u620F\u7ACB\u523B\u5931\u8D25(\u5FC5\u987B\u5148\u5F00\u59CB\u6E38\u620F)",
+        "\u9501\u5B9A\u989D\u5916\u76AE\u80A4"
+      ];
+    }
+    onOpened(param) {
+      this.regClick(this.imgShow, this.showHidePanel);
+      this.listCommand.renderHandler = new Handler3(this, this.changeItem);
+      this.listCommand.selectHandler = new Handler3(this, this.selectItem);
+      this.listCommand.array = this.commandList;
+    }
+    showHidePanel() {
+      this.MainPanel.visible = !this.MainPanel.visible;
+    }
+    changeItem(box, index) {
+      let Label8 = box.getChildByName("Label");
+      Label8.text = box.dataSource;
+    }
+    selectItem(index) {
+      switch (index) {
+        case 0:
+          GameData.gold += 5e3;
+          EventMgr.event("GOLDCHANGE" /* GOLDCHANGE */);
+          break;
+        case 1:
+          GameData.diamond += 5e3;
+          EventMgr.event("DIAMONDCHANGE" /* DIAMONDCHANGE */);
+          break;
+        case 2:
+          GameData.diamond = 0;
+          GameData.gold = 0;
+          EventMgr.event("DIAMONDCHANGE" /* DIAMONDCHANGE */);
+          EventMgr.event("GOLDCHANGE" /* GOLDCHANGE */);
+          break;
+        case 3:
+          break;
+        case 4:
+          break;
+      }
+      this.listCommand.selectedIndex = -1;
+    }
+  }, "DebugView");
+  __decorate10([
+    property9(),
+    __metadata("design:type", typeof (_a = typeof Image !== "undefined" && Image) === "function" ? _a : Object)
+  ], DebugView.prototype, "imgShow", void 0);
+  __decorate10([
+    property9(),
+    __metadata("design:type", typeof (_b = typeof Box !== "undefined" && Box) === "function" ? _b : Object)
+  ], DebugView.prototype, "MainPanel", void 0);
+  __decorate10([
+    property9(),
+    __metadata("design:type", typeof (_c = typeof List !== "undefined" && List) === "function" ? _c : Object)
+  ], DebugView.prototype, "listCommand", void 0);
+  DebugView = __decorate10([
+    regClass9(),
+    __metadata("design:paramtypes", [])
+  ], DebugView);
+
+  // E:/WheelChairMan/src/Util/RockerBox.ts
+  var __decorate11 = __$decorate("7204f275-aa8d-45b5-b2eb-b4122c72d7a3", "../src/Util/RockerBox.ts");
+  var _a2;
+  var Button = Laya.Button;
+  var Point = Laya.Point;
+  var { regClass: regClass10, property: property10 } = Laya;
+  var RockerBox = /* @__PURE__ */ __name(class RockerBox2 extends Laya.Script {
+    constructor() {
+      super();
+      this.dropLen = 110;
+      this.touchId = -1;
+      this.rockerAngle = 0;
+      this.rockerValue = 0;
+    }
+    onEnable() {
+      this.rockerBox = this.owner;
+    }
+    onStart() {
+      this.initBarX = this.freeBar.x;
+      this.initBarY = this.freeBar.y;
+      this.mousePoint = new Point(0, 0);
+      this.freeBar.on(Laya.Event.MOUSE_DOWN, this, this.rockerDown);
+      Laya.stage.on(Laya.Event.MOUSE_MOVE, this, this.rockerMove);
+      Laya.stage.on(Laya.Event.MOUSE_UP, this, this.rockerUp);
+    }
+    rockerDown(evt) {
+      if (this.touchId != -1)
+        return;
+      evt.stopPropagation();
+      this.touchId = evt.touchId;
+      this.rockerIsDown = true;
+      this.freeBar.selected = true;
+      this.mouseDownX = this.rockerBox.mouseX;
+      this.mouseDownY = this.rockerBox.mouseY;
+    }
+    rockerMove(evt) {
+      if (!this.rockerIsDown)
+        return;
+      if (evt.touchId != this.touchId)
+        return;
+      evt.stopPropagation();
+      this.mousePoint.x = Math.round(evt.touchPos.x / Laya.stage.clientScaleX);
+      this.mousePoint.y = Math.round(evt.touchPos.y / Laya.stage.clientScaleY);
+      this.rockerBox.globalToLocal(this.mousePoint, false);
+      let mouseX = this.mousePoint.x;
+      let mouseY = this.mousePoint.y;
+      let offX = mouseX - this.mouseDownX;
+      let offY = mouseY - this.mouseDownY;
+      this.rockerAngle = Math.atan2(offX, offY) * 180 / Math.PI;
+      let dis = Math.sqrt((this.mouseDownX - mouseX) * (this.mouseDownX - mouseX) + (this.mouseDownY - mouseY) * (this.mouseDownY - mouseY));
+      dis = dis < 0 ? -dis : dis;
+      if (dis < this.dropLen) {
+        this.freeBar.x = this.initBarX + offX;
+        this.freeBar.y = this.initBarY + offY;
+        this.rockerValue = dis / this.dropLen;
+      } else {
+        let radians = Math.PI / 180 * this.rockerAngle;
+        let x = Math.floor(Math.sin(radians) * this.dropLen + this.initBarX);
+        let y = Math.floor(Math.cos(radians) * this.dropLen + this.initBarY);
+        this.freeBar.x = x;
+        this.freeBar.y = y;
+        this.rockerValue = 1;
+      }
+      this.startMove();
+    }
+    rockerUp(evt) {
+      if (this.touchId == evt.touchId) {
+        this.touchId = -1;
+        this.rockerIsDown = false;
+        this.freeBar.x = this.initBarX;
+        this.freeBar.y = this.initBarY;
+        this.freeBar.selected = false;
+        this.stopMove();
+      }
+    }
+    /**开始移动 */
+    startMove() {
+    }
+    /**停止移动 */
+    stopMove() {
+    }
+    onDisable() {
+      this.freeBar.off(Laya.Event.MOUSE_DOWN, this, this.rockerDown);
+      Laya.stage.off(Laya.Event.MOUSE_MOVE, this, this.rockerMove);
+      Laya.stage.off(Laya.Event.MOUSE_UP, this, this.rockerUp);
+    }
+  }, "RockerBox");
+  __decorate11([
+    property10(),
+    __metadata("design:type", typeof (_a2 = typeof Button !== "undefined" && Button) === "function" ? _a2 : Object)
+  ], RockerBox.prototype, "freeBar", void 0);
+  __decorate11([
+    property10(),
+    __metadata("design:type", Number)
+  ], RockerBox.prototype, "dropLen", void 0);
+  RockerBox = __decorate11([
+    regClass10(),
+    __metadata("design:paramtypes", [])
+  ], RockerBox);
+  var RockerBox_default = RockerBox;
+
+  // E:/WheelChairMan/src/Scene/GameView.ts
+  var __decorate12 = __$decorate("ddf0e22e-43aa-4145-b2f5-8a127efb5611", "../src/Scene/GameView.ts");
+  var _a3;
+  var _b2;
+  var _c2;
+  var List2 = Laya.List;
+  var { regClass: regClass11, property: property11 } = Laya;
+  var GameView = /* @__PURE__ */ __name(class GameView2 extends UIBase_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+    }
+    onClosed() {
+    }
+  }, "GameView");
+  __decorate12([
+    property11(),
+    __metadata("design:type", typeof (_a3 = typeof List2 !== "undefined" && List2) === "function" ? _a3 : Object)
+  ], GameView.prototype, "listHealth", void 0);
+  __decorate12([
+    property11(),
+    __metadata("design:type", typeof (_b2 = typeof RockerBox_default !== "undefined" && RockerBox_default) === "function" ? _b2 : Object)
+  ], GameView.prototype, "rocketBoxL", void 0);
+  __decorate12([
+    property11(),
+    __metadata("design:type", typeof (_c2 = typeof RockerBox_default !== "undefined" && RockerBox_default) === "function" ? _c2 : Object)
+  ], GameView.prototype, "rocketBoxR", void 0);
+  GameView = __decorate12([
+    regClass11(),
+    __metadata("design:paramtypes", [])
+  ], GameView);
+
+  // E:/WheelChairMan/src/Scene/GuideView.ts
+  var __decorate13 = __$decorate("a7a26e14-76d9-4f1c-9471-21fbc179af77", "../src/Scene/GuideView.ts");
+  var _a4;
+  var Image2 = Laya.Image;
+  var { regClass: regClass12, property: property12 } = Laya;
+  var GuideView = /* @__PURE__ */ __name(class GuideView2 extends UIBase_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+    }
+    addEvent() {
+      this.imgSkip.on(Laya.Event.MOUSE_DOWN, this, this.skipGuide);
+    }
+    skipGuide() {
+    }
+    onClosed() {
+      this.imgSkip.off(Laya.Event.MOUSE_DOWN, this, this.skipGuide);
+      EventMgr.event("GUIDFINISH" /* GUIDFINISH */);
+      LocalStorageMgr.setItem("FIRESTTIME" /* FIRSTTIME */, "1");
+    }
+  }, "GuideView");
+  __decorate13([
+    property12(),
+    __metadata("design:type", typeof (_a4 = typeof Image2 !== "undefined" && Image2) === "function" ? _a4 : Object)
+  ], GuideView.prototype, "imgSkip", void 0);
+  GuideView = __decorate13([
+    regClass12(),
+    __metadata("design:paramtypes", [])
+  ], GuideView);
+
+  // E:/WheelChairMan/src/Scene/LanguageView.ts
+  var __decorate14 = __$decorate("6bc1bf6a-a993-4ac9-b9f4-4785e0d68c2b", "../src/Scene/LanguageView.ts");
+  var _a5;
+  var _b3;
+  var Image3 = Laya.Image;
+  var List3 = Laya.List;
+  var Handler4 = Laya.Handler;
+  var { regClass: regClass13, property: property13 } = Laya;
+  var LanguageView = /* @__PURE__ */ __name(class LanguageView2 extends UIBase_default {
+    constructor() {
+      super();
+      this.$selectIndex = 0;
+    }
+    onOpened(param) {
+      this.regClick(this.$imgClose, this.close);
+      this.$listLanguage.renderHandler = new Handler4(this, this.changeItem);
+      this.$listLanguage.selectHandler = new Handler4(this, this.selectItem);
+      let arr = [];
+      for (let i in LanguageEnum) {
+        if (!isNaN(Number(i))) {
+          arr.push(Number(i));
+        }
+      }
+      this.$selectIndex = arr.indexOf(LocalizationMgr.Language);
+      this.$listLanguage.array = arr;
+      this.$listLanguage.selectedIndex = this.$selectIndex;
+    }
+    changeItem(box, index) {
+      let labelLanguage = box.getChildByName("labelLanguage");
+      let imgFlag = box.getChildByName("imgFlag");
+      let imgSelect = box.getChildByName("imgSelect");
+      labelLanguage.text = LocalizationMgr.getLanguageMsgById(box.dataSource);
+      imgFlag.skin = ResLoader.instance.getUrlById(LocalizationMgr.getFlagSkinIdById(box.dataSource));
+      if (index == this.$selectIndex) {
+        imgSelect.visible = true;
+      } else {
+        imgSelect.visible = false;
+      }
+    }
+    selectItem(index) {
+      if (index != this.$selectIndex) {
+        let oldBox = this.$listLanguage.getCell(this.$selectIndex);
+        let oldSelect = oldBox.getChildByName("imgSelect");
+        oldSelect.visible = false;
+        this.$selectIndex = index;
+        LocalizationMgr.Language = this.$listLanguage.array[index];
+        let newBox = this.$listLanguage.getCell(this.$selectIndex);
+        let newSelect = newBox.getChildByName("imgSelect");
+        newSelect.visible = true;
+      }
+    }
+  }, "LanguageView");
+  __decorate14([
+    property13(),
+    __metadata("design:type", typeof (_a5 = typeof List3 !== "undefined" && List3) === "function" ? _a5 : Object)
+  ], LanguageView.prototype, "$listLanguage", void 0);
+  __decorate14([
+    property13(),
+    __metadata("design:type", typeof (_b3 = typeof Image3 !== "undefined" && Image3) === "function" ? _b3 : Object)
+  ], LanguageView.prototype, "$imgClose", void 0);
+  LanguageView = __decorate14([
+    regClass13(),
+    __metadata("design:paramtypes", [])
+  ], LanguageView);
+
+  // E:/WheelChairMan/src/Scene/LevelUpView.ts
+  var __decorate15 = __$decorate("f7577321-9089-4d76-ba3b-af9c8a8c0afe", "../src/Scene/LevelUpView.ts");
+  var { regClass: regClass14, property: property14 } = Laya;
+  var LevelUpView = /* @__PURE__ */ __name(class LevelUpView2 extends UIBase_default {
+  }, "LevelUpView");
+  LevelUpView = __decorate15([
+    regClass14()
+  ], LevelUpView);
+
+  // E:/WheelChairMan/src/Mgr/CurrencyMgr.ts
+  var CurrencyMgr = class {
+    /**初始化 */
+    static init() {
+      this.$currencyMap = ResLoader.instance.getDataTableById(3003 /* Currency */);
+    }
+    /**获取对应颜色 */
+    static getColorById(id) {
+      let data = this.$currencyMap.get(id);
+      if (data && data["color"]) {
+        return "#" + data["color"];
+      }
+      return "#fff";
+    }
+    /**获取对应图标 */
+    static getImgUrlById(id) {
+      let data = this.$currencyMap.get(id);
+      if (data && data["imgId"]) {
+        return ResLoader.instance.getUrlById(data["imgId"]);
+      }
+      return "";
+    }
+  };
+  __name(CurrencyMgr, "CurrencyMgr");
+
+  // E:/WheelChairMan/src/Mgr/LevelMgr.ts
+  var LevelMgr = class {
+    /**初始化 */
+    static init() {
+      this.$levelDataTable = ResLoader.instance.getDataTableById(3004 /* Level */);
+    }
+    /**等级 */
+    static get level() {
+      for (let [, value] of this.$levelDataTable) {
+        let minEx = value["minEx"];
+        let maxEx = value["maxEx"];
+        if (!isNaN(minEx) && !isNaN(maxEx)) {
+          if (GameData.experience > minEx && GameData.experience <= maxEx) {
+            return value["level"];
+          }
+        }
+      }
+      return 1;
+    }
+  };
+  __name(LevelMgr, "LevelMgr");
+  /**经验表 */
+  LevelMgr.$levelDataTable = /* @__PURE__ */ new Map();
+
+  // E:/WheelChairMan/src/Util/StringUtil.ts
+  var __decorate16 = __$decorate("9f8ef9b7-13a5-4980-a9d8-46f8659dff82", "../src/Util/StringUtil.ts");
+  var StringUtil = class {
+    /**小数转百分比，默认保留两位小数 */
+    static num2percentage(num, d = 2) {
+      num = num * 100;
+      return num.toFixed(d) + "%";
+    }
+    /**获取随机整数  */
+    static randNum(min, max) {
+      let range = max - min;
+      let rand = Math.random();
+      let num = min + Math.round(rand * range);
+      return num;
+    }
+    /**随机排序数组 */
+    static shuffle(arr) {
+      let i = arr.length, t, j;
+      while (--i) {
+        j = Math.floor(Math.random() * i);
+        t = arr[i];
+        arr[i] = arr[j];
+        arr[j] = t;
+      }
+    }
+    /**
+     * RGB转16色
+     * @param str RGB(23, 245, 56)
+     * @returns string
+     */
+    static colorHex(str) {
+      let reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+      if (/^(rgb|RGB)/.test(str)) {
+        let aColor = str.replace(/(?:\(|\)|rgb|RGB)*/g, "").split(",");
+        let strHex = "#";
+        for (let i = 0; i < aColor.length; i++) {
+          let hex = Number(aColor[i]).toString(16);
+          if (hex.length < 2) {
+            hex = "0" + hex;
+          }
+          strHex += hex;
+        }
+        if (strHex.length !== 7) {
+          strHex = str;
+        }
+        return strHex;
+      } else if (reg.test(str)) {
+        let aNum = str.replace(/#/, "").split("");
+        if (aNum.length === 6) {
+          return str;
+        } else if (aNum.length === 3) {
+          let numHex = "#";
+          for (let i = 0; i < aNum.length; i += 1) {
+            numHex += aNum[i] + aNum[i];
+          }
+          return numHex;
+        }
+      }
+      return str;
+    }
+    /**
+     * 16色 转 RGB
+     * @param str #34538b
+     * @returns v3
+     */
+    static colorRgb(str) {
+      str = str.toLowerCase();
+      let color = this._colorDic[str];
+      if (color) {
+        return color;
+      }
+      var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+      if (str && reg.test(str)) {
+        if (str.length === 4) {
+          var sColorNew = "#";
+          for (var i = 1; i < 4; i += 1) {
+            sColorNew += str.slice(i, i + 1).concat(str.slice(i, i + 1));
+          }
+          str = sColorNew;
+        }
+        var sColorChange = [];
+        for (var i = 1; i < 7; i += 2) {
+          sColorChange.push(parseInt("0x" + str.slice(i, i + 2)));
+        }
+        this._colorDic[str] = sColorChange;
+        return sColorChange;
+      } else {
+        console.log("\u8F6C\u6362\u9519\u8BEF");
+        return [0, 0, 0];
+      }
+    }
+    /**
+     * 格式化单位
+     * @param num
+     * @returns
+     */
+    static formatToUnitEN(num) {
+      num = Math.round(num);
+      let result = "";
+      if (("" + num).length > 15) {
+        result = (num / 1e15).toFixed(2) + "MB";
+      } else if (("" + num).length > 12) {
+        result = (num / 1e12).toFixed(2) + "KB";
+      } else if (("" + num).length > 9) {
+        result = (num / 1e9).toFixed(2) + "B";
+      } else if (("" + num).length > 6) {
+        result = (num / 1e6).toFixed(2) + "M";
+      } else if (("" + num).length > 3) {
+        result = (num / 1e3).toFixed(2) + "K";
+      } else {
+        result = "" + num.toFixed(0);
+      }
+      return result;
+    }
+  };
+  __name(StringUtil, "StringUtil");
+  StringUtil._colorDic = {};
+
+  // E:/WheelChairMan/src/Scene/LoadView.ts
+  var __decorate17 = __$decorate("9797e892-adab-4c82-8f5e-800b37f590f9", "../src/Scene/LoadView.ts");
+  var _a6;
+  var _b4;
+  var _c3;
+  var Image4 = Laya.Image;
+  var Label2 = Laya.Label;
+  var Handler5 = Laya.Handler;
+  var { regClass: regClass15, property: property15 } = Laya;
+  var LoadView = /* @__PURE__ */ __name(class LoadView2 extends UIBase_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+      this.imgMask = this.imgLoad.mask;
+      this.checkVersion();
+    }
+    /**请求版本 */
+    checkVersion() {
+      this.startPreLoad();
+    }
+    /**开始预加载全局资源 */
+    startPreLoad() {
+      ResLoader.instance.preloadRes(Handler5.create(this, this.onCompleted), Handler5.create(this, this._onProgress));
+    }
+    /**刷新进度条 */
+    _onProgress(value) {
+      this.imgMask.width = this.imgLoad.width * value;
+      this.labelLoad.text = "Loading\u2026" + StringUtil.num2percentage(value);
+    }
+    /**加载完成可以进入主界面 */
+    onCompleted() {
+      console.log("load_conCompleted");
+      this.initData();
+      this.openScene();
+    }
+    /**初始化数据 */
+    initData() {
+      LocalizationMgr.init();
+      LevelMgr.init();
+      CurrencyMgr.init();
+      Scene3dMgr.instance.init();
+      MainGame_default.instance.init();
+    }
+    /**打开页面 */
+    openScene() {
+      UIBaseMgr.instance.open(1013 /* MainView */);
+      this.close();
+    }
+  }, "LoadView");
+  __decorate17([
+    property15(),
+    __metadata("design:type", typeof (_a6 = typeof Image4 !== "undefined" && Image4) === "function" ? _a6 : Object)
+  ], LoadView.prototype, "imgLoad", void 0);
+  __decorate17([
+    property15(),
+    __metadata("design:type", typeof (_b4 = typeof Label2 !== "undefined" && Label2) === "function" ? _b4 : Object)
+  ], LoadView.prototype, "labelLoad", void 0);
+  __decorate17([
+    property15(),
+    __metadata("design:type", typeof (_c3 = typeof Label2 !== "undefined" && Label2) === "function" ? _c3 : Object)
+  ], LoadView.prototype, "testLabel", void 0);
+  LoadView = __decorate17([
+    regClass15(),
+    __metadata("design:paramtypes", [])
+  ], LoadView);
+
+  // E:/WheelChairMan/src/Scene/LoseView.ts
+  var __decorate18 = __$decorate("9b8220cb-adbc-4d84-9618-c7c9f2bd85f3", "../src/Scene/LoseView.ts");
+  var { regClass: regClass16, property: property16 } = Laya;
+  var LoseView = /* @__PURE__ */ __name(class LoseView2 extends UIBase_default {
+  }, "LoseView");
+  LoseView = __decorate18([
+    regClass16()
+  ], LoseView);
+
+  // E:/WheelChairMan/src/Scene/LuckyBoxView.ts
+  var __decorate19 = __$decorate("d94dafff-05f0-4479-9a1a-ab9861a24025", "../src/Scene/LuckyBoxView.ts");
+  var _a7;
+  var _b5;
+  var _c4;
+  var _d;
+  var _e;
+  var Text2 = Laya.Text;
+  var Image5 = Laya.Image;
+  var { regClass: regClass17, property: property17 } = Laya;
+  var LuckyBoxView = /* @__PURE__ */ __name(class LuckyBoxView2 extends UIBase_default {
+    constructor() {
+      super();
+      this.$luckyboxDataTable = /* @__PURE__ */ new Map();
+    }
+    onOpened(param) {
+      this.regClick(this.imgClose, this.close);
+      this.regClick(this.imgOpen, this.openLuckBox);
+      this.$luckyboxDataTable = ResLoader.instance.getDataTableById(3001 /* LuckyBox */);
+      this.initLuckBox();
+    }
+    initLuckBox() {
+      if (this.$param == void 0) {
+        this.$param = 0;
+      }
+      this.txtMsg.text = LocalizationMgr.$getLocalizationByKey(this.$luckyboxDataTable.get(this.$param)["localizationKey"]);
+      this.imgBox.skin = ResLoader.instance.getUrlById(this.$luckyboxDataTable.get(this.$param)["imgPath"]);
+    }
+    openLuckBox() {
+      switch (this.$param) {
+        case 0:
+          break;
+      }
+    }
+  }, "LuckyBoxView");
+  __decorate19([
+    property17(),
+    __metadata("design:type", typeof (_a7 = typeof Image5 !== "undefined" && Image5) === "function" ? _a7 : Object)
+  ], LuckyBoxView.prototype, "imgLight", void 0);
+  __decorate19([
+    property17(),
+    __metadata("design:type", typeof (_b5 = typeof Image5 !== "undefined" && Image5) === "function" ? _b5 : Object)
+  ], LuckyBoxView.prototype, "imgBox", void 0);
+  __decorate19([
+    property17(),
+    __metadata("design:type", typeof (_c4 = typeof Image5 !== "undefined" && Image5) === "function" ? _c4 : Object)
+  ], LuckyBoxView.prototype, "imgClose", void 0);
+  __decorate19([
+    property17(),
+    __metadata("design:type", typeof (_d = typeof Image5 !== "undefined" && Image5) === "function" ? _d : Object)
+  ], LuckyBoxView.prototype, "imgOpen", void 0);
+  __decorate19([
+    property17(),
+    __metadata("design:type", typeof (_e = typeof Text2 !== "undefined" && Text2) === "function" ? _e : Object)
+  ], LuckyBoxView.prototype, "txtMsg", void 0);
+  LuckyBoxView = __decorate19([
+    regClass17(),
+    __metadata("design:paramtypes", [])
+  ], LuckyBoxView);
+
+  // E:/WheelChairMan/src/Scene/MainView.ts
+  var __decorate20 = __$decorate("127f9431-d96d-491c-b782-2549a9c38d7b", "../src/Scene/MainView.ts");
+  var _a8;
+  var _b6;
+  var _c5;
+  var _d2;
+  var _e2;
+  var _f;
+  var _g;
+  var _h;
+  var _j;
+  var _k;
+  var _l;
+  var _m;
+  var _o;
+  var _p;
+  var _q;
+  var Text3 = Laya.Text;
+  var Box2 = Laya.Box;
+  var Label3 = Laya.Label;
+  var Image6 = Laya.Image;
+  var { regClass: regClass18, property: property18 } = Laya;
+  var MainView = /* @__PURE__ */ __name(class MainView2 extends UIBase_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+      this.labelName.text = GameData.userName;
+      this.imgHead.skin = GameData.userHead;
+      this.imgLevelMask = this.imgLevel.mask;
+      this.imgMsMask = this.imgMs.mask;
+    }
+    addEvent() {
+      this.regEvent("GOLDCHANGE" /* GOLDCHANGE */, this.changeGold, true);
+      this.regEvent("DIAMONDCHANGE" /* DIAMONDCHANGE */, this.changeDiamond, true);
+      this.regEvent("EXPERIENCECHANGE" /* EXPERIENCECHANGE */, this.changeExperience, true);
+      this.regClick(this.imgPlusGold, this.openShop, 1001 /* gold */);
+      this.regClick(this.imgPlusDiamond, this.openShop, 1002 /* diamond */);
+      this.regClick(this.imgRing, this.openUserInfo);
+      this.regClick(this.imgShop, this.openShop, 1002 /* diamond */);
+      this.regClick(this.imgRanking, this.openRanking);
+      this.regClick(this.imgSettings, this.openSetting);
+      this.regClick(this.imgStart, this.checkFirstTime);
+    }
+    changeGold() {
+      this.txtGold.text = StringUtil.formatToUnitEN(GameData.gold);
+    }
+    changeDiamond() {
+      this.txtDiamond.text = StringUtil.formatToUnitEN(GameData.diamond);
+    }
+    changeExperience() {
+      this.txtLevel.text = LevelMgr.level.toString();
+    }
+    openShop(currency) {
+      UIBaseMgr.instance.open(1019 /* ShopView */, currency);
+    }
+    openUserInfo() {
+    }
+    openSetting() {
+      UIBaseMgr.instance.open(1018 /* SettingView */);
+    }
+    openRanking() {
+      UIBaseMgr.instance.open(1017 /* RankingView */);
+    }
+    checkFirstTime() {
+      let value = LocalStorageMgr.getItem("FIRESTTIME" /* FIRSTTIME */);
+      console.log(value);
+      this.selectPlayer();
+    }
+    showGuide() {
+    }
+    selectPlayer() {
+      MainGame_default.instance.selectPlayerAndWeapon();
+      UIBaseMgr.instance.open(1021 /* SelectPlayerView */);
+      this.close();
+    }
+    selectWeapon() {
+    }
+    onClosed() {
+    }
+  }, "MainView");
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_a8 = typeof Text3 !== "undefined" && Text3) === "function" ? _a8 : Object)
+  ], MainView.prototype, "txtGold", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_b6 = typeof Image6 !== "undefined" && Image6) === "function" ? _b6 : Object)
+  ], MainView.prototype, "imgPlusGold", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_c5 = typeof Text3 !== "undefined" && Text3) === "function" ? _c5 : Object)
+  ], MainView.prototype, "txtDiamond", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_d2 = typeof Image6 !== "undefined" && Image6) === "function" ? _d2 : Object)
+  ], MainView.prototype, "imgPlusDiamond", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_e2 = typeof Image6 !== "undefined" && Image6) === "function" ? _e2 : Object)
+  ], MainView.prototype, "imgHead", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_f = typeof Image6 !== "undefined" && Image6) === "function" ? _f : Object)
+  ], MainView.prototype, "imgRing", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_g = typeof Image6 !== "undefined" && Image6) === "function" ? _g : Object)
+  ], MainView.prototype, "imgLevel", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_h = typeof Image6 !== "undefined" && Image6) === "function" ? _h : Object)
+  ], MainView.prototype, "imgMs", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_j = typeof Text3 !== "undefined" && Text3) === "function" ? _j : Object)
+  ], MainView.prototype, "txtLevel", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_k = typeof Label3 !== "undefined" && Label3) === "function" ? _k : Object)
+  ], MainView.prototype, "labelName", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_l = typeof Image6 !== "undefined" && Image6) === "function" ? _l : Object)
+  ], MainView.prototype, "imgShop", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_m = typeof Image6 !== "undefined" && Image6) === "function" ? _m : Object)
+  ], MainView.prototype, "imgRanking", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_o = typeof Image6 !== "undefined" && Image6) === "function" ? _o : Object)
+  ], MainView.prototype, "imgSettings", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_p = typeof Image6 !== "undefined" && Image6) === "function" ? _p : Object)
+  ], MainView.prototype, "imgStart", void 0);
+  __decorate20([
+    property18(),
+    __metadata("design:type", typeof (_q = typeof Box2 !== "undefined" && Box2) === "function" ? _q : Object)
+  ], MainView.prototype, "Main", void 0);
+  MainView = __decorate20([
+    regClass18(),
+    __metadata("design:paramtypes", [])
+  ], MainView);
+
+  // E:/WheelChairMan/src/Scene/MyInfoView.ts
+  var __decorate21 = __$decorate("dd16d8bf-53b3-41cc-81c1-44f39afec08e", "../src/Scene/MyInfoView.ts");
+  var { regClass: regClass19, property: property19 } = Laya;
+  var MyInfoView = /* @__PURE__ */ __name(class MyInfoView2 extends UIBase_default {
+  }, "MyInfoView");
+  MyInfoView = __decorate21([
+    regClass19()
+  ], MyInfoView);
+
+  // E:/WheelChairMan/src/Scene/PauseView.ts
+  var __decorate22 = __$decorate("352c01f5-c61a-4387-bd3b-63f412ac12c7", "../src/Scene/PauseView.ts");
+  var { regClass: regClass20, property: property20 } = Laya;
+  var PauseView = /* @__PURE__ */ __name(class PauseView2 extends UIBase_default {
+  }, "PauseView");
+  PauseView = __decorate22([
+    regClass20()
+  ], PauseView);
+
+  // E:/WheelChairMan/src/Scene/PrivacyAgreementView.ts
+  var __decorate23 = __$decorate("df9b38f8-2d16-4280-849d-786074a729fe", "../src/Scene/PrivacyAgreementView.ts");
+  var _a9;
+  var _b7;
+  var _c6;
+  var _d3;
+  var Label4 = Laya.Label;
+  var Image7 = Laya.Image;
+  var Panel = Laya.Panel;
+  var { regClass: regClass21, property: property21 } = Laya;
+  var PrivacyAgreementView = /* @__PURE__ */ __name(class PrivacyAgreementView2 extends UIBase_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+      this.regClick(this.imgSure, this.sure);
+      this.regClick(this.imgCancel, this.cancel);
+      let data = ResLoader.instance.getResById(4001 /* PrivacyAgreement */);
+      this.txtAgreement.text = data.data;
+      this.txtAgreement.height = data.data.length / 0.9;
+    }
+    sure() {
+      this.close();
+    }
+    cancel() {
+      this.close();
+    }
+  }, "PrivacyAgreementView");
+  __decorate23([
+    property21(),
+    __metadata("design:type", typeof (_a9 = typeof Image7 !== "undefined" && Image7) === "function" ? _a9 : Object)
+  ], PrivacyAgreementView.prototype, "imgSure", void 0);
+  __decorate23([
+    property21(),
+    __metadata("design:type", typeof (_b7 = typeof Image7 !== "undefined" && Image7) === "function" ? _b7 : Object)
+  ], PrivacyAgreementView.prototype, "imgCancel", void 0);
+  __decorate23([
+    property21(),
+    __metadata("design:type", typeof (_c6 = typeof Panel !== "undefined" && Panel) === "function" ? _c6 : Object)
+  ], PrivacyAgreementView.prototype, "panel", void 0);
+  __decorate23([
+    property21(),
+    __metadata("design:type", typeof (_d3 = typeof Label4 !== "undefined" && Label4) === "function" ? _d3 : Object)
+  ], PrivacyAgreementView.prototype, "txtAgreement", void 0);
+  PrivacyAgreementView = __decorate23([
+    regClass21(),
+    __metadata("design:paramtypes", [])
+  ], PrivacyAgreementView);
+
+  // E:/WheelChairMan/src/Scene/RankingView.ts
+  var __decorate24 = __$decorate("731a1c9f-76c7-4237-ad93-f469eb850bb9", "../src/Scene/RankingView.ts");
+  var _a10;
+  var _b8;
+  var _c7;
+  var _d4;
+  var _e3;
+  var _f2;
+  var Text4 = Laya.Text;
+  var Image8 = Laya.Image;
+  var List4 = Laya.List;
+  var Handler6 = Laya.Handler;
+  var { regClass: regClass22, property: property22 } = Laya;
+  var RankingView = /* @__PURE__ */ __name(class RankingView2 extends UIBase_default {
+    constructor() {
+      super();
+      this.rankingList = [
+        { "head": "", "name": "\u5F20\u4E09", "rank": 1, "lv": "100", "UID": "12324" },
+        { "head": "", "name": "\u674E\u56DB", "rank": 2, "lv": "99", "UID": "12324" },
+        { "head": "", "name": "\u738B\u9EBB\u5B50\u4E94", "rank": 3, "lv": "80", "UID": "12324" },
+        { "head": "", "name": "\u7231\u4E3D\u4E1D", "rank": 4, "lv": "77", "UID": "12324" },
+        { "head": "", "name": "\u8428\u9876\u9876", "rank": 5, "lv": "76", "UID": "12324" },
+        { "head": "", "name": "\u8C46\u8150\u4EE8", "rank": 6, "lv": "75", "UID": "12324" },
+        { "head": "", "name": "s'd''j", "rank": 7, "lv": "30", "UID": "12324" },
+        { "head": "", "name": "NoRainLand", "rank": 8, "lv": "22", "UID": "654" },
+        { "head": "", "name": "\u5F00\u82B1\u7ED3\u679C", "rank": 9, "lv": "11", "UID": "12324" },
+        { "head": "", "name": "323", "rank": 10, "lv": "2", "UID": "12324" }
+      ];
+    }
+    onOpened(param) {
+      let data = this.rankingList.find((value) => {
+        console.log(value);
+        return value.UID == "654";
+      });
+      if (data) {
+        this.txtLV.text = data.lv.toString();
+        this.txtName.text = data.name.toString();
+        this.txtRank.text = data.rank.toString();
+      }
+      this.$rankingMap = ResLoader.instance.getDataTableById(3006 /* Ranking */);
+    }
+    addEvent() {
+      this.regClick(this.imgClose, this.close);
+      this.listRanking.renderHandler = new Handler6(this, this.changeItem);
+      this.listRanking.array = this.rankingList;
+    }
+    changeItem(box, index) {
+      let txtLV = box.getChildByName("txtLV");
+      let txtName = box.getChildByName("txtName");
+      let txtRank = box.getChildByName("txtRank");
+      let data = box.dataSource;
+      txtLV.text = "LV" + data.lv.toString();
+      txtName.text = data.name.toString();
+      txtRank.text = data.rank.toString();
+      let imgRank = box.getChildByName("imgRank");
+      switch (data.rank) {
+        case 1:
+          let data1 = this.$rankingMap.get(1001 /* fist */);
+          txtRank.color = data1["color"];
+          imgRank.skin = ResLoader.instance.getUrlById(data1["imgId"]);
+          break;
+        case 2:
+          let data2 = this.$rankingMap.get(1002 /* second */);
+          txtRank.color = data2["color"];
+          imgRank.skin = ResLoader.instance.getUrlById(data2["imgId"]);
+          break;
+        case 3:
+          let data3 = this.$rankingMap.get(1003 /* third */);
+          txtRank.color = data3["color"];
+          imgRank.skin = ResLoader.instance.getUrlById(data3["imgId"]);
+          break;
+        default:
+          let data4 = this.$rankingMap.get(1004 /* default */);
+          txtRank.color = data4["color"];
+          imgRank.skin = ResLoader.instance.getUrlById(data4["imgId"]);
+          break;
+      }
+    }
+  }, "RankingView");
+  __decorate24([
+    property22(),
+    __metadata("design:type", typeof (_a10 = typeof Image8 !== "undefined" && Image8) === "function" ? _a10 : Object)
+  ], RankingView.prototype, "imgClose", void 0);
+  __decorate24([
+    property22(),
+    __metadata("design:type", typeof (_b8 = typeof Image8 !== "undefined" && Image8) === "function" ? _b8 : Object)
+  ], RankingView.prototype, "imgHead", void 0);
+  __decorate24([
+    property22(),
+    __metadata("design:type", typeof (_c7 = typeof Text4 !== "undefined" && Text4) === "function" ? _c7 : Object)
+  ], RankingView.prototype, "txtName", void 0);
+  __decorate24([
+    property22(),
+    __metadata("design:type", typeof (_d4 = typeof Text4 !== "undefined" && Text4) === "function" ? _d4 : Object)
+  ], RankingView.prototype, "txtLV", void 0);
+  __decorate24([
+    property22(),
+    __metadata("design:type", typeof (_e3 = typeof Text4 !== "undefined" && Text4) === "function" ? _e3 : Object)
+  ], RankingView.prototype, "txtRank", void 0);
+  __decorate24([
+    property22(),
+    __metadata("design:type", typeof (_f2 = typeof List4 !== "undefined" && List4) === "function" ? _f2 : Object)
+  ], RankingView.prototype, "listRanking", void 0);
+  RankingView = __decorate24([
+    regClass22(),
+    __metadata("design:paramtypes", [])
+  ], RankingView);
+
+  // E:/WheelChairMan/src/Enum/PlayerEnum.ts
+  var PlayerEnum = /* @__PURE__ */ ((PlayerEnum2) => {
+    PlayerEnum2[PlayerEnum2["BusinessMan"] = 1001] = "BusinessMan";
+    PlayerEnum2[PlayerEnum2["BombDisEX"] = 1002] = "BombDisEX";
+    PlayerEnum2[PlayerEnum2["GreatMagician"] = 1003] = "GreatMagician";
+    PlayerEnum2[PlayerEnum2["Kingsman"] = 1004] = "Kingsman";
+    PlayerEnum2[PlayerEnum2["ScoutRobot"] = 1005] = "ScoutRobot";
+    PlayerEnum2[PlayerEnum2["RookiePirate"] = 1006] = "RookiePirate";
+    return PlayerEnum2;
+  })(PlayerEnum || {});
+
+  // E:/WheelChairMan/src/Scene/SelectPlayerView.ts
+  var __decorate25 = __$decorate("cdfd211f-d5a7-4c9b-9ffb-7956585db6fc", "../src/Scene/SelectPlayerView.ts");
+  var _a11;
+  var _b9;
+  var _c8;
+  var _d5;
+  var _e4;
+  var _f3;
+  var _g2;
+  var _h2;
+  var _j2;
+  var _k2;
+  var Label5 = Laya.Label;
+  var Image9 = Laya.Image;
+  var { regClass: regClass23, property: property23 } = Laya;
+  var SelectPlayerView = /* @__PURE__ */ __name(class SelectPlayerView2 extends UIBase_default {
+    constructor() {
+      super();
+      this.$viewIndex = 0;
+      this.$selectIndex = 0;
+    }
+    onOpened(param) {
+      this.$viewIndex = 0;
+      this.$selectIndex = 0;
+      if (!this.$playerList) {
+        this.$playerList = [];
+        for (let item in PlayerEnum) {
+          if (!isNaN(Number(item))) {
+            this.$playerList.push(Number(item));
+          }
+        }
+      }
+      this.showPlayer();
+    }
+    addEvent() {
+      this.regClick(this.imgBack, this.goBack);
+      this.regClick(this.imgNext, this.nextItem);
+      this.regClick(this.imgPrev, this.prevItem);
+      this.regClick(this.imgSelect, this.selectPlayer);
+      this.regClick(this.imgSelect, this.selectPlayer);
+      this.regClick(this.imgUnlock, this.unlockPlayer);
+      this.regEvent("UNLOCKPLAYER" /* UNLOCKPLAYER */, this.changeNexPrev, true);
+    }
+    changeData() {
+      this.$playerData = PlayerMgr.instance.getSelectedPlayerData(this.$playerList[this.$selectIndex]);
+      this.labelName.text = LocalizationMgr.getLocalizationByEnum(this.$playerData.localizationKey);
+      this.labelDic.text = LocalizationMgr.getLocalizationByEnum(this.$playerData.descriptionKey);
+      if (PlayerMgr.instance.isUnlock(this.$playerList[this.$selectIndex])) {
+        this.imgLock.visible = false;
+        this.imgSelect.visible = true;
+        this.imgUnlock.visible = false;
+      } else {
+        this.imgLock.visible = true;
+        this.imgSelect.visible = false;
+        this.imgUnlock.visible = true;
+        this.labelUnlock.text = LocalizationMgr.getLocalizationByEnum(1030 /* UNLOCK */, this.$playerData.unlockPrice);
+        this.imgCurrency.skin = CurrencyMgr.getImgUrlById(this.$playerData["currency"]);
+      }
+    }
+    changeNexPrev() {
+      if (this.$selectIndex <= 0) {
+        this.imgPrev.visible = false;
+      } else if (this.$selectIndex >= this.$playerList.length - 1) {
+        this.imgNext.visible = false;
+      } else {
+        this.imgPrev.visible = true;
+        this.imgNext.visible = true;
+      }
+      this.changeData();
+    }
+    goBack() {
+      this.close();
+      UIBaseMgr.instance.open(1013 /* MainView */);
+      MainGame_default.instance.goToMain();
+    }
+    showPlayer() {
+      EventMgr.event("SHOWPLAYER" /* SHOWPLAYER */, this.$playerList[this.$selectIndex]);
+    }
+    nextItem() {
+      this.$selectIndex++;
+      this.changeNexPrev();
+      this.showPlayer();
+    }
+    prevItem() {
+      this.$selectIndex--;
+      this.changeNexPrev();
+      this.showPlayer();
+    }
+    selectPlayer() {
+      PlayerMgr.instance.setSelectedPlayerId(this.$playerList[this.$selectIndex]);
+      MainGame_default.instance.loadGameScene();
+      UIBaseMgr.instance.open(1008 /* GameView */);
+      this.close();
+    }
+    unlockPlayer() {
+      PlayerMgr.instance.unlockPlayer(this.$playerList[this.$selectIndex]);
+    }
+    onClosed() {
+    }
+  }, "SelectPlayerView");
+  __decorate25([
+    property23(),
+    __metadata("design:type", typeof (_a11 = typeof Image9 !== "undefined" && Image9) === "function" ? _a11 : Object)
+  ], SelectPlayerView.prototype, "imgBack", void 0);
+  __decorate25([
+    property23(),
+    __metadata("design:type", typeof (_b9 = typeof Image9 !== "undefined" && Image9) === "function" ? _b9 : Object)
+  ], SelectPlayerView.prototype, "imgNext", void 0);
+  __decorate25([
+    property23(),
+    __metadata("design:type", typeof (_c8 = typeof Image9 !== "undefined" && Image9) === "function" ? _c8 : Object)
+  ], SelectPlayerView.prototype, "imgPrev", void 0);
+  __decorate25([
+    property23(),
+    __metadata("design:type", typeof (_d5 = typeof Image9 !== "undefined" && Image9) === "function" ? _d5 : Object)
+  ], SelectPlayerView.prototype, "imgLock", void 0);
+  __decorate25([
+    property23(),
+    __metadata("design:type", typeof (_e4 = typeof Image9 !== "undefined" && Image9) === "function" ? _e4 : Object)
+  ], SelectPlayerView.prototype, "imgSelect", void 0);
+  __decorate25([
+    property23(),
+    __metadata("design:type", typeof (_f3 = typeof Label5 !== "undefined" && Label5) === "function" ? _f3 : Object)
+  ], SelectPlayerView.prototype, "labelName", void 0);
+  __decorate25([
+    property23(),
+    __metadata("design:type", typeof (_g2 = typeof Label5 !== "undefined" && Label5) === "function" ? _g2 : Object)
+  ], SelectPlayerView.prototype, "labelDic", void 0);
+  __decorate25([
+    property23(),
+    __metadata("design:type", typeof (_h2 = typeof Image9 !== "undefined" && Image9) === "function" ? _h2 : Object)
+  ], SelectPlayerView.prototype, "imgUnlock", void 0);
+  __decorate25([
+    property23(),
+    __metadata("design:type", typeof (_j2 = typeof Label5 !== "undefined" && Label5) === "function" ? _j2 : Object)
+  ], SelectPlayerView.prototype, "labelUnlock", void 0);
+  __decorate25([
+    property23(),
+    __metadata("design:type", typeof (_k2 = typeof Image9 !== "undefined" && Image9) === "function" ? _k2 : Object)
+  ], SelectPlayerView.prototype, "imgCurrency", void 0);
+  SelectPlayerView = __decorate25([
+    regClass23(),
+    __metadata("design:paramtypes", [])
+  ], SelectPlayerView);
+
+  // E:/WheelChairMan/src/Mgr/SoundMgr.ts
+  var SoundManager = Laya.SoundManager;
+  var SoundMgr = class {
+    /**修改音乐音量 */
+    static changeMusicVolume(value) {
+      SoundManager.musicVolume = value;
+    }
+    /**修改音效音量 */
+    static changeSoundVolume(value) {
+      SoundManager.soundVolume = value;
+    }
+    /**播放音效 */
+    static playSound(soundEnum, loopTimes) {
+      SoundManager.playSound(this.$soundBaseUrl + soundEnum + this.$soundUrlStuff, loopTimes);
+    }
+  };
+  __name(SoundMgr, "SoundMgr");
+  /**音乐路径 */
+  SoundMgr.$musicBaseUrl = "";
+  /**音乐后缀 */
+  SoundMgr.$musicUrlStuff = ".mp3";
+  /**声音路径 */
+  SoundMgr.$soundBaseUrl = "";
+  /**声音后缀 */
+  SoundMgr.$soundUrlStuff = ".mp3";
+
+  // E:/WheelChairMan/src/Mgr/VibrateMgr.ts
+  var VibrateMgr = class {
+    /**是否震动 */
+    static get isVibrate() {
+      return !!this.$isVibrate;
+    }
+    static set isVibrate(value) {
+      if (value) {
+        this.$isVibrate = 1;
+      } else {
+        this.$isVibrate = 0;
+      }
+    }
+  };
+  __name(VibrateMgr, "VibrateMgr");
+  /**震动 */
+  VibrateMgr.$isVibrate = -1;
+
+  // E:/WheelChairMan/src/Util/Slider.ts
+  var __decorate26 = __$decorate("35b37bb8-b4f2-4360-8030-42b6c06ee038", "../src/Util/Slider.ts");
+  var _a12;
+  var _b10;
+  var _c9;
+  var Image10 = Laya.Image;
+  var { regClass: regClass24, property: property24 } = Laya;
+  var Slider = /* @__PURE__ */ __name(class Slider2 extends Laya.Script {
+    constructor() {
+      super();
+      this.isH = false;
+      this.value = 0.7;
+      this.$isTouch = false;
+    }
+    onAwake() {
+      this.$isTouch = false;
+      this.$slider = this.owner;
+      this.$imgMask = this.imgLoad.mask;
+      this.$offX = this.imgLoad.width * this.value;
+      this.$offY = this.imgLoad.height * this.value;
+      this.changeMask();
+    }
+    onMouseDown(evt) {
+      if (evt.target == this.imgBar) {
+        this.$isTouch = true;
+        if (this.isH) {
+          this.$start = Laya.stage.mouseX;
+        } else {
+          this.$start = Laya.stage.mouseY;
+        }
+      }
+    }
+    onMouseMove(evt) {
+      if (evt.target == this.imgBar && this.$isTouch) {
+        if (this.isH) {
+          this.$offX += Laya.stage.mouseX - this.$start;
+          this.$offX = this.$offX > this.imgLoad.width ? this.imgLoad.width : this.$offX;
+          this.$offX = this.$offX < 0 ? 0 : this.$offX;
+          this.value = this.$offX / this.imgLoad.width;
+          this.$start = Laya.stage.mouseX;
+        } else {
+          this.$offY += Laya.stage.mouseY - this.$start;
+          this.$offY = this.$offY > this.imgLoad.height ? this.imgLoad.height : this.$offY;
+          this.$offY = this.$offY < 0 ? 0 : this.$offY;
+          this.value = this.$offX / this.imgLoad.height;
+          this.$start = Laya.stage.mouseY;
+        }
+        this.valueChange();
+      }
+    }
+    onMouseUp(evt) {
+      this.$isTouch = false;
+    }
+    onMouseOver(evt) {
+      this.$isTouch = false;
+    }
+    onMouseOut(evt) {
+      this.$isTouch = false;
+    }
+    /**初始化 */
+    init(caller, callback) {
+      this.$caller = caller;
+      this.$callback = callback;
+    }
+    changeMask() {
+      if (this.isH) {
+        this.$imgMask.width = this.imgLoad.width * this.value;
+        this.imgBar.x = this.imgLoad.width * this.value + this.imgBg.x;
+      } else {
+        this.$imgMask.height = this.imgLoad.height * this.value;
+        this.imgBar.y = this.imgLoad.height * this.value + this.imgBg.y;
+      }
+    }
+    valueChange() {
+      this.changeMask();
+      if (this.$caller && this.$callback) {
+        this.$callback.call(this.$caller, this.value);
+      }
+    }
+    onDisable() {
+    }
+  }, "Slider");
+  __decorate26([
+    property24(),
+    __metadata("design:type", Boolean)
+  ], Slider.prototype, "isH", void 0);
+  __decorate26([
+    property24(),
+    __metadata("design:type", typeof (_a12 = typeof Image10 !== "undefined" && Image10) === "function" ? _a12 : Object)
+  ], Slider.prototype, "imgLoad", void 0);
+  __decorate26([
+    property24(),
+    __metadata("design:type", typeof (_b10 = typeof Image10 !== "undefined" && Image10) === "function" ? _b10 : Object)
+  ], Slider.prototype, "imgBar", void 0);
+  __decorate26([
+    property24(),
+    __metadata("design:type", typeof (_c9 = typeof Image10 !== "undefined" && Image10) === "function" ? _c9 : Object)
+  ], Slider.prototype, "imgBg", void 0);
+  __decorate26([
+    property24(),
+    __metadata("design:type", Number)
+  ], Slider.prototype, "value", void 0);
+  Slider = __decorate26([
+    regClass24(),
+    __metadata("design:paramtypes", [])
+  ], Slider);
+  var Slider_default = Slider;
+
+  // E:/WheelChairMan/src/Util/Toggle.ts
+  var __decorate27 = __$decorate("0f5a24a0-2f83-4219-9165-99195082aa4a", "../src/Util/Toggle.ts");
+  var _a13;
+  var Image11 = Laya.Image;
+  var { regClass: regClass25, property: property25 } = Laya;
+  var Toggle = /* @__PURE__ */ __name(class Toggle2 extends Laya.Script {
+    constructor() {
+      super();
+      this.isON = false;
+    }
+    onEnable() {
+      this.$imgBg = this.owner;
+      this.$imgBg.on(Laya.Event.CLICK, this, this.changeValue);
+      this.changeItem();
+    }
+    init(caller, callback, isON) {
+      if (isON != void 0) {
+        this.isON = isON;
+      }
+      this.$caller = caller;
+      this.$callback = callback;
+    }
+    changeItem() {
+      if (this.isON) {
+        this.imgItem.x = 85;
+        this.imgItem.gray = false;
+      } else {
+        this.imgItem.x = 5;
+        this.imgItem.gray = true;
+      }
+    }
+    changeValue() {
+      this.isON = !this.isON;
+      this.changeItem();
+      if (this.$caller && this.$callback) {
+        this.$callback.call(this.$caller, this.isON);
+      }
+    }
+    onDisable() {
+      this.$imgBg.off(Laya.Event.CLICK, this, this.changeValue);
+    }
+  }, "Toggle");
+  __decorate27([
+    property25(),
+    __metadata("design:type", Boolean)
+  ], Toggle.prototype, "isON", void 0);
+  __decorate27([
+    property25(),
+    __metadata("design:type", typeof (_a13 = typeof Image11 !== "undefined" && Image11) === "function" ? _a13 : Object)
+  ], Toggle.prototype, "imgItem", void 0);
+  Toggle = __decorate27([
+    regClass25(),
+    __metadata("design:paramtypes", [])
+  ], Toggle);
+  var Toggle_default = Toggle;
+
+  // E:/WheelChairMan/src/Scene/SettingView.ts
+  var __decorate28 = __$decorate("9811079c-9340-49a7-8d8a-71570d70a98d", "../src/Scene/SettingView.ts");
+  var _a14;
+  var _b11;
+  var _c10;
+  var _d6;
+  var _e5;
+  var _f4;
+  var _g3;
+  var _h3;
+  var Box3 = Laya.Box;
+  var Label6 = Laya.Label;
+  var Image12 = Laya.Image;
+  var { regClass: regClass26, property: property26 } = Laya;
+  var SettingView = /* @__PURE__ */ __name(class SettingView2 extends UIBase_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+      this.$sliderBgm = this.sliderBgm.getComponent(Slider_default);
+      this.$sliderSfx = this.sliderSfx.getComponent(Slider_default);
+      this.$toggleShake = this.toggleShake.getComponent(Toggle_default);
+      this.$sliderBgm.init(this, this.bgmChange);
+      this.$sliderSfx.init(this, this.sfxChange);
+      this.$toggleShake.init(this, this.shakeChange);
+    }
+    addEvent() {
+      this.regClick(this.imgClose, this.close);
+      this.regClick(this.imgSupport, this.getSupport);
+      this.regClick(this.imgLanguage, this.changeLanguage);
+      this.regClick(this.txtAgreement, this.openPrivacyAgreement);
+      this.regEvent("LANGUAGECHANGE" /* LANGUAGECHANGE */, this.changeLanguageIcon, true);
+    }
+    bgmChange(value) {
+      SoundMgr.changeMusicVolume(value);
+    }
+    sfxChange(value) {
+      SoundMgr.changeSoundVolume(value);
+    }
+    shakeChange(value) {
+      VibrateMgr.isVibrate = value;
+    }
+    changeLanguageIcon() {
+      this.imgLan.skin = ResLoader.instance.getUrlById(LocalizationMgr.getFlagSkinIdById(LocalizationMgr.Language));
+    }
+    openPrivacyAgreement() {
+      UIBaseMgr.instance.open(1016 /* PrivacyAgreementView */);
+    }
+    getSupport() {
+      Laya.Browser.window.open(ProjectConfig.support);
+      console.log("support");
+    }
+    changeLanguage() {
+      UIBaseMgr.instance.open(1009 /* LanguageView */);
+    }
+    onClosed() {
+    }
+  }, "SettingView");
+  __decorate28([
+    property26(),
+    __metadata("design:type", typeof (_a14 = typeof Image12 !== "undefined" && Image12) === "function" ? _a14 : Object)
+  ], SettingView.prototype, "imgClose", void 0);
+  __decorate28([
+    property26(),
+    __metadata("design:type", typeof (_b11 = typeof Box3 !== "undefined" && Box3) === "function" ? _b11 : Object)
+  ], SettingView.prototype, "sliderSfx", void 0);
+  __decorate28([
+    property26(),
+    __metadata("design:type", typeof (_c10 = typeof Box3 !== "undefined" && Box3) === "function" ? _c10 : Object)
+  ], SettingView.prototype, "sliderBgm", void 0);
+  __decorate28([
+    property26(),
+    __metadata("design:type", typeof (_d6 = typeof Image12 !== "undefined" && Image12) === "function" ? _d6 : Object)
+  ], SettingView.prototype, "toggleShake", void 0);
+  __decorate28([
+    property26(),
+    __metadata("design:type", typeof (_e5 = typeof Image12 !== "undefined" && Image12) === "function" ? _e5 : Object)
+  ], SettingView.prototype, "imgLanguage", void 0);
+  __decorate28([
+    property26(),
+    __metadata("design:type", typeof (_f4 = typeof Image12 !== "undefined" && Image12) === "function" ? _f4 : Object)
+  ], SettingView.prototype, "imgLan", void 0);
+  __decorate28([
+    property26(),
+    __metadata("design:type", typeof (_g3 = typeof Image12 !== "undefined" && Image12) === "function" ? _g3 : Object)
+  ], SettingView.prototype, "imgSupport", void 0);
+  __decorate28([
+    property26(),
+    __metadata("design:type", typeof (_h3 = typeof Label6 !== "undefined" && Label6) === "function" ? _h3 : Object)
+  ], SettingView.prototype, "txtAgreement", void 0);
+  SettingView = __decorate28([
+    regClass26(),
+    __metadata("design:paramtypes", [])
+  ], SettingView);
+
+  // E:/WheelChairMan/src/Util/ObjUtil.ts
+  var ObjUtil = class {
+    /**数组去重 */
+    static clearList(arr) {
+      arr.every((item) => {
+      });
+    }
+    /**Set转List */
+    static set2List(_set) {
+      if (_set && _set.size) {
+        let arr = [];
+        for (let item of _set) {
+          arr.push(item);
+        }
+        return arr;
+      }
+      return null;
+    }
+  };
+  __name(ObjUtil, "ObjUtil");
+
+  // E:/WheelChairMan/src/Scene/ShopView.ts
+  var __decorate29 = __$decorate("6101acc2-fac8-487c-9045-7d083746b9cd", "../src/Scene/ShopView.ts");
+  var _a15;
+  var _b12;
+  var _c11;
+  var Image13 = Laya.Image;
+  var List5 = Laya.List;
+  var Handler7 = Laya.Handler;
+  var { regClass: regClass27, property: property27 } = Laya;
+  var ShopView = /* @__PURE__ */ __name(class ShopView2 extends UIBase_default {
+    constructor() {
+      super();
+      this.$titleSelectedIndex = 0;
+    }
+    onOpened(param) {
+      if (!this.$shopDataTable) {
+        this.$shopDataTable = ResLoader.instance.getDataTableById(3005 /* Shop */);
+      }
+      this.$titleSet = /* @__PURE__ */ new Set();
+      this.$shopList = [];
+      if (this.$shopDataTable) {
+        for (let [key, value] of this.$shopDataTable) {
+          this.$titleSet.add(value["localizationKey"]);
+          if (value["page"] && this.$shopList[value["page"] - 1]) {
+            this.$shopList[value["page"] - 1].push(value);
+          } else {
+            this.$shopList[value["page"] - 1] = [value];
+          }
+        }
+      }
+    }
+    addEvent() {
+      this.regClick(this.imgClose, this.close);
+      this.listTitle.renderHandler = new Handler7(this, this.changeTitleItem);
+      this.listTitle.selectHandler = new Handler7(this, this.selectTitleItem);
+      this.listShop.renderHandler = new Handler7(this, this.changeShopItem);
+      this.regEvent("LANGUAGECHANGE" /* LANGUAGECHANGE */, this.changeLanguage, true);
+    }
+    changeTitleItem(box, index) {
+      let imgUnSelected = box.getChildByName("imgUnSelected");
+      let labelUnSelected = imgUnSelected.getChildByName("labelUnSelected");
+      let imgSelected = box.getChildByName("imgSelected");
+      let labelSelected = imgSelected.getChildByName("labelSelected");
+      let show = index == this.listTitle.selectedIndex;
+      imgSelected.visible = show;
+      imgUnSelected.visible = !show;
+      let str = LocalizationMgr.$getLocalizationByKey(box.dataSource);
+      labelUnSelected.text = str;
+      labelSelected.text = str;
+    }
+    selectTitleItem(index) {
+      this.$titleSelectedIndex = index;
+      this.listShop.array = this.$shopList[this.$titleSelectedIndex];
+    }
+    changeLanguage() {
+      let index = 0;
+      switch (this.$param) {
+        case 1001 /* gold */:
+          index = 0;
+          break;
+        case 1002 /* diamond */:
+          index = 1;
+          break;
+      }
+      this.listTitle.array = ObjUtil.set2List(this.$titleSet);
+      this.listTitle.width = this.listTitle.array.length * 328;
+      this.listTitle.centerX = 0;
+      this.listTitle.selectedIndex = index;
+      this.listShop.array = this.$shopList[this.$titleSelectedIndex];
+      this.listShop.selectedIndex = index;
+    }
+    changeShopItem(box, index) {
+      let data = box.dataSource;
+      let imgItem = box.getChildByName("imgItem");
+      imgItem.skin = ResLoader.instance.getUrlById(data["imgId"]);
+      imgItem.height = imgItem.source.sourceHeight;
+      imgItem.width = imgItem.source.sourceWidth;
+      let imgBest = box.getChildByName("imgBest");
+      imgBest.visible = !!data["isBest"];
+      let imgHot = box.getChildByName("imgHot");
+      imgHot.visible = !!data["isHot"];
+      let labelNum = box.getChildByName("labelNum");
+      labelNum.text = data["number"];
+      labelNum.color = CurrencyMgr.getColorById(data["shopId"]);
+      let bonus = data["bonus"];
+      if (bonus) {
+        let labelBonus = box.getChildByName("labelBonus");
+        labelBonus.text = "+" + StringUtil.num2percentage(data["bonus"], 0);
+      }
+      let imgBuy = box.getChildByName("imgBuy");
+      imgBuy.offAll();
+      imgBuy.on(Laya.Event.CLICK, this, () => {
+        this.buySomething(data);
+      });
+      let imgCurrency = imgBuy.getChildByName("imgCurrency");
+      imgCurrency.skin = CurrencyMgr.getImgUrlById(data["priceId"]);
+      imgCurrency.height = imgCurrency.source.sourceHeight;
+      imgCurrency.width = imgCurrency.source.sourceWidth;
+      let txtPrice = imgBuy.getChildByName("txtPrice");
+      txtPrice.text = data["price"].toFixed(2);
+      txtPrice.color = CurrencyMgr.getColorById(data["priceId"]);
+    }
+    buySomething(obj) {
+      console.log(obj);
+      switch (obj["priceId"]) {
+        case 1001 /* gold */:
+          break;
+        case 1002 /* diamond */:
+          if (GameData.diamond >= obj["price"]) {
+            GameData.diamond -= obj["price"];
+            this.getSomething(obj);
+          } else {
+            UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1026 /* YOUDONTHAVEENOUGHDIAMONDS */, 1023 /* DIAMOND */));
+          }
+          break;
+        case 1003 /* key */:
+          break;
+        case 1005 /* dollar */:
+          UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1027 /* NOTYETIMPLEMENTED */));
+          break;
+      }
+    }
+    getSomething(obj) {
+      switch (obj["shopId"]) {
+        case 1001 /* gold */:
+          GameData.gold += obj["number"];
+          UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1028 /* CONGRATULATIONSONGETTING */, obj["number"], 1022 /* GOLD */));
+          break;
+        case 1002 /* diamond */:
+          GameData.diamond += obj["number"];
+          UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1028 /* CONGRATULATIONSONGETTING */, obj["number"], 1023 /* DIAMOND */));
+          break;
+        case 1003 /* key */:
+          GameData.key += obj["number"];
+          break;
+      }
+    }
+  }, "ShopView");
+  __decorate29([
+    property27(),
+    __metadata("design:type", typeof (_a15 = typeof Image13 !== "undefined" && Image13) === "function" ? _a15 : Object)
+  ], ShopView.prototype, "imgClose", void 0);
+  __decorate29([
+    property27(),
+    __metadata("design:type", typeof (_b12 = typeof List5 !== "undefined" && List5) === "function" ? _b12 : Object)
+  ], ShopView.prototype, "listTitle", void 0);
+  __decorate29([
+    property27(),
+    __metadata("design:type", typeof (_c11 = typeof List5 !== "undefined" && List5) === "function" ? _c11 : Object)
+  ], ShopView.prototype, "listShop", void 0);
+  ShopView = __decorate29([
+    regClass27(),
+    __metadata("design:paramtypes", [])
+  ], ShopView);
+
+  // E:/WheelChairMan/src/Scene/SignInView.ts
+  var __decorate30 = __$decorate("658fcc51-8109-42a6-a372-0d6e36f801cc", "../src/Scene/SignInView.ts");
+  var { regClass: regClass28, property: property28 } = Laya;
+  var SignInView = /* @__PURE__ */ __name(class SignInView2 extends UIBase_default {
+  }, "SignInView");
+  SignInView = __decorate30([
+    regClass28()
+  ], SignInView);
+
+  // E:/WheelChairMan/src/Scene/SureView.ts
+  var __decorate31 = __$decorate("2eee226a-dcc2-4965-9ad2-4c490d20fbdf", "../src/Scene/SureView.ts");
+  var _a16;
+  var _b13;
+  var _c12;
+  var _d7;
+  var Label7 = Laya.Label;
+  var Image14 = Laya.Image;
+  var { regClass: regClass29, property: property29 } = Laya;
+  var SureView = /* @__PURE__ */ __name(class SureView2 extends UIBase_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+      this.regClick(this.imgSure, this.sureClick);
+      this.regClick(this.imgCancel, this.cancelClick);
+      this.txtTitle.text = param.title;
+      this.txtMsg.text = param.msg;
+      this.caller = param.caller;
+      this.sureCallback = param.sureCallback;
+      this.cancelCallback = param.cancelCallBack;
+      if (!this.cancelCallback) {
+        this.imgSure.centerX = 0;
+        this.imgSure.visible = true;
+      } else {
+        this.imgSure.centerX = 180;
+        this.imgSure.visible = true;
+        this.imgCancel.visible = true;
+      }
+    }
+    sureClick() {
+      if (this.caller && this.sureCallback) {
+        this.sureCallback.call(this.caller);
+      }
+      this.close();
+    }
+    cancelClick() {
+      if (this.caller && this.cancelCallback) {
+        this.cancelCallback.call(this.caller);
+      }
+      this.close();
+    }
+    onClosed() {
+      this.caller = null;
+      this.sureCallback = null;
+      this.cancelCallback = null;
+      this.imgSure.visible = false;
+      this.imgCancel.visible = false;
+      this.imgSure.centerX = 180;
+    }
+  }, "SureView");
+  __decorate31([
+    property29(),
+    __metadata("design:type", typeof (_a16 = typeof Image14 !== "undefined" && Image14) === "function" ? _a16 : Object)
+  ], SureView.prototype, "imgSure", void 0);
+  __decorate31([
+    property29(),
+    __metadata("design:type", typeof (_b13 = typeof Image14 !== "undefined" && Image14) === "function" ? _b13 : Object)
+  ], SureView.prototype, "imgCancel", void 0);
+  __decorate31([
+    property29(),
+    __metadata("design:type", typeof (_c12 = typeof Label7 !== "undefined" && Label7) === "function" ? _c12 : Object)
+  ], SureView.prototype, "txtTitle", void 0);
+  __decorate31([
+    property29(),
+    __metadata("design:type", typeof (_d7 = typeof Label7 !== "undefined" && Label7) === "function" ? _d7 : Object)
+  ], SureView.prototype, "txtMsg", void 0);
+  SureView = __decorate31([
+    regClass29(),
+    __metadata("design:paramtypes", [])
+  ], SureView);
+
+  // E:/WheelChairMan/src/Scene/TipsView.ts
+  var __decorate32 = __$decorate("a1b11e33-3318-4f7e-af1d-2bbf5fa13333", "../src/Scene/TipsView.ts");
+  var _a17;
+  var Text5 = Laya.Text;
+  var { regClass: regClass30, property: property30 } = Laya;
+  var TipsView = /* @__PURE__ */ __name(class TipsView2 extends UIBase_default {
+    constructor() {
+      super();
+    }
+    onEnable() {
+      let img = this.owner;
+      img.centerX = 0;
+      img.centerY = 200;
+    }
+    onOpened(param) {
+      this.txtMsg.text = param;
+      Timer.get(1500, this, () => {
+        this.close();
+      }).once().start();
+    }
+  }, "TipsView");
+  __decorate32([
+    property30(),
+    __metadata("design:type", typeof (_a17 = typeof Text5 !== "undefined" && Text5) === "function" ? _a17 : Object)
+  ], TipsView.prototype, "txtMsg", void 0);
+  TipsView = __decorate32([
+    regClass30(),
+    __metadata("design:paramtypes", [])
+  ], TipsView);
+
+  // E:/WheelChairMan/src/Scene3d/GameScene.ts
+  var __decorate33 = __$decorate("0706d1ae-b0b6-47a5-9387-2a6360b2893e", "../src/Scene3d/GameScene.ts");
+  var _a18;
+  var _b14;
+  var _c13;
+  var _d8;
+  var _e6;
+  var Sprite3D = Laya.Sprite3D;
+  var Camera = Laya.Camera;
+  var DirectionLight = Laya.DirectionLight;
+  var { regClass: regClass31, property: property31 } = Laya;
+  var GameScene = /* @__PURE__ */ __name(class GameScene2 extends Scene3d_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+      EventMgr.event("GAMESCENELOADED" /* GAMESCENELOADED */, this);
+    }
+    addEvent() {
+    }
+    onClosed() {
+    }
+  }, "GameScene");
+  __decorate33([
+    property31(),
+    __metadata("design:type", typeof (_a18 = typeof Camera !== "undefined" && Camera) === "function" ? _a18 : Object)
+  ], GameScene.prototype, "mainCamera", void 0);
+  __decorate33([
+    property31(),
+    __metadata("design:type", typeof (_b14 = typeof Sprite3D !== "undefined" && Sprite3D) === "function" ? _b14 : Object)
+  ], GameScene.prototype, "groundStage", void 0);
+  __decorate33([
+    property31(),
+    __metadata("design:type", typeof (_c13 = typeof DirectionLight !== "undefined" && DirectionLight) === "function" ? _c13 : Object)
+  ], GameScene.prototype, "light", void 0);
+  __decorate33([
+    property31(),
+    __metadata("design:type", typeof (_d8 = typeof Sprite3D !== "undefined" && Sprite3D) === "function" ? _d8 : Object)
+  ], GameScene.prototype, "playerStage", void 0);
+  __decorate33([
+    property31(),
+    __metadata("design:type", typeof (_e6 = typeof Sprite3D !== "undefined" && Sprite3D) === "function" ? _e6 : Object)
+  ], GameScene.prototype, "zombieStage", void 0);
+  GameScene = __decorate33([
+    regClass31(),
+    __metadata("design:paramtypes", [])
+  ], GameScene);
+
+  // E:/WheelChairMan/src/Scene3d/MainScene.ts
+  var __decorate34 = __$decorate("71c8c727-1736-44b1-984f-02439872df63", "../src/Scene3d/MainScene.ts");
+  var { regClass: regClass32, property: property32 } = Laya;
+  var MainScene = /* @__PURE__ */ __name(class MainScene2 extends Scene3d_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+    }
+  }, "MainScene");
+  MainScene = __decorate34([
+    regClass32(),
+    __metadata("design:paramtypes", [])
+  ], MainScene);
+
+  // E:/WheelChairMan/src/Scene3d/SelectPlayerScene.ts
+  var __decorate35 = __$decorate("34405a80-13b4-48be-ac44-94bb920f1518", "../src/Scene3d/SelectPlayerScene.ts");
+  var _a19;
+  var Sprite3D2 = Laya.Sprite3D;
+  var { regClass: regClass33, property: property33 } = Laya;
+  var SelectPlayerScene = /* @__PURE__ */ __name(class SelectPlayerScene2 extends Scene3d_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+      if (!this.$playerList) {
+        this.$playerList = [];
+        this.$playerList = [];
+        for (let item in PlayerEnum) {
+          if (!isNaN(Number(item))) {
+            this.$playerList.push(Number(item));
+          }
+        }
+      }
+    }
+    addEvent() {
+      this.regEvent("SHOWPLAYER" /* SHOWPLAYER */, this.showPlayer);
+    }
+    showPlayer(playerId) {
+      var _a20;
+      (_a20 = this.$playerObj) === null || _a20 === void 0 ? void 0 : _a20.removeSelf();
+      this.$playerObj = PlayerMgr.instance.getSelectPlayer(playerId);
+      this.$playerObj && this.playerStage.addChild(this.$playerObj);
+      this.$playerObj && (this.$playerObj.transform.position = Sprite3d.ZERO);
+    }
+    onClosed() {
+      var _a20;
+      (_a20 = this.$playerObj) === null || _a20 === void 0 ? void 0 : _a20.removeSelf();
+    }
+  }, "SelectPlayerScene");
+  __decorate35([
+    property33(),
+    __metadata("design:type", typeof (_a19 = typeof Sprite3D2 !== "undefined" && Sprite3D2) === "function" ? _a19 : Object)
+  ], SelectPlayerScene.prototype, "playerStage", void 0);
+  SelectPlayerScene = __decorate35([
+    regClass33(),
+    __metadata("design:paramtypes", [])
+  ], SelectPlayerScene);
+
+  // E:/WheelChairMan/src/Util/Base64.ts
+  var __decorate36 = __$decorate("fe62c9ad-c7c3-4baa-8f7c-216a9f051006", "../src/Util/Base64.ts");
+  var Base64 = class {
+    /**
+     * 编码
+     * @param input 输入
+     */
+    static encode(input) {
+      let output = "";
+      let chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+      let i = 0;
+      input = this._utf8_encode(input);
+      while (i < input.length) {
+        chr1 = input.charCodeAt(i++);
+        chr2 = input.charCodeAt(i++);
+        chr3 = input.charCodeAt(i++);
+        enc1 = chr1 >> 2;
+        enc2 = (chr1 & 3) << 4 | chr2 >> 4;
+        enc3 = (chr2 & 15) << 2 | chr3 >> 6;
+        enc4 = chr3 & 63;
+        if (isNaN(chr2)) {
+          enc3 = enc4 = 64;
+        } else if (isNaN(chr3)) {
+          enc4 = 64;
+        }
+        output = output + this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) + this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+      }
+      return output;
+    }
+    /**
+     * 译码
+     * @param input 输入
+     */
+    static decode(input) {
+      let output = "";
+      let chr1, chr2, chr3;
+      let enc1, enc2, enc3, enc4;
+      let i = 0;
+      input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+      while (i < input.length) {
+        enc1 = this._keyStr.indexOf(input.charAt(i++));
+        enc2 = this._keyStr.indexOf(input.charAt(i++));
+        enc3 = this._keyStr.indexOf(input.charAt(i++));
+        enc4 = this._keyStr.indexOf(input.charAt(i++));
+        chr1 = enc1 << 2 | enc2 >> 4;
+        chr2 = (enc2 & 15) << 4 | enc3 >> 2;
+        chr3 = (enc3 & 3) << 6 | enc4;
+        output = output + String.fromCharCode(chr1);
+        if (enc3 !== 64) {
+          output = output + String.fromCharCode(chr2);
+        }
+        if (enc4 !== 64) {
+          output = output + String.fromCharCode(chr3);
+        }
+      }
+      output = this._utf8_decode(output);
+      return output;
+    }
+    // 
+    static _utf8_encode(string) {
+      string = string.replace(/\r\n/g, "\n");
+      let utftext = "";
+      for (let n = 0; n < string.length; n++) {
+        const c = string.charCodeAt(n);
+        if (c < 128) {
+          utftext += String.fromCharCode(c);
+        } else if (c > 127 && c < 2048) {
+          utftext += String.fromCharCode(c >> 6 | 192);
+          utftext += String.fromCharCode(c & 63 | 128);
+        } else {
+          utftext += String.fromCharCode(c >> 12 | 224);
+          utftext += String.fromCharCode(c >> 6 & 63 | 128);
+          utftext += String.fromCharCode(c & 63 | 128);
+        }
+      }
+      return utftext;
+    }
+    // 
+    static _utf8_decode(utftext) {
+      let string = "";
+      let i = 0;
+      let c = 0, c2 = 0, c3 = 0;
+      while (i < utftext.length) {
+        c = utftext.charCodeAt(i);
+        if (c < 128) {
+          string += String.fromCharCode(c);
+          i++;
+        } else if (c > 191 && c < 224) {
+          c2 = utftext.charCodeAt(i + 1);
+          string += String.fromCharCode((c & 31) << 6 | c2 & 63);
+          i += 2;
+        } else {
+          c2 = utftext.charCodeAt(i + 1);
+          c3 = utftext.charCodeAt(i + 2);
+          string += String.fromCharCode((c & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
+          i += 3;
+        }
+      }
+      return string;
+    }
+  };
+  __name(Base64, "Base64");
+  Base64._keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+
+  // E:/WheelChairMan/src/Game/BaseItem/BaseItemMgr.ts
+  var __decorate37 = __$decorate("24b34e30-2f17-4824-a3b0-0ba530674c37", "../src/Game/BaseItem/BaseItemMgr.ts");
+  var Vector35 = Laya.Vector3;
+  var Quaternion2 = Laya.Quaternion;
+  var Pool4 = Laya.Pool;
 })();
 //# sourceMappingURL=bundle.js.map

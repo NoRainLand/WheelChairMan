@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-25 19:20:06 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-25 19:23:32
+ * @Last Modified time: 2023-02-27 20:11:06
  */
 /**游戏状态 */
 export enum GameStepEnum {
@@ -12,14 +12,16 @@ export enum GameStepEnum {
     SelectPlayer = 1002,
     /**选择武器 */
     SelectWeapon = 1003,
+    /**加载游戏场景 */
+    LoadGameScene = 1004,
     /**游戏进行中 */
-    GameStart = 1004,
+    GameStart = 1005,
     /**游戏暂停 */
-    GamePause = 1005,
+    GamePause = 1006,
     /**玩家死亡倒计时 */
-    PlayerDead = 1006,
+    PlayerDead = 1007,
     /**游戏失败 */
-    GameLose = 1007,
+    GameLose = 1008,
     /**游戏胜利 */
-    GameWin = 1008,
+    GameWin = 1009,
 }

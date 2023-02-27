@@ -21,7 +21,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-02-24 22:40:31 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-25 17:06:13
+ * @Last Modified time: 2023-02-27 19:12:41
  */
 const { regClass, property } = Laya;
 /**选择人物界面 */
@@ -56,6 +56,9 @@ export default class SelectPlayerScene extends Scene3d {
         this.$playerObj = PlayerMgr.instance.getSelectPlayer(playerId);
         this.$playerObj && this.playerStage.addChild(this.$playerObj);
         this.$playerObj && (this.$playerObj.transform.position = Sprite3d.ZERO);
+    }
+    onClosed(): void {
+        this.$playerObj?.removeSelf();
     }
 
 }

@@ -48,7 +48,7 @@
     "laya.spine": false
   },
   "spineVersion": "3.8",
-  "stat": false,
+  "stat": true,
   "vConsole": false,
   "alertGlobalError": false
 }

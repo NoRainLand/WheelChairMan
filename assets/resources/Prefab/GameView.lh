@@ -15,7 +15,92 @@
       "_$type": "ddf0e22e-43aa-4145-b2f5-8a127efb5611",
       "scriptPath": "../src/Scene/GameView.ts",
       "depth": 2,
-      "isSingleton": true
+      "isSingleton": true,
+      "AniType": 0,
+      "listHealth": {
+        "_$ref": "fpgnko1q"
+      },
+      "rocketBoxL": {
+        "_$ref": "lzzqzyt6",
+        "_$type": "7204f275-aa8d-45b5-b2eb-b4122c72d7a3"
+      },
+      "rocketBoxR": {
+        "_$ref": "q844o93g",
+        "_$type": "7204f275-aa8d-45b5-b2eb-b4122c72d7a3"
+      }
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "fqmbtqj2",
+      "_$type": "Box",
+      "name": "Main",
+      "width": 1920,
+      "height": 1080,
+      "mouseEnabled": true,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "bottom": 0,
+      "_$child": [
+        {
+          "_$id": "fpgnko1q",
+          "_$type": "List",
+          "name": "listHealth",
+          "x": 16,
+          "y": 18,
+          "width": 1837,
+          "height": 60,
+          "mouseEnabled": true,
+          "repeatX": 24,
+          "repeatY": 1,
+          "itemRender": {
+            "_$type": "any",
+            "value": {
+              "_$ver": 1,
+              "_$id": "2pnf0p4p",
+              "_$type": "Box",
+              "name": "render",
+              "width": 76,
+              "height": 64,
+              "_$child": [
+                {
+                  "_$id": "0mrc7k65",
+                  "_$type": "Image",
+                  "name": "heart",
+                  "x": -5.684341886080802e-14,
+                  "y": 5.3290705182007514e-14,
+                  "width": 76,
+                  "height": 64,
+                  "skin": "res://b6d3fb29-baa0-4f97-b114-ed8c5fd838a6"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "_$id": "lzzqzyt6",
+      "_$prefab": "7fd6bc5b-3640-4074-a660-14201bc8bb04",
+      "name": "RockerBoxL",
+      "active": true,
+      "x": 50,
+      "y": 758,
+      "visible": true,
+      "left": 50,
+      "bottom": 50
+    },
+    {
+      "_$id": "q844o93g",
+      "_$prefab": "7fd6bc5b-3640-4074-a660-14201bc8bb04",
+      "name": "RockerBoxR",
+      "active": true,
+      "x": 1598,
+      "y": 758,
+      "visible": true,
+      "right": 50,
+      "bottom": 50
     }
   ]
 }

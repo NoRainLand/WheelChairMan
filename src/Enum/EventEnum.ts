@@ -22,4 +22,9 @@ export enum EventEnum {
 
     /**显示玩家 */
     SHOWPLAYER = "SHOWPLAYER",
+    /**解锁玩家 */
+    UNLOCKPLAYER = "UNLOCKPLAYER",
+
+    /**游戏场景加载完成 */
+    GAMESCENELOADED = "GAMESCENELOADED",
 }

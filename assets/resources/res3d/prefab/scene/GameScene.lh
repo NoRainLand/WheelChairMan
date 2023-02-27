@@ -3,6 +3,27 @@
   "_$id": "dlj4g932",
   "_$type": "Sprite3D",
   "name": "GameScene",
+  "_$comp": [
+    {
+      "_$type": "0706d1ae-b0b6-47a5-9387-2a6360b2893e",
+      "scriptPath": "../src/Scene3d/GameScene.ts",
+      "mainCamera": {
+        "_$ref": "6jx8h8bvc6"
+      },
+      "groundStage": {
+        "_$ref": "ea9bkwcu"
+      },
+      "light": {
+        "_$ref": "6ni3p096l5"
+      },
+      "playerStage": {
+        "_$ref": "eeuhwpc3"
+      },
+      "zombieStage": {
+        "_$ref": "oyt2gv7t"
+      }
+    }
+  ],
   "_$child": [
     {
       "_$id": "6jx8h8bvc6",
@@ -11,14 +32,20 @@
       "transform": {
         "localPosition": {
           "_$type": "Vector3",
-          "y": 1,
-          "z": 5
+          "y": 12,
+          "z": 5.5
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": -0.5372996083468239,
+          "w": 0.8433914458128857
         }
       },
-      "orthographicVerticalSize": 10,
+      "orthographic": true,
+      "orthographicVerticalSize": 9,
       "fieldOfView": 60,
       "nearPlane": 0.3,
-      "farPlane": 1000,
+      "farPlane": 20,
       "clearFlag": 1,
       "clearColor": {
         "_$type": "Color",
@@ -78,114 +105,19 @@
       ]
     },
     {
-      "_$id": "lyeftnuo",
+      "_$id": "ea9bkwcu",
       "_$type": "Sprite3D",
-      "name": "Ground",
-      "_$comp": [
-        {
-          "_$type": "PhysicsCollider",
-          "colliderShape": {
-            "_$type": "BoxColliderShape",
-            "localOffset": {
-              "_$type": "Vector3",
-              "y": -5
-            },
-            "sizeX": 1000,
-            "sizeY": 10,
-            "sizeZ": 1000
-          }
-        }
-      ],
-      "_$child": [
-        {
-          "_$id": "m4tkhpbh",
-          "_$prefab": "637d9e33-7419-4786-b207-998a59e7eeb2",
-          "name": "GrassGround",
-          "active": true,
-          "layer": 0,
-          "transform": {
-            "localPosition": {
-              "_$type": "Vector3",
-              "x": -5,
-              "y": -0.11597979068756104,
-              "z": 0
-            },
-            "localRotation": {
-              "_$type": "Quaternion",
-              "x": 0,
-              "y": 0,
-              "z": 0,
-              "w": 1
-            }
-          }
-        },
-        {
-          "_$id": "1qdnuog7",
-          "_$prefab": "637d9e33-7419-4786-b207-998a59e7eeb2",
-          "name": "GrassGround(1)",
-          "active": true,
-          "layer": 0,
-          "transform": {
-            "localPosition": {
-              "_$type": "Vector3",
-              "x": 0,
-              "y": -0.11597979068756104,
-              "z": 0
-            },
-            "localRotation": {
-              "_$type": "Quaternion",
-              "x": 0,
-              "y": 0,
-              "z": 0,
-              "w": 1
-            }
-          }
-        },
-        {
-          "_$id": "nhjqgku8",
-          "_$prefab": "637d9e33-7419-4786-b207-998a59e7eeb2",
-          "name": "GrassGround(2)",
-          "active": true,
-          "layer": 0,
-          "transform": {
-            "localPosition": {
-              "_$type": "Vector3",
-              "x": 0,
-              "y": -0.11597979068756104,
-              "z": 5
-            },
-            "localRotation": {
-              "_$type": "Quaternion",
-              "x": 0,
-              "y": 0,
-              "z": 0,
-              "w": 1
-            }
-          }
-        },
-        {
-          "_$id": "awgf513s",
-          "_$prefab": "637d9e33-7419-4786-b207-998a59e7eeb2",
-          "name": "GrassGround(3)",
-          "active": true,
-          "layer": 0,
-          "transform": {
-            "localPosition": {
-              "_$type": "Vector3",
-              "x": -5,
-              "y": -0.11597979068756104,
-              "z": 5
-            },
-            "localRotation": {
-              "_$type": "Quaternion",
-              "x": 0,
-              "y": 0,
-              "z": 0,
-              "w": 1
-            }
-          }
-        }
-      ]
+      "name": "GroundStage"
+    },
+    {
+      "_$id": "eeuhwpc3",
+      "_$type": "Sprite3D",
+      "name": "PlayerStage"
+    },
+    {
+      "_$id": "oyt2gv7t",
+      "_$type": "Sprite3D",
+      "name": "ZombieStage"
     }
   ]
 }

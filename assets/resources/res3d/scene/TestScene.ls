@@ -238,6 +238,11 @@
               "w": 1
             }
           }
+        },
+        {
+          "_$id": "1pbeo0xf",
+          "_$type": "Sprite3D",
+          "name": "GameScene"
         }
       ]
     }

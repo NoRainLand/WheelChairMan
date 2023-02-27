@@ -1,0 +1,44 @@
+{
+  "_$ver": 1,
+  "_$id": "lzzqzyt6",
+  "_$type": "Box",
+  "name": "RockerBox",
+  "x": 90,
+  "y": 767,
+  "width": 272,
+  "height": 272,
+  "mouseEnabled": true,
+  "_$comp": [
+    {
+      "_$type": "7204f275-aa8d-45b5-b2eb-b4122c72d7a3",
+      "scriptPath": "../src/Util/RockerBox.ts",
+      "freeBar": {
+        "_$ref": "y5pp2ndo"
+      }
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "l3oy7f1y",
+      "_$type": "Image",
+      "name": "Image",
+      "width": 272,
+      "height": 272,
+      "skin": "res://4dbecbd5-83bc-44ce-8a89-04db6ec780a6"
+    },
+    {
+      "_$id": "y5pp2ndo",
+      "_$type": "Button",
+      "name": "freeBar",
+      "x": 82,
+      "y": 82,
+      "width": 108,
+      "height": 108,
+      "mouseEnabled": true,
+      "stateNum": 2,
+      "skin": "res://b0fcc10b-5557-44ff-911a-3ccd7b975025",
+      "label": "",
+      "labelSize": 20
+    }
+  ]
+}
