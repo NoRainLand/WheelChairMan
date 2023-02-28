@@ -45,6 +45,10 @@ export default class RockerBox extends Laya.Script {
     rockerValue: number = 0;
 
 
+    private caller: any;
+    private FstartMove: Function;
+    private FstopMove: Function;
+
 
 
     constructor() { super() };
@@ -118,19 +122,30 @@ export default class RockerBox extends Laya.Script {
             this.stopMove();
         }
     }
+
+    /**初始化目标 */
+    initTarget(caller: any, startMove: Function, stopMove: Function) {
+        this.caller = caller;
+        this.FstartMove = startMove
+        this.FstopMove = stopMove;
+    }
+
     /**开始移动 */
     startMove() {
-
+        this.FstartMove&&this.caller&&this.FstartMove.apply(this.caller,[this.rockerAngle,this.rockerValue]);
     }
     /**停止移动 */
     stopMove() {
-
+        this.FstopMove&&this.caller&&this.FstopMove.call(this.caller);
     }
 
     onDisable(): void {
         this.freeBar.off(Laya.Event.MOUSE_DOWN, this, this.rockerDown);
         Laya.stage.off(Laya.Event.MOUSE_MOVE, this, this.rockerMove);
         Laya.stage.off(Laya.Event.MOUSE_UP, this, this.rockerUp);
+        this.caller = null;
+        this.FstartMove = null;
+        this.FstopMove = null;
     }
 
 

@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-06 19:04:56 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-22 20:58:48
+ * @Last Modified time: 2023-02-28 17:13:18
  */
 /**事件枚举 */
 export enum EventEnum {
@@ -27,4 +27,12 @@ export enum EventEnum {
 
     /**游戏场景加载完成 */
     GAMESCENELOADED = "GAMESCENELOADED",
+
+    /**玩家血量改变 */
+    HEALTHCHANGE = "HEALTHCHANGE",
+
+    /**玩家死亡 */
+    PLAYERDEAD = "PLAYERDEAD",
+
+
 }

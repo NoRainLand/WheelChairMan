@@ -84,24 +84,6 @@
       ]
     },
     {
-      "_$id": "rpnrgp79",
-      "_$type": "Label",
-      "name": "Text",
-      "x": 405,
-      "y": 907,
-      "width": 1111,
-      "height": 123,
-      "bottom": 50,
-      "centerX": 0,
-      "text": "抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。 \n\n适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。",
-      "fontSize": 40,
-      "color": "#FFFFFF",
-      "align": "center",
-      "valign": "middle",
-      "leading": 0,
-      "padding": "0,0,0,0"
-    },
-    {
       "_$id": "e1c3gd8j",
       "_$type": "Label",
       "name": "labelLoad",
@@ -140,6 +122,23 @@
       "text": "",
       "fontSize": 30,
       "color": "rgba(9, 223, 18, 1)",
+      "leading": 0,
+      "padding": "0,0,0,0"
+    },
+    {
+      "_$id": "pf5z4ic2",
+      "_$type": "Label",
+      "name": "Label(1)",
+      "x": 265,
+      "y": 905,
+      "width": 1391,
+      "height": 147,
+      "bottom": 28,
+      "text": "抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。 \n\n适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。",
+      "fontSize": 32,
+      "color": "#FFFFFF",
+      "align": "center",
+      "valign": "middle",
       "leading": 0,
       "padding": "0,0,0,0"
     }

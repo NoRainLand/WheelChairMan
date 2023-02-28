@@ -31,7 +31,7 @@
       "friction": 0.5,
       "stepHeight": 0.1,
       "jumpAllTimes": 1,
-      "moveSpeed": 10
+      "moveSpeed": 0.05
     }
   ],
   "_$child": [

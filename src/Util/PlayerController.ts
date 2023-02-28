@@ -38,7 +38,9 @@ export default class PlayerController extends Script3d {
     @property()
     jumpAllTimes: number = 1;
     @property()
-    moveSpeed: number = 10;
+    moveSpeed: number = 0.05;//标准
+
+    private moveSpeedV3: Vector3;
 
 
     jumpTimes: number = 0;
@@ -57,7 +59,7 @@ export default class PlayerController extends Script3d {
         this.characterController.friction = this.friction;
         this.characterController.stepHeight = this.stepHeight;
         // Laya.Loader.createNodes()
-
+        this.moveSpeedV3 = new Vector3(0, 0, 0);
 
 
     }
@@ -66,15 +68,26 @@ export default class PlayerController extends Script3d {
 
     }
 
-    /**移动 */
-    move(v3: Vector3) {
-        Vector3.normalize(v3, v3);
-        Vector3.scale(v3, this.moveSpeed, v3);
-        this.characterController.move(v3);
+    /**
+     * 移动 
+     * @param angle z方向为正方向，逆时针旋转0到180°，顺时针旋转0到-180°
+     */
+    move(angle: number) {
+        angle = angle / 180 * Math.PI;
+        let offX = Math.sin(angle) * this.moveSpeed;
+        let offY = Math.cos(angle) * this.moveSpeed;
+        this.moveSpeedV3 = new Vector3(offX, 0, offY);
+        this.characterController.move(this.moveSpeedV3);
     }
+
+
+
+
+
     /**停止移动 */
     stopMove() {
         this.characterController.move(Sprite3d.ZERO);
+        console.log('----stopMove---');
     }
     /**跳跃 */
     jump() {

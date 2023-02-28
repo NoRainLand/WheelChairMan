@@ -13,14 +13,17 @@
       "states": [
         {
           "x": 10,
-          "y": 100,
+          "y": 99,
           "id": "-1",
           "name": "进入",
           "speed": 1,
           "clipEnd": 1,
           "soloTransitions": [
             {
-              "id": "0"
+              "id": "0",
+              "exitByTime": true,
+              "transduration": 0.15,
+              "exitTime": 0.85
             }
           ]
         },

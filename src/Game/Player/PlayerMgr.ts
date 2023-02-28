@@ -2,7 +2,7 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-27 20:09:34
+ * @Last Modified time: 2023-02-28 17:15:46
 */
 
 import GameData from "../../Data/GameData";
@@ -41,7 +41,7 @@ export default class PlayerMgr {
     }
     private $playerMap: Map<number, Object>;
 
-    private $selectedPlayerId: number;
+     $selectedPlayerId: number;
 
     private $sign: string = "playerId_"
 
@@ -58,31 +58,20 @@ export default class PlayerMgr {
         this.$playerMap = ResLoader.instance.getDataTableById(DataTableEnum.Player);
     }
 
+    startMove(angle: number, value: number) {
+        this.$playerItem && this.$playerItem.startMove(angle, value);
+    }
+    stopMove() {
+        this.$playerItem && this.$playerItem.stopMove();
+    }
 
+    startShoot(angle: number, value: number) {
+        this.$playerItem && this.$playerItem.startShoot(angle, value);
+    }
+    stopShoot() {
+        this.$playerItem && this.$playerItem.stopShoot();
+    }
 
-
-    // /**获取当前选择的玩家id */
-    // get selectedPlayerId(): number {
-    //     if (!this.$selectedPlayerId) {
-    //         let id = Number(LocalStorageMgr.getItem(LocalStorageEnum.PLAYERID)?.replace(this.$sign, ""));
-    //         if (isNaN(id)) {
-    //             this.$selectedPlayerId = 1001;
-    //             LocalStorageMgr.setItem(LocalStorageEnum.PLAYERID, this.$sign + this.$selectedPlayerId);
-    //         } else {
-    //             {
-    //                 this.$selectedPlayerId = id
-    //             }
-    //         }
-    //     }
-    //     return this.$selectedPlayerId
-    // }
-
-    // set selectedPlayerId(value: number) {
-    //     if (value) {
-    //         this.$selectedPlayerId = value;
-    //         LocalStorageMgr.setItem(LocalStorageEnum.PLAYERID, this.$sign + this.$selectedPlayerId);
-    //     }
-    // }
 
 
 
@@ -170,6 +159,11 @@ export default class PlayerMgr {
             let playerData = this.getSelectedPlayerData(playerId);
             obj = ResLoader.instance.getResCloneById(playerData?.["path"]);
             this.playerPool.set(playerId, obj);
+
+            let playerItem = obj.getComponent(PlayerItem);
+            if (playerItem) {
+                playerItem.playerData = this.getSelectedPlayerData(this.$selectedPlayerId);
+            }
         }
 
         return obj;
@@ -182,9 +176,10 @@ export default class PlayerMgr {
         this.$playerStage = stage;
         let obj = this.getSelectPlayer(this.$selectedPlayerId);
         if (obj && this.$playerStage) {
-            this.$playerStage.addChild(obj);
             this.$playerItem = obj.getComponent(PlayerItem);
             this.$playerItem.position = Sprite3d.ZERO;
+            this.$playerStage.addChild(obj);
+            this.$playerItem.gameStart();
         }
     }
 

@@ -104,6 +104,28 @@
           "clip": {
             "_$uuid": "150cc3d1-074a-4f9e-a758-7458d1daa5dd@lani4"
           }
+        },
+        {
+          "x": 175,
+          "y": 202,
+          "id": "2",
+          "name": "idle",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "150cc3d1-074a-4f9e-a758-7458d1daa5dd@lani1"
+          }
+        },
+        {
+          "x": 183,
+          "y": 271,
+          "id": "3",
+          "name": "death",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "150cc3d1-074a-4f9e-a758-7458d1daa5dd@lani0"
+          }
         }
       ],
       "defaultWeight": 1
@@ -154,6 +176,28 @@
           "clipEnd": 1,
           "clip": {
             "_$uuid": "150cc3d1-074a-4f9e-a758-7458d1daa5dd@lani2"
+          }
+        },
+        {
+          "x": 185,
+          "y": 212,
+          "id": "2",
+          "name": "idle",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "150cc3d1-074a-4f9e-a758-7458d1daa5dd@lani1"
+          }
+        },
+        {
+          "x": 193,
+          "y": 281,
+          "id": "3",
+          "name": "death",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "150cc3d1-074a-4f9e-a758-7458d1daa5dd@lani0"
           }
         }
       ],

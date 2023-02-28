@@ -1355,6 +1355,62 @@ function __$decorate(assetId, codePath) {
   __name(Sprite3d, "Sprite3d");
   Sprite3d.nodeDic = {};
 
+  // E:/WheelChairMan/src/Util/AnimatorTool.ts
+  var AnimatorTool = class {
+    /**
+    * 播放动画
+    * @param ani 动画
+    * @param name 动画名
+    * @param loop 是否循环
+    * @param speed 速度
+    * @param layerIndex 层级
+    * @param crossFade 是否过渡
+    * @param transitionDuration 过渡时间
+    */
+    static play(ani, name, loop = true, speed = 1, layerIndex = 0, crossFade = false, transitionDuration = 0.1) {
+      if (ani && name) {
+        let AnimatorState = ani.getControllerLayer(layerIndex).getAnimatorState(name);
+        if (AnimatorState) {
+          if (crossFade) {
+            ani.crossFade(name, transitionDuration, layerIndex);
+          } else {
+            ani.play(name, layerIndex);
+          }
+          AnimatorState.speed = speed;
+          AnimatorState.clip.islooping = loop;
+        } else {
+          console.log("\u540D\u79F0:" + name + " /\u5C42\u7EA7:" + layerIndex + "\u5BF9\u5E94\u7684\u52A8\u753B\u4E3A\u7A7A");
+        }
+      } else {
+        console.log("ani/name\u4E22\u5931");
+      }
+    }
+    /**
+     * 添加动画退出事件监听 注意 isLooping = true 不执行
+     * @param ani 动画
+     * @param name 动画名
+     * @param caller 域
+     * @param callback 回调函数
+     * @param layerIndex 层级
+     */
+    static initEvent(ani, name, caller, callback, layerIndex = 0) {
+      let layer = ani.getControllerLayer(layerIndex);
+      let aniStatus = layer.getAnimatorState(name);
+      if (aniStatus) {
+        let aniScript = aniStatus.getScript(Laya.AnimatorStateScript);
+        if (aniScript == null) {
+          aniScript = aniStatus.addScript(Laya.AnimatorStateScript);
+        }
+        aniScript.onStateExit = () => {
+          callback && caller && callback.call(caller);
+        };
+      } else {
+        console.log(name + "\u72B6\u6001\u4E3A\u7A7A");
+      }
+    }
+  };
+  __name(AnimatorTool, "AnimatorTool");
+
   // E:/WheelChairMan/src/Script3d/Script3d.ts
   var Vector32 = Laya.Vector3;
   var Script3d = class extends Laya.Script {
@@ -1509,7 +1565,7 @@ function __$decorate(assetId, codePath) {
       this.friction = 0.5;
       this.stepHeight = 0.1;
       this.jumpAllTimes = 1;
-      this.moveSpeed = 10;
+      this.moveSpeed = 0.05;
       this.jumpTimes = 0;
     }
     onEnable() {
@@ -1521,18 +1577,25 @@ function __$decorate(assetId, codePath) {
     onStart() {
       this.characterController.friction = this.friction;
       this.characterController.stepHeight = this.stepHeight;
+      this.moveSpeedV3 = new Vector33(0, 0, 0);
     }
     update(time) {
     }
-    /**移动 */
-    move(v3) {
-      Vector33.normalize(v3, v3);
-      Vector33.scale(v3, this.moveSpeed, v3);
-      this.characterController.move(v3);
+    /**
+     * 移动
+     * @param angle z方向为正方向，逆时针旋转0到180°，顺时针旋转0到-180°
+     */
+    move(angle) {
+      angle = angle / 180 * Math.PI;
+      let offX = Math.sin(angle) * this.moveSpeed;
+      let offY = Math.cos(angle) * this.moveSpeed;
+      this.moveSpeedV3 = new Vector33(offX, 0, offY);
+      this.characterController.move(this.moveSpeedV3);
     }
     /**停止移动 */
     stopMove() {
       this.characterController.move(Sprite3d.ZERO);
+      console.log("----stopMove---");
     }
     /**跳跃 */
     jump() {
@@ -1675,11 +1738,16 @@ function __$decorate(assetId, codePath) {
 
   // E:/WheelChairMan/src/Game/Player/PlayerItem.ts
   var __decorate6 = __$decorate("778295ff-e54e-4576-82ea-f69285cd3b58", "../src/Game/Player/PlayerItem.ts");
+  var Vector35 = Laya.Vector3;
+  var Animator = Laya.Animator;
+  var PixelLineSprite3D = Laya.PixelLineSprite3D;
+  var Color = Laya.Color;
   var { regClass: regClass5, property: property5 } = Laya;
   var PlayerItem = /* @__PURE__ */ __name(class PlayerItem2 extends BaseItem {
     constructor() {
-      super(...arguments);
+      super();
       this.$health = 0;
+      this.totalHealth = 0;
     }
     get health() {
       return this.$health;
@@ -1691,8 +1759,17 @@ function __$decorate(assetId, codePath) {
         this.healthChange(oldHealth);
       }
     }
-    /**血量改变 */
-    healthChange(oldHealth) {
+    onEnable() {
+      this.rot = this.obj.getChildAt(0);
+      this.animator = this.rot.getComponent(Animator);
+      if (this.playerData) {
+        this.totalHealth = this.health = this.playerData.health;
+        this.playerController.moveSpeed = this.playerData.speed;
+      }
+      this.playerStatus = 1001 /* idle */;
+      if (this.pixelLineSprite3D) {
+        this.pixelLineSprite3D.active = false;
+      }
     }
     get playerController() {
       if (!this.$playerController) {
@@ -1700,11 +1777,99 @@ function __$decorate(assetId, codePath) {
       }
       return this.$playerController;
     }
-    reset() {
+    gameStart() {
+      if (!this.pixelLineSprite3D) {
+        this.pixelLineSprite3D = new PixelLineSprite3D(1);
+        this.obj.addChild(this.pixelLineSprite3D);
+        this.pixelLineSprite3D.addLine(new Vector35(0, 1.3, 0), new Vector35(0, 1.3, 5), new Color(1 / 255, 114 / 255, 1 / 255), new Color(1 / 255, 114 / 255, 1 / 255));
+      }
+    }
+    /**血量改变 */
+    healthChange(oldHealth) {
+      if (this.health == 0) {
+        EventMgr.event("PLAYERDEAD" /* PLAYERDEAD */);
+        this.playerStatus = 1005 /* death */;
+        this.changeAni();
+      }
+    }
+    changeAni() {
+      switch (this.playerStatus) {
+        case 1001 /* idle */:
+          AnimatorTool.play(this.animator, "idle" /* idle */, true, 1, 1, false, 0.2);
+          AnimatorTool.play(this.animator, "idle" /* idle */, true, 1, 2, false, 0.2);
+          break;
+        case 1005 /* death */:
+          AnimatorTool.play(this.animator, "death" /* death */, false, 1, 1, false, 0.2);
+          AnimatorTool.play(this.animator, "death" /* death */, false, 1, 2, false, 0.2);
+          break;
+        case 1003 /* run */:
+          AnimatorTool.play(this.animator, "runUp" /* runUp */, true, 1, 1, false, 0.2);
+          AnimatorTool.play(this.animator, "runDown" /* runDown */, true, 1, 2, false, 0.2);
+          break;
+        case 1004 /* runAndShoot */:
+          AnimatorTool.play(this.animator, "shoot" /* shoot */, true, 1, 1, false, 0.2);
+          AnimatorTool.play(this.animator, "runDown" /* runDown */, true, 1, 2, false, 0.2);
+          break;
+        case 1002 /* standAndShoot */:
+          AnimatorTool.play(this.animator, "shoot" /* shoot */, true, 1, 1, false, 0.2);
+          AnimatorTool.play(this.animator, "stand" /* stand */, true, 1, 2, false, 0.2);
+          break;
+      }
+    }
+    startMove(angle, value) {
+      if (this.playerStatus == 1005 /* death */)
+        return;
+      this.playerController.move(angle);
+      if (this.playerStatus == 1001 /* idle */) {
+        this.playerStatus = 1003 /* run */;
+        this.changeAni();
+      } else if (this.playerStatus == 1002 /* standAndShoot */) {
+        this.playerStatus = 1004 /* runAndShoot */;
+        this.changeAni();
+      }
+    }
+    stopMove() {
+      if (this.playerStatus == 1005 /* death */)
+        return;
+      this.playerController.stopMove();
+      if (this.playerStatus == 1003 /* run */) {
+        this.playerStatus = 1001 /* idle */;
+        this.changeAni();
+      } else if (this.playerStatus == 1004 /* runAndShoot */) {
+        this.playerStatus = 1002 /* standAndShoot */;
+        this.changeAni();
+      }
+    }
+    startShoot(angle, value) {
+      if (this.playerStatus == 1005 /* death */)
+        return;
+      this.rot.transform.localRotationEulerY = angle;
+      if (this.playerStatus == 1001 /* idle */) {
+        this.playerStatus = 1002 /* standAndShoot */;
+        this.changeAni();
+      } else if (this.playerStatus == 1003 /* run */) {
+        this.playerStatus = 1004 /* runAndShoot */;
+        this.changeAni();
+      }
+      this.pixelLineSprite3D.transform.localRotationEulerY = angle;
+      this.pixelLineSprite3D.active = true;
+    }
+    stopShoot() {
+      if (this.playerStatus == 1005 /* death */)
+        return;
+      if (this.playerStatus == 1002 /* standAndShoot */) {
+        this.playerStatus = 1001 /* idle */;
+        this.changeAni();
+      } else if (this.playerStatus == 1004 /* runAndShoot */) {
+        this.playerStatus = 1003 /* run */;
+        this.changeAni();
+      }
+      this.pixelLineSprite3D.active = false;
     }
   }, "PlayerItem");
   PlayerItem = __decorate6([
-    regClass5()
+    regClass5(),
+    __metadata("design:paramtypes", [])
   ], PlayerItem);
   var PlayerItem_default = PlayerItem;
 
@@ -1719,27 +1884,18 @@ function __$decorate(assetId, codePath) {
     init() {
       this.$playerMap = ResLoader.instance.getDataTableById(3008 /* Player */);
     }
-    // /**获取当前选择的玩家id */
-    // get selectedPlayerId(): number {
-    //     if (!this.$selectedPlayerId) {
-    //         let id = Number(LocalStorageMgr.getItem(LocalStorageEnum.PLAYERID)?.replace(this.$sign, ""));
-    //         if (isNaN(id)) {
-    //             this.$selectedPlayerId = 1001;
-    //             LocalStorageMgr.setItem(LocalStorageEnum.PLAYERID, this.$sign + this.$selectedPlayerId);
-    //         } else {
-    //             {
-    //                 this.$selectedPlayerId = id
-    //             }
-    //         }
-    //     }
-    //     return this.$selectedPlayerId
-    // }
-    // set selectedPlayerId(value: number) {
-    //     if (value) {
-    //         this.$selectedPlayerId = value;
-    //         LocalStorageMgr.setItem(LocalStorageEnum.PLAYERID, this.$sign + this.$selectedPlayerId);
-    //     }
-    // }
+    startMove(angle, value) {
+      this.$playerItem && this.$playerItem.startMove(angle, value);
+    }
+    stopMove() {
+      this.$playerItem && this.$playerItem.stopMove();
+    }
+    startShoot(angle, value) {
+      this.$playerItem && this.$playerItem.startShoot(angle, value);
+    }
+    stopShoot() {
+      this.$playerItem && this.$playerItem.stopShoot();
+    }
     /**获取已经解锁的人物 */
     getUnlockList() {
       let str = LocalStorageMgr.getItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */);
@@ -1805,6 +1961,10 @@ function __$decorate(assetId, codePath) {
         let playerData = this.getSelectedPlayerData(playerId);
         obj = ResLoader.instance.getResCloneById(playerData == null ? void 0 : playerData["path"]);
         this.playerPool.set(playerId, obj);
+        let playerItem = obj.getComponent(PlayerItem_default);
+        if (playerItem) {
+          playerItem.playerData = this.getSelectedPlayerData(this.$selectedPlayerId);
+        }
       }
       return obj;
     }
@@ -1812,9 +1972,10 @@ function __$decorate(assetId, codePath) {
       this.$playerStage = stage;
       let obj = this.getSelectPlayer(this.$selectedPlayerId);
       if (obj && this.$playerStage) {
-        this.$playerStage.addChild(obj);
         this.$playerItem = obj.getComponent(PlayerItem_default);
         this.$playerItem.position = Sprite3d.ZERO;
+        this.$playerStage.addChild(obj);
+        this.$playerItem.gameStart();
       }
     }
   };
@@ -2094,16 +2255,27 @@ function __$decorate(assetId, codePath) {
         this.stopMove();
       }
     }
+    /**初始化目标 */
+    initTarget(caller, startMove, stopMove) {
+      this.caller = caller;
+      this.FstartMove = startMove;
+      this.FstopMove = stopMove;
+    }
     /**开始移动 */
     startMove() {
+      this.FstartMove && this.caller && this.FstartMove.apply(this.caller, [this.rockerAngle, this.rockerValue]);
     }
     /**停止移动 */
     stopMove() {
+      this.FstopMove && this.caller && this.FstopMove.call(this.caller);
     }
     onDisable() {
       this.freeBar.off(Laya.Event.MOUSE_DOWN, this, this.rockerDown);
       Laya.stage.off(Laya.Event.MOUSE_MOVE, this, this.rockerMove);
       Laya.stage.off(Laya.Event.MOUSE_UP, this, this.rockerUp);
+      this.caller = null;
+      this.FstartMove = null;
+      this.FstopMove = null;
     }
   }, "RockerBox");
   __decorate11([
@@ -2126,14 +2298,46 @@ function __$decorate(assetId, codePath) {
   var _b2;
   var _c2;
   var List2 = Laya.List;
+  var Handler4 = Laya.Handler;
   var { regClass: regClass11, property: property11 } = Laya;
   var GameView = /* @__PURE__ */ __name(class GameView2 extends UIBase_default {
     constructor() {
       super();
+      this.health = 0;
+      this.totalHealth = 0;
     }
     onOpened(param) {
+      this.rocketBoxL.initTarget(PlayerMgr.instance, PlayerMgr.instance.startMove, PlayerMgr.instance.stopMove);
+      this.rocketBoxR.initTarget(PlayerMgr.instance, PlayerMgr.instance.startShoot, PlayerMgr.instance.stopShoot);
+      this.playerData = PlayerMgr.instance.getSelectedPlayerData(PlayerMgr.instance.$selectedPlayerId);
+      this.totalHealth = this.health = this.playerData.health;
+    }
+    addEvent() {
+      this.listHealth.renderHandler = new Handler4(this, this.changeHealthItem);
+      this.regEvent("HEALTHCHANGE" /* HEALTHCHANGE */, this.changeHealth, true);
+    }
+    changeHealth(health) {
+      if (!isNaN(health)) {
+        this.health = health;
+      }
+      if (!this.healthList) {
+        this.healthList = [];
+        for (let i = 0; i < this.totalHealth; i++) {
+          this.healthList.push(1);
+        }
+      }
+      this.listHealth.array = this.healthList;
+    }
+    changeHealthItem(box, index) {
+      let img = box.getChildAt(0);
+      if (index > this.health - 1) {
+        img.gray = true;
+      } else {
+        img.gray = false;
+      }
     }
     onClosed() {
+      this.healthList = null;
     }
   }, "GameView");
   __decorate12([
@@ -2190,7 +2394,7 @@ function __$decorate(assetId, codePath) {
   var _b3;
   var Image3 = Laya.Image;
   var List3 = Laya.List;
-  var Handler4 = Laya.Handler;
+  var Handler5 = Laya.Handler;
   var { regClass: regClass13, property: property13 } = Laya;
   var LanguageView = /* @__PURE__ */ __name(class LanguageView2 extends UIBase_default {
     constructor() {
@@ -2199,8 +2403,8 @@ function __$decorate(assetId, codePath) {
     }
     onOpened(param) {
       this.regClick(this.$imgClose, this.close);
-      this.$listLanguage.renderHandler = new Handler4(this, this.changeItem);
-      this.$listLanguage.selectHandler = new Handler4(this, this.selectItem);
+      this.$listLanguage.renderHandler = new Handler5(this, this.changeItem);
+      this.$listLanguage.selectHandler = new Handler5(this, this.selectItem);
       let arr = [];
       for (let i in LanguageEnum) {
         if (!isNaN(Number(i))) {
@@ -2432,7 +2636,7 @@ function __$decorate(assetId, codePath) {
   var _c3;
   var Image4 = Laya.Image;
   var Label2 = Laya.Label;
-  var Handler5 = Laya.Handler;
+  var Handler6 = Laya.Handler;
   var { regClass: regClass15, property: property15 } = Laya;
   var LoadView = /* @__PURE__ */ __name(class LoadView2 extends UIBase_default {
     constructor() {
@@ -2448,7 +2652,7 @@ function __$decorate(assetId, codePath) {
     }
     /**开始预加载全局资源 */
     startPreLoad() {
-      ResLoader.instance.preloadRes(Handler5.create(this, this.onCompleted), Handler5.create(this, this._onProgress));
+      ResLoader.instance.preloadRes(Handler6.create(this, this.onCompleted), Handler6.create(this, this._onProgress));
     }
     /**刷新进度条 */
     _onProgress(value) {
@@ -2785,7 +2989,7 @@ function __$decorate(assetId, codePath) {
   var Text4 = Laya.Text;
   var Image8 = Laya.Image;
   var List4 = Laya.List;
-  var Handler6 = Laya.Handler;
+  var Handler7 = Laya.Handler;
   var { regClass: regClass22, property: property22 } = Laya;
   var RankingView = /* @__PURE__ */ __name(class RankingView2 extends UIBase_default {
     constructor() {
@@ -2817,7 +3021,7 @@ function __$decorate(assetId, codePath) {
     }
     addEvent() {
       this.regClick(this.imgClose, this.close);
-      this.listRanking.renderHandler = new Handler6(this, this.changeItem);
+      this.listRanking.renderHandler = new Handler7(this, this.changeItem);
       this.listRanking.array = this.rankingList;
     }
     changeItem(box, index) {
@@ -3369,7 +3573,7 @@ function __$decorate(assetId, codePath) {
   var _c11;
   var Image13 = Laya.Image;
   var List5 = Laya.List;
-  var Handler7 = Laya.Handler;
+  var Handler8 = Laya.Handler;
   var { regClass: regClass27, property: property27 } = Laya;
   var ShopView = /* @__PURE__ */ __name(class ShopView2 extends UIBase_default {
     constructor() {
@@ -3395,9 +3599,9 @@ function __$decorate(assetId, codePath) {
     }
     addEvent() {
       this.regClick(this.imgClose, this.close);
-      this.listTitle.renderHandler = new Handler7(this, this.changeTitleItem);
-      this.listTitle.selectHandler = new Handler7(this, this.selectTitleItem);
-      this.listShop.renderHandler = new Handler7(this, this.changeShopItem);
+      this.listTitle.renderHandler = new Handler8(this, this.changeTitleItem);
+      this.listTitle.selectHandler = new Handler8(this, this.selectTitleItem);
+      this.listShop.renderHandler = new Handler8(this, this.changeShopItem);
       this.regEvent("LANGUAGECHANGE" /* LANGUAGECHANGE */, this.changeLanguage, true);
     }
     changeTitleItem(box, index) {
@@ -3841,7 +4045,7 @@ function __$decorate(assetId, codePath) {
 
   // E:/WheelChairMan/src/Game/BaseItem/BaseItemMgr.ts
   var __decorate37 = __$decorate("24b34e30-2f17-4824-a3b0-0ba530674c37", "../src/Game/BaseItem/BaseItemMgr.ts");
-  var Vector35 = Laya.Vector3;
+  var Vector36 = Laya.Vector3;
   var Quaternion2 = Laya.Quaternion;
   var Pool4 = Laya.Pool;
 })();

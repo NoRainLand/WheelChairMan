@@ -27,7 +27,7 @@
       "friction": 0.5,
       "stepHeight": 0.1,
       "jumpAllTimes": 1,
-      "moveSpeed": 10
+      "moveSpeed": 0.05
     },
     {
       "_$type": "778295ff-e54e-4576-82ea-f69285cd3b58",

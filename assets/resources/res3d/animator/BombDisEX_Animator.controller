@@ -33,8 +33,8 @@
           "clipEnd": 1
         },
         {
-          "x": 312,
-          "y": 234,
+          "x": 228,
+          "y": 141,
           "id": "0",
           "name": "idle",
           "speed": 1,
@@ -104,6 +104,28 @@
           "clip": {
             "_$uuid": "fae2777f-6d0f-442a-b23c-18f2619a97de@lani3"
           }
+        },
+        {
+          "x": 208,
+          "y": 98,
+          "id": "2",
+          "name": "death",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "fae2777f-6d0f-442a-b23c-18f2619a97de@lani0"
+          }
+        },
+        {
+          "x": 207,
+          "y": 42,
+          "id": "3",
+          "name": "idle",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "fae2777f-6d0f-442a-b23c-18f2619a97de@lani1"
+          }
         }
       ],
       "defaultWeight": 1
@@ -135,8 +157,8 @@
           "clipEnd": 1
         },
         {
-          "x": 155,
-          "y": 344,
+          "x": 123,
+          "y": 206,
           "id": "0",
           "name": "runDown",
           "speed": 1,
@@ -154,6 +176,28 @@
           "clipEnd": 1,
           "clip": {
             "_$uuid": "fae2777f-6d0f-442a-b23c-18f2619a97de@lani5"
+          }
+        },
+        {
+          "x": 205,
+          "y": 117,
+          "id": "2",
+          "name": "idle",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "fae2777f-6d0f-442a-b23c-18f2619a97de@lani1"
+          }
+        },
+        {
+          "x": 232,
+          "y": 61,
+          "id": "3",
+          "name": "death",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "fae2777f-6d0f-442a-b23c-18f2619a97de@lani0"
           }
         }
       ],

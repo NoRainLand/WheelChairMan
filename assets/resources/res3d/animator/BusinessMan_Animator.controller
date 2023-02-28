@@ -104,6 +104,28 @@
           "clip": {
             "_$uuid": "d141b363-8fd9-444b-9413-99242b48d833@lani3"
           }
+        },
+        {
+          "x": 191,
+          "y": 130,
+          "id": "2",
+          "name": "idle",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "d141b363-8fd9-444b-9413-99242b48d833@lani1"
+          }
+        },
+        {
+          "x": 179,
+          "y": 40,
+          "id": "3",
+          "name": "death",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "d141b363-8fd9-444b-9413-99242b48d833@lani0"
+          }
         }
       ],
       "defaultWeight": 1
@@ -154,6 +176,28 @@
           "clipEnd": 1,
           "clip": {
             "_$uuid": "d141b363-8fd9-444b-9413-99242b48d833@lani2"
+          }
+        },
+        {
+          "x": 189,
+          "y": 50,
+          "id": "2",
+          "name": "death",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "d141b363-8fd9-444b-9413-99242b48d833@lani0"
+          }
+        },
+        {
+          "x": 201,
+          "y": 140,
+          "id": "3",
+          "name": "idle",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "d141b363-8fd9-444b-9413-99242b48d833@lani1"
           }
         }
       ],
