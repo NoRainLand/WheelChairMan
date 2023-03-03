@@ -2,7 +2,7 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-28 17:55:33
+ * @Last Modified time: 2023-03-03 14:52:21
 */
 
 import GameData from "../../Data/GameData";
@@ -48,7 +48,7 @@ export default class PlayerMgr {
     private unlockList: number[];
 
 
-    private playerItem: PlayerItem;
+     $playerItem: PlayerItem;
 
     private playerStage: Sprite3D;
 
@@ -59,23 +59,23 @@ export default class PlayerMgr {
     }
 
     startMove(angle: number, value: number) {
-        this.playerItem && this.playerItem.startMove(angle, value);
+        this.$playerItem && this.$playerItem.startMove(angle, value);
     }
     stopMove() {
-        this.playerItem && this.playerItem.stopMove();
+        this.$playerItem && this.$playerItem.stopMove();
     }
 
     startShoot(angle: number, value: number) {
-        this.playerItem && this.playerItem.startShoot(angle, value);
+        this.$playerItem && this.$playerItem.startShoot(angle, value);
     }
     stopShoot() {
-        this.playerItem && this.playerItem.stopShoot();
+        this.$playerItem && this.$playerItem.stopShoot();
     }
 
 
     /**获取坐标 */
     getPlayerPos() {
-        return this.playerItem.position;
+        return this.$playerItem?.position;
     }
 
 
@@ -176,10 +176,10 @@ export default class PlayerMgr {
         this.playerStage = stage;
         let obj = this.getSelectPlayer(this.selectedPlayerId);
         if (obj && this.playerStage) {
-            this.playerItem = obj.getComponent(PlayerItem);
-            this.playerItem.position = Sprite3d.ZERO;
+            this.$playerItem = obj.getComponent(PlayerItem);
+            this.$playerItem.position = Sprite3d.ZERO;
             this.playerStage.addChild(obj);
-            this.playerItem.gameStart();
+            this.$playerItem.gameStart();
         }
     }
 

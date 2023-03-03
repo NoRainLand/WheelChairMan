@@ -15,7 +15,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-24 23:37:55
+ * @Last Modified time: 2023-03-03 21:50:26
  */
 const { regClass, property } = Laya;
 
@@ -82,7 +82,7 @@ export default class LoadView extends UIBase {
 
     /**打开页面 */
     openScene() {
-        // UIBaseMgr.instance.showDebug();
+        UIBaseMgr.instance.showDebug();
         UIBaseMgr.instance.open(SceneEnum.MainView);
         this.close();
     }

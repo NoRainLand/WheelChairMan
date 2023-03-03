@@ -5,6 +5,8 @@
   "name": "SureView",
   "width": 1920,
   "height": 1080,
+  "anchorX": 0,
+  "anchorY": 0,
   "mouseEnabled": true,
   "left": 0,
   "right": 0,
@@ -13,7 +15,11 @@
   "_$comp": [
     {
       "_$type": "2eee226a-dcc2-4965-9ad2-4c490d20fbdf",
-      "scriptPath": "../src/Game/Scene/SureView.ts",
+      "scriptPath": "../src/Scene/SureView.ts",
+      "depth": 1,
+      "isSingleton": false,
+      "AniType": 1,
+      "aniNode": null,
       "imgSure": {
         "_$ref": "dro7ng2v"
       },
@@ -25,9 +31,7 @@
       },
       "txtMsg": {
         "_$ref": "vgdjxmix"
-      },
-      "depth": 1,
-      "isSingleton": false
+      }
     }
   ],
   "_$child": [
@@ -37,6 +41,8 @@
       "name": "Bg",
       "width": 1920,
       "height": 1080,
+      "anchorX": 0,
+      "anchorY": 0,
       "alpha": 0.8,
       "mouseEnabled": true,
       "left": 0,
@@ -53,23 +59,11 @@
       "y": 540,
       "width": 901,
       "height": 632,
-      "pivotX": 450.5,
-      "pivotY": 316,
-      "mouseEnabled": true,
       "anchorX": 0.5,
       "anchorY": 0.5,
+      "mouseEnabled": true,
       "skin": "res://7f568993-82b8-41eb-8ed7-f60fda767bf1",
       "sizeGrid": "72,82,96,83,0",
-      "_$comp": [
-        {
-          "_$type": "Animator2D",
-          "controller": {
-            "_$uuid": "0810b5a6-fa15-4a08-958c-20de25e7caf2",
-            "_$type": "AnimationController2D"
-          },
-          "controllerLayers": []
-        }
-      ],
       "_$child": [
         {
           "_$id": "dro7ng2v",
@@ -79,6 +73,8 @@
           "y": 387,
           "width": 316,
           "height": 133,
+          "anchorX": 0,
+          "anchorY": 0,
           "visible": false,
           "mouseEnabled": true,
           "centerX": 180,
@@ -93,6 +89,8 @@
               "y": 24,
               "width": 244,
               "height": 86,
+              "anchorX": 0,
+              "anchorY": 0,
               "centerX": 0,
               "centerY": 0,
               "text": "OK",
@@ -100,7 +98,6 @@
               "color": "rgba(223, 255, 255, 1)",
               "align": "center",
               "valign": "middle",
-              "overflow": "visible",
               "leading": 0,
               "padding": "0,0,0,0",
               "_$comp": [
@@ -121,6 +118,8 @@
           "y": 387,
           "width": 316,
           "height": 133,
+          "anchorX": 0,
+          "anchorY": 0,
           "visible": false,
           "mouseEnabled": true,
           "centerX": -180,
@@ -135,6 +134,8 @@
               "y": 24,
               "width": 244,
               "height": 86,
+              "anchorX": 0,
+              "anchorY": 0,
               "centerX": 0,
               "centerY": 0,
               "text": "CANCEL",
@@ -142,7 +143,6 @@
               "color": "rgba(243, 222, 159, 1)",
               "align": "center",
               "valign": "middle",
-              "overflow": "visible",
               "leading": 0,
               "padding": "0,0,0,0",
               "_$comp": [
@@ -163,13 +163,14 @@
           "y": 158,
           "width": 714,
           "height": 212,
+          "anchorX": 0,
+          "anchorY": 0,
           "centerX": 0,
           "text": "\n",
           "fontSize": 40,
           "color": "rgba(156, 140, 116, 1)",
           "align": "center",
           "valign": "middle",
-          "overflow": "visible",
           "wordWrap": true,
           "leading": 10,
           "padding": "10,10,10,10"
@@ -182,6 +183,8 @@
           "y": 79,
           "width": 614,
           "height": 70,
+          "anchorX": 0,
+          "anchorY": 0,
           "centerX": 0,
           "text": "",
           "fontSize": 46,
@@ -189,7 +192,6 @@
           "bold": true,
           "align": "center",
           "valign": "middle",
-          "overflow": "visible",
           "leading": 0,
           "padding": "0,0,0,0"
         }

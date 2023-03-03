@@ -147,4 +147,9 @@ export default class GameData {
         }
     }
 
+
+
+    /**单局游戏时长 */
+    static gameTime: number = 180;
+
 }

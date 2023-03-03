@@ -1,5 +1,5 @@
 import UIBase from "../UIBase/UIBase";
-import Timer from "../Util/Timer";
+import Tween from "../Util/Tween";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
 import Box = Laya.Box;
@@ -13,7 +13,7 @@ import List = Laya.List;
  * @Author: NoRain 
  * @Date: 2023-02-10 16:29:21 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-10 16:46:22
+ * @Last Modified time: 2023-03-03 21:49:26
  */
 const { regClass, property } = Laya;
 
@@ -24,16 +24,25 @@ export default class TipsView extends UIBase {
     txtMsg: Text;
     constructor() { super() }
 
+    img: Image;
     onEnable(): void {
-        let img = this.owner as Image;
-        img.centerX = 0;
-        img.centerY = 200;
+        this.img = this.owner as Image;
+        this.img.centerX = 0;
+        this.img.centerY = 200;
+        this.img.alpha
     }
 
     onOpened(param?: any): void {
         this.txtMsg.text = param;
-        Timer.get(1500, this, () => {
-            this.close();
-        }).once().start();
+
+        Tween.get(this.owner)
+            .set({ scaleX: 0.8, scaleY: 0.8, alpha: 1 })
+            .to({ scaleX: 1, scaleY: 1 }, 300, Laya.Ease.backOut)
+            .to({ centerY: 0, alpha: 0.7 }, 1500)
+            .call(this, () => {
+                this.close();
+            })
+            .start();
+
     }
 }

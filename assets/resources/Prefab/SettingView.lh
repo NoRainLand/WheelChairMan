@@ -5,6 +5,8 @@
   "name": "SettingView",
   "width": 1920,
   "height": 1080,
+  "anchorX": 0,
+  "anchorY": 0,
   "mouseEnabled": true,
   "left": 0,
   "right": 0,
@@ -14,6 +16,10 @@
     {
       "_$type": "9811079c-9340-49a7-8d8a-71570d70a98d",
       "scriptPath": "../src/Scene/SettingView.ts",
+      "depth": 1,
+      "isSingleton": true,
+      "AniType": 1,
+      "aniNode": null,
       "imgClose": {
         "_$ref": "fdfzx0c2"
       },
@@ -37,9 +43,7 @@
       },
       "txtAgreement": {
         "_$ref": "l2ivck1h"
-      },
-      "depth": 1,
-      "isSingleton": true
+      }
     }
   ],
   "_$child": [
@@ -49,6 +53,8 @@
       "name": "Bg",
       "width": 1920,
       "height": 1080,
+      "anchorX": 0,
+      "anchorY": 0,
       "alpha": 0.8,
       "mouseEnabled": true,
       "left": 0,
@@ -65,41 +71,13 @@
       "y": 540,
       "width": 1200,
       "height": 840,
-      "pivotX": 600,
-      "pivotY": 420,
-      "mouseEnabled": true,
       "anchorX": 0.5,
       "anchorY": 0.5,
+      "scaleX": 0.8,
+      "scaleY": 0.8,
+      "mouseEnabled": true,
       "skin": "res://7f568993-82b8-41eb-8ed7-f60fda767bf1",
       "sizeGrid": "87,86,100,87,0",
-      "_$comp": [
-        {
-          "_$type": "Animator2D",
-          "controller": {
-            "_$uuid": "0810b5a6-fa15-4a08-958c-20de25e7caf2",
-            "_$type": "AnimationController2D"
-          },
-          "controllerLayers": [
-            {
-              "_$type": "AnimatorControllerLayer2D",
-              "name": "Base Layer",
-              "states": [
-                {
-                  "_$type": "AnimatorState2D",
-                  "name": "DialogOpen",
-                  "clipStart": 0,
-                  "clip": {
-                    "_$uuid": "2d6cdaca-41c6-41bb-8c14-52bc647307eb",
-                    "_$type": "AnimationClip2D"
-                  },
-                  "soloTransitions": []
-                }
-              ],
-              "defaultStateName": "DialogOpen"
-            }
-          ]
-        }
-      ],
       "_$child": [
         {
           "_$id": "ecar9ad2",
@@ -109,6 +87,8 @@
           "y": -25.000000000000057,
           "width": 503,
           "height": 113,
+          "anchorX": 0,
+          "anchorY": 0,
           "skin": "res://e29d4ce1-ba92-4b2e-a3ab-5b7d7ed7613c",
           "sizeGrid": "0,155,0,162,0",
           "_$child": [
@@ -120,12 +100,13 @@
               "y": 14.000000000000014,
               "width": 315,
               "height": 85,
+              "anchorX": 0,
+              "anchorY": 0,
               "text": "Setting",
               "fontSize": 50,
               "color": "rgba(221, 198, 171, 1)",
               "align": "center",
               "valign": "middle",
-              "overflow": "visible",
               "leading": 0,
               "padding": "0,0,0,0",
               "_$comp": [
@@ -146,6 +127,8 @@
           "y": 129,
           "width": 985,
           "height": 131,
+          "anchorX": 0,
+          "anchorY": 0,
           "mouseEnabled": true,
           "_$child": [
             {
@@ -156,6 +139,8 @@
               "y": 43,
               "width": 40,
               "height": 50,
+              "anchorX": 0,
+              "anchorY": 0,
               "_filters": [
                 {
                   "_$type": "ColorFilter",
@@ -176,11 +161,12 @@
               "y": 39,
               "width": 134,
               "height": 54,
+              "anchorX": 0,
+              "anchorY": 0,
               "text": "Bgm",
               "fontSize": 30,
               "color": "rgba(135, 120, 98, 1)",
               "valign": "middle",
-              "overflow": "visible",
               "leading": 0,
               "padding": "0,0,0,0",
               "_$comp": [
@@ -198,16 +184,14 @@
               "active": true,
               "x": 217,
               "y": 21,
+              "visible": true,
               "width": 660,
               "height": 90,
-              "pivotX": 0,
-              "pivotY": 0,
               "scaleX": 1,
               "scaleY": 1,
               "skewX": 0,
               "skewY": 0,
               "rotation": 0,
-              "visible": true,
               "alpha": 1,
               "zOrder": 0,
               "blendMode": null,
@@ -218,12 +202,6 @@
               "cacheAs": "none",
               "anchorX": null,
               "anchorY": null,
-              "left": null,
-              "right": null,
-              "top": null,
-              "bottom": null,
-              "centerX": null,
-              "centerY": null,
               "disabled": null,
               "gray": null
             }
@@ -237,6 +215,8 @@
           "y": 275.99999999999994,
           "width": 985,
           "height": 131,
+          "anchorX": 0,
+          "anchorY": 0,
           "mouseEnabled": true,
           "_$child": [
             {
@@ -247,6 +227,8 @@
               "y": 43,
               "width": 46,
               "height": 46,
+              "anchorX": 0,
+              "anchorY": 0,
               "_filters": [
                 {
                   "_$type": "ColorFilter",
@@ -267,11 +249,12 @@
               "y": 39,
               "width": 134,
               "height": 54,
+              "anchorX": 0,
+              "anchorY": 0,
               "text": "Sfx",
               "fontSize": 30,
               "color": "rgba(135, 120, 98, 1)",
               "valign": "middle",
-              "overflow": "visible",
               "leading": 0,
               "padding": "0,0,0,0",
               "_$comp": [
@@ -290,16 +273,14 @@
               "active": true,
               "x": 217,
               "y": 21,
+              "visible": true,
               "width": 660,
               "height": 90,
-              "pivotX": 0,
-              "pivotY": 0,
               "scaleX": 1,
               "scaleY": 1,
               "skewX": 0,
               "skewY": 0,
               "rotation": 0,
-              "visible": true,
               "alpha": 1,
               "zOrder": 0,
               "blendMode": null,
@@ -310,12 +291,6 @@
               "cacheAs": "none",
               "anchorX": null,
               "anchorY": null,
-              "left": null,
-              "right": null,
-              "top": null,
-              "bottom": null,
-              "centerX": null,
-              "centerY": null,
               "disabled": null,
               "gray": null,
               "bgColor": null
@@ -330,6 +305,8 @@
           "y": 423.0000000000001,
           "width": 985,
           "height": 131,
+          "anchorX": 0,
+          "anchorY": 0,
           "mouseEnabled": true,
           "_$child": [
             {
@@ -340,6 +317,8 @@
               "y": 43,
               "width": 46,
               "height": 46,
+              "anchorX": 0,
+              "anchorY": 0,
               "_filters": [
                 {
                   "_$type": "ColorFilter",
@@ -360,11 +339,12 @@
               "y": 39,
               "width": 134,
               "height": 54,
+              "anchorX": 0,
+              "anchorY": 0,
               "text": "Shake",
               "fontSize": 30,
               "color": "rgba(135, 120, 98, 1)",
               "valign": "middle",
-              "overflow": "visible",
               "leading": 0,
               "padding": "0,0,0,0",
               "_$comp": [
@@ -382,16 +362,14 @@
               "active": true,
               "x": 240,
               "y": 29,
+              "visible": true,
               "width": 150,
               "height": 74,
-              "pivotX": 0,
-              "pivotY": 0,
               "scaleX": 1,
               "scaleY": 1,
               "skewX": 0,
               "skewY": 0,
               "rotation": 0,
-              "visible": true,
               "alpha": 1,
               "zOrder": 0,
               "blendMode": null,
@@ -402,12 +380,6 @@
               "cacheAs": "none",
               "anchorX": null,
               "anchorY": null,
-              "left": null,
-              "right": null,
-              "top": null,
-              "bottom": null,
-              "centerX": null,
-              "centerY": null,
               "disabled": null,
               "gray": null
             },
@@ -419,6 +391,8 @@
               "y": 19,
               "width": 307,
               "height": 93,
+              "anchorX": 0,
+              "anchorY": 0,
               "mouseEnabled": true,
               "text": "PrivacyAgreement",
               "fontSize": 30,
@@ -426,7 +400,6 @@
               "underline": true,
               "align": "center",
               "valign": "middle",
-              "overflow": "visible",
               "leading": 0,
               "padding": "0,0,0,0",
               "_$comp": [
@@ -447,6 +420,8 @@
           "y": 570.0000000000001,
           "width": 985,
           "height": 131,
+          "anchorX": 0,
+          "anchorY": 0,
           "mouseEnabled": true,
           "_$child": [
             {
@@ -456,6 +431,8 @@
               "x": 138,
               "width": 310,
               "height": 140,
+              "anchorX": 0,
+              "anchorY": 0,
               "centerX": -200,
               "skin": "res://c4e91d24-9b3d-4b94-936c-e38368425d0e",
               "sizeGrid": "0,36,0,28,0",
@@ -468,6 +445,8 @@
                   "y": 32.99999999999977,
                   "width": 71,
                   "height": 65,
+                  "anchorX": 0,
+                  "anchorY": 0,
                   "skin": "res://fb0b7cef-f3e2-41d9-8381-7565cda04710"
                 },
                 {
@@ -478,13 +457,14 @@
                   "y": 29,
                   "width": 162,
                   "height": 65,
+                  "anchorX": 0,
+                  "anchorY": 0,
                   "centerY": -9,
                   "text": "Language",
                   "fontSize": 34,
                   "color": "rgba(243, 222, 159, 1)",
                   "align": "center",
                   "valign": "middle",
-                  "overflow": "visible",
                   "leading": 0,
                   "padding": "0,0,0,0",
                   "_$comp": [
@@ -504,6 +484,8 @@
               "x": 538,
               "width": 310,
               "height": 140,
+              "anchorX": 0,
+              "anchorY": 0,
               "centerX": 200,
               "skin": "res://cc6ab823-f690-4a05-bbfa-913d70bf15e3",
               "sizeGrid": "0,39,0,31,0",
@@ -516,6 +498,8 @@
                   "y": 35,
                   "width": 53,
                   "height": 52,
+                  "anchorX": 0,
+                  "anchorY": 0,
                   "skin": "res://cedfc9ab-767f-4645-969b-ef9ea7353146"
                 },
                 {
@@ -526,13 +510,14 @@
                   "y": 29,
                   "width": 149,
                   "height": 65,
+                  "anchorX": 0,
+                  "anchorY": 0,
                   "centerY": -9,
                   "text": "Support",
                   "fontSize": 34,
                   "color": "rgba(200, 220, 255, 1)",
                   "align": "center",
                   "valign": "middle",
-                  "overflow": "visible",
                   "leading": 0,
                   "padding": "0,0,0,0",
                   "_$comp": [
@@ -555,6 +540,8 @@
           "y": -12,
           "width": 104,
           "height": 116,
+          "anchorX": 0,
+          "anchorY": 0,
           "mouseEnabled": true,
           "skin": "res://79d501c7-75ed-41c9-93b2-cc025caeba59"
         }

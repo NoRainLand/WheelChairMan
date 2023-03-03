@@ -1,25 +1,26 @@
 {
   "_$ver": 1,
-  "_$id": "2x0wab2x",
+  "_$id": "5kxiyrzi",
   "_$type": "Sprite3D",
   "name": "GrassGround",
   "isStatic": true,
   "transform": {
     "localPosition": {
       "_$type": "Vector3",
-      "x": -5,
-      "y": -0.11597979068756104
+      "x": -0.09651992764164441,
+      "y": -0.12999999523162842,
+      "z": -4.900981669128402
     }
   },
   "_$comp": [
     {
       "_$type": "Animator",
-      "controller": {
-        "_$uuid": "",
-        "_$type": "AnimationController"
-      },
       "cullingMode": 0,
       "controllerLayers": []
+    },
+    {
+      "_$type": "e2100ba2-ca09-4fc2-8312-90645c381ddc",
+      "scriptPath": "../src/Game/Ground/GroundItem.ts"
     }
   ],
   "_$child": [
@@ -44,7 +45,8 @@
               "_$uuid": "ddcb0be2-cb6c-4b22-a34e-6cef3621cfe5",
               "_$type": "Material"
             }
-          ]
+          ],
+          "renderMode": null
         }
       ]
     }

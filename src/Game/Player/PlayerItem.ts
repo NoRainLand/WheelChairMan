@@ -28,7 +28,7 @@ import Color = Laya.Color;
  * @Author: NoRain 
  * @Date: 2023-02-25 19:27:37 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-28 22:09:27
+ * @Last Modified time: 2023-03-03 16:27:41
  */
 const { regClass, property } = Laya;
 /**玩家类 */
@@ -43,17 +43,18 @@ export default class PlayerItem extends BaseItem {
     /**玩家数据 */
     playerData: any;
 
-    rot: Sprite3D;
+    /**旋转节点 */
+    rotNode: Sprite3D;
 
     animator: Animator;
 
-    private $health: number = 0;
 
     private totalHealth: number = 0;
 
     private weaponItem: WeaponItem;
 
-
+    private $health: number = 0;
+    /**生命 */
     get health(): number {
         return this.$health;
     }
@@ -65,15 +66,14 @@ export default class PlayerItem extends BaseItem {
         }
     }
 
-
     private playerStatus: PlayerStatusEnum;
 
     private pixelLineSprite3D: PixelLineSprite3D;
 
 
     onEnable(): void {
-        this.rot = this.obj.getChildAt(0) as Sprite3D;
-        this.animator = this.rot.getComponent(Animator);
+        this.rotNode = this.obj.getChildAt(0) as Sprite3D;
+        this.animator = this.rotNode.getComponent(Animator);
         if (this.playerData) {
             this.totalHealth = this.health = this.playerData.health;
             this.playerController.moveSpeed = this.playerData.speed;
@@ -107,7 +107,6 @@ export default class PlayerItem extends BaseItem {
 
     initWeapon() {
         if (!this.weaponItem) {
-            console.log(this.playerData["weaponId"]);
             this.weaponItem = WeaponMgr.instance.getSelectWeapon(this.playerData["weaponId"]);
             this.weaponPoint.addChild(this.weaponItem.owner);
         } else {
@@ -130,8 +129,10 @@ export default class PlayerItem extends BaseItem {
 
 
     changeAni() {
+        this.weaponItem.owner.active = true;
         switch (this.playerStatus) {
             case PlayerStatusEnum.idle:
+                this.weaponItem.owner.active = false;
                 AnimatorTool.play(this.animator, PlayerAniEnum.idle, true, 1, 1, false, 0.2);
                 AnimatorTool.play(this.animator, PlayerAniEnum.idle, true, 1, 2, false, 0.2);
                 break;
@@ -183,7 +184,7 @@ export default class PlayerItem extends BaseItem {
 
     startShoot(angle: number, value: number) {
         if (this.playerStatus == PlayerStatusEnum.death) return;
-        this.rot.transform.localRotationEulerY = angle;
+        this.rotNode.transform.localRotationEulerY = angle;
         if (this.playerStatus == PlayerStatusEnum.idle) {
             this.playerStatus = PlayerStatusEnum.standAndShoot;
             this.changeAni();

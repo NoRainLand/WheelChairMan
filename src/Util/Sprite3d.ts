@@ -109,6 +109,43 @@ export default class Sprite3d {
 
 
 
+    /**获取目标向量 */
+    static getDic(startPos: Vector3, endPos: Vector3, scale: number = 1, ignoreY: boolean = false): Vector3 {
+        if (startPos && endPos) {
+            let v3 = new Vector3(0, 0, 0);
+            Vector3.subtract(endPos, startPos, v3);
+            Vector3.normalize(v3, v3);
+            if (scale != 1) {
+                Vector3.scale(v3, scale, v3);
+            }
+            if (ignoreY) {
+                v3 = new Vector3(v3.x, 0, v3.z);
+            }
+            return v3;
+        } else {
+            return this.ZERO;
+        }
+    }
+    /**获取目标Y轴的欧拉角
+     *       ±180°
+     *         |
+     * 90° ----+---- -90°
+     *         |
+     *         0
+     */
+    static getAngle(startPos: Vector3, endPos: Vector3): number {
+        if (startPos && endPos) {
+
+            let offX = endPos.x - startPos.x;
+            let offZ = endPos.z - startPos.z;
+            let angle = Math.atan2(offX, offZ) * 180 / Math.PI;
+            return angle;
+        }
+        return null;
+    }
+
+
+
 
 
     //步骤1：获取目标节点的所有子节点，将所有子节点放入数组并返回

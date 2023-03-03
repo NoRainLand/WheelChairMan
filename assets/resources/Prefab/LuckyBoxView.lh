@@ -5,6 +5,8 @@
   "name": "LuckBoxView",
   "width": 1920,
   "height": 1080,
+  "anchorX": 0,
+  "anchorY": 0,
   "mouseEnabled": true,
   "left": 0,
   "right": 0,
@@ -14,6 +16,10 @@
     {
       "_$type": "d94dafff-05f0-4479-9a1a-ab9861a24025",
       "scriptPath": "../src/Scene/LuckyBoxView.ts",
+      "depth": 2,
+      "isSingleton": true,
+      "AniType": 1,
+      "aniNode": null,
       "imgLight": {
         "_$ref": "mwvgm1qr"
       },
@@ -28,9 +34,7 @@
       },
       "txtMsg": {
         "_$ref": "5ag4vtsc"
-      },
-      "depth": 2,
-      "isSingleton": true
+      }
     }
   ],
   "_$child": [
@@ -40,6 +44,8 @@
       "name": "Bg",
       "width": 1920,
       "height": 1080,
+      "anchorX": 0,
+      "anchorY": 0,
       "alpha": 0.8,
       "mouseEnabled": true,
       "left": 0,
@@ -54,6 +60,8 @@
       "name": "Main",
       "width": 1920,
       "height": 1080,
+      "anchorX": 0,
+      "anchorY": 0,
       "mouseEnabled": true,
       "left": 0,
       "right": 0,
@@ -68,6 +76,8 @@
           "y": -131,
           "width": 1342,
           "height": 1342,
+          "anchorX": 0,
+          "anchorY": 0,
           "_filters": [
             {
               "_$type": "ColorFilter",
@@ -86,10 +96,12 @@
           "_$id": "845irtoe",
           "_$type": "Image",
           "name": "imgBox",
-          "x": 809,
+          "x": 810,
           "y": 354,
           "width": 305,
           "height": 224,
+          "anchorX": 0,
+          "anchorY": 0,
           "centerX": 2,
           "centerY": -74,
           "skin": "res://2542b6f0-2695-43a4-8387-943459c6a738"
@@ -102,6 +114,8 @@
           "y": 108,
           "width": 104,
           "height": 116,
+          "anchorX": 0,
+          "anchorY": 0,
           "mouseEnabled": true,
           "skin": "res://79d501c7-75ed-41c9-93b2-cc025caeba59"
         },
@@ -113,6 +127,8 @@
           "y": 153,
           "width": 524,
           "height": 143,
+          "anchorX": 0,
+          "anchorY": 0,
           "skin": "res://f69edd39-a094-4448-845b-f15d9c0cead1",
           "_$child": [
             {
@@ -123,12 +139,13 @@
               "y": 2,
               "width": 356,
               "height": 93,
+              "anchorX": 0,
+              "anchorY": 0,
               "text": "Congratulations",
               "fontSize": 40,
               "color": "rgba(255, 251, 188, 1)",
               "align": "center",
               "valign": "middle",
-              "overflow": "visible",
               "leading": 0,
               "padding": "0,0,0,0",
               "_$comp": [
@@ -149,6 +166,8 @@
           "y": 721,
           "width": 332,
           "height": 133,
+          "anchorX": 0,
+          "anchorY": 0,
           "mouseEnabled": true,
           "skin": "res://9554605f-8645-4148-ad18-ce84e8b52ae2",
           "sizeGrid": "0,37,0,28,0",
@@ -161,13 +180,14 @@
               "y": 13,
               "width": 265,
               "height": 88,
+              "anchorX": 0,
+              "anchorY": 0,
               "text": "Open Now",
               "fontSize": 40,
               "color": "rgba(255, 251, 188, 1)",
               "align": "center",
               "valign": "middle",
               "leading": 0,
-              "overflow": "visible",
               "_$comp": [
                 {
                   "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
@@ -186,13 +206,14 @@
           "y": 623,
           "width": 671,
           "height": 84,
+          "anchorX": 0,
+          "anchorY": 0,
           "text": "GOLD LUCK BOX",
           "fontSize": 50,
           "color": "rgba(242, 169, 54, 1)",
           "align": "center",
           "valign": "middle",
-          "leading": 0,
-          "overflow": "visible"
+          "leading": 0
         }
       ]
     }

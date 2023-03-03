@@ -1,7 +1,9 @@
 import { EventEnum } from "../Enum/EventEnum";
+import MainGame from "../Game/MainGame";
 import PlayerMgr from "../Game/Player/PlayerMgr";
 import UIBase from "../UIBase/UIBase";
 import RockerBox from "../Util/RockerBox";
+import Timer from "../Util/Timer";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
 import Box = Laya.Box;
@@ -16,7 +18,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-14 10:37:38 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-27 20:24:24
+ * @Last Modified time: 2023-03-03 21:22:18
  */
 const { regClass, property } = Laya;
 /**游戏界面 */
@@ -29,12 +31,18 @@ export default class GameView extends UIBase {
     @property()
     rocketBoxR: RockerBox;
 
+    @property()
+    labelTime: Label;
+
+
+
     private playerData: any;
 
     private health: number = 0;
     private totalHealth: number = 0;
 
     private healthList: Array<number>;
+
 
     constructor() { super() }
     onOpened(param?: any): void {
@@ -43,11 +51,21 @@ export default class GameView extends UIBase {
         this.playerData = PlayerMgr.instance.getSelectedPlayerData(PlayerMgr.instance.selectedPlayerId);
         this.totalHealth = this.health = this.playerData.health;
 
+
+        Timer.get(1, this, () => {
+            let min = Math.floor(MainGame.instance.gameTime / 60);
+            let sec = MainGame.instance.gameTime % 60;
+
+            this.labelTime.text = "0" + min + ":" + (sec < 10 ? "0" + sec : sec);
+
+        }).frameLoop().start();
     }
 
     addEvent(): void {
         this.listHealth.renderHandler = new Handler(this, this.changeHealthItem);
         this.regEvent(EventEnum.HEALTHCHANGE, this.changeHealth, true);
+
+
     }
 
     changeHealth(health: number) {
@@ -62,6 +80,12 @@ export default class GameView extends UIBase {
         }
         this.listHealth.array = this.healthList;
     }
+
+
+
+
+
+
 
     changeHealthItem(box: Box, index: number) {
         let img = box.getChildAt(0) as Image;

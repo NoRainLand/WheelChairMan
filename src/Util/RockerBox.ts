@@ -39,7 +39,13 @@ export default class RockerBox extends Laya.Script {
     private mousePoint: Point;
 
 
-    /**角度 */
+    /**欧拉角
+    *       ±180°
+    *         |
+    * 90° ----+---- -90°
+    *         |
+    *         0
+    */
     rockerAngle: number = 0;
     /**幅度 */
     rockerValue: number = 0;
@@ -92,7 +98,7 @@ export default class RockerBox extends Laya.Script {
         let offY = mouseY - this.mouseDownY;
         this.rockerAngle = Math.atan2(offX, offY) * 180 / Math.PI;
 
-
+        // console.log(this.rockerAngle);
 
         let dis = Math.sqrt((this.mouseDownX - mouseX) * (this.mouseDownX - mouseX) + (this.mouseDownY - mouseY) * (this.mouseDownY - mouseY));
         dis = dis < 0 ? -dis : dis;
@@ -132,11 +138,11 @@ export default class RockerBox extends Laya.Script {
 
     /**开始移动 */
     startMove() {
-        this.FstartMove&&this.caller&&this.FstartMove.apply(this.caller,[this.rockerAngle,this.rockerValue]);
+        this.FstartMove && this.caller && this.FstartMove.apply(this.caller, [this.rockerAngle, this.rockerValue]);
     }
     /**停止移动 */
     stopMove() {
-        this.FstopMove&&this.caller&&this.FstopMove.call(this.caller);
+        this.FstopMove && this.caller && this.FstopMove.call(this.caller);
     }
 
     onDisable(): void {

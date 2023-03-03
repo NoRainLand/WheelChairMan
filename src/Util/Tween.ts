@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-07 16:38:31 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 11:48:45
+ * @Last Modified time: 2023-03-03 21:35:00
  */
 
 import Timer from "./Timer";
@@ -298,9 +298,9 @@ export default class Tween {
        * 执行回调
        * 注：尽量避免在回调里对自身进行有持续性的操作to/wait等，会出现异常现象
        */
-    public call(call: Function, thisObj?: any, params?: any[]): Tween {
+    public call(caller: any, callback: Function, params?: any[]): Tween {
         var self = this;
-        call && self.$addStep(3, 0, [call, thisObj, params]);
+        callback && self.$addStep(3, 0, [callback, caller, params]);
         return self;
     }
     /**延时 */

@@ -1,5 +1,6 @@
 import { EventEnum } from "../Enum/EventEnum";
 import EventMgr from "../Mgr/EventMgr";
+import Tween from "../Util/Tween";
 import UIBaseMgr from "./UIBaseMgr";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
@@ -17,7 +18,7 @@ import Node = Laya.Node;
  * @Author: NoRain 
  * @Date: 2023-02-08 10:03:24 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-24 23:38:28
+ * @Last Modified time: 2023-03-03 21:46:08
  */
 const { regClass, property } = Laya;
 
@@ -56,9 +57,20 @@ export default class UIBase extends Laya.Script {
     constructor() {
         super();
     }
-    /**是开启特效 */
+    /**是开启特效
+     * 0 空
+     * 1 弹出
+     * 2 左切入
+     * 3 右切入
+     */
     @property()
     AniType: number = 0;
+
+
+    /**动画节点，默认为Main */
+    @property()
+    aniNode: Sprite;
+
     /**是否播放完特效 */
     aniFinish: boolean = false;
 
@@ -66,22 +78,35 @@ export default class UIBase extends Laya.Script {
     private $Main: Node;
     /**开启特效 */
     openAni() {
-        this.$Main = this.owner.getChildByName("Main");
-        switch (this.AniType) {
-            default:
-                this.aniFinish = true;
-                break;
-            case 0:
-                this.aniFinish = true;
-                break;
-            case 1:
-
-                break
-
-
+        if (!this.aniNode) {
+            this.aniNode = this.owner.getChildByName("Main") as Sprite;
         }
-
-        this.aniFinish = true; //暂时没有
+        if (this.aniNode) {
+            this.$Main = this.owner.getChildByName("Main");
+            switch (this.AniType) {
+                default:
+                case 0:
+                    this.aniFinish = true;
+                    break;
+                case 1:
+                    Tween.get(this.aniNode)
+                        // this.aniNode.scaleX
+                        .set({ scaleX: 0.8, scaleY: 0.8 })
+                        .to({ scaleX: 1, scaleY: 1 }, 300, Laya.Ease.backOut)
+                        .call(this, () => {
+                            this.aniFinish = true;
+                        })
+                        .start();
+                    break;
+                case 2:
+                    // Tween.get(this.aniNode)
+                    // .set({x:1920})
+                    // .to()
+                    break
+            }
+        } else {
+            this.aniFinish = true;
+        }
     }
 
     /**界面打开 */

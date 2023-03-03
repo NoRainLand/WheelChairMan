@@ -5,6 +5,8 @@
   "name": "LanguageView",
   "width": 1920,
   "height": 1080,
+  "anchorX": 0,
+  "anchorY": 0,
   "mouseEnabled": true,
   "left": 0,
   "right": 0,
@@ -16,6 +18,8 @@
       "scriptPath": "../src/Scene/LanguageView.ts",
       "depth": 1,
       "isSingleton": true,
+      "AniType": 1,
+      "aniNode": null,
       "$listLanguage": {
         "_$ref": "x83d9sq5"
       },
@@ -31,6 +35,8 @@
       "name": "Bg",
       "width": 1920,
       "height": 1080,
+      "anchorX": 0,
+      "anchorY": 0,
       "alpha": 0.8,
       "mouseEnabled": true,
       "left": 0,
@@ -47,41 +53,11 @@
       "y": 540,
       "width": 974,
       "height": 732,
-      "pivotX": 487,
-      "pivotY": 366,
-      "mouseEnabled": true,
       "anchorX": 0.5,
       "anchorY": 0.5,
+      "mouseEnabled": true,
       "skin": "res://7f568993-82b8-41eb-8ed7-f60fda767bf1",
       "sizeGrid": "87,82,105,85,0",
-      "_$comp": [
-        {
-          "_$type": "Animator2D",
-          "controller": {
-            "_$uuid": "0810b5a6-fa15-4a08-958c-20de25e7caf2",
-            "_$type": "AnimationController2D"
-          },
-          "controllerLayers": [
-            {
-              "_$type": "AnimatorControllerLayer2D",
-              "name": "Base Layer",
-              "states": [
-                {
-                  "_$type": "AnimatorState2D",
-                  "name": "DialogOpen",
-                  "clipStart": 0,
-                  "clip": {
-                    "_$uuid": "2d6cdaca-41c6-41bb-8c14-52bc647307eb",
-                    "_$type": "AnimationClip2D"
-                  },
-                  "soloTransitions": []
-                }
-              ],
-              "defaultStateName": "DialogOpen"
-            }
-          ]
-        }
-      ],
       "_$child": [
         {
           "_$id": "x83d9sq5",
@@ -91,22 +67,28 @@
           "y": 65.99999999999994,
           "width": 846,
           "height": 577,
+          "anchorX": 0,
+          "anchorY": 0,
           "mouseEnabled": true,
+          "itemTemplate": {
+            "_$ref": "hkctbdbw",
+            "_$tmpl": "itemRender"
+          },
           "repeatX": 1,
           "repeatY": 3,
           "elasticEnabled": true,
           "spaceX": 10,
           "spaceY": 10,
           "selectEnable": true,
-          "itemRender": {
-            "_$type": "any",
-            "value": {
-              "_$ver": 1,
+          "_$child": [
+            {
               "_$id": "hkctbdbw",
               "_$type": "Box",
               "name": "item",
               "width": 846,
               "height": 180,
+              "anchorX": 0,
+              "anchorY": 0,
               "left": 0,
               "right": 0,
               "_$child": [
@@ -118,6 +100,8 @@
                   "y": 27,
                   "width": 140,
                   "height": 127,
+                  "anchorX": 0,
+                  "anchorY": 0,
                   "skin": "res://fb0b7cef-f3e2-41d9-8381-7565cda04710"
                 },
                 {
@@ -128,12 +112,13 @@
                   "y": 28,
                   "width": 529,
                   "height": 126,
+                  "anchorX": 0,
+                  "anchorY": 0,
                   "text": "简体中文",
                   "fontSize": 60,
                   "color": "rgba(135, 120, 98, 1)",
                   "align": "center",
                   "valign": "middle",
-                  "overflow": "visible",
                   "leading": 0,
                   "padding": "0,0,0,0"
                 },
@@ -145,12 +130,14 @@
                   "y": 12,
                   "width": 45,
                   "height": 59,
+                  "anchorX": 0,
+                  "anchorY": 0,
                   "visible": false,
                   "skin": "res://b570751f-8408-4edb-9d83-bef9c64e50ef"
                 }
               ]
             }
-          }
+          ]
         },
         {
           "_$id": "4y2yjav5",
@@ -160,6 +147,8 @@
           "y": -6.999999999999773,
           "width": 104,
           "height": 116,
+          "anchorX": 0,
+          "anchorY": 0,
           "mouseEnabled": true,
           "skin": "res://79d501c7-75ed-41c9-93b2-cc025caeba59"
         }

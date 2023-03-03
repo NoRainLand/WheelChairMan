@@ -211,15 +211,15 @@ function __$decorate(assetId, codePath) {
     }
     /**获取克隆 */
     getResCloneById(id) {
-      var _a21, _b15;
+      var _a23, _b16;
       if (id) {
         let url = this.getUrlById(id);
         if (url) {
           let obj = Laya.loader.getRes(url);
           if (obj === null || obj === void 0 ? void 0 : obj.create) {
-            return (_a21 = obj === null || obj === void 0 ? void 0 : obj.create) === null || _a21 === void 0 ? void 0 : _a21.call(obj);
+            return (_a23 = obj === null || obj === void 0 ? void 0 : obj.create) === null || _a23 === void 0 ? void 0 : _a23.call(obj);
           } else if (obj === null || obj === void 0 ? void 0 : obj.clone) {
-            return (_b15 = obj === null || obj === void 0 ? void 0 : obj.clone) === null || _b15 === void 0 ? void 0 : _b15.call(obj);
+            return (_b16 = obj === null || obj === void 0 ? void 0 : obj.clone) === null || _b16 === void 0 ? void 0 : _b16.call(obj);
           } else {
             console.log("\u65E0\u6CD5\u83B7\u53D6\u514B\u9686");
             return obj;
@@ -349,324 +349,8 @@ function __$decorate(assetId, codePath) {
   };
   __name(ResLoader, "ResLoader");
 
-  // E:/WheelChairMan/src/UIBase/UIBase.ts
-  var __decorate2 = __$decorate("172331b7-4cbf-495d-96b7-70e583afa5dd", "../src/UIBase/UIBase.ts");
-  var { regClass, property } = Laya;
-  var UIBase = /* @__PURE__ */ __name(class UIBase2 extends Laya.Script {
-    constructor() {
-      super();
-      this.depth = 2;
-      this.isSingleton = true;
-      this.$param = null;
-      this.isOpen = false;
-      this.AniType = 0;
-      this.aniFinish = false;
-    }
-    /**开启特效 */
-    openAni() {
-      this.$Main = this.owner.getChildByName("Main");
-      switch (this.AniType) {
-        default:
-          this.aniFinish = true;
-          break;
-        case 0:
-          this.aniFinish = true;
-          break;
-        case 1:
-          break;
-      }
-      this.aniFinish = true;
-    }
-    /**界面打开 */
-    onOpened(param) {
-    }
-    /**添加监听 */
-    addEvent() {
-    }
-    /**界面关闭 */
-    onClosed() {
-    }
-    /**
-     * 注册监听事件，不需要销毁
-     * @param event 事件枚举
-     * @param callback 回调
-     * @param callNow 立刻回调一次
-     */
-    regEvent(event, callback, callNow = false, data) {
-      let self = this;
-      if (event && callback) {
-        EventMgr.on(event, this, callback);
-        self.$event || (self.$event = /* @__PURE__ */ new Map());
-        self.$event.set(event, callback);
-        if (callNow) {
-          callback.call(this, data);
-        }
-      }
-    }
-    /**
-     * 注册点击事件，并且清空之前的所有事件
-     * @param node 节点
-     * @param callback 回调
-     * @param data 参数 默认第一位
-     * @param once 是否只触发一次
-     * @param time 点击间隔,默认300s，防止多次点击
-     */
-    regClick(node, callback, data, once, time) {
-      this.addClick(node, this, callback, once, data, time);
-    }
-    /**
-    * 添加点击事件
-    * @param node 点击对象
-    * @param callback 回调
-    * @param caller 回调对象
-    * @param once 仅监听一次
-    * @param data 回调参数
-    * @param time 多次点击阻断，默认300
-    * 注：事件清理请使用offAll
-    */
-    addClick(node, caller, callback, once, data, time = 300) {
-      if (node) {
-        let clickTime = 0, params = [], evtIdx = 0;
-        node.offAll();
-        node[once ? "once" : "on"](Laya.Event.CLICK, caller, (e) => {
-          let now = Date.now();
-          e.stopPropagation();
-          if (now - clickTime > time && this.aniFinish) {
-            if (data !== void 0) {
-              params[evtIdx] = data;
-              evtIdx = 1;
-            }
-            params[evtIdx] = e;
-            callback.apply(caller, params);
-            clickTime = now;
-          }
-        });
-      } else {
-        console.log("node is undefined");
-      }
-    }
-    /**关闭自身 */
-    close() {
-      UIBaseMgr.instance.close(this.$assetsId, this.id);
-    }
-  }, "UIBase");
-  __decorate2([
-    property(),
-    __metadata("design:type", Number)
-  ], UIBase.prototype, "depth", void 0);
-  __decorate2([
-    property(),
-    __metadata("design:type", Boolean)
-  ], UIBase.prototype, "isSingleton", void 0);
-  __decorate2([
-    property(),
-    __metadata("design:type", Number)
-  ], UIBase.prototype, "AniType", void 0);
-  UIBase = __decorate2([
-    regClass(),
-    __metadata("design:paramtypes", [])
-  ], UIBase);
-  var UIBase_default = UIBase;
-
-  // E:/WheelChairMan/src/UIBase/UIBaseMgr.ts
-  var Pool = Laya.Pool;
-  var Handler2 = Laya.Handler;
-  var UIBaseMgr = class {
-    constructor() {
-      /**是否已经调用过openLoadView */
-      this.$isOpenLoadView = false;
-      /**对象池标记 */
-      this.$sign = "View_";
-    }
-    static get instance() {
-      return this._instance ? this._instance : this._instance = new UIBaseMgr();
-    }
-    /**初始化 */
-    init(UIBase3) {
-      this.$UIBase = UIBase3;
-      this.$DebugUI = this.$UIBase.getChildByName("DebugUI");
-      this.$TipsUI = this.$UIBase.getChildByName("TipsUI");
-      this.$MainUI = this.$UIBase.getChildByName("MainUI");
-      this.$3DUI = this.$UIBase.getChildByName("3DUI");
-      this.$sceneScriptPool = /* @__PURE__ */ new Map();
-      this.$scenePool = /* @__PURE__ */ new Map();
-    }
-    /**加载load界面 */
-    openLoadView() {
-      if (!this.$isOpenLoadView) {
-        this.$isOpenLoadView = true;
-        ResLoader.instance.load(SceneUrl.LoadView, Handler2.create(this, () => {
-          this.initScene(ResLoader.instance.getResCloneByUrl(SceneUrl.LoadView), 1006 /* LoadView */);
-        }));
-      }
-    }
-    /**
-     * 打开一个场景
-     * @param sceneId 场景名称
-     * @param param 传递参数
-     * @param caller 作用域
-     * @param callback 回调
-     */
-    open(sceneId, param, caller, callback) {
-      let scripts = this.$sceneScriptPool.get(sceneId);
-      if (scripts && scripts[0] && scripts[0].isSingleton) {
-        console.log("\u8FD9\u4E2A\u9875\u9762\u5DF2\u7ECF\u5B58\u5728\u5E76\u4E14\u4E0D\u5141\u8BB8\u91CD\u590D\u6253\u5F00");
-      } else {
-        let scene = Pool.getItem(this.$sign + sceneId);
-        if (scene) {
-          this.initScene(scene, sceneId, param, caller, callback);
-        } else {
-          let scenePrefab = this.$scenePool.get(sceneId);
-          if (scenePrefab) {
-            scene = scenePrefab.create();
-            this.initScene(scene, sceneId, param, caller, callback);
-          } else {
-            this.loadScene(sceneId, param, caller, callback);
-          }
-        }
-      }
-    }
-    /**初始化界面 */
-    initScene(scene, sceneName, param, caller, callback) {
-      let base = scene.getComponent(UIBase_default);
-      if (base) {
-        switch (base.depth) {
-          default:
-            this.$MainUI.addChild(scene);
-            break;
-          case 0:
-            this.$DebugUI.addChild(scene);
-            break;
-          case 1:
-            this.$TipsUI.addChild(scene);
-            break;
-          case 2:
-            this.$MainUI.addChild(scene);
-            break;
-          case 3:
-            this.$3DUI.addChild(scene);
-            break;
-        }
-        base.$param = param;
-        base.$assetsId = sceneName;
-        base.isOpen = true;
-        base.aniFinish = false;
-        base.openAni();
-        base.onOpened(param);
-        base.addEvent();
-        if (caller && callback) {
-          callback.call(caller);
-        }
-        let arr = this.$sceneScriptPool.get(sceneName);
-        if (arr) {
-          arr.push(base);
-          this.$sceneScriptPool.set(sceneName, arr);
-        } else {
-          this.$sceneScriptPool.set(sceneName, [base]);
-        }
-      } else {
-        console.log("UIData\u6216\u8005UIBase\u7F3A\u5931");
-      }
-    }
-    /**关闭页面 */
-    close(sceneName, id) {
-      let scripts = this.$sceneScriptPool.get(sceneName);
-      if (scripts && scripts.length > 0) {
-        let arr = [];
-        for (let i = 0; i < scripts.length; i++) {
-          let script = scripts[i];
-          if (script.id == id) {
-            script.isOpen = false;
-            script.owner.removeSelf();
-            script.onClosed();
-            let events = script.$event;
-            for (let name in events) {
-              EventMgr.off(name, script, events.get(name));
-            }
-            script.$event = null;
-            script.$param = null;
-            Pool.recover(this.$sign + sceneName, script.owner);
-          } else {
-            arr.push(script);
-          }
-        }
-        this.$sceneScriptPool.set(sceneName, arr);
-      }
-    }
-    /**是否打开某个界面 */
-    isOpen(sceneName) {
-      let arr = this.$sceneScriptPool.get(sceneName);
-      if (arr && arr.length > 0) {
-        return true;
-      }
-      return false;
-    }
-    /**加载场景 */
-    loadScene(sceneName, param, caller, callback) {
-      this.$scenePool.set(sceneName, ResLoader.instance.getResById(sceneName));
-      if (this.$scenePool.get(sceneName)) {
-        this.open(sceneName, param, caller, callback);
-      }
-    }
-    initDebugScene() {
-      this.open(1001 /* DebugView */);
-    }
-    /**打开一个调试界面 */
-    showDebug() {
-      this.open(1001 /* DebugView */);
-    }
-    /**
-     * 打开一个提示面板
-     * @param msg 信息
-     */
-    showTips(msg) {
-      this.open(1004 /* TipsView */, msg);
-    }
-    /**
-     * 打开一个确认取消面板
-     * @param title 标题
-     * @param msg 信息
-     * @param caller 作用域
-     * @param sureCallback 确认回调
-     * @param cancelCallBack 取消回调
-     */
-    showSureDialog(title, msg, caller, sureCallback, cancelCallBack) {
-      let data = { title, msg, caller, sureCallback, cancelCallBack };
-      this.open(1005 /* SureView */, data);
-    }
-  };
-  __name(UIBaseMgr, "UIBaseMgr");
-
-  // E:/WheelChairMan/src/GameEntry.ts
-  var __decorate3 = __$decorate("5d4f5965-a166-4aeb-8715-baae3302439a", "../src/GameEntry.ts");
-  var { regClass: regClass2, property: property2 } = Laya;
-  var GameEntry = /* @__PURE__ */ __name(class GameEntry2 extends Laya.Script {
-    constructor() {
-      super();
-      this.isInit = false;
-    }
-    onAwake() {
-      if (!this.isInit) {
-        this.isInit = true;
-        this.init();
-      }
-    }
-    /**初始化 */
-    init() {
-      console.log(`\u5F53\u524D\u5F15\u64CE\u7248\u672C:${Laya.LayaEnv.version}, \u5F53\u524D\u9879\u76EE\u540D\u79F0:${ProjectConfig.projectName},\u5F53\u524D\u9879\u76EE\u7248\u672C:${ProjectConfig.projectVersion}/${ProjectConfig.projectVersionIndex}`);
-      this.GameEntry = this.owner;
-      this.UIBase = this.GameEntry.getChildByName("UIBase");
-      UIBaseMgr.instance.init(this.UIBase);
-      UIBaseMgr.instance.openLoadView();
-    }
-  }, "GameEntry");
-  GameEntry = __decorate3([
-    regClass2(),
-    __metadata("design:paramtypes", [])
-  ], GameEntry);
-
   // E:/WheelChairMan/src/Util/Timer.ts
-  var Pool2 = Laya.Pool;
+  var Pool = Laya.Pool;
   var _Timer = class {
     constructor() {
       /**作用域 */
@@ -719,7 +403,7 @@ function __$decorate(assetId, codePath) {
     static get(delay, caller, callBack) {
       let self = this;
       if (delay > 0 && caller != null && callBack != null) {
-        let timer = Pool2.getItemByClass(self.$sign, _Timer);
+        let timer = Pool.getItemByClass(self.$sign, _Timer);
         timer.$init(delay, caller, callBack);
         return timer;
       } else {
@@ -743,6 +427,7 @@ function __$decorate(assetId, codePath) {
       self.$delay = delay;
       self.$caller = caller;
       self.$callBack = callBack;
+      self.$type = 0;
     }
     /**定时执行一次 */
     once() {
@@ -816,7 +501,7 @@ function __$decorate(assetId, codePath) {
     clear() {
       this.reset();
       Laya.timer.clear(this, this.update);
-      Pool2.recover(_Timer.$sign, this);
+      Pool.recover(_Timer.$sign, this);
       if (this.$caller) {
         let timerCache = this.$caller[_Timer.$cache];
         if (timerCache && timerCache instanceof Array) {
@@ -847,14 +532,7 @@ function __$decorate(assetId, codePath) {
       if (timerCache && timerCache instanceof Array) {
         for (let i = 0; i < timerCache.length; i++) {
           let timer = timerCache[i];
-          console.log(_Timer.$cache);
-          console.log(timerCache);
-          console.log(timer);
-          if (timer instanceof _Timer) {
-            timer.clear();
-          } else {
-            console.log("11111");
-          }
+          timer instanceof _Timer && timer.clear();
         }
       }
     }
@@ -865,2099 +543,7 @@ function __$decorate(assetId, codePath) {
   Timer.$sign = "MyTimer";
   Timer.$cache = "$" + _Timer.$sign;
 
-  // E:/WheelChairMan/src/Scene3dBase/Scene3d.ts
-  var __decorate4 = __$decorate("5d2200e4-1fa0-4d47-ab3d-f4961980a2ae", "../src/Scene3dBase/Scene3d.ts");
-  var { regClass: regClass3, property: property3 } = Laya;
-  var Scene3d = /* @__PURE__ */ __name(class Scene3d2 extends Laya.Script {
-    constructor() {
-      super();
-      this.$param = null;
-      this.sceneId = 0;
-    }
-    onReset() {
-    }
-    /**界面打开 */
-    onOpened(param) {
-    }
-    /**添加监听 */
-    addEvent() {
-    }
-    /**界面关闭 */
-    onClosed() {
-    }
-    /**关闭 */
-    close(isDestroy) {
-      Scene3dMgr.instance.close(this.sceneId, isDestroy);
-    }
-    /**
-        * 注册监听事件，不需要销毁
-        * @param event 事件枚举
-        * @param callback 回调
-        * @param callNow 立刻回调一次
-        */
-    regEvent(event, callback, callNow = false, data) {
-      let self = this;
-      if (event && callback) {
-        EventMgr.on(event, this, callback);
-        self.$event || (self.$event = /* @__PURE__ */ new Map());
-        self.$event.set(event, callback);
-        if (callNow) {
-          callback.call(this, data);
-        }
-      }
-    }
-  }, "Scene3d");
-  Scene3d = __decorate4([
-    regClass3(),
-    __metadata("design:paramtypes", [])
-  ], Scene3d);
-  var Scene3d_default = Scene3d;
-
-  // E:/WheelChairMan/src/Scene3dBase/Scene3dMgr.ts
-  var Scene3D = Laya.Scene3D;
-  var Scene3dMgr = class {
-    static get instance() {
-      return this._instance ? this._instance : this._instance = new Scene3dMgr();
-    }
-    init() {
-      this.$scene3dMap = ResLoader.instance.getDataTableById(3007 /* Scene3d */);
-      this.$scene3dPool = /* @__PURE__ */ new Map();
-      this.initScene3D();
-    }
-    initScene3D() {
-      this.$scene3d = new Scene3D();
-      this.$scene3d.name = "baseScene3d";
-      Laya.stage.addChild(this.$scene3d);
-      Laya.stage.setChildIndex(this.$scene3d, 0);
-      this.$scene3d.enableFog = true;
-      this.$scene3d.fogStart = 200;
-      this.$scene3d.fogRange = 400;
-      this.$scene3d.fogColor = new Laya.Color(0.34, 0.34, 0.34);
-      this.$scene3d.sceneReflectionProb.ambientIntensity = 0.7;
-      this.$scene3d.sceneReflectionProb.ambientMode = 0;
-      this.$scene3d.sceneReflectionProb.ambientColor = new Laya.Color(0.7, 0.7, 0.7, 0.7);
-      this.$scene3d.skyRenderer.material = ResLoader.instance.getResCloneById(5103 /* SkyBox3 */);
-      this.rotSkyBox();
-    }
-    rotSkyBox() {
-      let mat = this.$scene3d.skyRenderer.material;
-      mat && Timer.get(1, this, () => {
-        mat._shaderValues.setNumber(Laya.SkyBoxMaterial.ROTATION, mat._shaderValues.getNumber(Laya.SkyBoxMaterial.ROTATION) + 0.01);
-      }).frameLoop().start();
-    }
-    /**打开某个场景 */
-    open(sceneId, param) {
-      var _a21;
-      let sceneScript;
-      sceneScript = this.$scene3dPool.get(sceneId);
-      if (sceneScript) {
-        this.initScene(sceneScript, param);
-      } else {
-        let id = (_a21 = this.$scene3dMap.get(sceneId)) == null ? void 0 : _a21["path"];
-        if (id) {
-          let scene = ResLoader.instance.getResCloneById(id);
-          scene && this.$scene3d.addChild(scene);
-          sceneScript = scene.getComponent(Scene3d_default);
-          if (sceneScript) {
-            this.$scene3dPool.set(sceneId, sceneScript);
-            sceneScript.sceneId = sceneId;
-            this.initScene(sceneScript, param);
-          } else {
-            console.log("sceneScript is undefined");
-          }
-        }
-      }
-    }
-    /**初始化一下 */
-    initScene(sceneScript, param) {
-      var _a21;
-      this.$scene3d.addChild(sceneScript.owner);
-      sceneScript.owner.name = (_a21 = this.$scene3dMap.get(sceneScript.sceneId)) == null ? void 0 : _a21["key"];
-      sceneScript.$param = param;
-      sceneScript.onOpened(param);
-      sceneScript.addEvent();
-    }
-    /**关闭某个场景 */
-    close(sceneId, isDestroy) {
-      let sceneScript = this.$scene3dPool.get(sceneId);
-      if (sceneScript) {
-        sceneScript.onClosed();
-        sceneScript.owner.removeSelf();
-        let events = sceneScript.$event;
-        for (let name in events) {
-          EventMgr.off(name, sceneScript, events.get(name));
-        }
-        sceneScript.$event = null;
-        sceneScript.$param = null;
-        if (isDestroy) {
-          sceneScript.owner.destroy();
-          this.$scene3dPool.delete(sceneId);
-        }
-      }
-    }
-  };
-  __name(Scene3dMgr, "Scene3dMgr");
-
-  // E:/WheelChairMan/src/Mgr/LocalMgr.ts
-  var LocalStorage = Laya.LocalStorage;
-  var LocalStorageMgr = class {
-    /**
-    * 获取指定键名的值。
-    * @param key 键名。
-    * @return 字符串型值。
-    */
-    static getItem(key) {
-      return LocalStorage.getItem(`${ProjectConfig.projectName}_${key}`);
-    }
-    /**
-     * 存储指定键名和键值，字符串类型。
-     * @param key 键名。
-     * @param value 键值。
-     */
-    static setItem(key, value) {
-      LocalStorage.setItem(`${ProjectConfig.projectName}_${key}`, typeof value === "string" ? value : value.toString());
-    }
-  };
-  __name(LocalStorageMgr, "LocalStorageMgr");
-
-  // E:/WheelChairMan/src/Data/GameData.ts
-  var GameData = class {
-    /**用户头像 */
-    static get userHead() {
-      if (!this.$userHead) {
-        this.$userHead = LocalStorageMgr.getItem("USERHEAD" /* USERHEAD */);
-      }
-      return this.$userHead;
-    }
-    /**用户唯一ID */
-    static get UID() {
-      if (!this.$UID) {
-        let uid = LocalStorageMgr.getItem("DID" /* UID */);
-        if (uid) {
-          this.$UID = uid;
-        } else {
-          this.$UID = (Math.random() * 1e8).toFixed();
-          LocalStorageMgr.setItem("DID" /* UID */, this.$UID);
-        }
-      }
-      return this.$UID;
-    }
-    /**用户名字 */
-    static get userName() {
-      if (!this.$userName) {
-        this.$userName = LocalStorageMgr.getItem("USERNAME" /* USERNAME */);
-        if (!this.$userName) {
-          this.$userName = "userName";
-          LocalStorageMgr.setItem("USERNAME" /* USERNAME */, this.$userName);
-        }
-      }
-      return this.$userName;
-    }
-    /**金币 */
-    static get gold() {
-      if (this.$gold == -1) {
-        let gold = Number(LocalStorageMgr.getItem("GOLD" /* GOLD */));
-        if (isNaN(gold)) {
-          this.$gold = 0;
-          LocalStorageMgr.setItem("GOLD" /* GOLD */, this.$gold);
-        } else {
-          this.$gold = gold;
-        }
-      }
-      return this.$gold;
-    }
-    static set gold(value) {
-      if (!isNaN(value) && value >= 0) {
-        this.$gold = value;
-        LocalStorageMgr.setItem("GOLD" /* GOLD */, this.$gold);
-      }
-    }
-    /**钻石 */
-    static get diamond() {
-      if (this.$diamond == -1) {
-        let diamond = Number(LocalStorageMgr.getItem("DIAMOND" /* DIAMOND */));
-        if (isNaN(diamond)) {
-          this.$diamond = 0;
-          LocalStorageMgr.setItem("DIAMOND" /* DIAMOND */, this.$diamond);
-        } else {
-          this.$diamond = diamond;
-        }
-      }
-      return this.$diamond;
-    }
-    static set diamond(value) {
-      if (!isNaN(value) && value >= 0) {
-        this.$diamond = value;
-        LocalStorageMgr.setItem("DIAMOND" /* DIAMOND */, this.$diamond);
-      }
-    }
-    /**经验 */
-    static get experience() {
-      if (this.$experience == -1) {
-        let experience = Number(LocalStorageMgr.getItem("EXPERIENCE" /* EXPERIENCE */));
-        if (isNaN(experience)) {
-          this.$experience = 0;
-          LocalStorageMgr.setItem("EXPERIENCE" /* EXPERIENCE */, this.$experience);
-        } else {
-          this.$experience = experience;
-        }
-      }
-      return this.$experience;
-    }
-    static set experience(value) {
-      if (!isNaN(value) && value >= 0) {
-        this.$experience = value;
-        LocalStorageMgr.setItem("EXPERIENCE" /* EXPERIENCE */, this.$experience);
-      }
-    }
-    /**金币 */
-    static get key() {
-      if (this.$key == -1) {
-        let key = Number(LocalStorageMgr.getItem("KEY" /* KEY */));
-        console.log(key);
-        if (isNaN(key)) {
-          this.$key = 0;
-          LocalStorageMgr.setItem("KEY" /* KEY */, this.$key);
-        } else {
-          this.$key = key;
-        }
-      }
-      return this.$key;
-    }
-    static set key(value) {
-      if (!isNaN(value) && value >= 0) {
-        this.$key = value;
-        LocalStorageMgr.setItem("KEY" /* KEY */, this.$key);
-      }
-    }
-  };
-  __name(GameData, "GameData");
-  GameData.$userHead = "";
-  GameData.$UID = "";
-  GameData.$userName = "";
-  GameData.$gold = -1;
-  GameData.$diamond = -1;
-  GameData.$experience = -1;
-  GameData.$key = -1;
-
-  // E:/WheelChairMan/src/Enum/LanguageEnum.ts
-  var LanguageEnum = /* @__PURE__ */ ((LanguageEnum2) => {
-    LanguageEnum2[LanguageEnum2["ChineseSimplified"] = 1001] = "ChineseSimplified";
-    LanguageEnum2[LanguageEnum2["English"] = 1002] = "English";
-    return LanguageEnum2;
-  })(LanguageEnum || {});
-
-  // E:/WheelChairMan/src/Localization/LocalizationMgr.ts
-  var LocalizationMgr = class {
-    /**初始化 */
-    static init() {
-      this.$localizationResMap = ResLoader.instance.getDataTableById(3002 /* LocalizationRes */);
-      this.$localizationMap = ResLoader.instance.getDataTableById(501 /* Localization */);
-      this.$localizationKeyMap = /* @__PURE__ */ new Map();
-      for (let [key, value] of this.$localizationMap) {
-        this.$localizationKeyMap.set(value["key"], value);
-      }
-    }
-    /**获取语言对应国旗 */
-    static getFlagSkinIdById(id) {
-      let data = this.$localizationResMap.get(id);
-      return data && data["flagId"];
-    }
-    /**获取语言描述 */
-    static getLanguageMsgById(id) {
-      let data = this.$localizationResMap.get(id);
-      return data && data["msg"];
-    }
-    /**通过key获取对应语言,一般来说是内部调用 */
-    static $getLocalizationByKey(key, ...keys) {
-      var _a21, _b15;
-      let language = LanguageEnum[this.Language];
-      let value = (_a21 = this.$localizationKeyMap.get(key)) == null ? void 0 : _a21[language];
-      if (value) {
-        if (keys && keys.length) {
-          for (let i = 0; i < keys.length; i++) {
-            let item = (_b15 = this.$localizationKeyMap.get(keys[i])) == null ? void 0 : _b15[language];
-            item = item ? item : keys[i];
-            value = value.replace("$", item);
-          }
-        }
-      }
-      return value;
-    }
-    /**通过枚举获取对应语言 */
-    static getLocalizationByEnum(lenum, ...lenums) {
-      var _a21, _b15;
-      let language = LanguageEnum[this.Language];
-      let value = (_a21 = this.$localizationMap.get(lenum)) == null ? void 0 : _a21[language];
-      if (value) {
-        if (lenums && lenums.length) {
-          for (let i = 0; i < lenums.length; i++) {
-            let item = (_b15 = this.$localizationMap.get(lenums[i])) == null ? void 0 : _b15[language];
-            item = item ? item : lenums[i];
-            value = value.replace("$", item);
-          }
-        }
-      }
-      return value;
-    }
-    /**获取当前语言 */
-    static get Language() {
-      if (!this.$language) {
-        let language = LocalStorageMgr.getItem("LANGUAGE" /* LANGUAGE */);
-        if (language) {
-          this.$language = Number(language.substring(language.indexOf("_") + 1));
-        } else {
-          this.$language = ProjectConfig.defaultLanguage;
-          LocalStorageMgr.setItem("LANGUAGE" /* LANGUAGE */, this.$sign + this.$language);
-        }
-      }
-      return this.$language;
-    }
-    /**修改当前语言 */
-    static set Language(language) {
-      this.$language = language;
-      LocalStorageMgr.setItem("LANGUAGE" /* LANGUAGE */, this.$sign + this.$language);
-      EventMgr.event("LANGUAGECHANGE" /* LANGUAGECHANGE */);
-    }
-  };
-  __name(LocalizationMgr, "LocalizationMgr");
-  /**持久化标志 */
-  LocalizationMgr.$sign = "language_";
-
-  // E:/WheelChairMan/src/Util/Sprite3d.ts
-  var Vector3 = Laya.Vector3;
-  var _Sprite3d = class {
-    static get instance() {
-      return this._instance ? this._instance : this._instance = new _Sprite3d();
-    }
-    constructor() {
-    }
-    /**零向量 */
-    static get ZERO() {
-      if (!this._ZERO) {
-        this._ZERO = new Vector3(0, 0, 0);
-        Object.freeze(this._ZERO);
-      }
-      return this._ZERO;
-    }
-    /**一向量 */
-    static get ONE() {
-      if (!this._ONE) {
-        this._ONE = new Vector3(1, 1, 1);
-        Object.freeze(this._ONE);
-      }
-      return this._ONE;
-    }
-    /**X向量 */
-    static get UnitX() {
-      if (!this._UnitX) {
-        this._UnitX = new Vector3(1, 0, 0);
-        Object.freeze(this._UnitX);
-      }
-      return this._UnitX;
-    }
-    /**Y向量 */
-    static get UnitY() {
-      if (!this._UnitY) {
-        this._UnitY = new Vector3(0, 1, 0);
-        Object.freeze(this._UnitY);
-      }
-      return this._UnitY;
-    }
-    /**上向量 */
-    static get DOWN() {
-      if (!this._DOWN) {
-        this._DOWN = new Vector3(0, -1, 0);
-        Object.freeze(this._DOWN);
-      }
-      return this._DOWN;
-    }
-    /**Z向量 */
-    static get UnitZ() {
-      if (!this._UnitZ) {
-        this._UnitZ = new Vector3(0, 0, 1);
-        Object.freeze(this._UnitZ);
-      }
-      return this._UnitZ;
-    }
-    /**
-    * 世界坐标转局部坐标
-    * @param {Vector3} pos2world 世界坐标
-    * @param {Sprite3D} sp3d 局部空间
-    * @returns {Vector3} 局部坐标
-    */
-    static positionWorld2local(pos2world, sp3d) {
-      let pos2local = new Vector3(0, 0, 0);
-      let m = new Laya.Matrix4x4();
-      sp3d.transform.worldMatrix.invert(m);
-      Vector3.transformCoordinate(pos2world, m, pos2local);
-      return pos2local;
-    }
-    //步骤1：获取目标节点的所有子节点，将所有子节点放入数组并返回
-    static getChildNodesArray(target) {
-      let nodeArray = [];
-      for (let i = 0; i < target.numChildren; i++) {
-        let node = target.getChildAt(i);
-        if (node) {
-          nodeArray.push(node);
-        }
-      }
-      return nodeArray;
-    }
-    //步骤二：递归获取目标节点的所有子孙节点，并将他们全部放入数组并返回
-    static FindAndGetAllChildren(parentNode, outNodesArray) {
-      if (parentNode.numChildren > 0) {
-        let nodeArray = this.getChildNodesArray(parentNode);
-        nodeArray.forEach((node) => {
-          outNodesArray.push(node);
-          if (this.getChildNodesArray(node).length > 0) {
-            this.FindAndGetAllChildren(node, outNodesArray);
-          } else {
-            return outNodesArray;
-          }
-        });
-      }
-      return null;
-    }
-    //第三步：构建一个数组来存放获取的所有节点并返回此数组
-    static getAllChildrenArray(parentNode) {
-      let allChildrenArray = [];
-      this.FindAndGetAllChildren(parentNode, allChildrenArray);
-      return allChildrenArray;
-    }
-    //最后一步：将所有节点封装到字典里，方便获取
-    static getAllChildrenMap(parentNode) {
-      let obj = parentNode;
-      let id = obj.id;
-      let map = this.nodeDic[id];
-      if (!map) {
-        let allChildrenArray = this.getAllChildrenArray(parentNode);
-        map = /* @__PURE__ */ new Map();
-        for (let i = 0; i < allChildrenArray.length; i++) {
-          if (!map.has(allChildrenArray[i].name)) {
-            map.set(allChildrenArray[i].name, allChildrenArray[i]);
-          }
-        }
-        if (!this.nodeDic) {
-          this.nodeDic = new Array();
-        }
-        this.nodeDic[id] = map;
-      }
-      return map;
-    }
-    //为了方便获取各种类型的节点，可以在写一个泛型方法来获取
-    static getNodeByMap(nodeName, map) {
-      if (!map.has(nodeName)) {
-        return null;
-      }
-      return map.get(nodeName);
-    }
-    /**获取某个节点 */
-    static getNodeByName(nodeName, parentNode) {
-      let id = parentNode.id;
-      let map = this.nodeDic[id];
-      if (!map) {
-        let allChildrenArray = this.getAllChildrenArray(parentNode);
-        map = /* @__PURE__ */ new Map();
-        for (let i = 0; i < allChildrenArray.length; i++) {
-          if (!map.has(allChildrenArray[i].name)) {
-            map.set(allChildrenArray[i].name, allChildrenArray[i]);
-          }
-        }
-        this.nodeDic[id] = map;
-      }
-      if (!map.has(nodeName)) {
-        return null;
-      }
-      return map.get(nodeName);
-    }
-    /**清除拖尾
-    * @param trail 拖尾
-    * @param active 清理之后是否展示
-    */
-    static clearTrail(trail, active = false) {
-      if (trail && trail instanceof Laya.TrailSprite3D) {
-        trail.active = true;
-        let bt = trail.trailFilter.time;
-        trail.trailFilter.time = 1e-3;
-        Laya.timer.frameOnce(1, this, () => {
-          trail.trailFilter.time = bt;
-          trail.active = active;
-        });
-      }
-    }
-  };
-  var Sprite3d = _Sprite3d;
-  __name(Sprite3d, "Sprite3d");
-  Sprite3d.nodeDic = {};
-
-  // E:/WheelChairMan/src/Util/AnimatorTool.ts
-  var AnimatorTool = class {
-    /**
-    * 播放动画
-    * @param ani 动画
-    * @param name 动画名
-    * @param loop 是否循环
-    * @param speed 速度
-    * @param layerIndex 层级
-    * @param crossFade 是否过渡
-    * @param transitionDuration 过渡时间
-    */
-    static play(ani, name, loop = true, speed = 1, layerIndex = 0, crossFade = false, transitionDuration = 0.1) {
-      if (ani && name) {
-        let AnimatorState = ani.getControllerLayer(layerIndex).getAnimatorState(name);
-        if (AnimatorState) {
-          if (crossFade) {
-            ani.crossFade(name, transitionDuration, layerIndex);
-          } else {
-            ani.play(name, layerIndex);
-          }
-          AnimatorState.speed = speed;
-          AnimatorState.clip.islooping = loop;
-        } else {
-          console.log("\u540D\u79F0:" + name + " /\u5C42\u7EA7:" + layerIndex + "\u5BF9\u5E94\u7684\u52A8\u753B\u4E3A\u7A7A");
-        }
-      } else {
-        console.log("ani/name\u4E22\u5931");
-      }
-    }
-    /**
-     * 添加动画退出事件监听 注意 isLooping = true 不执行
-     * @param ani 动画
-     * @param name 动画名
-     * @param caller 域
-     * @param callback 回调函数
-     * @param layerIndex 层级
-     */
-    static initEvent(ani, name, caller, callback, layerIndex = 0) {
-      let layer = ani.getControllerLayer(layerIndex);
-      let aniStatus = layer.getAnimatorState(name);
-      if (aniStatus) {
-        let aniScript = aniStatus.getScript(Laya.AnimatorStateScript);
-        if (aniScript == null) {
-          aniScript = aniStatus.addScript(Laya.AnimatorStateScript);
-        }
-        aniScript.onStateExit = () => {
-          callback && caller && callback.call(caller);
-        };
-      } else {
-        console.log(name + "\u72B6\u6001\u4E3A\u7A7A");
-      }
-    }
-  };
-  __name(AnimatorTool, "AnimatorTool");
-
-  // E:/WheelChairMan/src/Script3d/Script3d.ts
-  var Vector32 = Laya.Vector3;
-  var Script3d = class extends Laya.Script {
-    constructor() {
-      super();
-    }
-    /**y挂载脚本的对象
-      * 同 owner
-      */
-    get obj() {
-      return this.owner;
-    }
-    /**z精灵变换。*/
-    get transform() {
-      return this.obj ? this.obj.transform : null;
-    }
-    /**d世界坐标 */
-    get position() {
-      return this.transform ? this.transform.position.clone() : null;
-    }
-    set position(v3) {
-      this.transform && (this.transform.position = v3);
-    }
-    /**本地坐标 */
-    get localPosition() {
-      return this.transform ? this.transform.localPosition.clone() : null;
-    }
-    set localPosition(v3) {
-      this.transform && (this.transform.localPosition = v3);
-    }
-    /**世界旋转 */
-    get rotation() {
-      return this.transform ? this.transform.rotation.clone() : null;
-    }
-    set rotation(v3) {
-      this.transform && (this.transform.rotation = v3);
-    }
-    /**局部旋转 */
-    get localRotation() {
-      return this.transform ? this.transform.localRotation.clone() : null;
-    }
-    set localRotation(v3) {
-      this.transform && (this.transform.localRotation = v3);
-    }
-    /**世界欧拉角 */
-    get rotationEuler() {
-      return this.transform ? this.transform.rotationEuler.clone() : null;
-    }
-    set rotationEuler(v3) {
-      this.transform && (this.transform.rotationEuler = v3);
-    }
-    /**本地欧拉角 */
-    get localRotationEuler() {
-      return this.transform ? this.transform.localRotationEuler.clone() : null;
-    }
-    set localRotationEuler(e) {
-      this.transform && (this.transform.localRotationEuler = e);
-    }
-    /**世界缩放（某些情况不准，少用） */
-    get scale() {
-      return this.transform ? this.transform.getWorldLossyScale().clone() : null;
-    }
-    set scale(v3) {
-      this.transform && this.transform.setWorldLossyScale(v3);
-    }
-    /**本地缩放*/
-    get localScale() {
-      return this.transform ? this.transform.localScale.clone() : null;
-    }
-    set localScale(v3) {
-      this.transform && (this.transform.localScale = v3);
-    }
-    /**局部空间的X轴欧拉角。*/
-    get localRotationEulerX() {
-      return this.transform ? this.transform.localRotationEulerX : null;
-    }
-    set localRotationEulerX(num) {
-      this.transform && (this.transform.localRotationEulerX = num);
-    }
-    /**局部空间的Y轴欧拉角。*/
-    get localRotationEulerY() {
-      return this.transform ? this.transform.localRotationEulerY : null;
-    }
-    set localRotationEulerY(num) {
-      this.transform && (this.transform.localRotationEulerY = num);
-    }
-    /**局部空间的Z轴欧拉角。*/
-    get localRotationEulerZ() {
-      return this.transform ? this.transform.localRotationEulerZ : null;
-    }
-    set localRotationEulerZ(num) {
-      this.transform && (this.transform.localRotationEulerZ = num);
-    }
-    /**局部位置X轴分量。*/
-    get localPositionX() {
-      return this.transform ? this.transform.localPositionX : null;
-    }
-    set localPositionX(num) {
-      this.transform && (this.transform.localPositionX = num);
-    }
-    /**局部位置Y轴分量。*/
-    get localPositionY() {
-      return this.transform ? this.transform.localPositionY : null;
-    }
-    set localPositionY(num) {
-      this.transform && (this.transform.localPositionY = num);
-    }
-    /**局部位置Z轴分量。*/
-    get localPositionZ() {
-      return this.transform ? this.transform.localPositionZ : null;
-    }
-    set localPositionZ(num) {
-      this.transform && (this.transform.localPositionZ = num);
-    }
-    onUpdate() {
-      this.updateTime = Laya.timer.delta;
-      this.update(this.updateTime);
-    }
-    /**更新 */
-    update(time) {
-    }
-    onLateUpdate() {
-      this.laterUpdateTime = Laya.timer.delta;
-      this.laterUpdate(this.laterUpdateTime);
-    }
-    laterUpdate(time) {
-    }
-    /**
-    * 世界坐标转局部坐标
-    * @param {Vector3} pos2world 世界坐标
-    * @param {Sprite3D} sp3d 局部空间
-    * @returns {Vector3} 局部坐标
-    */
-    positionWorld2local(pos2world, sp3d) {
-      let pos2local = new Vector32(0, 0, 0);
-      let m = new Laya.Matrix4x4();
-      sp3d.transform.worldMatrix.invert(m);
-      Vector32.transformCoordinate(pos2world, m, pos2local);
-      return pos2local;
-    }
-  };
-  __name(Script3d, "Script3d");
-
-  // E:/WheelChairMan/src/Util/PlayerController.ts
-  var __decorate5 = __$decorate("f3ea911e-7d9e-4e77-b857-d99a7338285a", "../src/Util/PlayerController.ts");
-  var Vector33 = Laya.Vector3;
-  var CharacterController = Laya.CharacterController;
-  var { regClass: regClass4, property: property4 } = Laya;
-  var PlayerController = /* @__PURE__ */ __name(class PlayerController2 extends Script3d {
-    constructor() {
-      super();
-      this.friction = 0.5;
-      this.stepHeight = 0.1;
-      this.jumpAllTimes = 1;
-      this.moveSpeed = 0.05;
-      this.jumpTimes = 0;
-    }
-    onEnable() {
-      this.characterController = this.obj.getComponent(CharacterController);
-      if (!this.characterController) {
-        console.log("characterController is undefined");
-      }
-    }
-    onStart() {
-      this.characterController.friction = this.friction;
-      this.characterController.stepHeight = this.stepHeight;
-      this.moveSpeedV3 = new Vector33(0, 0, 0);
-    }
-    update(time) {
-    }
-    /**
-     * 移动
-     * @param angle z方向为正方向，逆时针旋转0到180°，顺时针旋转0到-180°
-     */
-    move(angle) {
-      angle = angle / 180 * Math.PI;
-      let offX = Math.sin(angle) * this.moveSpeed;
-      let offY = Math.cos(angle) * this.moveSpeed;
-      this.moveSpeedV3 = new Vector33(offX, 0, offY);
-      this.characterController.move(this.moveSpeedV3);
-    }
-    /**停止移动 */
-    stopMove() {
-      this.characterController.move(Sprite3d.ZERO);
-      console.log("----stopMove---");
-    }
-    /**跳跃 */
-    jump() {
-      if (this.isGrounded) {
-        this.jumpTimes = 0;
-        this.jumpTimes++;
-        this.characterController.jump();
-      } else {
-        if (this.jumpTimes < this.jumpAllTimes) {
-          this.jumpTimes++;
-          this.characterController.jump();
-        }
-      }
-    }
-    /**是否在地上 */
-    isGrounded() {
-      return this.characterController.isGrounded;
-    }
-    onDisable() {
-    }
-  }, "PlayerController");
-  __decorate5([
-    property4(),
-    __metadata("design:type", Number)
-  ], PlayerController.prototype, "friction", void 0);
-  __decorate5([
-    property4(),
-    __metadata("design:type", Number)
-  ], PlayerController.prototype, "stepHeight", void 0);
-  __decorate5([
-    property4(),
-    __metadata("design:type", Number)
-  ], PlayerController.prototype, "jumpAllTimes", void 0);
-  __decorate5([
-    property4(),
-    __metadata("design:type", Number)
-  ], PlayerController.prototype, "moveSpeed", void 0);
-  PlayerController = __decorate5([
-    regClass4(),
-    __metadata("design:paramtypes", [])
-  ], PlayerController);
-  var PlayerController_default = PlayerController;
-
-  // E:/WheelChairMan/src/Game/BaseItem/BaseItem.ts
-  var Vector34 = Laya.Vector3;
-  var Quaternion = Laya.Quaternion;
-  var Pool3 = Laya.Pool;
-  var BaseItem = class extends Script3d {
-    constructor() {
-      super();
-      /**序号 */
-      this.index = -1;
-      /**对象类型 */
-      this.objType = -1;
-    }
-    onAwake() {
-      this.$events = {};
-      this.objName = "";
-      this.addEvent();
-    }
-    addEvent() {
-    }
-    /**初始化位置
-         * @param data 数据
-         * @param isRotPoint 是否为旋转节点
-         * @param isLocalPos 是否为本地节点
-         * @param lscale 是否修正缩放
-         */
-    initPos(data, isRotPoint = false, isLocalPos = false, lscale = 1) {
-      this.posData = data;
-      let pos = new Vector34(this.posData.x, this.posData.y, this.posData.z);
-      let rot = new Quaternion(this.posData.rotX, this.posData.rotY, this.posData.rotZ, this.posData.rotW);
-      let scale = new Vector34(this.posData.scaleX * lscale, this.posData.scaleY * lscale, this.posData.scaleZ * lscale);
-      if (isLocalPos) {
-        pos && (this.localPosition = pos);
-      } else {
-        pos && (this.position = pos);
-      }
-      if (isRotPoint) {
-        let rotPoint = this.obj.getChildAt(0);
-        rotPoint && (rotPoint.transform.rotation = rot);
-      } else {
-        rot && (this.rotation = rot);
-      }
-      scale && (this.localScale = scale);
-      this.initOthers();
-    }
-    initOthers() {
-    }
-    /**
-     * 注册自身事件
-     * 回收对象的时候会自动移除
-     * @param eventName 
-     * @param func 
-     */
-    regEvent(eventName, func) {
-      var self = this;
-      self.$events[eventName] = func;
-      EventMgr.on(eventName, self, func);
-    }
-    /**移除监听 */
-    unRegEvent() {
-      var self = this, eventMgr = EventMgr, events = self.$events;
-      for (let name in events) {
-        eventMgr.off(name, self, events[name]);
-      }
-      self.$events = null;
-    }
-    /**清理回收对象 */
-    clear(isDestroy = false) {
-      this.clearOthers();
-      this.unRegEvent();
-      Laya.timer.clearAll(this);
-      this.index = -1;
-      this.objData = null;
-      this.posData = null;
-      if (this.obj) {
-        this.obj.removeSelf();
-        if (isDestroy) {
-          this.obj.destroy(true);
-        } else {
-          if (this.objName != "") {
-            Pool3.recover(this.objName, this.obj);
-            this.objName = "";
-          } else {
-            Pool3.recover(this.obj.name, this.obj);
-          }
-        }
-        this.destroy();
-      } else {
-        this.destroy();
-      }
-    }
-    /**额外清理
-     */
-    clearOthers() {
-    }
-  };
-  __name(BaseItem, "BaseItem");
-
-  // E:/WheelChairMan/src/Game/Weapon/WeaponItem.ts
-  var __decorate6 = __$decorate("303c1b70-94df-4fd5-afab-45556c45c044", "../src/Game/Weapon/WeaponItem.ts");
-  var { regClass: regClass5, property: property5 } = Laya;
-  var WeaponItem = /* @__PURE__ */ __name(class WeaponItem2 extends Script3d {
-    constructor() {
-      super();
-      this.totalBullet = 0;
-      this.$bullet = 0;
-      this.canShoot = false;
-    }
-    onEnable() {
-    }
-    onStart() {
-    }
-    gameStart() {
-      this.canShoot = true;
-    }
-    get bullet() {
-      return this.$bullet;
-    }
-    set bullet(value) {
-      if (value == 0) {
-        this.reLoad();
-        this.canShoot = false;
-      }
-    }
-    reLoad() {
-    }
-  }, "WeaponItem");
-  WeaponItem = __decorate6([
-    regClass5(),
-    __metadata("design:paramtypes", [])
-  ], WeaponItem);
-  var WeaponItem_default = WeaponItem;
-
-  // E:/WheelChairMan/src/Game/Weapon/WeaponMgr.ts
-  var WeaponMgr = class {
-    constructor() {
-      this.selectWeaponId = 0;
-    }
-    static get instance() {
-      return this._instance ? this._instance : this._instance = new WeaponMgr();
-    }
-    init() {
-      this.weaponDataMap = ResLoader.instance.getDataTableById(3009 /* Weapon */);
-    }
-    getSelectWeapon(weaponId) {
-      console.log(weaponId);
-      let obj;
-      let weaponItem;
-      if (!this.weaponMap) {
-        this.weaponMap = /* @__PURE__ */ new Map();
-      } else {
-        obj = this.weaponMap.get(weaponId);
-      }
-      if (!obj) {
-        let weaponData = this.getSelectedWeaponData(weaponId);
-        obj = ResLoader.instance.getResCloneById(weaponData["path"]);
-        this.weaponMap.set(weaponId, obj);
-        weaponItem = obj.getComponent(WeaponItem_default);
-        if (weaponItem) {
-          weaponItem.weaponData = weaponData;
-        }
-      }
-      return weaponItem;
-    }
-    /**获取当前选择的武器数据 */
-    getSelectedWeaponData(weaponId) {
-      return this.weaponDataMap.get(weaponId);
-    }
-  };
-  __name(WeaponMgr, "WeaponMgr");
-
-  // E:/WheelChairMan/src/Game/Player/PlayerItem.ts
-  var __decorate7 = __$decorate("778295ff-e54e-4576-82ea-f69285cd3b58", "../src/Game/Player/PlayerItem.ts");
-  var _a;
-  var Vector35 = Laya.Vector3;
-  var Sprite3D = Laya.Sprite3D;
-  var Animator = Laya.Animator;
-  var PixelLineSprite3D = Laya.PixelLineSprite3D;
-  var Color = Laya.Color;
-  var { regClass: regClass6, property: property6 } = Laya;
-  var PlayerItem = /* @__PURE__ */ __name(class PlayerItem2 extends BaseItem {
-    constructor() {
-      super();
-      this.$health = 0;
-      this.totalHealth = 0;
-    }
-    get health() {
-      return this.$health;
-    }
-    set health(value) {
-      if (!isNaN(value)) {
-        let oldHealth = this.$health;
-        this.$health = value;
-        this.healthChange(oldHealth);
-      }
-    }
-    onEnable() {
-      this.rot = this.obj.getChildAt(0);
-      this.animator = this.rot.getComponent(Animator);
-      if (this.playerData) {
-        this.totalHealth = this.health = this.playerData.health;
-        this.playerController.moveSpeed = this.playerData.speed;
-      }
-      this.playerStatus = 1001 /* idle */;
-      if (this.pixelLineSprite3D) {
-        this.pixelLineSprite3D.active = false;
-      }
-    }
-    get playerController() {
-      if (!this.$playerController) {
-        this.$playerController = this.obj.getComponent(PlayerController_default);
-      }
-      return this.$playerController;
-    }
-    gameStart() {
-      if (!this.pixelLineSprite3D) {
-        this.pixelLineSprite3D = new PixelLineSprite3D(1);
-        this.obj.addChild(this.pixelLineSprite3D);
-        this.pixelLineSprite3D.addLine(new Vector35(0, 1.3, 0), new Vector35(0, 1.3, 5), new Color(1 / 255, 114 / 255, 1 / 255), new Color(1 / 255, 114 / 255, 1 / 255));
-      }
-      this.initWeapon();
-    }
-    initWeapon() {
-      if (!this.weaponItem) {
-        console.log(this.playerData["weaponId"]);
-        this.weaponItem = WeaponMgr.instance.getSelectWeapon(this.playerData["weaponId"]);
-        this.weaponPoint.addChild(this.weaponItem.owner);
-      } else {
-        this.weaponItem.owner.active = true;
-      }
-      this.weaponItem.localPosition = Sprite3d.ZERO;
-      this.weaponItem.localRotationEuler = Sprite3d.ZERO;
-    }
-    /**血量改变 */
-    healthChange(oldHealth) {
-      EventMgr.event("HEALTHCHANGE" /* HEALTHCHANGE */, this.health);
-      if (this.health == 0) {
-        EventMgr.event("PLAYERDEAD" /* PLAYERDEAD */);
-        this.playerStatus = 1005 /* death */;
-        this.changeAni();
-      }
-    }
-    changeAni() {
-      switch (this.playerStatus) {
-        case 1001 /* idle */:
-          AnimatorTool.play(this.animator, "idle" /* idle */, true, 1, 1, false, 0.2);
-          AnimatorTool.play(this.animator, "idle" /* idle */, true, 1, 2, false, 0.2);
-          break;
-        case 1005 /* death */:
-          AnimatorTool.play(this.animator, "death" /* death */, false, 1, 1, false, 0.2);
-          AnimatorTool.play(this.animator, "death" /* death */, false, 1, 2, false, 0.2);
-          break;
-        case 1003 /* run */:
-          AnimatorTool.play(this.animator, "runUp" /* runUp */, true, 1, 1, false, 0.2);
-          AnimatorTool.play(this.animator, "runDown" /* runDown */, true, 1, 2, false, 0.2);
-          break;
-        case 1004 /* runAndShoot */:
-          AnimatorTool.play(this.animator, "shoot" /* shoot */, true, 1, 1, false, 0.2);
-          AnimatorTool.play(this.animator, "runDown" /* runDown */, true, 1, 2, false, 0.2);
-          break;
-        case 1002 /* standAndShoot */:
-          AnimatorTool.play(this.animator, "shoot" /* shoot */, true, 1, 1, false, 0.2);
-          AnimatorTool.play(this.animator, "stand" /* stand */, true, 1, 2, false, 0.2);
-          break;
-      }
-    }
-    startMove(angle, value) {
-      if (this.playerStatus == 1005 /* death */)
-        return;
-      this.playerController.move(angle);
-      if (this.playerStatus == 1001 /* idle */) {
-        this.playerStatus = 1003 /* run */;
-        this.changeAni();
-      } else if (this.playerStatus == 1002 /* standAndShoot */) {
-        this.playerStatus = 1004 /* runAndShoot */;
-        this.changeAni();
-      }
-    }
-    stopMove() {
-      if (this.playerStatus == 1005 /* death */)
-        return;
-      this.playerController.stopMove();
-      if (this.playerStatus == 1003 /* run */) {
-        this.playerStatus = 1001 /* idle */;
-        this.changeAni();
-      } else if (this.playerStatus == 1004 /* runAndShoot */) {
-        this.playerStatus = 1002 /* standAndShoot */;
-        this.changeAni();
-      }
-    }
-    startShoot(angle, value) {
-      if (this.playerStatus == 1005 /* death */)
-        return;
-      this.rot.transform.localRotationEulerY = angle;
-      if (this.playerStatus == 1001 /* idle */) {
-        this.playerStatus = 1002 /* standAndShoot */;
-        this.changeAni();
-      } else if (this.playerStatus == 1003 /* run */) {
-        this.playerStatus = 1004 /* runAndShoot */;
-        this.changeAni();
-      }
-      this.pixelLineSprite3D.transform.localRotationEulerY = angle;
-      this.pixelLineSprite3D.active = true;
-    }
-    stopShoot() {
-      if (this.playerStatus == 1005 /* death */)
-        return;
-      if (this.playerStatus == 1002 /* standAndShoot */) {
-        this.playerStatus = 1001 /* idle */;
-        this.changeAni();
-      } else if (this.playerStatus == 1004 /* runAndShoot */) {
-        this.playerStatus = 1003 /* run */;
-        this.changeAni();
-      }
-      this.pixelLineSprite3D.active = false;
-    }
-  }, "PlayerItem");
-  __decorate7([
-    property6(),
-    __metadata("design:type", typeof (_a = typeof Sprite3D !== "undefined" && Sprite3D) === "function" ? _a : Object)
-  ], PlayerItem.prototype, "weaponPoint", void 0);
-  PlayerItem = __decorate7([
-    regClass6(),
-    __metadata("design:paramtypes", [])
-  ], PlayerItem);
-  var PlayerItem_default = PlayerItem;
-
-  // E:/WheelChairMan/src/Game/Player/PlayerMgr.ts
-  var PlayerMgr = class {
-    constructor() {
-      this.$sign = "playerId_";
-    }
-    static get instance() {
-      return this._instance ? this._instance : this._instance = new PlayerMgr();
-    }
-    init() {
-      this.playerMap = ResLoader.instance.getDataTableById(3008 /* Player */);
-    }
-    startMove(angle, value) {
-      this.playerItem && this.playerItem.startMove(angle, value);
-    }
-    stopMove() {
-      this.playerItem && this.playerItem.stopMove();
-    }
-    startShoot(angle, value) {
-      this.playerItem && this.playerItem.startShoot(angle, value);
-    }
-    stopShoot() {
-      this.playerItem && this.playerItem.stopShoot();
-    }
-    /**获取坐标 */
-    getPlayerPos() {
-      return this.playerItem.position;
-    }
-    /**获取已经解锁的人物 */
-    getUnlockList() {
-      let str = LocalStorageMgr.getItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */);
-      if (str) {
-        this.unlockList = JSON.parse(str);
-      } else {
-        this.unlockList = [1001];
-        LocalStorageMgr.setItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */, JSON.stringify(this.unlockList));
-      }
-      return this.unlockList;
-    }
-    /**解锁人物 */
-    unlockPlayer(playerId) {
-      if (playerId && this.unlockList.indexOf(playerId) == -1) {
-        let data = this.getSelectedPlayerData(playerId);
-        switch (data["currency"]) {
-          case 1001 /* gold */:
-            if (GameData.gold >= data["unlockPrice"]) {
-              GameData.gold -= data["unlockPrice"];
-              this.unlockList.push(playerId);
-              LocalStorageMgr.setItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */, JSON.stringify(this.unlockList));
-              UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1031 /* CONGRATULATIONSUNLOCK */));
-              EventMgr.event("UNLOCKPLAYER" /* UNLOCKPLAYER */, playerId);
-            } else {
-              UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1026 /* YOUDONTHAVEENOUGHDIAMONDS */, 1022 /* GOLD */));
-            }
-            break;
-          case 1002 /* diamond */:
-            if (GameData.diamond >= data["unlockPrice"]) {
-              GameData.diamond -= data["unlockPrice"];
-              this.unlockList.push(playerId);
-              LocalStorageMgr.setItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */, JSON.stringify(this.unlockList));
-              UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1031 /* CONGRATULATIONSUNLOCK */));
-              EventMgr.event("UNLOCKPLAYER" /* UNLOCKPLAYER */, playerId);
-            } else {
-              UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1026 /* YOUDONTHAVEENOUGHDIAMONDS */, 1023 /* DIAMOND */));
-            }
-            break;
-        }
-      }
-    }
-    /**是否已经解锁 */
-    isUnlock(playerId) {
-      let arr = this.getUnlockList();
-      return arr.indexOf(playerId) != -1;
-    }
-    /**获取当前选择的玩家数据 */
-    getSelectedPlayerData(playerId) {
-      return this.playerMap.get(playerId);
-    }
-    setSelectedPlayerId(playerId) {
-      this.selectedPlayerId = playerId;
-    }
-    /**获取当前人物 */
-    getSelectPlayer(playerId) {
-      let obj;
-      if (this.playerPool) {
-        obj = this.playerPool.get(playerId);
-      } else {
-        this.playerPool = /* @__PURE__ */ new Map();
-      }
-      if (!obj) {
-        let playerData = this.getSelectedPlayerData(playerId);
-        obj = ResLoader.instance.getResCloneById(playerData == null ? void 0 : playerData["path"]);
-        this.playerPool.set(playerId, obj);
-        let playerItem = obj.getComponent(PlayerItem_default);
-        if (playerItem) {
-          playerItem.playerData = playerData;
-        }
-      }
-      return obj;
-    }
-    gameStart(stage) {
-      this.playerStage = stage;
-      let obj = this.getSelectPlayer(this.selectedPlayerId);
-      if (obj && this.playerStage) {
-        this.playerItem = obj.getComponent(PlayerItem_default);
-        this.playerItem.position = Sprite3d.ZERO;
-        this.playerStage.addChild(obj);
-        this.playerItem.gameStart();
-      }
-    }
-  };
-  __name(PlayerMgr, "PlayerMgr");
-
-  // E:/WheelChairMan/src/Game/Ground/GroundItem.ts
-  var __decorate8 = __$decorate("e2100ba2-ca09-4fc2-8312-90645c381ddc", "../src/Game/Ground/GroundItem.ts");
-  var { regClass: regClass7, property: property7 } = Laya;
-  var GroundItem = /* @__PURE__ */ __name(class GroundItem2 extends Script3d {
-    constructor() {
-      super();
-    }
-    changePos(playerPos) {
-    }
-  }, "GroundItem");
-  GroundItem = __decorate8([
-    regClass7(),
-    __metadata("design:paramtypes", [])
-  ], GroundItem);
-  var GroundItem_default = GroundItem;
-
-  // E:/WheelChairMan/src/Game/Ground/GroundMgr.ts
-  var GroundMgr = class {
-    static get instance() {
-      return this._instance ? this._instance : this._instance = new GroundMgr();
-    }
-    init() {
-      if (!this.$grass) {
-        this.$grass = ResLoader.instance.getResCloneById(6701 /* grass */);
-      }
-    }
-    gameStart(grassStage) {
-      this.$stage = grassStage;
-      if (this.groundList) {
-        for (let i = 0; i < this.groundList.length; i++) {
-          let groundItem = this.groundList[i];
-          this.$stage.addChild(groundItem.owner);
-        }
-      } else {
-        this.groundList = [];
-        for (let i = 0; i < 20; i++) {
-          let grass = ResLoader.instance.getResCloneById(6701 /* grass */);
-          let groundItem = grass.getComponent(GroundItem_default);
-          this.$stage.addChild(grass);
-          this.groundList.push(groundItem);
-        }
-      }
-      Timer.get(16, this, () => {
-        let pos = PlayerMgr.instance.getPlayerPos();
-        for (let i = 0; i < this.groundList.length; i++) {
-          let groundItem = this.groundList[i];
-          groundItem.changePos(pos);
-        }
-      }).frameLoop().start();
-    }
-    gamePause() {
-    }
-    gameOver() {
-      Timer.clearAll(this);
-    }
-  };
-  __name(GroundMgr, "GroundMgr");
-
-  // E:/WheelChairMan/src/Game/MainGame.ts
-  var __decorate9 = __$decorate("17be9e1a-ac52-43f3-8894-fa783a42a738", "../src/Game/MainGame.ts");
-  var MainGame_1;
-  var { regClass: regClass8, property: property8 } = Laya;
-  var MainGame = MainGame_1 = /* @__PURE__ */ __name(class MainGame2 {
-    constructor() {
-      this.$isInit = false;
-    }
-    static get instance() {
-      return this._instance ? this._instance : this._instance = new MainGame_1();
-    }
-    init() {
-      if (!this.$isInit) {
-        this.$isInit = true;
-        this.addEvent();
-        this.reset();
-        WeaponMgr.instance.init();
-        PlayerMgr.instance.init();
-      }
-    }
-    /**获取当前游戏的流程 */
-    getGameSetp() {
-      return this.$gameStep;
-    }
-    addEvent() {
-      EventMgr.on("GAMESCENELOADED" /* GAMESCENELOADED */, this, this.gameStart);
-    }
-    reset() {
-      this.$gameStep = 1001 /* ResetGame */;
-      this.goToMain();
-      this.$gameScene = null;
-    }
-    /**开始选择玩家 */
-    selectPlayerAndWeapon() {
-      this.$gameStep = 1002 /* SelectPlayer */;
-      Scene3dMgr.instance.open(1002 /* SelectPlayerScene */);
-      Scene3dMgr.instance.close(1001 /* MainScene */);
-    }
-    /**返回主页 */
-    goToMain() {
-      Scene3dMgr.instance.close(1002 /* SelectPlayerScene */);
-      Scene3dMgr.instance.open(1001 /* MainScene */);
-    }
-    loadGameScene() {
-      this.$gameStep = 1004 /* LoadGameScene */;
-      Scene3dMgr.instance.close(1002 /* SelectPlayerScene */);
-      Scene3dMgr.instance.open(1003 /* GameScene */);
-    }
-    /**游戏开始 */
-    gameStart(gameScene) {
-      this.$gameStep = 1005 /* GameStart */;
-      this.$gameScene = gameScene;
-      GroundMgr.instance.gameStart(this.$gameScene.groundStage);
-      PlayerMgr.instance.gameStart(this.$gameScene.playerStage);
-    }
-    /**游戏暂停 */
-    gamePause() {
-      this.$gameStep = 1006 /* GamePause */;
-    }
-    /**游戏继续*/
-    gameResume() {
-      this.$gameStep = 1005 /* GameStart */;
-    }
-    gameWin() {
-      this.$gameStep = 1009 /* GameWin */;
-      this.gameOver();
-    }
-    gameLose() {
-      this.$gameStep = 1008 /* GameLose */;
-      this.gameOver();
-    }
-    gameOver() {
-    }
-  }, "MainGame");
-  MainGame = MainGame_1 = __decorate9([
-    regClass8()
-  ], MainGame);
-  var MainGame_default = MainGame;
-
-  // E:/WheelChairMan/src/Localization/LocalizationText.ts
-  var __decorate10 = __$decorate("5a62e727-31ad-49bf-b53f-96fbff2b0a39", "../src/Localization/LocalizationText.ts");
-  var Text = Laya.Text;
-  var Label = Laya.Label;
-  var { regClass: regClass9, property: property9 } = Laya;
-  var LocalizationText = /* @__PURE__ */ __name(class LocalizationText2 extends Laya.Script {
-    constructor() {
-      super();
-    }
-    onEnable() {
-      if (this.owner instanceof Text || this.owner instanceof Label) {
-        this.text = this.owner;
-        EventMgr.on("LANGUAGECHANGE" /* LANGUAGECHANGE */, this, this.changeLanguage);
-        this.changeLanguage();
-      }
-    }
-    changeLanguage() {
-      if (this.localizationKey) {
-        let value = LocalizationMgr.$getLocalizationByKey(this.localizationKey);
-        if (value) {
-          this.text.text = value;
-        }
-      }
-    }
-    onDisable() {
-      EventMgr.offAllCaller(this);
-    }
-  }, "LocalizationText");
-  __decorate10([
-    property9(),
-    __metadata("design:type", String)
-  ], LocalizationText.prototype, "localizationKey", void 0);
-  LocalizationText = __decorate10([
-    regClass9(),
-    __metadata("design:paramtypes", [])
-  ], LocalizationText);
-
-  // E:/WheelChairMan/src/Scene/CompleteView.ts
-  var __decorate11 = __$decorate("f5f376ef-5874-4c8a-9a28-8088976bd468", "../src/Scene/CompleteView.ts");
-  var { regClass: regClass10, property: property10 } = Laya;
-  var CompleteView = /* @__PURE__ */ __name(class CompleteView2 extends UIBase_default {
-  }, "CompleteView");
-  CompleteView = __decorate11([
-    regClass10()
-  ], CompleteView);
-
-  // E:/WheelChairMan/src/Scene/DebugView.ts
-  var __decorate12 = __$decorate("5ca51831-1d23-46b6-a853-a10d5da54d6c", "../src/Scene/DebugView.ts");
-  var _a2;
-  var _b;
-  var _c;
-  var Box = Laya.Box;
-  var Image = Laya.Image;
-  var List = Laya.List;
-  var Handler3 = Laya.Handler;
-  var { regClass: regClass11, property: property11 } = Laya;
-  var DebugView = /* @__PURE__ */ __name(class DebugView2 extends UIBase_default {
-    constructor() {
-      super();
-      this.commandList = [
-        "\u6DFB\u52A05000\u91D1\u5E01",
-        "\u6DFB\u52A05000\u94BB\u77F3",
-        "\u6E05\u96F6\u91D1\u5E01\u94BB\u77F3",
-        "\u6E38\u620F\u7ACB\u523B\u80DC\u5229(\u5FC5\u987B\u5148\u5F00\u59CB\u6E38\u620F)",
-        "\u6E38\u620F\u7ACB\u523B\u5931\u8D25(\u5FC5\u987B\u5148\u5F00\u59CB\u6E38\u620F)",
-        "\u9501\u5B9A\u989D\u5916\u76AE\u80A4"
-      ];
-    }
-    onOpened(param) {
-      this.regClick(this.imgShow, this.showHidePanel);
-      this.listCommand.renderHandler = new Handler3(this, this.changeItem);
-      this.listCommand.selectHandler = new Handler3(this, this.selectItem);
-      this.listCommand.array = this.commandList;
-    }
-    showHidePanel() {
-      this.MainPanel.visible = !this.MainPanel.visible;
-    }
-    changeItem(box, index) {
-      let Label8 = box.getChildByName("Label");
-      Label8.text = box.dataSource;
-    }
-    selectItem(index) {
-      switch (index) {
-        case 0:
-          GameData.gold += 5e3;
-          EventMgr.event("GOLDCHANGE" /* GOLDCHANGE */);
-          break;
-        case 1:
-          GameData.diamond += 5e3;
-          EventMgr.event("DIAMONDCHANGE" /* DIAMONDCHANGE */);
-          break;
-        case 2:
-          GameData.diamond = 0;
-          GameData.gold = 0;
-          EventMgr.event("DIAMONDCHANGE" /* DIAMONDCHANGE */);
-          EventMgr.event("GOLDCHANGE" /* GOLDCHANGE */);
-          break;
-        case 3:
-          break;
-        case 4:
-          break;
-      }
-      this.listCommand.selectedIndex = -1;
-    }
-  }, "DebugView");
-  __decorate12([
-    property11(),
-    __metadata("design:type", typeof (_a2 = typeof Image !== "undefined" && Image) === "function" ? _a2 : Object)
-  ], DebugView.prototype, "imgShow", void 0);
-  __decorate12([
-    property11(),
-    __metadata("design:type", typeof (_b = typeof Box !== "undefined" && Box) === "function" ? _b : Object)
-  ], DebugView.prototype, "MainPanel", void 0);
-  __decorate12([
-    property11(),
-    __metadata("design:type", typeof (_c = typeof List !== "undefined" && List) === "function" ? _c : Object)
-  ], DebugView.prototype, "listCommand", void 0);
-  DebugView = __decorate12([
-    regClass11(),
-    __metadata("design:paramtypes", [])
-  ], DebugView);
-
-  // E:/WheelChairMan/src/Util/RockerBox.ts
-  var __decorate13 = __$decorate("7204f275-aa8d-45b5-b2eb-b4122c72d7a3", "../src/Util/RockerBox.ts");
-  var _a3;
-  var Button = Laya.Button;
-  var Point = Laya.Point;
-  var { regClass: regClass12, property: property12 } = Laya;
-  var RockerBox = /* @__PURE__ */ __name(class RockerBox2 extends Laya.Script {
-    constructor() {
-      super();
-      this.dropLen = 110;
-      this.touchId = -1;
-      this.rockerAngle = 0;
-      this.rockerValue = 0;
-    }
-    onEnable() {
-      this.rockerBox = this.owner;
-    }
-    onStart() {
-      this.initBarX = this.freeBar.x;
-      this.initBarY = this.freeBar.y;
-      this.mousePoint = new Point(0, 0);
-      this.freeBar.on(Laya.Event.MOUSE_DOWN, this, this.rockerDown);
-      Laya.stage.on(Laya.Event.MOUSE_MOVE, this, this.rockerMove);
-      Laya.stage.on(Laya.Event.MOUSE_UP, this, this.rockerUp);
-    }
-    rockerDown(evt) {
-      if (this.touchId != -1)
-        return;
-      evt.stopPropagation();
-      this.touchId = evt.touchId;
-      this.rockerIsDown = true;
-      this.freeBar.selected = true;
-      this.mouseDownX = this.rockerBox.mouseX;
-      this.mouseDownY = this.rockerBox.mouseY;
-    }
-    rockerMove(evt) {
-      if (!this.rockerIsDown)
-        return;
-      if (evt.touchId != this.touchId)
-        return;
-      evt.stopPropagation();
-      this.mousePoint.x = Math.round(evt.touchPos.x / Laya.stage.clientScaleX);
-      this.mousePoint.y = Math.round(evt.touchPos.y / Laya.stage.clientScaleY);
-      this.rockerBox.globalToLocal(this.mousePoint, false);
-      let mouseX = this.mousePoint.x;
-      let mouseY = this.mousePoint.y;
-      let offX = mouseX - this.mouseDownX;
-      let offY = mouseY - this.mouseDownY;
-      this.rockerAngle = Math.atan2(offX, offY) * 180 / Math.PI;
-      let dis = Math.sqrt((this.mouseDownX - mouseX) * (this.mouseDownX - mouseX) + (this.mouseDownY - mouseY) * (this.mouseDownY - mouseY));
-      dis = dis < 0 ? -dis : dis;
-      if (dis < this.dropLen) {
-        this.freeBar.x = this.initBarX + offX;
-        this.freeBar.y = this.initBarY + offY;
-        this.rockerValue = dis / this.dropLen;
-      } else {
-        let radians = Math.PI / 180 * this.rockerAngle;
-        let x = Math.floor(Math.sin(radians) * this.dropLen + this.initBarX);
-        let y = Math.floor(Math.cos(radians) * this.dropLen + this.initBarY);
-        this.freeBar.x = x;
-        this.freeBar.y = y;
-        this.rockerValue = 1;
-      }
-      this.startMove();
-    }
-    rockerUp(evt) {
-      if (this.touchId == evt.touchId) {
-        this.touchId = -1;
-        this.rockerIsDown = false;
-        this.freeBar.x = this.initBarX;
-        this.freeBar.y = this.initBarY;
-        this.freeBar.selected = false;
-        this.stopMove();
-      }
-    }
-    /**初始化目标 */
-    initTarget(caller, startMove, stopMove) {
-      this.caller = caller;
-      this.FstartMove = startMove;
-      this.FstopMove = stopMove;
-    }
-    /**开始移动 */
-    startMove() {
-      this.FstartMove && this.caller && this.FstartMove.apply(this.caller, [this.rockerAngle, this.rockerValue]);
-    }
-    /**停止移动 */
-    stopMove() {
-      this.FstopMove && this.caller && this.FstopMove.call(this.caller);
-    }
-    onDisable() {
-      this.freeBar.off(Laya.Event.MOUSE_DOWN, this, this.rockerDown);
-      Laya.stage.off(Laya.Event.MOUSE_MOVE, this, this.rockerMove);
-      Laya.stage.off(Laya.Event.MOUSE_UP, this, this.rockerUp);
-      this.caller = null;
-      this.FstartMove = null;
-      this.FstopMove = null;
-    }
-  }, "RockerBox");
-  __decorate13([
-    property12(),
-    __metadata("design:type", typeof (_a3 = typeof Button !== "undefined" && Button) === "function" ? _a3 : Object)
-  ], RockerBox.prototype, "freeBar", void 0);
-  __decorate13([
-    property12(),
-    __metadata("design:type", Number)
-  ], RockerBox.prototype, "dropLen", void 0);
-  RockerBox = __decorate13([
-    regClass12(),
-    __metadata("design:paramtypes", [])
-  ], RockerBox);
-  var RockerBox_default = RockerBox;
-
-  // E:/WheelChairMan/src/Scene/GameView.ts
-  var __decorate14 = __$decorate("ddf0e22e-43aa-4145-b2f5-8a127efb5611", "../src/Scene/GameView.ts");
-  var _a4;
-  var _b2;
-  var _c2;
-  var List2 = Laya.List;
-  var Handler4 = Laya.Handler;
-  var { regClass: regClass13, property: property13 } = Laya;
-  var GameView = /* @__PURE__ */ __name(class GameView2 extends UIBase_default {
-    constructor() {
-      super();
-      this.health = 0;
-      this.totalHealth = 0;
-    }
-    onOpened(param) {
-      this.rocketBoxL.initTarget(PlayerMgr.instance, PlayerMgr.instance.startMove, PlayerMgr.instance.stopMove);
-      this.rocketBoxR.initTarget(PlayerMgr.instance, PlayerMgr.instance.startShoot, PlayerMgr.instance.stopShoot);
-      this.playerData = PlayerMgr.instance.getSelectedPlayerData(PlayerMgr.instance.selectedPlayerId);
-      this.totalHealth = this.health = this.playerData.health;
-    }
-    addEvent() {
-      this.listHealth.renderHandler = new Handler4(this, this.changeHealthItem);
-      this.regEvent("HEALTHCHANGE" /* HEALTHCHANGE */, this.changeHealth, true);
-    }
-    changeHealth(health) {
-      if (!isNaN(health)) {
-        this.health = health;
-      }
-      if (!this.healthList) {
-        this.healthList = [];
-        for (let i = 0; i < this.totalHealth; i++) {
-          this.healthList.push(1);
-        }
-      }
-      this.listHealth.array = this.healthList;
-    }
-    changeHealthItem(box, index) {
-      let img = box.getChildAt(0);
-      if (index > this.health - 1) {
-        img.gray = true;
-      } else {
-        img.gray = false;
-      }
-    }
-    onClosed() {
-      this.healthList = null;
-    }
-  }, "GameView");
-  __decorate14([
-    property13(),
-    __metadata("design:type", typeof (_a4 = typeof List2 !== "undefined" && List2) === "function" ? _a4 : Object)
-  ], GameView.prototype, "listHealth", void 0);
-  __decorate14([
-    property13(),
-    __metadata("design:type", typeof (_b2 = typeof RockerBox_default !== "undefined" && RockerBox_default) === "function" ? _b2 : Object)
-  ], GameView.prototype, "rocketBoxL", void 0);
-  __decorate14([
-    property13(),
-    __metadata("design:type", typeof (_c2 = typeof RockerBox_default !== "undefined" && RockerBox_default) === "function" ? _c2 : Object)
-  ], GameView.prototype, "rocketBoxR", void 0);
-  GameView = __decorate14([
-    regClass13(),
-    __metadata("design:paramtypes", [])
-  ], GameView);
-
-  // E:/WheelChairMan/src/Scene/GuideView.ts
-  var __decorate15 = __$decorate("a7a26e14-76d9-4f1c-9471-21fbc179af77", "../src/Scene/GuideView.ts");
-  var _a5;
-  var Image2 = Laya.Image;
-  var { regClass: regClass14, property: property14 } = Laya;
-  var GuideView = /* @__PURE__ */ __name(class GuideView2 extends UIBase_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-    }
-    addEvent() {
-      this.imgSkip.on(Laya.Event.MOUSE_DOWN, this, this.skipGuide);
-    }
-    skipGuide() {
-    }
-    onClosed() {
-      this.imgSkip.off(Laya.Event.MOUSE_DOWN, this, this.skipGuide);
-      EventMgr.event("GUIDFINISH" /* GUIDFINISH */);
-      LocalStorageMgr.setItem("FIRESTTIME" /* FIRSTTIME */, "1");
-    }
-  }, "GuideView");
-  __decorate15([
-    property14(),
-    __metadata("design:type", typeof (_a5 = typeof Image2 !== "undefined" && Image2) === "function" ? _a5 : Object)
-  ], GuideView.prototype, "imgSkip", void 0);
-  GuideView = __decorate15([
-    regClass14(),
-    __metadata("design:paramtypes", [])
-  ], GuideView);
-
-  // E:/WheelChairMan/src/Scene/LanguageView.ts
-  var __decorate16 = __$decorate("6bc1bf6a-a993-4ac9-b9f4-4785e0d68c2b", "../src/Scene/LanguageView.ts");
-  var _a6;
-  var _b3;
-  var Image3 = Laya.Image;
-  var List3 = Laya.List;
-  var Handler5 = Laya.Handler;
-  var { regClass: regClass15, property: property15 } = Laya;
-  var LanguageView = /* @__PURE__ */ __name(class LanguageView2 extends UIBase_default {
-    constructor() {
-      super();
-      this.$selectIndex = 0;
-    }
-    onOpened(param) {
-      this.regClick(this.$imgClose, this.close);
-      this.$listLanguage.renderHandler = new Handler5(this, this.changeItem);
-      this.$listLanguage.selectHandler = new Handler5(this, this.selectItem);
-      let arr = [];
-      for (let i in LanguageEnum) {
-        if (!isNaN(Number(i))) {
-          arr.push(Number(i));
-        }
-      }
-      this.$selectIndex = arr.indexOf(LocalizationMgr.Language);
-      this.$listLanguage.array = arr;
-      this.$listLanguage.selectedIndex = this.$selectIndex;
-    }
-    changeItem(box, index) {
-      let labelLanguage = box.getChildByName("labelLanguage");
-      let imgFlag = box.getChildByName("imgFlag");
-      let imgSelect = box.getChildByName("imgSelect");
-      labelLanguage.text = LocalizationMgr.getLanguageMsgById(box.dataSource);
-      imgFlag.skin = ResLoader.instance.getUrlById(LocalizationMgr.getFlagSkinIdById(box.dataSource));
-      if (index == this.$selectIndex) {
-        imgSelect.visible = true;
-      } else {
-        imgSelect.visible = false;
-      }
-    }
-    selectItem(index) {
-      if (index != this.$selectIndex) {
-        let oldBox = this.$listLanguage.getCell(this.$selectIndex);
-        let oldSelect = oldBox.getChildByName("imgSelect");
-        oldSelect.visible = false;
-        this.$selectIndex = index;
-        LocalizationMgr.Language = this.$listLanguage.array[index];
-        let newBox = this.$listLanguage.getCell(this.$selectIndex);
-        let newSelect = newBox.getChildByName("imgSelect");
-        newSelect.visible = true;
-      }
-    }
-  }, "LanguageView");
-  __decorate16([
-    property15(),
-    __metadata("design:type", typeof (_a6 = typeof List3 !== "undefined" && List3) === "function" ? _a6 : Object)
-  ], LanguageView.prototype, "$listLanguage", void 0);
-  __decorate16([
-    property15(),
-    __metadata("design:type", typeof (_b3 = typeof Image3 !== "undefined" && Image3) === "function" ? _b3 : Object)
-  ], LanguageView.prototype, "$imgClose", void 0);
-  LanguageView = __decorate16([
-    regClass15(),
-    __metadata("design:paramtypes", [])
-  ], LanguageView);
-
-  // E:/WheelChairMan/src/Scene/LevelUpView.ts
-  var __decorate17 = __$decorate("f7577321-9089-4d76-ba3b-af9c8a8c0afe", "../src/Scene/LevelUpView.ts");
-  var { regClass: regClass16, property: property16 } = Laya;
-  var LevelUpView = /* @__PURE__ */ __name(class LevelUpView2 extends UIBase_default {
-  }, "LevelUpView");
-  LevelUpView = __decorate17([
-    regClass16()
-  ], LevelUpView);
-
-  // E:/WheelChairMan/src/Mgr/CurrencyMgr.ts
-  var CurrencyMgr = class {
-    /**初始化 */
-    static init() {
-      this.$currencyMap = ResLoader.instance.getDataTableById(3003 /* Currency */);
-    }
-    /**获取对应颜色 */
-    static getColorById(id) {
-      let data = this.$currencyMap.get(id);
-      if (data && data["color"]) {
-        return "#" + data["color"];
-      }
-      return "#fff";
-    }
-    /**获取对应图标 */
-    static getImgUrlById(id) {
-      let data = this.$currencyMap.get(id);
-      if (data && data["imgId"]) {
-        return ResLoader.instance.getUrlById(data["imgId"]);
-      }
-      return "";
-    }
-  };
-  __name(CurrencyMgr, "CurrencyMgr");
-
-  // E:/WheelChairMan/src/Mgr/LevelMgr.ts
-  var LevelMgr = class {
-    /**初始化 */
-    static init() {
-      this.$levelDataTable = ResLoader.instance.getDataTableById(3004 /* Level */);
-    }
-    /**等级 */
-    static get level() {
-      for (let [, value] of this.$levelDataTable) {
-        let minEx = value["minEx"];
-        let maxEx = value["maxEx"];
-        if (!isNaN(minEx) && !isNaN(maxEx)) {
-          if (GameData.experience > minEx && GameData.experience <= maxEx) {
-            return value["level"];
-          }
-        }
-      }
-      return 1;
-    }
-  };
-  __name(LevelMgr, "LevelMgr");
-  /**经验表 */
-  LevelMgr.$levelDataTable = /* @__PURE__ */ new Map();
-
-  // E:/WheelChairMan/src/Util/StringUtil.ts
-  var __decorate18 = __$decorate("9f8ef9b7-13a5-4980-a9d8-46f8659dff82", "../src/Util/StringUtil.ts");
-  var StringUtil = class {
-    /**小数转百分比，默认保留两位小数 */
-    static num2percentage(num, d = 2) {
-      num = num * 100;
-      return num.toFixed(d) + "%";
-    }
-    /**获取随机整数  */
-    static randNum(min, max) {
-      let range = max - min;
-      let rand = Math.random();
-      let num = min + Math.round(rand * range);
-      return num;
-    }
-    /**随机排序数组 */
-    static shuffle(arr) {
-      let i = arr.length, t, j;
-      while (--i) {
-        j = Math.floor(Math.random() * i);
-        t = arr[i];
-        arr[i] = arr[j];
-        arr[j] = t;
-      }
-    }
-    /**
-     * RGB转16色
-     * @param str RGB(23, 245, 56)
-     * @returns string
-     */
-    static colorHex(str) {
-      let reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
-      if (/^(rgb|RGB)/.test(str)) {
-        let aColor = str.replace(/(?:\(|\)|rgb|RGB)*/g, "").split(",");
-        let strHex = "#";
-        for (let i = 0; i < aColor.length; i++) {
-          let hex = Number(aColor[i]).toString(16);
-          if (hex.length < 2) {
-            hex = "0" + hex;
-          }
-          strHex += hex;
-        }
-        if (strHex.length !== 7) {
-          strHex = str;
-        }
-        return strHex;
-      } else if (reg.test(str)) {
-        let aNum = str.replace(/#/, "").split("");
-        if (aNum.length === 6) {
-          return str;
-        } else if (aNum.length === 3) {
-          let numHex = "#";
-          for (let i = 0; i < aNum.length; i += 1) {
-            numHex += aNum[i] + aNum[i];
-          }
-          return numHex;
-        }
-      }
-      return str;
-    }
-    /**
-     * 16色 转 RGB
-     * @param str #34538b
-     * @returns v3
-     */
-    static colorRgb(str) {
-      str = str.toLowerCase();
-      let color = this._colorDic[str];
-      if (color) {
-        return color;
-      }
-      var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
-      if (str && reg.test(str)) {
-        if (str.length === 4) {
-          var sColorNew = "#";
-          for (var i = 1; i < 4; i += 1) {
-            sColorNew += str.slice(i, i + 1).concat(str.slice(i, i + 1));
-          }
-          str = sColorNew;
-        }
-        var sColorChange = [];
-        for (var i = 1; i < 7; i += 2) {
-          sColorChange.push(parseInt("0x" + str.slice(i, i + 2)));
-        }
-        this._colorDic[str] = sColorChange;
-        return sColorChange;
-      } else {
-        console.log("\u8F6C\u6362\u9519\u8BEF");
-        return [0, 0, 0];
-      }
-    }
-    /**
-     * 格式化单位
-     * @param num
-     * @returns
-     */
-    static formatToUnitEN(num) {
-      num = Math.round(num);
-      let result = "";
-      if (("" + num).length > 15) {
-        result = (num / 1e15).toFixed(2) + "MB";
-      } else if (("" + num).length > 12) {
-        result = (num / 1e12).toFixed(2) + "KB";
-      } else if (("" + num).length > 9) {
-        result = (num / 1e9).toFixed(2) + "B";
-      } else if (("" + num).length > 6) {
-        result = (num / 1e6).toFixed(2) + "M";
-      } else if (("" + num).length > 3) {
-        result = (num / 1e3).toFixed(2) + "K";
-      } else {
-        result = "" + num.toFixed(0);
-      }
-      return result;
-    }
-  };
-  __name(StringUtil, "StringUtil");
-  StringUtil._colorDic = {};
-
-  // E:/WheelChairMan/src/Scene/LoadView.ts
-  var __decorate19 = __$decorate("9797e892-adab-4c82-8f5e-800b37f590f9", "../src/Scene/LoadView.ts");
-  var _a7;
-  var _b4;
-  var _c3;
-  var Image4 = Laya.Image;
-  var Label2 = Laya.Label;
-  var Handler6 = Laya.Handler;
-  var { regClass: regClass17, property: property17 } = Laya;
-  var LoadView = /* @__PURE__ */ __name(class LoadView2 extends UIBase_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-      this.imgMask = this.imgLoad.mask;
-      this.checkVersion();
-    }
-    /**请求版本 */
-    checkVersion() {
-      this.startPreLoad();
-    }
-    /**开始预加载全局资源 */
-    startPreLoad() {
-      ResLoader.instance.preloadRes(Handler6.create(this, this.onCompleted), Handler6.create(this, this._onProgress));
-    }
-    /**刷新进度条 */
-    _onProgress(value) {
-      this.imgMask.width = this.imgLoad.width * value;
-      this.labelLoad.text = "Loading\u2026" + StringUtil.num2percentage(value);
-    }
-    /**加载完成可以进入主界面 */
-    onCompleted() {
-      console.log("load_conCompleted");
-      this.initData();
-      this.openScene();
-    }
-    /**初始化数据 */
-    initData() {
-      LocalizationMgr.init();
-      LevelMgr.init();
-      CurrencyMgr.init();
-      Scene3dMgr.instance.init();
-      MainGame_default.instance.init();
-    }
-    /**打开页面 */
-    openScene() {
-      UIBaseMgr.instance.open(1013 /* MainView */);
-      this.close();
-    }
-  }, "LoadView");
-  __decorate19([
-    property17(),
-    __metadata("design:type", typeof (_a7 = typeof Image4 !== "undefined" && Image4) === "function" ? _a7 : Object)
-  ], LoadView.prototype, "imgLoad", void 0);
-  __decorate19([
-    property17(),
-    __metadata("design:type", typeof (_b4 = typeof Label2 !== "undefined" && Label2) === "function" ? _b4 : Object)
-  ], LoadView.prototype, "labelLoad", void 0);
-  __decorate19([
-    property17(),
-    __metadata("design:type", typeof (_c3 = typeof Label2 !== "undefined" && Label2) === "function" ? _c3 : Object)
-  ], LoadView.prototype, "testLabel", void 0);
-  LoadView = __decorate19([
-    regClass17(),
-    __metadata("design:paramtypes", [])
-  ], LoadView);
-
-  // E:/WheelChairMan/src/Scene/LoseView.ts
-  var __decorate20 = __$decorate("9b8220cb-adbc-4d84-9618-c7c9f2bd85f3", "../src/Scene/LoseView.ts");
-  var { regClass: regClass18, property: property18 } = Laya;
-  var LoseView = /* @__PURE__ */ __name(class LoseView2 extends UIBase_default {
-  }, "LoseView");
-  LoseView = __decorate20([
-    regClass18()
-  ], LoseView);
-
-  // E:/WheelChairMan/src/Scene/LuckyBoxView.ts
-  var __decorate21 = __$decorate("d94dafff-05f0-4479-9a1a-ab9861a24025", "../src/Scene/LuckyBoxView.ts");
-  var _a8;
-  var _b5;
-  var _c4;
-  var _d;
-  var _e;
-  var Text2 = Laya.Text;
-  var Image5 = Laya.Image;
-  var { regClass: regClass19, property: property19 } = Laya;
-  var LuckyBoxView = /* @__PURE__ */ __name(class LuckyBoxView2 extends UIBase_default {
-    constructor() {
-      super();
-      this.$luckyboxDataTable = /* @__PURE__ */ new Map();
-    }
-    onOpened(param) {
-      this.regClick(this.imgClose, this.close);
-      this.regClick(this.imgOpen, this.openLuckBox);
-      this.$luckyboxDataTable = ResLoader.instance.getDataTableById(3001 /* LuckyBox */);
-      this.initLuckBox();
-    }
-    initLuckBox() {
-      if (this.$param == void 0) {
-        this.$param = 0;
-      }
-      this.txtMsg.text = LocalizationMgr.$getLocalizationByKey(this.$luckyboxDataTable.get(this.$param)["localizationKey"]);
-      this.imgBox.skin = ResLoader.instance.getUrlById(this.$luckyboxDataTable.get(this.$param)["imgPath"]);
-    }
-    openLuckBox() {
-      switch (this.$param) {
-        case 0:
-          break;
-      }
-    }
-  }, "LuckyBoxView");
-  __decorate21([
-    property19(),
-    __metadata("design:type", typeof (_a8 = typeof Image5 !== "undefined" && Image5) === "function" ? _a8 : Object)
-  ], LuckyBoxView.prototype, "imgLight", void 0);
-  __decorate21([
-    property19(),
-    __metadata("design:type", typeof (_b5 = typeof Image5 !== "undefined" && Image5) === "function" ? _b5 : Object)
-  ], LuckyBoxView.prototype, "imgBox", void 0);
-  __decorate21([
-    property19(),
-    __metadata("design:type", typeof (_c4 = typeof Image5 !== "undefined" && Image5) === "function" ? _c4 : Object)
-  ], LuckyBoxView.prototype, "imgClose", void 0);
-  __decorate21([
-    property19(),
-    __metadata("design:type", typeof (_d = typeof Image5 !== "undefined" && Image5) === "function" ? _d : Object)
-  ], LuckyBoxView.prototype, "imgOpen", void 0);
-  __decorate21([
-    property19(),
-    __metadata("design:type", typeof (_e = typeof Text2 !== "undefined" && Text2) === "function" ? _e : Object)
-  ], LuckyBoxView.prototype, "txtMsg", void 0);
-  LuckyBoxView = __decorate21([
-    regClass19(),
-    __metadata("design:paramtypes", [])
-  ], LuckyBoxView);
-
-  // E:/WheelChairMan/src/Util/Tween2.ts
+  // E:/WheelChairMan/src/Util/Tween.ts
   var _Tween = class {
     constructor() {
       /**循环次数 -1 为无限循环 */
@@ -3152,9 +738,9 @@ function __$decorate(assetId, codePath) {
        * 执行回调
        * 注：尽量避免在回调里对自身进行有持续性的操作to/wait等，会出现异常现象
        */
-    call(call, thisObj, params) {
+    call(caller, callback, params) {
       var self = this;
-      call && self.$addStep(3, 0, [call, thisObj, params]);
+      callback && self.$addStep(3, 0, [callback, caller, params]);
       return self;
     }
     /**延时 */
@@ -3231,13 +817,2906 @@ function __$decorate(assetId, codePath) {
   Tween.sign = "MyTween";
   Tween.cache = "$" + _Tween.sign;
 
-  // E:/WheelChairMan/src/Scene/MainView.ts
-  var __decorate22 = __$decorate("127f9431-d96d-491c-b782-2549a9c38d7b", "../src/Scene/MainView.ts");
-  var _a9;
-  var _b6;
-  var _c5;
+  // E:/WheelChairMan/src/UIBase/UIBase.ts
+  var __decorate2 = __$decorate("172331b7-4cbf-495d-96b7-70e583afa5dd", "../src/UIBase/UIBase.ts");
+  var _a;
+  var Sprite = Laya.Sprite;
+  var { regClass, property } = Laya;
+  var UIBase = /* @__PURE__ */ __name(class UIBase2 extends Laya.Script {
+    constructor() {
+      super();
+      this.depth = 2;
+      this.isSingleton = true;
+      this.$param = null;
+      this.isOpen = false;
+      this.AniType = 0;
+      this.aniFinish = false;
+    }
+    /**开启特效 */
+    openAni() {
+      if (!this.aniNode) {
+        this.aniNode = this.owner.getChildByName("Main");
+      }
+      if (this.aniNode) {
+        this.$Main = this.owner.getChildByName("Main");
+        switch (this.AniType) {
+          default:
+          case 0:
+            this.aniFinish = true;
+            break;
+          case 1:
+            Tween.get(this.aniNode).set({ scaleX: 0.8, scaleY: 0.8 }).to({ scaleX: 1, scaleY: 1 }, 300, Laya.Ease.backOut).call(this, () => {
+              this.aniFinish = true;
+            }).start();
+            break;
+          case 2:
+            break;
+        }
+      } else {
+        this.aniFinish = true;
+      }
+    }
+    /**界面打开 */
+    onOpened(param) {
+    }
+    /**添加监听 */
+    addEvent() {
+    }
+    /**界面关闭 */
+    onClosed() {
+    }
+    /**
+     * 注册监听事件，不需要销毁
+     * @param event 事件枚举
+     * @param callback 回调
+     * @param callNow 立刻回调一次
+     */
+    regEvent(event, callback, callNow = false, data) {
+      let self = this;
+      if (event && callback) {
+        EventMgr.on(event, this, callback);
+        self.$event || (self.$event = /* @__PURE__ */ new Map());
+        self.$event.set(event, callback);
+        if (callNow) {
+          callback.call(this, data);
+        }
+      }
+    }
+    /**
+     * 注册点击事件，并且清空之前的所有事件
+     * @param node 节点
+     * @param callback 回调
+     * @param data 参数 默认第一位
+     * @param once 是否只触发一次
+     * @param time 点击间隔,默认300s，防止多次点击
+     */
+    regClick(node, callback, data, once, time) {
+      this.addClick(node, this, callback, once, data, time);
+    }
+    /**
+    * 添加点击事件
+    * @param node 点击对象
+    * @param callback 回调
+    * @param caller 回调对象
+    * @param once 仅监听一次
+    * @param data 回调参数
+    * @param time 多次点击阻断，默认300
+    * 注：事件清理请使用offAll
+    */
+    addClick(node, caller, callback, once, data, time = 300) {
+      if (node) {
+        let clickTime = 0, params = [], evtIdx = 0;
+        node.offAll();
+        node[once ? "once" : "on"](Laya.Event.CLICK, caller, (e) => {
+          let now = Date.now();
+          e.stopPropagation();
+          if (now - clickTime > time && this.aniFinish) {
+            if (data !== void 0) {
+              params[evtIdx] = data;
+              evtIdx = 1;
+            }
+            params[evtIdx] = e;
+            callback.apply(caller, params);
+            clickTime = now;
+          }
+        });
+      } else {
+        console.log("node is undefined");
+      }
+    }
+    /**关闭自身 */
+    close() {
+      UIBaseMgr.instance.close(this.$assetsId, this.id);
+    }
+  }, "UIBase");
+  __decorate2([
+    property(),
+    __metadata("design:type", Number)
+  ], UIBase.prototype, "depth", void 0);
+  __decorate2([
+    property(),
+    __metadata("design:type", Boolean)
+  ], UIBase.prototype, "isSingleton", void 0);
+  __decorate2([
+    property(),
+    __metadata("design:type", Number)
+  ], UIBase.prototype, "AniType", void 0);
+  __decorate2([
+    property(),
+    __metadata("design:type", typeof (_a = typeof Sprite !== "undefined" && Sprite) === "function" ? _a : Object)
+  ], UIBase.prototype, "aniNode", void 0);
+  UIBase = __decorate2([
+    regClass(),
+    __metadata("design:paramtypes", [])
+  ], UIBase);
+  var UIBase_default = UIBase;
+
+  // E:/WheelChairMan/src/UIBase/UIBaseMgr.ts
+  var Pool2 = Laya.Pool;
+  var Handler2 = Laya.Handler;
+  var UIBaseMgr = class {
+    constructor() {
+      /**是否已经调用过openLoadView */
+      this.$isOpenLoadView = false;
+      /**对象池标记 */
+      this.$sign = "View_";
+    }
+    static get instance() {
+      return this._instance ? this._instance : this._instance = new UIBaseMgr();
+    }
+    /**初始化 */
+    init(UIBase3) {
+      this.$UIBase = UIBase3;
+      this.$DebugUI = this.$UIBase.getChildByName("DebugUI");
+      this.$TipsUI = this.$UIBase.getChildByName("TipsUI");
+      this.$MainUI = this.$UIBase.getChildByName("MainUI");
+      this.$3DUI = this.$UIBase.getChildByName("3DUI");
+      this.$sceneScriptPool = /* @__PURE__ */ new Map();
+      this.$scenePool = /* @__PURE__ */ new Map();
+    }
+    /**加载load界面 */
+    openLoadView() {
+      if (!this.$isOpenLoadView) {
+        this.$isOpenLoadView = true;
+        ResLoader.instance.load(SceneUrl.LoadView, Handler2.create(this, () => {
+          this.initScene(ResLoader.instance.getResCloneByUrl(SceneUrl.LoadView), 1006 /* LoadView */);
+        }));
+      }
+    }
+    /**
+     * 打开一个场景
+     * @param sceneId 场景名称
+     * @param param 传递参数
+     * @param caller 作用域
+     * @param callback 回调
+     */
+    open(sceneId, param, caller, callback) {
+      let scripts = this.$sceneScriptPool.get(sceneId);
+      if (scripts && scripts[0] && scripts[0].isSingleton) {
+        console.log("\u8FD9\u4E2A\u9875\u9762\u5DF2\u7ECF\u5B58\u5728\u5E76\u4E14\u4E0D\u5141\u8BB8\u91CD\u590D\u6253\u5F00");
+      } else {
+        let scene = Pool2.getItem(this.$sign + sceneId);
+        if (scene) {
+          this.initScene(scene, sceneId, param, caller, callback);
+        } else {
+          let scenePrefab = this.$scenePool.get(sceneId);
+          if (scenePrefab) {
+            scene = scenePrefab.create();
+            this.initScene(scene, sceneId, param, caller, callback);
+          } else {
+            this.loadScene(sceneId, param, caller, callback);
+          }
+        }
+      }
+    }
+    /**初始化界面 */
+    initScene(scene, sceneName, param, caller, callback) {
+      let base = scene.getComponent(UIBase_default);
+      if (base) {
+        switch (base.depth) {
+          default:
+            this.$MainUI.addChild(scene);
+            break;
+          case 0:
+            this.$DebugUI.addChild(scene);
+            break;
+          case 1:
+            this.$TipsUI.addChild(scene);
+            break;
+          case 2:
+            this.$MainUI.addChild(scene);
+            break;
+          case 3:
+            this.$3DUI.addChild(scene);
+            break;
+        }
+        base.$param = param;
+        base.$assetsId = sceneName;
+        base.isOpen = true;
+        base.aniFinish = false;
+        base.openAni();
+        base.onOpened(param);
+        base.addEvent();
+        if (caller && callback) {
+          callback.call(caller);
+        }
+        let arr = this.$sceneScriptPool.get(sceneName);
+        if (arr) {
+          arr.push(base);
+          this.$sceneScriptPool.set(sceneName, arr);
+        } else {
+          this.$sceneScriptPool.set(sceneName, [base]);
+        }
+      } else {
+        console.log("UIData\u6216\u8005UIBase\u7F3A\u5931");
+      }
+    }
+    /**关闭页面 */
+    close(sceneName, id) {
+      let scripts = this.$sceneScriptPool.get(sceneName);
+      if (scripts && scripts.length > 0) {
+        let arr = [];
+        for (let i = 0; i < scripts.length; i++) {
+          let script = scripts[i];
+          if (script.id == id) {
+            script.isOpen = false;
+            script.owner.removeSelf();
+            script.onClosed();
+            let events = script.$event;
+            for (let name in events) {
+              EventMgr.off(name, script, events.get(name));
+            }
+            script.$event = null;
+            script.$param = null;
+            Pool2.recover(this.$sign + sceneName, script.owner);
+          } else {
+            arr.push(script);
+          }
+        }
+        this.$sceneScriptPool.set(sceneName, arr);
+      }
+    }
+    /**是否打开某个界面 */
+    isOpen(sceneName) {
+      let arr = this.$sceneScriptPool.get(sceneName);
+      if (arr && arr.length > 0) {
+        return true;
+      }
+      return false;
+    }
+    /**加载场景 */
+    loadScene(sceneName, param, caller, callback) {
+      this.$scenePool.set(sceneName, ResLoader.instance.getResById(sceneName));
+      if (this.$scenePool.get(sceneName)) {
+        this.open(sceneName, param, caller, callback);
+      }
+    }
+    initDebugScene() {
+      this.open(1001 /* DebugView */);
+    }
+    /**打开一个调试界面 */
+    showDebug() {
+      this.open(1001 /* DebugView */);
+    }
+    /**
+     * 打开一个提示面板
+     * @param msg 信息
+     */
+    showTips(msg) {
+      this.open(1004 /* TipsView */, msg);
+    }
+    /**
+     * 打开一个确认取消面板
+     * @param title 标题
+     * @param msg 信息
+     * @param caller 作用域
+     * @param sureCallback 确认回调
+     * @param cancelCallBack 取消回调
+     */
+    showSureDialog(title, msg, caller, sureCallback, cancelCallBack) {
+      let data = { title, msg, caller, sureCallback, cancelCallBack };
+      this.open(1005 /* SureView */, data);
+    }
+  };
+  __name(UIBaseMgr, "UIBaseMgr");
+
+  // E:/WheelChairMan/src/GameEntry.ts
+  var __decorate3 = __$decorate("5d4f5965-a166-4aeb-8715-baae3302439a", "../src/GameEntry.ts");
+  var { regClass: regClass2, property: property2 } = Laya;
+  var GameEntry = /* @__PURE__ */ __name(class GameEntry2 extends Laya.Script {
+    constructor() {
+      super();
+      this.isInit = false;
+    }
+    onAwake() {
+      if (!this.isInit) {
+        this.isInit = true;
+        this.init();
+      }
+    }
+    /**初始化 */
+    init() {
+      console.log(`\u5F53\u524D\u5F15\u64CE\u7248\u672C:${Laya.LayaEnv.version}, \u5F53\u524D\u9879\u76EE\u540D\u79F0:${ProjectConfig.projectName},\u5F53\u524D\u9879\u76EE\u7248\u672C:${ProjectConfig.projectVersion}/${ProjectConfig.projectVersionIndex}`);
+      this.GameEntry = this.owner;
+      this.UIBase = this.GameEntry.getChildByName("UIBase");
+      UIBaseMgr.instance.init(this.UIBase);
+      UIBaseMgr.instance.openLoadView();
+    }
+  }, "GameEntry");
+  GameEntry = __decorate3([
+    regClass2(),
+    __metadata("design:paramtypes", [])
+  ], GameEntry);
+
+  // E:/WheelChairMan/src/Script3d/Script3d.ts
+  var Vector3 = Laya.Vector3;
+  var Script3d = class extends Laya.Script {
+    constructor() {
+      super();
+      /**序列 */
+      this.index = -1;
+    }
+    /**y挂载脚本的对象
+      * 同 owner
+      */
+    get obj() {
+      return this.owner;
+    }
+    /**z精灵变换。*/
+    get transform() {
+      return this.obj ? this.obj.transform : null;
+    }
+    /**d世界坐标 */
+    get position() {
+      return this.transform ? this.transform.position.clone() : null;
+    }
+    set position(v3) {
+      this.transform && (this.transform.position = v3);
+    }
+    /**本地坐标 */
+    get localPosition() {
+      return this.transform ? this.transform.localPosition.clone() : null;
+    }
+    set localPosition(v3) {
+      this.transform && (this.transform.localPosition = v3);
+    }
+    /**世界旋转 */
+    get rotation() {
+      return this.transform ? this.transform.rotation.clone() : null;
+    }
+    set rotation(v3) {
+      this.transform && (this.transform.rotation = v3);
+    }
+    /**局部旋转 */
+    get localRotation() {
+      return this.transform ? this.transform.localRotation.clone() : null;
+    }
+    set localRotation(v3) {
+      this.transform && (this.transform.localRotation = v3);
+    }
+    /**世界欧拉角 */
+    get rotationEuler() {
+      return this.transform ? this.transform.rotationEuler.clone() : null;
+    }
+    set rotationEuler(v3) {
+      this.transform && (this.transform.rotationEuler = v3);
+    }
+    /**本地欧拉角 */
+    get localRotationEuler() {
+      return this.transform ? this.transform.localRotationEuler.clone() : null;
+    }
+    set localRotationEuler(e) {
+      this.transform && (this.transform.localRotationEuler = e);
+    }
+    /**世界缩放（某些情况不准，少用） */
+    get scale() {
+      return this.transform ? this.transform.getWorldLossyScale().clone() : null;
+    }
+    set scale(v3) {
+      this.transform && this.transform.setWorldLossyScale(v3);
+    }
+    /**本地缩放*/
+    get localScale() {
+      return this.transform ? this.transform.localScale.clone() : null;
+    }
+    set localScale(v3) {
+      this.transform && (this.transform.localScale = v3);
+    }
+    /**局部空间的X轴欧拉角。*/
+    get localRotationEulerX() {
+      return this.transform ? this.transform.localRotationEulerX : null;
+    }
+    set localRotationEulerX(num) {
+      this.transform && (this.transform.localRotationEulerX = num);
+    }
+    /**局部空间的Y轴欧拉角。*/
+    get localRotationEulerY() {
+      return this.transform ? this.transform.localRotationEulerY : null;
+    }
+    set localRotationEulerY(num) {
+      this.transform && (this.transform.localRotationEulerY = num);
+    }
+    /**局部空间的Z轴欧拉角。*/
+    get localRotationEulerZ() {
+      return this.transform ? this.transform.localRotationEulerZ : null;
+    }
+    set localRotationEulerZ(num) {
+      this.transform && (this.transform.localRotationEulerZ = num);
+    }
+    /**局部位置X轴分量。*/
+    get localPositionX() {
+      return this.transform ? this.transform.localPositionX : null;
+    }
+    set localPositionX(num) {
+      this.transform && (this.transform.localPositionX = num);
+    }
+    /**局部位置Y轴分量。*/
+    get localPositionY() {
+      return this.transform ? this.transform.localPositionY : null;
+    }
+    set localPositionY(num) {
+      this.transform && (this.transform.localPositionY = num);
+    }
+    /**局部位置Z轴分量。*/
+    get localPositionZ() {
+      return this.transform ? this.transform.localPositionZ : null;
+    }
+    set localPositionZ(num) {
+      this.transform && (this.transform.localPositionZ = num);
+    }
+    onUpdate() {
+      this.updateTime = Laya.timer.delta;
+      this.update(this.updateTime);
+    }
+    /**更新 */
+    update(time) {
+    }
+    onLateUpdate() {
+      this.laterUpdateTime = Laya.timer.delta;
+      this.laterUpdate(this.laterUpdateTime);
+    }
+    laterUpdate(time) {
+    }
+    /**
+    * 世界坐标转局部坐标
+    * @param {Vector3} pos2world 世界坐标
+    * @param {Sprite3D} sp3d 局部空间
+    * @returns {Vector3} 局部坐标
+    */
+    positionWorld2local(pos2world, sp3d) {
+      let pos2local = new Vector3(0, 0, 0);
+      let m = new Laya.Matrix4x4();
+      sp3d.transform.worldMatrix.invert(m);
+      Vector3.transformCoordinate(pos2world, m, pos2local);
+      return pos2local;
+    }
+  };
+  __name(Script3d, "Script3d");
+
+  // E:/WheelChairMan/src/Game/CameraItem.ts
+  var __decorate4 = __$decorate("5c31dd90-8819-4905-b33b-ed3d5c647cc8", "../src/Game/CameraItem.ts");
+  var { regClass: regClass3, property: property3 } = Laya;
+  var CameraItem = /* @__PURE__ */ __name(class CameraItem2 extends Script3d {
+    constructor() {
+      super();
+    }
+    onEnable() {
+      this.camera = this.owner;
+    }
+    onAwake() {
+    }
+    onDisable() {
+    }
+    initFallowTarget(target) {
+      if (target) {
+        this.fallowTarget = target;
+        this.curpos = new Laya.Vector3();
+        this.fallowTarget.transform.position.cloneTo(this.curpos);
+        this.delatpos = new Laya.Vector3();
+      }
+    }
+    laterUpdate(time) {
+      if (this.fallowTarget && this.curpos && this.delatpos) {
+        this.fallowTarget.transform.position.vsub(this.curpos, this.delatpos);
+        this.camera.transform.position.vadd(this.delatpos, this.delatpos);
+        this.camera.transform.position = this.delatpos;
+        this.fallowTarget.transform.position.cloneTo(this.curpos);
+      }
+    }
+  }, "CameraItem");
+  CameraItem = __decorate4([
+    regClass3(),
+    __metadata("design:paramtypes", [])
+  ], CameraItem);
+  var CameraItem_default = CameraItem;
+
+  // E:/WheelChairMan/src/Mgr/LocalMgr.ts
+  var LocalStorage = Laya.LocalStorage;
+  var LocalStorageMgr = class {
+    /**
+    * 获取指定键名的值。
+    * @param key 键名。
+    * @return 字符串型值。
+    */
+    static getItem(key) {
+      return LocalStorage.getItem(`${ProjectConfig.projectName}_${key}`);
+    }
+    /**
+     * 存储指定键名和键值，字符串类型。
+     * @param key 键名。
+     * @param value 键值。
+     */
+    static setItem(key, value) {
+      LocalStorage.setItem(`${ProjectConfig.projectName}_${key}`, typeof value === "string" ? value : value.toString());
+    }
+  };
+  __name(LocalStorageMgr, "LocalStorageMgr");
+
+  // E:/WheelChairMan/src/Data/GameData.ts
+  var GameData = class {
+    /**用户头像 */
+    static get userHead() {
+      if (!this.$userHead) {
+        this.$userHead = LocalStorageMgr.getItem("USERHEAD" /* USERHEAD */);
+      }
+      return this.$userHead;
+    }
+    /**用户唯一ID */
+    static get UID() {
+      if (!this.$UID) {
+        let uid = LocalStorageMgr.getItem("DID" /* UID */);
+        if (uid) {
+          this.$UID = uid;
+        } else {
+          this.$UID = (Math.random() * 1e8).toFixed();
+          LocalStorageMgr.setItem("DID" /* UID */, this.$UID);
+        }
+      }
+      return this.$UID;
+    }
+    /**用户名字 */
+    static get userName() {
+      if (!this.$userName) {
+        this.$userName = LocalStorageMgr.getItem("USERNAME" /* USERNAME */);
+        if (!this.$userName) {
+          this.$userName = "userName";
+          LocalStorageMgr.setItem("USERNAME" /* USERNAME */, this.$userName);
+        }
+      }
+      return this.$userName;
+    }
+    /**金币 */
+    static get gold() {
+      if (this.$gold == -1) {
+        let gold = Number(LocalStorageMgr.getItem("GOLD" /* GOLD */));
+        if (isNaN(gold)) {
+          this.$gold = 0;
+          LocalStorageMgr.setItem("GOLD" /* GOLD */, this.$gold);
+        } else {
+          this.$gold = gold;
+        }
+      }
+      return this.$gold;
+    }
+    static set gold(value) {
+      if (!isNaN(value) && value >= 0) {
+        this.$gold = value;
+        LocalStorageMgr.setItem("GOLD" /* GOLD */, this.$gold);
+      }
+    }
+    /**钻石 */
+    static get diamond() {
+      if (this.$diamond == -1) {
+        let diamond = Number(LocalStorageMgr.getItem("DIAMOND" /* DIAMOND */));
+        if (isNaN(diamond)) {
+          this.$diamond = 0;
+          LocalStorageMgr.setItem("DIAMOND" /* DIAMOND */, this.$diamond);
+        } else {
+          this.$diamond = diamond;
+        }
+      }
+      return this.$diamond;
+    }
+    static set diamond(value) {
+      if (!isNaN(value) && value >= 0) {
+        this.$diamond = value;
+        LocalStorageMgr.setItem("DIAMOND" /* DIAMOND */, this.$diamond);
+      }
+    }
+    /**经验 */
+    static get experience() {
+      if (this.$experience == -1) {
+        let experience = Number(LocalStorageMgr.getItem("EXPERIENCE" /* EXPERIENCE */));
+        if (isNaN(experience)) {
+          this.$experience = 0;
+          LocalStorageMgr.setItem("EXPERIENCE" /* EXPERIENCE */, this.$experience);
+        } else {
+          this.$experience = experience;
+        }
+      }
+      return this.$experience;
+    }
+    static set experience(value) {
+      if (!isNaN(value) && value >= 0) {
+        this.$experience = value;
+        LocalStorageMgr.setItem("EXPERIENCE" /* EXPERIENCE */, this.$experience);
+      }
+    }
+    /**金币 */
+    static get key() {
+      if (this.$key == -1) {
+        let key = Number(LocalStorageMgr.getItem("KEY" /* KEY */));
+        console.log(key);
+        if (isNaN(key)) {
+          this.$key = 0;
+          LocalStorageMgr.setItem("KEY" /* KEY */, this.$key);
+        } else {
+          this.$key = key;
+        }
+      }
+      return this.$key;
+    }
+    static set key(value) {
+      if (!isNaN(value) && value >= 0) {
+        this.$key = value;
+        LocalStorageMgr.setItem("KEY" /* KEY */, this.$key);
+      }
+    }
+  };
+  __name(GameData, "GameData");
+  GameData.$userHead = "";
+  GameData.$UID = "";
+  GameData.$userName = "";
+  GameData.$gold = -1;
+  GameData.$diamond = -1;
+  GameData.$experience = -1;
+  GameData.$key = -1;
+  /**单局游戏时长 */
+  GameData.gameTime = 180;
+
+  // E:/WheelChairMan/src/Scene3dBase/Scene3d.ts
+  var __decorate5 = __$decorate("5d2200e4-1fa0-4d47-ab3d-f4961980a2ae", "../src/Scene3dBase/Scene3d.ts");
+  var { regClass: regClass4, property: property4 } = Laya;
+  var Scene3d = /* @__PURE__ */ __name(class Scene3d2 extends Laya.Script {
+    constructor() {
+      super();
+      this.$param = null;
+      this.sceneId = 0;
+    }
+    onReset() {
+    }
+    /**界面打开 */
+    onOpened(param) {
+    }
+    /**添加监听 */
+    addEvent() {
+    }
+    /**界面关闭 */
+    onClosed() {
+    }
+    /**关闭 */
+    close(isDestroy) {
+      Scene3dMgr.instance.close(this.sceneId, isDestroy);
+    }
+    /**
+        * 注册监听事件，不需要销毁
+        * @param event 事件枚举
+        * @param callback 回调
+        * @param callNow 立刻回调一次
+        */
+    regEvent(event, callback, callNow = false, data) {
+      let self = this;
+      if (event && callback) {
+        EventMgr.on(event, this, callback);
+        self.$event || (self.$event = /* @__PURE__ */ new Map());
+        self.$event.set(event, callback);
+        if (callNow) {
+          callback.call(this, data);
+        }
+      }
+    }
+  }, "Scene3d");
+  Scene3d = __decorate5([
+    regClass4(),
+    __metadata("design:paramtypes", [])
+  ], Scene3d);
+  var Scene3d_default = Scene3d;
+
+  // E:/WheelChairMan/src/Scene3dBase/Scene3dMgr.ts
+  var Scene3D = Laya.Scene3D;
+  var Scene3dMgr = class {
+    static get instance() {
+      return this._instance ? this._instance : this._instance = new Scene3dMgr();
+    }
+    init() {
+      this.$scene3dMap = ResLoader.instance.getDataTableById(3007 /* Scene3d */);
+      this.$scene3dPool = /* @__PURE__ */ new Map();
+      this.initScene3D();
+    }
+    initScene3D() {
+      this.$scene3d = new Scene3D();
+      this.$scene3d.name = "baseScene3d";
+      Laya.stage.addChild(this.$scene3d);
+      Laya.stage.setChildIndex(this.$scene3d, 0);
+      this.$scene3d.enableFog = true;
+      this.$scene3d.fogStart = 200;
+      this.$scene3d.fogRange = 400;
+      this.$scene3d.fogColor = new Laya.Color(0.34, 0.34, 0.34);
+      this.$scene3d.sceneReflectionProb.ambientIntensity = 0.7;
+      this.$scene3d.sceneReflectionProb.ambientMode = 0;
+      this.$scene3d.sceneReflectionProb.ambientColor = new Laya.Color(0.7, 0.7, 0.7, 0.7);
+      this.$scene3d.skyRenderer.material = ResLoader.instance.getResCloneById(5103 /* SkyBox3 */);
+      this.rotSkyBox();
+    }
+    rotSkyBox() {
+      let mat = this.$scene3d.skyRenderer.material;
+      mat && Timer.get(1, this, () => {
+        mat._shaderValues.setNumber(Laya.SkyBoxMaterial.ROTATION, mat._shaderValues.getNumber(Laya.SkyBoxMaterial.ROTATION) + 0.01);
+      }).frameLoop().start();
+    }
+    /**打开某个场景 */
+    open(sceneId, param) {
+      var _a23;
+      let sceneScript;
+      sceneScript = this.$scene3dPool.get(sceneId);
+      if (sceneScript) {
+        this.initScene(sceneScript, param);
+      } else {
+        let id = (_a23 = this.$scene3dMap.get(sceneId)) == null ? void 0 : _a23["path"];
+        if (id) {
+          let scene = ResLoader.instance.getResCloneById(id);
+          scene && this.$scene3d.addChild(scene);
+          sceneScript = scene.getComponent(Scene3d_default);
+          if (sceneScript) {
+            this.$scene3dPool.set(sceneId, sceneScript);
+            sceneScript.sceneId = sceneId;
+            this.initScene(sceneScript, param);
+          } else {
+            console.log("sceneScript is undefined");
+          }
+        }
+      }
+    }
+    /**初始化一下 */
+    initScene(sceneScript, param) {
+      var _a23;
+      this.$scene3d.addChild(sceneScript.owner);
+      sceneScript.owner.name = (_a23 = this.$scene3dMap.get(sceneScript.sceneId)) == null ? void 0 : _a23["key"];
+      sceneScript.$param = param;
+      sceneScript.onOpened(param);
+      sceneScript.addEvent();
+    }
+    /**关闭某个场景 */
+    close(sceneId, isDestroy) {
+      let sceneScript = this.$scene3dPool.get(sceneId);
+      if (sceneScript) {
+        sceneScript.onClosed();
+        sceneScript.owner.removeSelf();
+        let events = sceneScript.$event;
+        for (let name in events) {
+          EventMgr.off(name, sceneScript, events.get(name));
+        }
+        sceneScript.$event = null;
+        sceneScript.$param = null;
+        if (isDestroy) {
+          sceneScript.owner.destroy();
+          this.$scene3dPool.delete(sceneId);
+        }
+      }
+    }
+  };
+  __name(Scene3dMgr, "Scene3dMgr");
+
+  // E:/WheelChairMan/src/Util/ObjUtil.ts
+  var Point = Laya.Point;
+  var ObjUtil = class {
+    /**数组去重 */
+    static clearList(arr) {
+      arr.every((item) => {
+      });
+    }
+    /**Set转List */
+    static set2List(_set) {
+      if (_set && _set.size) {
+        let arr = [];
+        for (let item of _set) {
+          arr.push(item);
+        }
+        return arr;
+      }
+      return null;
+    }
+    /**移除项目 */
+    static removeItem(arr, item) {
+      if (arr && arr.length && item) {
+        let index = arr.indexOf(item);
+        index != -1 && arr.splice(index, 1);
+      }
+    }
+    /**
+     * 随机一个圆环坐标
+     * @param De 外径
+     * @param d 内径
+     */
+    static randomRingPos(De, d) {
+      let point = new Point();
+      let r = Math.random() * (De - d) + d;
+      let angle = Math.random() * 360;
+      point.x = Math.cos(angle / 2 / Math.PI) * r;
+      point.y = Math.sin(angle / 2 / Math.PI) * r;
+      return point;
+    }
+  };
+  __name(ObjUtil, "ObjUtil");
+
+  // E:/WheelChairMan/src/Enum/LanguageEnum.ts
+  var LanguageEnum = /* @__PURE__ */ ((LanguageEnum2) => {
+    LanguageEnum2[LanguageEnum2["ChineseSimplified"] = 1001] = "ChineseSimplified";
+    LanguageEnum2[LanguageEnum2["English"] = 1002] = "English";
+    return LanguageEnum2;
+  })(LanguageEnum || {});
+
+  // E:/WheelChairMan/src/Localization/LocalizationMgr.ts
+  var LocalizationMgr = class {
+    /**初始化 */
+    static init() {
+      this.$localizationResMap = ResLoader.instance.getDataTableById(3002 /* LocalizationRes */);
+      this.$localizationMap = ResLoader.instance.getDataTableById(501 /* Localization */);
+      this.$localizationKeyMap = /* @__PURE__ */ new Map();
+      for (let [key, value] of this.$localizationMap) {
+        this.$localizationKeyMap.set(value["key"], value);
+      }
+    }
+    /**获取语言对应国旗 */
+    static getFlagSkinIdById(id) {
+      let data = this.$localizationResMap.get(id);
+      return data && data["flagId"];
+    }
+    /**获取语言描述 */
+    static getLanguageMsgById(id) {
+      let data = this.$localizationResMap.get(id);
+      return data && data["msg"];
+    }
+    /**通过key获取对应语言,一般来说是内部调用 */
+    static $getLocalizationByKey(key, ...keys) {
+      var _a23, _b16;
+      let language = LanguageEnum[this.Language];
+      let value = (_a23 = this.$localizationKeyMap.get(key)) == null ? void 0 : _a23[language];
+      if (value) {
+        if (keys && keys.length) {
+          for (let i = 0; i < keys.length; i++) {
+            let item = (_b16 = this.$localizationKeyMap.get(keys[i])) == null ? void 0 : _b16[language];
+            item = item ? item : keys[i];
+            value = value.replace("$", item);
+          }
+        }
+      }
+      return value;
+    }
+    /**通过枚举获取对应语言 */
+    static getLocalizationByEnum(lenum, ...lenums) {
+      var _a23, _b16;
+      let language = LanguageEnum[this.Language];
+      let value = (_a23 = this.$localizationMap.get(lenum)) == null ? void 0 : _a23[language];
+      if (value) {
+        if (lenums && lenums.length) {
+          for (let i = 0; i < lenums.length; i++) {
+            let item = (_b16 = this.$localizationMap.get(lenums[i])) == null ? void 0 : _b16[language];
+            item = item ? item : lenums[i];
+            value = value.replace("$", item);
+          }
+        }
+      }
+      return value;
+    }
+    /**获取当前语言 */
+    static get Language() {
+      if (!this.$language) {
+        let language = LocalStorageMgr.getItem("LANGUAGE" /* LANGUAGE */);
+        if (language) {
+          this.$language = Number(language.substring(language.indexOf("_") + 1));
+        } else {
+          this.$language = ProjectConfig.defaultLanguage;
+          LocalStorageMgr.setItem("LANGUAGE" /* LANGUAGE */, this.$sign + this.$language);
+        }
+      }
+      return this.$language;
+    }
+    /**修改当前语言 */
+    static set Language(language) {
+      this.$language = language;
+      LocalStorageMgr.setItem("LANGUAGE" /* LANGUAGE */, this.$sign + this.$language);
+      EventMgr.event("LANGUAGECHANGE" /* LANGUAGECHANGE */);
+    }
+  };
+  __name(LocalizationMgr, "LocalizationMgr");
+  /**持久化标志 */
+  LocalizationMgr.$sign = "language_";
+
+  // E:/WheelChairMan/src/Util/Sprite3d.ts
+  var Vector32 = Laya.Vector3;
+  var _Sprite3d = class {
+    static get instance() {
+      return this._instance ? this._instance : this._instance = new _Sprite3d();
+    }
+    constructor() {
+    }
+    /**零向量 */
+    static get ZERO() {
+      if (!this._ZERO) {
+        this._ZERO = new Vector32(0, 0, 0);
+        Object.freeze(this._ZERO);
+      }
+      return this._ZERO;
+    }
+    /**一向量 */
+    static get ONE() {
+      if (!this._ONE) {
+        this._ONE = new Vector32(1, 1, 1);
+        Object.freeze(this._ONE);
+      }
+      return this._ONE;
+    }
+    /**X向量 */
+    static get UnitX() {
+      if (!this._UnitX) {
+        this._UnitX = new Vector32(1, 0, 0);
+        Object.freeze(this._UnitX);
+      }
+      return this._UnitX;
+    }
+    /**Y向量 */
+    static get UnitY() {
+      if (!this._UnitY) {
+        this._UnitY = new Vector32(0, 1, 0);
+        Object.freeze(this._UnitY);
+      }
+      return this._UnitY;
+    }
+    /**上向量 */
+    static get DOWN() {
+      if (!this._DOWN) {
+        this._DOWN = new Vector32(0, -1, 0);
+        Object.freeze(this._DOWN);
+      }
+      return this._DOWN;
+    }
+    /**Z向量 */
+    static get UnitZ() {
+      if (!this._UnitZ) {
+        this._UnitZ = new Vector32(0, 0, 1);
+        Object.freeze(this._UnitZ);
+      }
+      return this._UnitZ;
+    }
+    /**
+    * 世界坐标转局部坐标
+    * @param {Vector3} pos2world 世界坐标
+    * @param {Sprite3D} sp3d 局部空间
+    * @returns {Vector3} 局部坐标
+    */
+    static positionWorld2local(pos2world, sp3d) {
+      let pos2local = new Vector32(0, 0, 0);
+      let m = new Laya.Matrix4x4();
+      sp3d.transform.worldMatrix.invert(m);
+      Vector32.transformCoordinate(pos2world, m, pos2local);
+      return pos2local;
+    }
+    /**获取目标向量 */
+    static getDic(startPos, endPos, scale = 1, ignoreY = false) {
+      if (startPos && endPos) {
+        let v3 = new Vector32(0, 0, 0);
+        Vector32.subtract(endPos, startPos, v3);
+        Vector32.normalize(v3, v3);
+        if (scale != 1) {
+          Vector32.scale(v3, scale, v3);
+        }
+        if (ignoreY) {
+          v3 = new Vector32(v3.x, 0, v3.z);
+        }
+        return v3;
+      } else {
+        return this.ZERO;
+      }
+    }
+    /**获取目标Y轴的欧拉角
+     *       ±180°
+     *         |
+     * 90° ----+---- -90°
+     *         |
+     *         0
+     */
+    static getAngle(startPos, endPos) {
+      if (startPos && endPos) {
+        let offX = endPos.x - startPos.x;
+        let offZ = endPos.z - startPos.z;
+        let angle = Math.atan2(offX, offZ) * 180 / Math.PI;
+        return angle;
+      }
+      return null;
+    }
+    //步骤1：获取目标节点的所有子节点，将所有子节点放入数组并返回
+    static getChildNodesArray(target) {
+      let nodeArray = [];
+      for (let i = 0; i < target.numChildren; i++) {
+        let node = target.getChildAt(i);
+        if (node) {
+          nodeArray.push(node);
+        }
+      }
+      return nodeArray;
+    }
+    //步骤二：递归获取目标节点的所有子孙节点，并将他们全部放入数组并返回
+    static FindAndGetAllChildren(parentNode, outNodesArray) {
+      if (parentNode.numChildren > 0) {
+        let nodeArray = this.getChildNodesArray(parentNode);
+        nodeArray.forEach((node) => {
+          outNodesArray.push(node);
+          if (this.getChildNodesArray(node).length > 0) {
+            this.FindAndGetAllChildren(node, outNodesArray);
+          } else {
+            return outNodesArray;
+          }
+        });
+      }
+      return null;
+    }
+    //第三步：构建一个数组来存放获取的所有节点并返回此数组
+    static getAllChildrenArray(parentNode) {
+      let allChildrenArray = [];
+      this.FindAndGetAllChildren(parentNode, allChildrenArray);
+      return allChildrenArray;
+    }
+    //最后一步：将所有节点封装到字典里，方便获取
+    static getAllChildrenMap(parentNode) {
+      let obj = parentNode;
+      let id = obj.id;
+      let map = this.nodeDic[id];
+      if (!map) {
+        let allChildrenArray = this.getAllChildrenArray(parentNode);
+        map = /* @__PURE__ */ new Map();
+        for (let i = 0; i < allChildrenArray.length; i++) {
+          if (!map.has(allChildrenArray[i].name)) {
+            map.set(allChildrenArray[i].name, allChildrenArray[i]);
+          }
+        }
+        if (!this.nodeDic) {
+          this.nodeDic = new Array();
+        }
+        this.nodeDic[id] = map;
+      }
+      return map;
+    }
+    //为了方便获取各种类型的节点，可以在写一个泛型方法来获取
+    static getNodeByMap(nodeName, map) {
+      if (!map.has(nodeName)) {
+        return null;
+      }
+      return map.get(nodeName);
+    }
+    /**获取某个节点 */
+    static getNodeByName(nodeName, parentNode) {
+      let id = parentNode.id;
+      let map = this.nodeDic[id];
+      if (!map) {
+        let allChildrenArray = this.getAllChildrenArray(parentNode);
+        map = /* @__PURE__ */ new Map();
+        for (let i = 0; i < allChildrenArray.length; i++) {
+          if (!map.has(allChildrenArray[i].name)) {
+            map.set(allChildrenArray[i].name, allChildrenArray[i]);
+          }
+        }
+        this.nodeDic[id] = map;
+      }
+      if (!map.has(nodeName)) {
+        return null;
+      }
+      return map.get(nodeName);
+    }
+    /**清除拖尾
+    * @param trail 拖尾
+    * @param active 清理之后是否展示
+    */
+    static clearTrail(trail, active = false) {
+      if (trail && trail instanceof Laya.TrailSprite3D) {
+        trail.active = true;
+        let bt = trail.trailFilter.time;
+        trail.trailFilter.time = 1e-3;
+        Laya.timer.frameOnce(1, this, () => {
+          trail.trailFilter.time = bt;
+          trail.active = active;
+        });
+      }
+    }
+  };
+  var Sprite3d = _Sprite3d;
+  __name(Sprite3d, "Sprite3d");
+  Sprite3d.nodeDic = {};
+
+  // E:/WheelChairMan/src/Util/AnimatorTool.ts
+  var AnimatorTool = class {
+    /**
+    * 播放动画
+    * @param ani 动画
+    * @param name 动画名
+    * @param loop 是否循环
+    * @param speed 速度
+    * @param layerIndex 层级
+    * @param crossFade 是否过渡
+    * @param transitionDuration 过渡时间
+    */
+    static play(ani, name, loop = true, speed = 1, layerIndex = 0, crossFade = false, transitionDuration = 0.1) {
+      if (ani && name) {
+        let AnimatorState = ani.getControllerLayer(layerIndex).getAnimatorState(name);
+        if (AnimatorState) {
+          if (crossFade) {
+            ani.crossFade(name, transitionDuration, layerIndex);
+          } else {
+            ani.play(name, layerIndex);
+          }
+          AnimatorState.speed = speed;
+          AnimatorState.clip.islooping = loop;
+        } else {
+          console.log("\u540D\u79F0:" + name + " /\u5C42\u7EA7:" + layerIndex + "\u5BF9\u5E94\u7684\u52A8\u753B\u4E3A\u7A7A");
+        }
+      } else {
+        console.log("ani/name\u4E22\u5931");
+      }
+    }
+    /**
+     * 添加动画退出事件监听 注意 isLooping = true 不执行
+     * @param ani 动画
+     * @param name 动画名
+     * @param caller 域
+     * @param callback 回调函数
+     * @param layerIndex 层级
+     */
+    static initEvent(ani, name, caller, callback, layerIndex = 0) {
+      let layer = ani.getControllerLayer(layerIndex);
+      let aniStatus = layer.getAnimatorState(name);
+      if (aniStatus) {
+        let aniScript = aniStatus.getScript(Laya.AnimatorStateScript);
+        if (aniScript == null) {
+          aniScript = aniStatus.addScript(Laya.AnimatorStateScript);
+        }
+        aniScript.onStateExit = () => {
+          callback && caller && callback.call(caller);
+        };
+      } else {
+        console.log(name + "\u72B6\u6001\u4E3A\u7A7A");
+      }
+    }
+  };
+  __name(AnimatorTool, "AnimatorTool");
+
+  // E:/WheelChairMan/src/Util/PlayerController.ts
+  var __decorate6 = __$decorate("f3ea911e-7d9e-4e77-b857-d99a7338285a", "../src/Util/PlayerController.ts");
+  var Vector33 = Laya.Vector3;
+  var CharacterController = Laya.CharacterController;
+  var { regClass: regClass5, property: property5 } = Laya;
+  var PlayerController = /* @__PURE__ */ __name(class PlayerController2 extends Script3d {
+    constructor() {
+      super();
+      this.friction = 0.5;
+      this.stepHeight = 0.1;
+      this.jumpAllTimes = 1;
+      this.moveSpeed = 0.05;
+      this.jumpTimes = 0;
+    }
+    onEnable() {
+      this.characterController = this.obj.getComponent(CharacterController);
+      if (!this.characterController) {
+        console.log("characterController is undefined");
+      }
+    }
+    onStart() {
+      this.characterController.friction = this.friction;
+      this.characterController.stepHeight = this.stepHeight;
+      this.moveSpeedV3 = new Vector33(0, 0, 0);
+    }
+    update(time) {
+    }
+    /**
+     * 移动
+     * @param angle z方向为正方向，逆时针旋转0到180°，顺时针旋转0到-180°
+     */
+    move(angle) {
+      if (!isNaN(angle)) {
+        angle = angle / 180 * Math.PI;
+        let offX = Math.sin(angle) * this.moveSpeed;
+        let offY = Math.cos(angle) * this.moveSpeed;
+        this.moveSpeedV3 = new Vector33(offX, 0, offY);
+        this.characterController.move(this.moveSpeedV3);
+      }
+    }
+    /**停止移动 */
+    stopMove() {
+      this.characterController.move(Sprite3d.ZERO);
+      console.log("----stopMove---");
+    }
+    /**跳跃 */
+    jump() {
+      if (this.isGrounded) {
+        this.jumpTimes = 0;
+        this.jumpTimes++;
+        this.characterController.jump();
+      } else {
+        if (this.jumpTimes < this.jumpAllTimes) {
+          this.jumpTimes++;
+          this.characterController.jump();
+        }
+      }
+    }
+    /**是否在地上 */
+    isGrounded() {
+      return this.characterController.isGrounded;
+    }
+    onDisable() {
+    }
+  }, "PlayerController");
+  __decorate6([
+    property5(),
+    __metadata("design:type", Number)
+  ], PlayerController.prototype, "friction", void 0);
+  __decorate6([
+    property5(),
+    __metadata("design:type", Number)
+  ], PlayerController.prototype, "stepHeight", void 0);
+  __decorate6([
+    property5(),
+    __metadata("design:type", Number)
+  ], PlayerController.prototype, "jumpAllTimes", void 0);
+  __decorate6([
+    property5(),
+    __metadata("design:type", Number)
+  ], PlayerController.prototype, "moveSpeed", void 0);
+  PlayerController = __decorate6([
+    regClass5(),
+    __metadata("design:paramtypes", [])
+  ], PlayerController);
+  var PlayerController_default = PlayerController;
+
+  // E:/WheelChairMan/src/Game/BaseItem/BaseItem.ts
+  var Vector34 = Laya.Vector3;
+  var Quaternion = Laya.Quaternion;
+  var Pool3 = Laya.Pool;
+  var BaseItem = class extends Script3d {
+    constructor() {
+      super();
+      /**序号 */
+      this.index = -1;
+      /**对象类型 */
+      this.objType = -1;
+    }
+    onAwake() {
+      this.$events = {};
+      this.objName = "";
+      this.addEvent();
+    }
+    addEvent() {
+    }
+    /**初始化位置
+         * @param data 数据
+         * @param isRotPoint 是否为旋转节点
+         * @param isLocalPos 是否为本地节点
+         * @param lscale 是否修正缩放
+         */
+    initPos(data, isRotPoint = false, isLocalPos = false, lscale = 1) {
+      this.posData = data;
+      let pos = new Vector34(this.posData.x, this.posData.y, this.posData.z);
+      let rot = new Quaternion(this.posData.rotX, this.posData.rotY, this.posData.rotZ, this.posData.rotW);
+      let scale = new Vector34(this.posData.scaleX * lscale, this.posData.scaleY * lscale, this.posData.scaleZ * lscale);
+      if (isLocalPos) {
+        pos && (this.localPosition = pos);
+      } else {
+        pos && (this.position = pos);
+      }
+      if (isRotPoint) {
+        let rotPoint = this.obj.getChildAt(0);
+        rotPoint && (rotPoint.transform.rotation = rot);
+      } else {
+        rot && (this.rotation = rot);
+      }
+      scale && (this.localScale = scale);
+      this.initOthers();
+    }
+    initOthers() {
+    }
+    /**
+     * 注册自身事件
+     * 回收对象的时候会自动移除
+     * @param eventName 
+     * @param func 
+     */
+    regEvent(eventName, func) {
+      var self = this;
+      self.$events[eventName] = func;
+      EventMgr.on(eventName, self, func);
+    }
+    /**移除监听 */
+    unRegEvent() {
+      var self = this, eventMgr = EventMgr, events = self.$events;
+      for (let name in events) {
+        eventMgr.off(name, self, events[name]);
+      }
+      self.$events = null;
+    }
+    /**清理回收对象 */
+    clear(isDestroy = false) {
+      this.clearOthers();
+      this.unRegEvent();
+      Laya.timer.clearAll(this);
+      this.index = -1;
+      this.objData = null;
+      this.posData = null;
+      if (this.obj) {
+        this.obj.removeSelf();
+        if (isDestroy) {
+          this.obj.destroy(true);
+        } else {
+          if (this.objName != "") {
+            Pool3.recover(this.objName, this.obj);
+            this.objName = "";
+          } else {
+            Pool3.recover(this.obj.name, this.obj);
+          }
+        }
+        this.destroy();
+      } else {
+        this.destroy();
+      }
+    }
+    /**额外清理
+     */
+    clearOthers() {
+    }
+  };
+  __name(BaseItem, "BaseItem");
+
+  // E:/WheelChairMan/src/Game/Weapon/WeaponItem.ts
+  var __decorate7 = __$decorate("303c1b70-94df-4fd5-afab-45556c45c044", "../src/Game/Weapon/WeaponItem.ts");
+  var { regClass: regClass6, property: property6 } = Laya;
+  var WeaponItem = /* @__PURE__ */ __name(class WeaponItem2 extends Script3d {
+    constructor() {
+      super();
+      this.totalBullet = 0;
+      this.$bullet = 0;
+      this.canShoot = false;
+    }
+    onEnable() {
+    }
+    onStart() {
+    }
+    gameStart() {
+      this.canShoot = true;
+    }
+    get bullet() {
+      return this.$bullet;
+    }
+    set bullet(value) {
+      if (value == 0) {
+        this.reLoad();
+        this.canShoot = false;
+      }
+    }
+    reLoad() {
+    }
+  }, "WeaponItem");
+  WeaponItem = __decorate7([
+    regClass6(),
+    __metadata("design:paramtypes", [])
+  ], WeaponItem);
+  var WeaponItem_default = WeaponItem;
+
+  // E:/WheelChairMan/src/Game/Weapon/WeaponMgr.ts
+  var WeaponMgr = class {
+    constructor() {
+      this.selectWeaponId = 0;
+    }
+    static get instance() {
+      return this._instance ? this._instance : this._instance = new WeaponMgr();
+    }
+    init() {
+      this.weaponDataMap = ResLoader.instance.getDataTableById(3009 /* Weapon */);
+    }
+    getSelectWeapon(weaponId) {
+      console.log(weaponId);
+      let obj;
+      let weaponItem;
+      if (!this.weaponMap) {
+        this.weaponMap = /* @__PURE__ */ new Map();
+      } else {
+        obj = this.weaponMap.get(weaponId);
+      }
+      if (!obj) {
+        let weaponData = this.getSelectedWeaponData(weaponId);
+        obj = ResLoader.instance.getResCloneById(weaponData["path"]);
+        this.weaponMap.set(weaponId, obj);
+        weaponItem = obj.getComponent(WeaponItem_default);
+        if (weaponItem) {
+          weaponItem.weaponData = weaponData;
+        }
+      }
+      return weaponItem;
+    }
+    /**获取当前选择的武器数据 */
+    getSelectedWeaponData(weaponId) {
+      return this.weaponDataMap.get(weaponId);
+    }
+  };
+  __name(WeaponMgr, "WeaponMgr");
+
+  // E:/WheelChairMan/src/Game/Player/PlayerItem.ts
+  var __decorate8 = __$decorate("778295ff-e54e-4576-82ea-f69285cd3b58", "../src/Game/Player/PlayerItem.ts");
+  var _a2;
+  var Vector35 = Laya.Vector3;
+  var Sprite3D = Laya.Sprite3D;
+  var Animator = Laya.Animator;
+  var PixelLineSprite3D = Laya.PixelLineSprite3D;
+  var Color = Laya.Color;
+  var { regClass: regClass7, property: property7 } = Laya;
+  var PlayerItem = /* @__PURE__ */ __name(class PlayerItem2 extends BaseItem {
+    constructor() {
+      super();
+      this.totalHealth = 0;
+      this.$health = 0;
+    }
+    /**生命 */
+    get health() {
+      return this.$health;
+    }
+    set health(value) {
+      if (!isNaN(value)) {
+        let oldHealth = this.$health;
+        this.$health = value;
+        this.healthChange(oldHealth);
+      }
+    }
+    onEnable() {
+      this.rotNode = this.obj.getChildAt(0);
+      this.animator = this.rotNode.getComponent(Animator);
+      if (this.playerData) {
+        this.totalHealth = this.health = this.playerData.health;
+        this.playerController.moveSpeed = this.playerData.speed;
+      }
+      this.playerStatus = 1001 /* idle */;
+      if (this.pixelLineSprite3D) {
+        this.pixelLineSprite3D.active = false;
+      }
+    }
+    get playerController() {
+      if (!this.$playerController) {
+        this.$playerController = this.obj.getComponent(PlayerController_default);
+      }
+      return this.$playerController;
+    }
+    gameStart() {
+      if (!this.pixelLineSprite3D) {
+        this.pixelLineSprite3D = new PixelLineSprite3D(1);
+        this.obj.addChild(this.pixelLineSprite3D);
+        this.pixelLineSprite3D.addLine(new Vector35(0, 1.3, 0), new Vector35(0, 1.3, 5), new Color(1 / 255, 114 / 255, 1 / 255), new Color(1 / 255, 114 / 255, 1 / 255));
+      }
+      this.initWeapon();
+    }
+    initWeapon() {
+      if (!this.weaponItem) {
+        this.weaponItem = WeaponMgr.instance.getSelectWeapon(this.playerData["weaponId"]);
+        this.weaponPoint.addChild(this.weaponItem.owner);
+      } else {
+        this.weaponItem.owner.active = true;
+      }
+      this.weaponItem.localPosition = Sprite3d.ZERO;
+      this.weaponItem.localRotationEuler = Sprite3d.ZERO;
+    }
+    /**血量改变 */
+    healthChange(oldHealth) {
+      EventMgr.event("HEALTHCHANGE" /* HEALTHCHANGE */, this.health);
+      if (this.health == 0) {
+        EventMgr.event("PLAYERDEAD" /* PLAYERDEAD */);
+        this.playerStatus = 1005 /* death */;
+        this.changeAni();
+      }
+    }
+    changeAni() {
+      this.weaponItem.owner.active = true;
+      switch (this.playerStatus) {
+        case 1001 /* idle */:
+          this.weaponItem.owner.active = false;
+          AnimatorTool.play(this.animator, "idle" /* idle */, true, 1, 1, false, 0.2);
+          AnimatorTool.play(this.animator, "idle" /* idle */, true, 1, 2, false, 0.2);
+          break;
+        case 1005 /* death */:
+          AnimatorTool.play(this.animator, "death" /* death */, false, 1, 1, false, 0.2);
+          AnimatorTool.play(this.animator, "death" /* death */, false, 1, 2, false, 0.2);
+          break;
+        case 1003 /* run */:
+          AnimatorTool.play(this.animator, "runUp" /* runUp */, true, 1, 1, false, 0.2);
+          AnimatorTool.play(this.animator, "runDown" /* runDown */, true, 1, 2, false, 0.2);
+          break;
+        case 1004 /* runAndShoot */:
+          AnimatorTool.play(this.animator, "shoot" /* shoot */, true, 1, 1, false, 0.2);
+          AnimatorTool.play(this.animator, "runDown" /* runDown */, true, 1, 2, false, 0.2);
+          break;
+        case 1002 /* standAndShoot */:
+          AnimatorTool.play(this.animator, "shoot" /* shoot */, true, 1, 1, false, 0.2);
+          AnimatorTool.play(this.animator, "stand" /* stand */, true, 1, 2, false, 0.2);
+          break;
+      }
+    }
+    startMove(angle, value) {
+      if (this.playerStatus == 1005 /* death */)
+        return;
+      this.playerController.move(angle);
+      if (this.playerStatus == 1001 /* idle */) {
+        this.playerStatus = 1003 /* run */;
+        this.changeAni();
+      } else if (this.playerStatus == 1002 /* standAndShoot */) {
+        this.playerStatus = 1004 /* runAndShoot */;
+        this.changeAni();
+      }
+    }
+    stopMove() {
+      if (this.playerStatus == 1005 /* death */)
+        return;
+      this.playerController.stopMove();
+      if (this.playerStatus == 1003 /* run */) {
+        this.playerStatus = 1001 /* idle */;
+        this.changeAni();
+      } else if (this.playerStatus == 1004 /* runAndShoot */) {
+        this.playerStatus = 1002 /* standAndShoot */;
+        this.changeAni();
+      }
+    }
+    startShoot(angle, value) {
+      if (this.playerStatus == 1005 /* death */)
+        return;
+      this.rotNode.transform.localRotationEulerY = angle;
+      if (this.playerStatus == 1001 /* idle */) {
+        this.playerStatus = 1002 /* standAndShoot */;
+        this.changeAni();
+      } else if (this.playerStatus == 1003 /* run */) {
+        this.playerStatus = 1004 /* runAndShoot */;
+        this.changeAni();
+      }
+      this.pixelLineSprite3D.transform.localRotationEulerY = angle;
+      this.pixelLineSprite3D.active = true;
+    }
+    stopShoot() {
+      if (this.playerStatus == 1005 /* death */)
+        return;
+      if (this.playerStatus == 1002 /* standAndShoot */) {
+        this.playerStatus = 1001 /* idle */;
+        this.changeAni();
+      } else if (this.playerStatus == 1004 /* runAndShoot */) {
+        this.playerStatus = 1003 /* run */;
+        this.changeAni();
+      }
+      this.pixelLineSprite3D.active = false;
+    }
+  }, "PlayerItem");
+  __decorate8([
+    property7(),
+    __metadata("design:type", typeof (_a2 = typeof Sprite3D !== "undefined" && Sprite3D) === "function" ? _a2 : Object)
+  ], PlayerItem.prototype, "weaponPoint", void 0);
+  PlayerItem = __decorate8([
+    regClass7(),
+    __metadata("design:paramtypes", [])
+  ], PlayerItem);
+  var PlayerItem_default = PlayerItem;
+
+  // E:/WheelChairMan/src/Game/Player/PlayerMgr.ts
+  var PlayerMgr = class {
+    constructor() {
+      this.$sign = "playerId_";
+    }
+    static get instance() {
+      return this._instance ? this._instance : this._instance = new PlayerMgr();
+    }
+    init() {
+      this.playerMap = ResLoader.instance.getDataTableById(3008 /* Player */);
+    }
+    startMove(angle, value) {
+      this.$playerItem && this.$playerItem.startMove(angle, value);
+    }
+    stopMove() {
+      this.$playerItem && this.$playerItem.stopMove();
+    }
+    startShoot(angle, value) {
+      this.$playerItem && this.$playerItem.startShoot(angle, value);
+    }
+    stopShoot() {
+      this.$playerItem && this.$playerItem.stopShoot();
+    }
+    /**获取坐标 */
+    getPlayerPos() {
+      var _a23;
+      return (_a23 = this.$playerItem) == null ? void 0 : _a23.position;
+    }
+    /**获取已经解锁的人物 */
+    getUnlockList() {
+      let str = LocalStorageMgr.getItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */);
+      if (str) {
+        this.unlockList = JSON.parse(str);
+      } else {
+        this.unlockList = [1001];
+        LocalStorageMgr.setItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */, JSON.stringify(this.unlockList));
+      }
+      return this.unlockList;
+    }
+    /**解锁人物 */
+    unlockPlayer(playerId) {
+      if (playerId && this.unlockList.indexOf(playerId) == -1) {
+        let data = this.getSelectedPlayerData(playerId);
+        switch (data["currency"]) {
+          case 1001 /* gold */:
+            if (GameData.gold >= data["unlockPrice"]) {
+              GameData.gold -= data["unlockPrice"];
+              this.unlockList.push(playerId);
+              LocalStorageMgr.setItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */, JSON.stringify(this.unlockList));
+              UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1031 /* CONGRATULATIONSUNLOCK */));
+              EventMgr.event("UNLOCKPLAYER" /* UNLOCKPLAYER */, playerId);
+            } else {
+              UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1026 /* YOUDONTHAVEENOUGHDIAMONDS */, 1022 /* GOLD */));
+            }
+            break;
+          case 1002 /* diamond */:
+            if (GameData.diamond >= data["unlockPrice"]) {
+              GameData.diamond -= data["unlockPrice"];
+              this.unlockList.push(playerId);
+              LocalStorageMgr.setItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */, JSON.stringify(this.unlockList));
+              UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1031 /* CONGRATULATIONSUNLOCK */));
+              EventMgr.event("UNLOCKPLAYER" /* UNLOCKPLAYER */, playerId);
+            } else {
+              UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(1026 /* YOUDONTHAVEENOUGHDIAMONDS */, 1023 /* DIAMOND */));
+            }
+            break;
+        }
+      }
+    }
+    /**是否已经解锁 */
+    isUnlock(playerId) {
+      let arr = this.getUnlockList();
+      return arr.indexOf(playerId) != -1;
+    }
+    /**获取当前选择的玩家数据 */
+    getSelectedPlayerData(playerId) {
+      return this.playerMap.get(playerId);
+    }
+    setSelectedPlayerId(playerId) {
+      this.selectedPlayerId = playerId;
+    }
+    /**获取当前人物 */
+    getSelectPlayer(playerId) {
+      let obj;
+      if (this.playerPool) {
+        obj = this.playerPool.get(playerId);
+      } else {
+        this.playerPool = /* @__PURE__ */ new Map();
+      }
+      if (!obj) {
+        let playerData = this.getSelectedPlayerData(playerId);
+        obj = ResLoader.instance.getResCloneById(playerData == null ? void 0 : playerData["path"]);
+        this.playerPool.set(playerId, obj);
+        let playerItem = obj.getComponent(PlayerItem_default);
+        if (playerItem) {
+          playerItem.playerData = playerData;
+        }
+      }
+      return obj;
+    }
+    gameStart(stage) {
+      this.playerStage = stage;
+      let obj = this.getSelectPlayer(this.selectedPlayerId);
+      if (obj && this.playerStage) {
+        this.$playerItem = obj.getComponent(PlayerItem_default);
+        this.$playerItem.position = Sprite3d.ZERO;
+        this.playerStage.addChild(obj);
+        this.$playerItem.gameStart();
+      }
+    }
+  };
+  __name(PlayerMgr, "PlayerMgr");
+
+  // E:/WheelChairMan/src/Game/Enemy/ZombieItem.ts
+  var __decorate9 = __$decorate("834e827d-f6c6-404f-a4a3-2ccf75708917", "../src/Game/Enemy/ZombieItem.ts");
+  var _a3;
+  var _b;
+  var _c;
+  var _d;
+  var _e;
+  var Animator2 = Laya.Animator;
+  var SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
+  var { regClass: regClass8, property: property8 } = Laya;
+  var ZombieItem = /* @__PURE__ */ __name(class ZombieItem2 extends Script3d {
+    /**生命 */
+    get health() {
+      return this.$health;
+    }
+    set health(value) {
+      if (!isNaN(value)) {
+        let oldHealth = this.$health;
+        this.$health = value;
+        this.healthChange(oldHealth);
+      }
+    }
+    constructor() {
+      super();
+      this.totalHealth = 0;
+      this.$health = 0;
+      this.logicTime = 0;
+    }
+    onStart() {
+      this.rotNode = this.owner.getChildAt(0);
+      this.animator = this.rotNode.getComponent(Animator2);
+      this.randomSkin();
+    }
+    /**血量改变 */
+    healthChange(oldHealth) {
+      if (this.health <= 0) {
+        this.dead();
+      }
+    }
+    get playerController() {
+      if (!this.$playerController) {
+        this.$playerController = this.obj.getComponent(PlayerController_default);
+      }
+      return this.$playerController;
+    }
+    init() {
+      this.zombieStatus = 1001 /* idle */;
+    }
+    randomSkin() {
+      this.skin1.active = false;
+      this.skin2.active = false;
+      this.skin3.active = false;
+      this.skin4.active = false;
+      this.skin5.active = false;
+      let ran = Math.random();
+      if (ran >= 0 && ran < 0.4) {
+        this.skin1.active = true;
+      } else if (ran >= 0.4 && ran < 0.6) {
+        this.skin2.active = true;
+      } else if (ran >= 0.6 && ran < 0.75) {
+        this.skin3.active = true;
+      } else if (ran >= 0.75 && ran > 0.9) {
+        this.skin4.active = true;
+      } else if (ran >= 0.9) {
+        this.skin5.active = true;
+      }
+    }
+    update(time) {
+      if (MainGame_default.instance.getGameStep() == 1005 /* GameStart */) {
+        this.logicTime += time;
+        if (this.logicTime > 4 * 15) {
+          this.logicTime = 0;
+          let pos = PlayerMgr.instance.getPlayerPos();
+          let angle = Sprite3d.getAngle(this.position, pos);
+          this.move(angle);
+        }
+      }
+    }
+    changeAni() {
+      switch (this.zombieStatus) {
+        case 1001 /* idle */:
+          AnimatorTool.play(this.animator, "ZombieIdle" /* ZombieIdle */, true, 1, 0, true, 0.1);
+          break;
+        case 1002 /* walking */:
+          AnimatorTool.play(this.animator, "ZombieWalk" /* ZombieWalk */, true, 1.5, 0, true, 0.1);
+          break;
+        case 1003 /* death */:
+          AnimatorTool.play(this.animator, "ZombieDeath" /* ZombieDeath */, false, 1, 0, true, 0.1);
+          break;
+      }
+    }
+    idle() {
+      if (this.zombieStatus == 1002 /* walking */) {
+        this.zombieStatus = 1001 /* idle */;
+        this.changeAni();
+      }
+    }
+    move(angle) {
+      if (this.zombieStatus != 1003 /* death */) {
+        if (this.zombieStatus != 1002 /* walking */) {
+          this.zombieStatus = 1002 /* walking */;
+          this.changeAni();
+        }
+        if (!isNaN(angle)) {
+          this.playerController.move(angle);
+          this.rotNode.transform.localRotationEulerY = angle;
+        }
+      }
+    }
+    dead() {
+      this.zombieStatus = 1003 /* death */;
+      this.changeAni();
+    }
+    beHit(pos) {
+    }
+  }, "ZombieItem");
+  __decorate9([
+    property8(),
+    __metadata("design:type", typeof (_a3 = typeof SkinnedMeshSprite3D !== "undefined" && SkinnedMeshSprite3D) === "function" ? _a3 : Object)
+  ], ZombieItem.prototype, "skin1", void 0);
+  __decorate9([
+    property8(),
+    __metadata("design:type", typeof (_b = typeof SkinnedMeshSprite3D !== "undefined" && SkinnedMeshSprite3D) === "function" ? _b : Object)
+  ], ZombieItem.prototype, "skin2", void 0);
+  __decorate9([
+    property8(),
+    __metadata("design:type", typeof (_c = typeof SkinnedMeshSprite3D !== "undefined" && SkinnedMeshSprite3D) === "function" ? _c : Object)
+  ], ZombieItem.prototype, "skin3", void 0);
+  __decorate9([
+    property8(),
+    __metadata("design:type", typeof (_d = typeof SkinnedMeshSprite3D !== "undefined" && SkinnedMeshSprite3D) === "function" ? _d : Object)
+  ], ZombieItem.prototype, "skin4", void 0);
+  __decorate9([
+    property8(),
+    __metadata("design:type", typeof (_e = typeof SkinnedMeshSprite3D !== "undefined" && SkinnedMeshSprite3D) === "function" ? _e : Object)
+  ], ZombieItem.prototype, "skin5", void 0);
+  ZombieItem = __decorate9([
+    regClass8(),
+    __metadata("design:paramtypes", [])
+  ], ZombieItem);
+  var ZombieItem_default = ZombieItem;
+
+  // E:/WheelChairMan/src/Game/Enemy/EnemyMgr.ts
+  var Vector36 = Laya.Vector3;
+  var EnemyMgr = class {
+    constructor() {
+      this.maxZombieNum = 20;
+    }
+    static get instance() {
+      return this._instance ? this._instance : this._instance = new EnemyMgr();
+    }
+    init() {
+      this.enemyDataMap = ResLoader.instance.getDataTableById(3010 /* Enemy */);
+      this.zombieList = [];
+    }
+    gameStart(stage) {
+      this.enemyStage = stage;
+      let index = 0;
+      Timer.get(200, this, () => {
+        this.createZombie();
+        index++;
+        if (index >= this.maxZombieNum) {
+          Timer.clearAll(this);
+        }
+      }).loop().start();
+    }
+    createZombie() {
+      var _a23;
+      if (this.zombieList.length < this.maxZombieNum) {
+        let zombie = ResLoader.instance.getResCloneById((_a23 = this.enemyDataMap.get(1001 /* zombie */)) == null ? void 0 : _a23["path"]);
+        let point = ObjUtil.randomRingPos(18, 13);
+        let pos = PlayerMgr.instance.getPlayerPos();
+        let zombieItem = zombie.getComponent(ZombieItem_default);
+        zombieItem.position = new Vector36(pos.x + point.x, pos.y, pos.z + point.y);
+        this.enemyStage.addChild(zombie);
+        zombieItem.init();
+      }
+    }
+  };
+  __name(EnemyMgr, "EnemyMgr");
+
+  // E:/WheelChairMan/src/Game/Ground/GroundItem.ts
+  var __decorate10 = __$decorate("e2100ba2-ca09-4fc2-8312-90645c381ddc", "../src/Game/Ground/GroundItem.ts");
+  var Vector37 = Laya.Vector3;
+  var { regClass: regClass9, property: property9 } = Laya;
+  var GroundItem = /* @__PURE__ */ __name(class GroundItem2 extends Script3d {
+    constructor() {
+      super();
+      this.staticY = -0.13;
+    }
+    init() {
+      this.position = new Vector37(this.index % 6 * 5 - 15, this.staticY, Math.floor(this.index / 6) * 5 - 5);
+    }
+    changePos(playerPos) {
+      if (this.position.x > playerPos.x + 12) {
+        this.position = new Vector37(this.position.x - 30, this.staticY, this.position.z);
+      }
+      if (this.position.x < playerPos.x - 17) {
+        this.position = new Vector37(this.position.x + 30, this.staticY, this.position.z);
+      }
+      if (this.position.z > playerPos.z + 12) {
+        this.position = new Vector37(this.position.x, this.staticY, this.position.z - 20);
+      }
+      if (this.position.z < playerPos.z - 7) {
+        this.position = new Vector37(this.position.x, this.staticY, this.position.z + 20);
+      }
+    }
+  }, "GroundItem");
+  GroundItem = __decorate10([
+    regClass9(),
+    __metadata("design:paramtypes", [])
+  ], GroundItem);
+  var GroundItem_default = GroundItem;
+
+  // E:/WheelChairMan/src/Game/Ground/GroundMgr.ts
+  var GroundMgr = class {
+    static get instance() {
+      return this._instance ? this._instance : this._instance = new GroundMgr();
+    }
+    init() {
+      if (!this.$grass) {
+        this.$grass = ResLoader.instance.getResCloneById(6701 /* grass */);
+      }
+    }
+    gameStart(grassStage) {
+      this.$stage = grassStage;
+      if (this.groundList) {
+        for (let i = 0; i < this.groundList.length; i++) {
+          let groundItem = this.groundList[i];
+          this.$stage.addChild(groundItem.owner);
+          groundItem.init();
+        }
+      } else {
+        this.groundList = [];
+        for (let i = 0; i < 24; i++) {
+          let grass = ResLoader.instance.getResCloneById(6701 /* grass */);
+          let groundItem = grass.getComponent(GroundItem_default);
+          groundItem.index = i;
+          this.$stage.addChild(grass);
+          this.groundList.push(groundItem);
+          groundItem.init();
+        }
+      }
+      Timer.get(16, this, () => {
+        let pos = PlayerMgr.instance.getPlayerPos();
+        for (let i = 0; i < this.groundList.length; i++) {
+          let groundItem = this.groundList[i];
+          groundItem.changePos(pos);
+        }
+      }).frameLoop().start();
+    }
+    gamePause() {
+    }
+    gameOver() {
+      Timer.clearAll(this);
+    }
+  };
+  __name(GroundMgr, "GroundMgr");
+
+  // E:/WheelChairMan/src/Game/MainGame.ts
+  var __decorate11 = __$decorate("17be9e1a-ac52-43f3-8894-fa783a42a738", "../src/Game/MainGame.ts");
+  var MainGame_1;
+  var { regClass: regClass10, property: property10 } = Laya;
+  var MainGame = MainGame_1 = /* @__PURE__ */ __name(class MainGame2 {
+    constructor() {
+      this.$isInit = false;
+    }
+    static get instance() {
+      return this._instance ? this._instance : this._instance = new MainGame_1();
+    }
+    init() {
+      if (!this.$isInit) {
+        this.$isInit = true;
+        this.addEvent();
+        this.reset();
+        WeaponMgr.instance.init();
+        PlayerMgr.instance.init();
+        EnemyMgr.instance.init();
+      }
+    }
+    /**获取当前游戏的流程 */
+    getGameStep() {
+      return this.$gameStep;
+    }
+    addEvent() {
+      EventMgr.on("GAMESCENELOADED" /* GAMESCENELOADED */, this, this.gameStart);
+    }
+    reset() {
+      this.$gameStep = 1001 /* ResetGame */;
+      this.goToMain();
+      this.$gameScene = null;
+    }
+    /**开始选择玩家 */
+    selectPlayerAndWeapon() {
+      this.$gameStep = 1002 /* SelectPlayer */;
+      Scene3dMgr.instance.open(1002 /* SelectPlayerScene */);
+      Scene3dMgr.instance.close(1001 /* MainScene */);
+    }
+    /**返回主页 */
+    goToMain() {
+      Scene3dMgr.instance.close(1002 /* SelectPlayerScene */);
+      Scene3dMgr.instance.open(1001 /* MainScene */);
+    }
+    loadGameScene() {
+      this.$gameStep = 1004 /* LoadGameScene */;
+      Scene3dMgr.instance.close(1002 /* SelectPlayerScene */);
+      Scene3dMgr.instance.open(1003 /* GameScene */);
+    }
+    /**游戏开始 */
+    gameStart(gameScene) {
+      this.$gameStep = 1005 /* GameStart */;
+      this.$gameScene = gameScene;
+      GroundMgr.instance.gameStart(this.$gameScene.groundStage);
+      PlayerMgr.instance.gameStart(this.$gameScene.playerStage);
+      this.$gameScene.cameraItem.initFallowTarget(PlayerMgr.instance.$playerItem.owner);
+      Timer.get(1400, this, () => {
+        EnemyMgr.instance.gameStart(this.$gameScene.zombieStage);
+      }).start();
+      this.setGameTime();
+    }
+    /**开启一个游戏倒计时,倒计时结束游戏胜利 */
+    setGameTime() {
+      this.gameTime = GameData.gameTime;
+      this.gameTimer = Timer.get(1e3, this, () => {
+        this.gameTime--;
+        if (this.gameTime <= 0) {
+          Timer.clearAll(this);
+          this.gameWin();
+        }
+      }).loop().start();
+    }
+    /**游戏暂停 */
+    gamePause() {
+      this.$gameStep = 1006 /* GamePause */;
+      this.gameTimer.pause();
+    }
+    /**游戏继续*/
+    gameResume() {
+      this.$gameStep = 1005 /* GameStart */;
+      this.gameTimer.resume();
+    }
+    gameWin() {
+      this.$gameStep = 1009 /* GameWin */;
+      this.gameOver();
+    }
+    gameLose() {
+      this.$gameStep = 1008 /* GameLose */;
+      this.gameOver();
+    }
+    gameOver() {
+    }
+  }, "MainGame");
+  MainGame = MainGame_1 = __decorate11([
+    regClass10()
+  ], MainGame);
+  var MainGame_default = MainGame;
+
+  // E:/WheelChairMan/src/Localization/LocalizationText.ts
+  var __decorate12 = __$decorate("5a62e727-31ad-49bf-b53f-96fbff2b0a39", "../src/Localization/LocalizationText.ts");
+  var Text = Laya.Text;
+  var Label = Laya.Label;
+  var { regClass: regClass11, property: property11 } = Laya;
+  var LocalizationText = /* @__PURE__ */ __name(class LocalizationText2 extends Laya.Script {
+    constructor() {
+      super();
+    }
+    onEnable() {
+      if (this.owner instanceof Text || this.owner instanceof Label) {
+        this.text = this.owner;
+        EventMgr.on("LANGUAGECHANGE" /* LANGUAGECHANGE */, this, this.changeLanguage);
+        this.changeLanguage();
+      }
+    }
+    changeLanguage() {
+      if (this.localizationKey) {
+        let value = LocalizationMgr.$getLocalizationByKey(this.localizationKey);
+        if (value) {
+          this.text.text = value;
+        }
+      }
+    }
+    onDisable() {
+      EventMgr.offAllCaller(this);
+    }
+  }, "LocalizationText");
+  __decorate12([
+    property11(),
+    __metadata("design:type", String)
+  ], LocalizationText.prototype, "localizationKey", void 0);
+  LocalizationText = __decorate12([
+    regClass11(),
+    __metadata("design:paramtypes", [])
+  ], LocalizationText);
+
+  // E:/WheelChairMan/src/Scene3d/GameScene.ts
+  var __decorate13 = __$decorate("0706d1ae-b0b6-47a5-9387-2a6360b2893e", "../src/Scene3d/GameScene.ts");
+  var _a4;
+  var _b2;
+  var _c2;
   var _d2;
   var _e2;
+  var Sprite3D2 = Laya.Sprite3D;
+  var DirectionLight = Laya.DirectionLight;
+  var { regClass: regClass12, property: property12 } = Laya;
+  var GameScene = /* @__PURE__ */ __name(class GameScene2 extends Scene3d_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+      EventMgr.event("GAMESCENELOADED" /* GAMESCENELOADED */, this);
+    }
+    addEvent() {
+    }
+    onClosed() {
+    }
+  }, "GameScene");
+  __decorate13([
+    property12(),
+    __metadata("design:type", typeof (_a4 = typeof CameraItem_default !== "undefined" && CameraItem_default) === "function" ? _a4 : Object)
+  ], GameScene.prototype, "cameraItem", void 0);
+  __decorate13([
+    property12(),
+    __metadata("design:type", typeof (_b2 = typeof Sprite3D2 !== "undefined" && Sprite3D2) === "function" ? _b2 : Object)
+  ], GameScene.prototype, "groundStage", void 0);
+  __decorate13([
+    property12(),
+    __metadata("design:type", typeof (_c2 = typeof DirectionLight !== "undefined" && DirectionLight) === "function" ? _c2 : Object)
+  ], GameScene.prototype, "light", void 0);
+  __decorate13([
+    property12(),
+    __metadata("design:type", typeof (_d2 = typeof Sprite3D2 !== "undefined" && Sprite3D2) === "function" ? _d2 : Object)
+  ], GameScene.prototype, "playerStage", void 0);
+  __decorate13([
+    property12(),
+    __metadata("design:type", typeof (_e2 = typeof Sprite3D2 !== "undefined" && Sprite3D2) === "function" ? _e2 : Object)
+  ], GameScene.prototype, "zombieStage", void 0);
+  GameScene = __decorate13([
+    regClass12(),
+    __metadata("design:paramtypes", [])
+  ], GameScene);
+
+  // E:/WheelChairMan/src/Scene3d/MainScene.ts
+  var __decorate14 = __$decorate("71c8c727-1736-44b1-984f-02439872df63", "../src/Scene3d/MainScene.ts");
+  var { regClass: regClass13, property: property13 } = Laya;
+  var MainScene = /* @__PURE__ */ __name(class MainScene2 extends Scene3d_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+    }
+  }, "MainScene");
+  MainScene = __decorate14([
+    regClass13(),
+    __metadata("design:paramtypes", [])
+  ], MainScene);
+
+  // E:/WheelChairMan/src/Enum/PlayerEnum.ts
+  var PlayerEnum = /* @__PURE__ */ ((PlayerEnum2) => {
+    PlayerEnum2[PlayerEnum2["BusinessMan"] = 1001] = "BusinessMan";
+    PlayerEnum2[PlayerEnum2["BombDisEX"] = 1002] = "BombDisEX";
+    PlayerEnum2[PlayerEnum2["GreatMagician"] = 1003] = "GreatMagician";
+    PlayerEnum2[PlayerEnum2["Kingsman"] = 1004] = "Kingsman";
+    PlayerEnum2[PlayerEnum2["ScoutRobot"] = 1005] = "ScoutRobot";
+    PlayerEnum2[PlayerEnum2["RookiePirate"] = 1006] = "RookiePirate";
+    return PlayerEnum2;
+  })(PlayerEnum || {});
+
+  // E:/WheelChairMan/src/Scene3d/SelectPlayerScene.ts
+  var __decorate15 = __$decorate("34405a80-13b4-48be-ac44-94bb920f1518", "../src/Scene3d/SelectPlayerScene.ts");
+  var _a5;
+  var Sprite3D3 = Laya.Sprite3D;
+  var { regClass: regClass14, property: property14 } = Laya;
+  var SelectPlayerScene = /* @__PURE__ */ __name(class SelectPlayerScene2 extends Scene3d_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+      if (!this.$playerList) {
+        this.$playerList = [];
+        this.$playerList = [];
+        for (let item in PlayerEnum) {
+          if (!isNaN(Number(item))) {
+            this.$playerList.push(Number(item));
+          }
+        }
+      }
+    }
+    addEvent() {
+      this.regEvent("SHOWPLAYER" /* SHOWPLAYER */, this.showPlayer);
+    }
+    showPlayer(playerId) {
+      var _a23;
+      (_a23 = this.$playerObj) === null || _a23 === void 0 ? void 0 : _a23.removeSelf();
+      this.$playerObj = PlayerMgr.instance.getSelectPlayer(playerId);
+      this.$playerObj && this.playerStage.addChild(this.$playerObj);
+      this.$playerObj && (this.$playerObj.transform.position = Sprite3d.ZERO);
+    }
+    onClosed() {
+      var _a23;
+      (_a23 = this.$playerObj) === null || _a23 === void 0 ? void 0 : _a23.removeSelf();
+    }
+  }, "SelectPlayerScene");
+  __decorate15([
+    property14(),
+    __metadata("design:type", typeof (_a5 = typeof Sprite3D3 !== "undefined" && Sprite3D3) === "function" ? _a5 : Object)
+  ], SelectPlayerScene.prototype, "playerStage", void 0);
+  SelectPlayerScene = __decorate15([
+    regClass14(),
+    __metadata("design:paramtypes", [])
+  ], SelectPlayerScene);
+
+  // E:/WheelChairMan/src/Scene/CompleteView.ts
+  var __decorate16 = __$decorate("f5f376ef-5874-4c8a-9a28-8088976bd468", "../src/Scene/CompleteView.ts");
+  var { regClass: regClass15, property: property15 } = Laya;
+  var CompleteView = /* @__PURE__ */ __name(class CompleteView2 extends UIBase_default {
+  }, "CompleteView");
+  CompleteView = __decorate16([
+    regClass15()
+  ], CompleteView);
+
+  // E:/WheelChairMan/src/Scene/DebugView.ts
+  var __decorate17 = __$decorate("5ca51831-1d23-46b6-a853-a10d5da54d6c", "../src/Scene/DebugView.ts");
+  var _a6;
+  var _b3;
+  var _c3;
+  var Box = Laya.Box;
+  var Image = Laya.Image;
+  var List = Laya.List;
+  var Handler3 = Laya.Handler;
+  var { regClass: regClass16, property: property16 } = Laya;
+  var DebugView = /* @__PURE__ */ __name(class DebugView2 extends UIBase_default {
+    constructor() {
+      super();
+      this.commandList = [
+        "\u6DFB\u52A05000\u91D1\u5E01",
+        "\u6DFB\u52A05000\u94BB\u77F3",
+        "\u6E05\u96F6\u91D1\u5E01\u94BB\u77F3",
+        "\u6E38\u620F\u7ACB\u523B\u80DC\u5229(\u5FC5\u987B\u5148\u5F00\u59CB\u6E38\u620F)",
+        "\u6E38\u620F\u7ACB\u523B\u5931\u8D25(\u5FC5\u987B\u5148\u5F00\u59CB\u6E38\u620F)",
+        "\u9501\u5B9A\u989D\u5916\u76AE\u80A4"
+      ];
+    }
+    onOpened(param) {
+      this.regClick(this.imgShow, this.showHidePanel);
+      this.listCommand.renderHandler = new Handler3(this, this.changeItem);
+      this.listCommand.selectHandler = new Handler3(this, this.selectItem);
+      this.listCommand.array = this.commandList;
+    }
+    showHidePanel() {
+      this.MainPanel.visible = !this.MainPanel.visible;
+    }
+    changeItem(box, index) {
+      let Label9 = box.getChildByName("Label");
+      Label9.text = box.dataSource;
+    }
+    selectItem(index) {
+      switch (index) {
+        case 0:
+          GameData.gold += 5e3;
+          EventMgr.event("GOLDCHANGE" /* GOLDCHANGE */);
+          break;
+        case 1:
+          GameData.diamond += 5e3;
+          EventMgr.event("DIAMONDCHANGE" /* DIAMONDCHANGE */);
+          break;
+        case 2:
+          GameData.diamond = 0;
+          GameData.gold = 0;
+          EventMgr.event("DIAMONDCHANGE" /* DIAMONDCHANGE */);
+          EventMgr.event("GOLDCHANGE" /* GOLDCHANGE */);
+          break;
+        case 3:
+          break;
+        case 4:
+          break;
+      }
+      this.listCommand.selectedIndex = -1;
+    }
+  }, "DebugView");
+  __decorate17([
+    property16(),
+    __metadata("design:type", typeof (_a6 = typeof Image !== "undefined" && Image) === "function" ? _a6 : Object)
+  ], DebugView.prototype, "imgShow", void 0);
+  __decorate17([
+    property16(),
+    __metadata("design:type", typeof (_b3 = typeof Box !== "undefined" && Box) === "function" ? _b3 : Object)
+  ], DebugView.prototype, "MainPanel", void 0);
+  __decorate17([
+    property16(),
+    __metadata("design:type", typeof (_c3 = typeof List !== "undefined" && List) === "function" ? _c3 : Object)
+  ], DebugView.prototype, "listCommand", void 0);
+  DebugView = __decorate17([
+    regClass16(),
+    __metadata("design:paramtypes", [])
+  ], DebugView);
+
+  // E:/WheelChairMan/src/Util/RockerBox.ts
+  var __decorate18 = __$decorate("7204f275-aa8d-45b5-b2eb-b4122c72d7a3", "../src/Util/RockerBox.ts");
+  var _a7;
+  var Button = Laya.Button;
+  var Point2 = Laya.Point;
+  var { regClass: regClass17, property: property17 } = Laya;
+  var RockerBox = /* @__PURE__ */ __name(class RockerBox2 extends Laya.Script {
+    constructor() {
+      super();
+      this.dropLen = 110;
+      this.touchId = -1;
+      this.rockerAngle = 0;
+      this.rockerValue = 0;
+    }
+    onEnable() {
+      this.rockerBox = this.owner;
+    }
+    onStart() {
+      this.initBarX = this.freeBar.x;
+      this.initBarY = this.freeBar.y;
+      this.mousePoint = new Point2(0, 0);
+      this.freeBar.on(Laya.Event.MOUSE_DOWN, this, this.rockerDown);
+      Laya.stage.on(Laya.Event.MOUSE_MOVE, this, this.rockerMove);
+      Laya.stage.on(Laya.Event.MOUSE_UP, this, this.rockerUp);
+    }
+    rockerDown(evt) {
+      if (this.touchId != -1)
+        return;
+      evt.stopPropagation();
+      this.touchId = evt.touchId;
+      this.rockerIsDown = true;
+      this.freeBar.selected = true;
+      this.mouseDownX = this.rockerBox.mouseX;
+      this.mouseDownY = this.rockerBox.mouseY;
+    }
+    rockerMove(evt) {
+      if (!this.rockerIsDown)
+        return;
+      if (evt.touchId != this.touchId)
+        return;
+      evt.stopPropagation();
+      this.mousePoint.x = Math.round(evt.touchPos.x / Laya.stage.clientScaleX);
+      this.mousePoint.y = Math.round(evt.touchPos.y / Laya.stage.clientScaleY);
+      this.rockerBox.globalToLocal(this.mousePoint, false);
+      let mouseX = this.mousePoint.x;
+      let mouseY = this.mousePoint.y;
+      let offX = mouseX - this.mouseDownX;
+      let offY = mouseY - this.mouseDownY;
+      this.rockerAngle = Math.atan2(offX, offY) * 180 / Math.PI;
+      let dis = Math.sqrt((this.mouseDownX - mouseX) * (this.mouseDownX - mouseX) + (this.mouseDownY - mouseY) * (this.mouseDownY - mouseY));
+      dis = dis < 0 ? -dis : dis;
+      if (dis < this.dropLen) {
+        this.freeBar.x = this.initBarX + offX;
+        this.freeBar.y = this.initBarY + offY;
+        this.rockerValue = dis / this.dropLen;
+      } else {
+        let radians = Math.PI / 180 * this.rockerAngle;
+        let x = Math.floor(Math.sin(radians) * this.dropLen + this.initBarX);
+        let y = Math.floor(Math.cos(radians) * this.dropLen + this.initBarY);
+        this.freeBar.x = x;
+        this.freeBar.y = y;
+        this.rockerValue = 1;
+      }
+      this.startMove();
+    }
+    rockerUp(evt) {
+      if (this.touchId == evt.touchId) {
+        this.touchId = -1;
+        this.rockerIsDown = false;
+        this.freeBar.x = this.initBarX;
+        this.freeBar.y = this.initBarY;
+        this.freeBar.selected = false;
+        this.stopMove();
+      }
+    }
+    /**初始化目标 */
+    initTarget(caller, startMove, stopMove) {
+      this.caller = caller;
+      this.FstartMove = startMove;
+      this.FstopMove = stopMove;
+    }
+    /**开始移动 */
+    startMove() {
+      this.FstartMove && this.caller && this.FstartMove.apply(this.caller, [this.rockerAngle, this.rockerValue]);
+    }
+    /**停止移动 */
+    stopMove() {
+      this.FstopMove && this.caller && this.FstopMove.call(this.caller);
+    }
+    onDisable() {
+      this.freeBar.off(Laya.Event.MOUSE_DOWN, this, this.rockerDown);
+      Laya.stage.off(Laya.Event.MOUSE_MOVE, this, this.rockerMove);
+      Laya.stage.off(Laya.Event.MOUSE_UP, this, this.rockerUp);
+      this.caller = null;
+      this.FstartMove = null;
+      this.FstopMove = null;
+    }
+  }, "RockerBox");
+  __decorate18([
+    property17(),
+    __metadata("design:type", typeof (_a7 = typeof Button !== "undefined" && Button) === "function" ? _a7 : Object)
+  ], RockerBox.prototype, "freeBar", void 0);
+  __decorate18([
+    property17(),
+    __metadata("design:type", Number)
+  ], RockerBox.prototype, "dropLen", void 0);
+  RockerBox = __decorate18([
+    regClass17(),
+    __metadata("design:paramtypes", [])
+  ], RockerBox);
+  var RockerBox_default = RockerBox;
+
+  // E:/WheelChairMan/src/Scene/GameView.ts
+  var __decorate19 = __$decorate("ddf0e22e-43aa-4145-b2f5-8a127efb5611", "../src/Scene/GameView.ts");
+  var _a8;
+  var _b4;
+  var _c4;
+  var _d3;
+  var Label2 = Laya.Label;
+  var List2 = Laya.List;
+  var Handler4 = Laya.Handler;
+  var { regClass: regClass18, property: property18 } = Laya;
+  var GameView = /* @__PURE__ */ __name(class GameView2 extends UIBase_default {
+    constructor() {
+      super();
+      this.health = 0;
+      this.totalHealth = 0;
+    }
+    onOpened(param) {
+      this.rocketBoxL.initTarget(PlayerMgr.instance, PlayerMgr.instance.startMove, PlayerMgr.instance.stopMove);
+      this.rocketBoxR.initTarget(PlayerMgr.instance, PlayerMgr.instance.startShoot, PlayerMgr.instance.stopShoot);
+      this.playerData = PlayerMgr.instance.getSelectedPlayerData(PlayerMgr.instance.selectedPlayerId);
+      this.totalHealth = this.health = this.playerData.health;
+      Timer.get(1, this, () => {
+        let min = Math.floor(MainGame_default.instance.gameTime / 60);
+        let sec = MainGame_default.instance.gameTime % 60;
+        this.labelTime.text = "0" + min + ":" + (sec < 10 ? "0" + sec : sec);
+      }).frameLoop().start();
+    }
+    addEvent() {
+      this.listHealth.renderHandler = new Handler4(this, this.changeHealthItem);
+      this.regEvent("HEALTHCHANGE" /* HEALTHCHANGE */, this.changeHealth, true);
+    }
+    changeHealth(health) {
+      if (!isNaN(health)) {
+        this.health = health;
+      }
+      if (!this.healthList) {
+        this.healthList = [];
+        for (let i = 0; i < this.totalHealth; i++) {
+          this.healthList.push(1);
+        }
+      }
+      this.listHealth.array = this.healthList;
+    }
+    changeHealthItem(box, index) {
+      let img = box.getChildAt(0);
+      if (index > this.health - 1) {
+        img.gray = true;
+      } else {
+        img.gray = false;
+      }
+    }
+    onClosed() {
+      this.healthList = null;
+    }
+  }, "GameView");
+  __decorate19([
+    property18(),
+    __metadata("design:type", typeof (_a8 = typeof List2 !== "undefined" && List2) === "function" ? _a8 : Object)
+  ], GameView.prototype, "listHealth", void 0);
+  __decorate19([
+    property18(),
+    __metadata("design:type", typeof (_b4 = typeof RockerBox_default !== "undefined" && RockerBox_default) === "function" ? _b4 : Object)
+  ], GameView.prototype, "rocketBoxL", void 0);
+  __decorate19([
+    property18(),
+    __metadata("design:type", typeof (_c4 = typeof RockerBox_default !== "undefined" && RockerBox_default) === "function" ? _c4 : Object)
+  ], GameView.prototype, "rocketBoxR", void 0);
+  __decorate19([
+    property18(),
+    __metadata("design:type", typeof (_d3 = typeof Label2 !== "undefined" && Label2) === "function" ? _d3 : Object)
+  ], GameView.prototype, "labelTime", void 0);
+  GameView = __decorate19([
+    regClass18(),
+    __metadata("design:paramtypes", [])
+  ], GameView);
+
+  // E:/WheelChairMan/src/Scene/GuideView.ts
+  var __decorate20 = __$decorate("a7a26e14-76d9-4f1c-9471-21fbc179af77", "../src/Scene/GuideView.ts");
+  var _a9;
+  var Image2 = Laya.Image;
+  var { regClass: regClass19, property: property19 } = Laya;
+  var GuideView = /* @__PURE__ */ __name(class GuideView2 extends UIBase_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+    }
+    addEvent() {
+      this.imgSkip.on(Laya.Event.MOUSE_DOWN, this, this.skipGuide);
+    }
+    skipGuide() {
+    }
+    onClosed() {
+      this.imgSkip.off(Laya.Event.MOUSE_DOWN, this, this.skipGuide);
+      EventMgr.event("GUIDFINISH" /* GUIDFINISH */);
+      LocalStorageMgr.setItem("FIRESTTIME" /* FIRSTTIME */, "1");
+    }
+  }, "GuideView");
+  __decorate20([
+    property19(),
+    __metadata("design:type", typeof (_a9 = typeof Image2 !== "undefined" && Image2) === "function" ? _a9 : Object)
+  ], GuideView.prototype, "imgSkip", void 0);
+  GuideView = __decorate20([
+    regClass19(),
+    __metadata("design:paramtypes", [])
+  ], GuideView);
+
+  // E:/WheelChairMan/src/Scene/LanguageView.ts
+  var __decorate21 = __$decorate("6bc1bf6a-a993-4ac9-b9f4-4785e0d68c2b", "../src/Scene/LanguageView.ts");
+  var _a10;
+  var _b5;
+  var Image3 = Laya.Image;
+  var List3 = Laya.List;
+  var Handler5 = Laya.Handler;
+  var { regClass: regClass20, property: property20 } = Laya;
+  var LanguageView = /* @__PURE__ */ __name(class LanguageView2 extends UIBase_default {
+    constructor() {
+      super();
+      this.$selectIndex = 0;
+    }
+    onOpened(param) {
+      this.regClick(this.$imgClose, this.close);
+      this.$listLanguage.renderHandler = new Handler5(this, this.changeItem);
+      this.$listLanguage.selectHandler = new Handler5(this, this.selectItem);
+      let arr = [];
+      for (let i in LanguageEnum) {
+        if (!isNaN(Number(i))) {
+          arr.push(Number(i));
+        }
+      }
+      this.$selectIndex = arr.indexOf(LocalizationMgr.Language);
+      this.$listLanguage.array = arr;
+      this.$listLanguage.selectedIndex = this.$selectIndex;
+    }
+    changeItem(box, index) {
+      let labelLanguage = box.getChildByName("labelLanguage");
+      let imgFlag = box.getChildByName("imgFlag");
+      let imgSelect = box.getChildByName("imgSelect");
+      labelLanguage.text = LocalizationMgr.getLanguageMsgById(box.dataSource);
+      imgFlag.skin = ResLoader.instance.getUrlById(LocalizationMgr.getFlagSkinIdById(box.dataSource));
+      if (index == this.$selectIndex) {
+        imgSelect.visible = true;
+      } else {
+        imgSelect.visible = false;
+      }
+    }
+    selectItem(index) {
+      if (index != this.$selectIndex) {
+        let oldBox = this.$listLanguage.getCell(this.$selectIndex);
+        let oldSelect = oldBox.getChildByName("imgSelect");
+        oldSelect.visible = false;
+        this.$selectIndex = index;
+        LocalizationMgr.Language = this.$listLanguage.array[index];
+        let newBox = this.$listLanguage.getCell(this.$selectIndex);
+        let newSelect = newBox.getChildByName("imgSelect");
+        newSelect.visible = true;
+      }
+    }
+  }, "LanguageView");
+  __decorate21([
+    property20(),
+    __metadata("design:type", typeof (_a10 = typeof List3 !== "undefined" && List3) === "function" ? _a10 : Object)
+  ], LanguageView.prototype, "$listLanguage", void 0);
+  __decorate21([
+    property20(),
+    __metadata("design:type", typeof (_b5 = typeof Image3 !== "undefined" && Image3) === "function" ? _b5 : Object)
+  ], LanguageView.prototype, "$imgClose", void 0);
+  LanguageView = __decorate21([
+    regClass20(),
+    __metadata("design:paramtypes", [])
+  ], LanguageView);
+
+  // E:/WheelChairMan/src/Scene/LevelUpView.ts
+  var __decorate22 = __$decorate("f7577321-9089-4d76-ba3b-af9c8a8c0afe", "../src/Scene/LevelUpView.ts");
+  var { regClass: regClass21, property: property21 } = Laya;
+  var LevelUpView = /* @__PURE__ */ __name(class LevelUpView2 extends UIBase_default {
+  }, "LevelUpView");
+  LevelUpView = __decorate22([
+    regClass21()
+  ], LevelUpView);
+
+  // E:/WheelChairMan/src/Mgr/CurrencyMgr.ts
+  var CurrencyMgr = class {
+    /**初始化 */
+    static init() {
+      this.$currencyMap = ResLoader.instance.getDataTableById(3003 /* Currency */);
+    }
+    /**获取对应颜色 */
+    static getColorById(id) {
+      let data = this.$currencyMap.get(id);
+      if (data && data["color"]) {
+        return "#" + data["color"];
+      }
+      return "#fff";
+    }
+    /**获取对应图标 */
+    static getImgUrlById(id) {
+      let data = this.$currencyMap.get(id);
+      if (data && data["imgId"]) {
+        return ResLoader.instance.getUrlById(data["imgId"]);
+      }
+      return "";
+    }
+  };
+  __name(CurrencyMgr, "CurrencyMgr");
+
+  // E:/WheelChairMan/src/Mgr/LevelMgr.ts
+  var LevelMgr = class {
+    /**初始化 */
+    static init() {
+      this.$levelDataTable = ResLoader.instance.getDataTableById(3004 /* Level */);
+    }
+    /**等级 */
+    static get level() {
+      for (let [, value] of this.$levelDataTable) {
+        let minEx = value["minEx"];
+        let maxEx = value["maxEx"];
+        if (!isNaN(minEx) && !isNaN(maxEx)) {
+          if (GameData.experience > minEx && GameData.experience <= maxEx) {
+            return value["level"];
+          }
+        }
+      }
+      return 1;
+    }
+  };
+  __name(LevelMgr, "LevelMgr");
+  /**经验表 */
+  LevelMgr.$levelDataTable = /* @__PURE__ */ new Map();
+
+  // E:/WheelChairMan/src/Util/StringUtil.ts
+  var __decorate23 = __$decorate("9f8ef9b7-13a5-4980-a9d8-46f8659dff82", "../src/Util/StringUtil.ts");
+  var StringUtil = class {
+    /**小数转百分比，默认保留两位小数 */
+    static num2percentage(num, d = 2) {
+      num = num * 100;
+      return num.toFixed(d) + "%";
+    }
+    /**获取随机整数  */
+    static randNum(min, max) {
+      let range = max - min;
+      let rand = Math.random();
+      let num = min + Math.round(rand * range);
+      return num;
+    }
+    /**随机排序数组 */
+    static shuffle(arr) {
+      let i = arr.length, t, j;
+      while (--i) {
+        j = Math.floor(Math.random() * i);
+        t = arr[i];
+        arr[i] = arr[j];
+        arr[j] = t;
+      }
+    }
+    /**
+     * RGB转16色
+     * @param str RGB(23, 245, 56)
+     * @returns string
+     */
+    static colorHex(str) {
+      let reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+      if (/^(rgb|RGB)/.test(str)) {
+        let aColor = str.replace(/(?:\(|\)|rgb|RGB)*/g, "").split(",");
+        let strHex = "#";
+        for (let i = 0; i < aColor.length; i++) {
+          let hex = Number(aColor[i]).toString(16);
+          if (hex.length < 2) {
+            hex = "0" + hex;
+          }
+          strHex += hex;
+        }
+        if (strHex.length !== 7) {
+          strHex = str;
+        }
+        return strHex;
+      } else if (reg.test(str)) {
+        let aNum = str.replace(/#/, "").split("");
+        if (aNum.length === 6) {
+          return str;
+        } else if (aNum.length === 3) {
+          let numHex = "#";
+          for (let i = 0; i < aNum.length; i += 1) {
+            numHex += aNum[i] + aNum[i];
+          }
+          return numHex;
+        }
+      }
+      return str;
+    }
+    /**
+     * 16色 转 RGB
+     * @param str #34538b
+     * @returns v3
+     */
+    static colorRgb(str) {
+      str = str.toLowerCase();
+      let color = this._colorDic[str];
+      if (color) {
+        return color;
+      }
+      var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+      if (str && reg.test(str)) {
+        if (str.length === 4) {
+          var sColorNew = "#";
+          for (var i = 1; i < 4; i += 1) {
+            sColorNew += str.slice(i, i + 1).concat(str.slice(i, i + 1));
+          }
+          str = sColorNew;
+        }
+        var sColorChange = [];
+        for (var i = 1; i < 7; i += 2) {
+          sColorChange.push(parseInt("0x" + str.slice(i, i + 2)));
+        }
+        this._colorDic[str] = sColorChange;
+        return sColorChange;
+      } else {
+        console.log("\u8F6C\u6362\u9519\u8BEF");
+        return [0, 0, 0];
+      }
+    }
+    /**
+     * 格式化单位
+     * @param num
+     * @returns
+     */
+    static formatToUnitEN(num) {
+      num = Math.round(num);
+      let result = "";
+      if (("" + num).length > 15) {
+        result = (num / 1e15).toFixed(2) + "MB";
+      } else if (("" + num).length > 12) {
+        result = (num / 1e12).toFixed(2) + "KB";
+      } else if (("" + num).length > 9) {
+        result = (num / 1e9).toFixed(2) + "B";
+      } else if (("" + num).length > 6) {
+        result = (num / 1e6).toFixed(2) + "M";
+      } else if (("" + num).length > 3) {
+        result = (num / 1e3).toFixed(2) + "K";
+      } else {
+        result = "" + num.toFixed(0);
+      }
+      return result;
+    }
+  };
+  __name(StringUtil, "StringUtil");
+  StringUtil._colorDic = {};
+
+  // E:/WheelChairMan/src/Scene/LoadView.ts
+  var __decorate24 = __$decorate("9797e892-adab-4c82-8f5e-800b37f590f9", "../src/Scene/LoadView.ts");
+  var _a11;
+  var _b6;
+  var _c5;
+  var Image4 = Laya.Image;
+  var Label3 = Laya.Label;
+  var Handler6 = Laya.Handler;
+  var { regClass: regClass22, property: property22 } = Laya;
+  var LoadView = /* @__PURE__ */ __name(class LoadView2 extends UIBase_default {
+    constructor() {
+      super();
+    }
+    onOpened(param) {
+      this.imgMask = this.imgLoad.mask;
+      this.checkVersion();
+    }
+    /**请求版本 */
+    checkVersion() {
+      this.startPreLoad();
+    }
+    /**开始预加载全局资源 */
+    startPreLoad() {
+      ResLoader.instance.preloadRes(Handler6.create(this, this.onCompleted), Handler6.create(this, this._onProgress));
+    }
+    /**刷新进度条 */
+    _onProgress(value) {
+      this.imgMask.width = this.imgLoad.width * value;
+      this.labelLoad.text = "Loading\u2026" + StringUtil.num2percentage(value);
+    }
+    /**加载完成可以进入主界面 */
+    onCompleted() {
+      console.log("load_conCompleted");
+      this.initData();
+      this.openScene();
+    }
+    /**初始化数据 */
+    initData() {
+      LocalizationMgr.init();
+      LevelMgr.init();
+      CurrencyMgr.init();
+      Scene3dMgr.instance.init();
+      MainGame_default.instance.init();
+    }
+    /**打开页面 */
+    openScene() {
+      UIBaseMgr.instance.showDebug();
+      UIBaseMgr.instance.open(1013 /* MainView */);
+      this.close();
+    }
+  }, "LoadView");
+  __decorate24([
+    property22(),
+    __metadata("design:type", typeof (_a11 = typeof Image4 !== "undefined" && Image4) === "function" ? _a11 : Object)
+  ], LoadView.prototype, "imgLoad", void 0);
+  __decorate24([
+    property22(),
+    __metadata("design:type", typeof (_b6 = typeof Label3 !== "undefined" && Label3) === "function" ? _b6 : Object)
+  ], LoadView.prototype, "labelLoad", void 0);
+  __decorate24([
+    property22(),
+    __metadata("design:type", typeof (_c5 = typeof Label3 !== "undefined" && Label3) === "function" ? _c5 : Object)
+  ], LoadView.prototype, "testLabel", void 0);
+  LoadView = __decorate24([
+    regClass22(),
+    __metadata("design:paramtypes", [])
+  ], LoadView);
+
+  // E:/WheelChairMan/src/Scene/LoseView.ts
+  var __decorate25 = __$decorate("9b8220cb-adbc-4d84-9618-c7c9f2bd85f3", "../src/Scene/LoseView.ts");
+  var { regClass: regClass23, property: property23 } = Laya;
+  var LoseView = /* @__PURE__ */ __name(class LoseView2 extends UIBase_default {
+  }, "LoseView");
+  LoseView = __decorate25([
+    regClass23()
+  ], LoseView);
+
+  // E:/WheelChairMan/src/Scene/LuckyBoxView.ts
+  var __decorate26 = __$decorate("d94dafff-05f0-4479-9a1a-ab9861a24025", "../src/Scene/LuckyBoxView.ts");
+  var _a12;
+  var _b7;
+  var _c6;
+  var _d4;
+  var _e3;
+  var Text2 = Laya.Text;
+  var Image5 = Laya.Image;
+  var { regClass: regClass24, property: property24 } = Laya;
+  var LuckyBoxView = /* @__PURE__ */ __name(class LuckyBoxView2 extends UIBase_default {
+    constructor() {
+      super();
+      this.$luckyboxDataTable = /* @__PURE__ */ new Map();
+    }
+    onOpened(param) {
+      this.regClick(this.imgClose, this.close);
+      this.regClick(this.imgOpen, this.openLuckBox);
+      this.$luckyboxDataTable = ResLoader.instance.getDataTableById(3001 /* LuckyBox */);
+      this.initLuckBox();
+    }
+    initLuckBox() {
+      if (this.$param == void 0) {
+        this.$param = 0;
+      }
+      this.txtMsg.text = LocalizationMgr.$getLocalizationByKey(this.$luckyboxDataTable.get(this.$param)["localizationKey"]);
+      this.imgBox.skin = ResLoader.instance.getUrlById(this.$luckyboxDataTable.get(this.$param)["imgPath"]);
+    }
+    openLuckBox() {
+      switch (this.$param) {
+        case 0:
+          break;
+      }
+    }
+  }, "LuckyBoxView");
+  __decorate26([
+    property24(),
+    __metadata("design:type", typeof (_a12 = typeof Image5 !== "undefined" && Image5) === "function" ? _a12 : Object)
+  ], LuckyBoxView.prototype, "imgLight", void 0);
+  __decorate26([
+    property24(),
+    __metadata("design:type", typeof (_b7 = typeof Image5 !== "undefined" && Image5) === "function" ? _b7 : Object)
+  ], LuckyBoxView.prototype, "imgBox", void 0);
+  __decorate26([
+    property24(),
+    __metadata("design:type", typeof (_c6 = typeof Image5 !== "undefined" && Image5) === "function" ? _c6 : Object)
+  ], LuckyBoxView.prototype, "imgClose", void 0);
+  __decorate26([
+    property24(),
+    __metadata("design:type", typeof (_d4 = typeof Image5 !== "undefined" && Image5) === "function" ? _d4 : Object)
+  ], LuckyBoxView.prototype, "imgOpen", void 0);
+  __decorate26([
+    property24(),
+    __metadata("design:type", typeof (_e3 = typeof Text2 !== "undefined" && Text2) === "function" ? _e3 : Object)
+  ], LuckyBoxView.prototype, "txtMsg", void 0);
+  LuckyBoxView = __decorate26([
+    regClass24(),
+    __metadata("design:paramtypes", [])
+  ], LuckyBoxView);
+
+  // E:/WheelChairMan/src/Scene/MainView.ts
+  var __decorate27 = __$decorate("127f9431-d96d-491c-b782-2549a9c38d7b", "../src/Scene/MainView.ts");
+  var _a13;
+  var _b8;
+  var _c7;
+  var _d5;
+  var _e4;
   var _f;
   var _g;
   var _h;
@@ -3250,9 +3729,9 @@ function __$decorate(assetId, codePath) {
   var _q;
   var Text3 = Laya.Text;
   var Box2 = Laya.Box;
-  var Label3 = Laya.Label;
+  var Label4 = Laya.Label;
   var Image6 = Laya.Image;
-  var { regClass: regClass20, property: property20 } = Laya;
+  var { regClass: regClass25, property: property25 } = Laya;
   var MainView = /* @__PURE__ */ __name(class MainView2 extends UIBase_default {
     constructor() {
       super();
@@ -3293,12 +3772,7 @@ function __$decorate(assetId, codePath) {
       UIBaseMgr.instance.open(1018 /* SettingView */);
     }
     openRanking() {
-      Timer.get(3e3, this, () => {
-        console.log("\u5BC4\u65F6\u5668");
-      }).start();
-      Timer.clearAll(this);
-      Tween.get(this.imgRanking).to({ y: 600 }, 4e3).start();
-      Tween.clear(this.imgRanking);
+      UIBaseMgr.instance.open(1017 /* RankingView */);
     }
     checkFirstTime() {
       let value = LocalStorageMgr.getItem("FIRESTTIME" /* FIRSTTIME */);
@@ -3317,99 +3791,99 @@ function __$decorate(assetId, codePath) {
     onClosed() {
     }
   }, "MainView");
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_a9 = typeof Text3 !== "undefined" && Text3) === "function" ? _a9 : Object)
+  __decorate27([
+    property25(),
+    __metadata("design:type", typeof (_a13 = typeof Text3 !== "undefined" && Text3) === "function" ? _a13 : Object)
   ], MainView.prototype, "txtGold", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_b6 = typeof Image6 !== "undefined" && Image6) === "function" ? _b6 : Object)
+  __decorate27([
+    property25(),
+    __metadata("design:type", typeof (_b8 = typeof Image6 !== "undefined" && Image6) === "function" ? _b8 : Object)
   ], MainView.prototype, "imgPlusGold", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_c5 = typeof Text3 !== "undefined" && Text3) === "function" ? _c5 : Object)
+  __decorate27([
+    property25(),
+    __metadata("design:type", typeof (_c7 = typeof Text3 !== "undefined" && Text3) === "function" ? _c7 : Object)
   ], MainView.prototype, "txtDiamond", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_d2 = typeof Image6 !== "undefined" && Image6) === "function" ? _d2 : Object)
+  __decorate27([
+    property25(),
+    __metadata("design:type", typeof (_d5 = typeof Image6 !== "undefined" && Image6) === "function" ? _d5 : Object)
   ], MainView.prototype, "imgPlusDiamond", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_e2 = typeof Image6 !== "undefined" && Image6) === "function" ? _e2 : Object)
+  __decorate27([
+    property25(),
+    __metadata("design:type", typeof (_e4 = typeof Image6 !== "undefined" && Image6) === "function" ? _e4 : Object)
   ], MainView.prototype, "imgHead", void 0);
-  __decorate22([
-    property20(),
+  __decorate27([
+    property25(),
     __metadata("design:type", typeof (_f = typeof Image6 !== "undefined" && Image6) === "function" ? _f : Object)
   ], MainView.prototype, "imgRing", void 0);
-  __decorate22([
-    property20(),
+  __decorate27([
+    property25(),
     __metadata("design:type", typeof (_g = typeof Image6 !== "undefined" && Image6) === "function" ? _g : Object)
   ], MainView.prototype, "imgLevel", void 0);
-  __decorate22([
-    property20(),
+  __decorate27([
+    property25(),
     __metadata("design:type", typeof (_h = typeof Image6 !== "undefined" && Image6) === "function" ? _h : Object)
   ], MainView.prototype, "imgMs", void 0);
-  __decorate22([
-    property20(),
+  __decorate27([
+    property25(),
     __metadata("design:type", typeof (_j = typeof Text3 !== "undefined" && Text3) === "function" ? _j : Object)
   ], MainView.prototype, "txtLevel", void 0);
-  __decorate22([
-    property20(),
-    __metadata("design:type", typeof (_k = typeof Label3 !== "undefined" && Label3) === "function" ? _k : Object)
+  __decorate27([
+    property25(),
+    __metadata("design:type", typeof (_k = typeof Label4 !== "undefined" && Label4) === "function" ? _k : Object)
   ], MainView.prototype, "labelName", void 0);
-  __decorate22([
-    property20(),
+  __decorate27([
+    property25(),
     __metadata("design:type", typeof (_l = typeof Image6 !== "undefined" && Image6) === "function" ? _l : Object)
   ], MainView.prototype, "imgShop", void 0);
-  __decorate22([
-    property20(),
+  __decorate27([
+    property25(),
     __metadata("design:type", typeof (_m = typeof Image6 !== "undefined" && Image6) === "function" ? _m : Object)
   ], MainView.prototype, "imgRanking", void 0);
-  __decorate22([
-    property20(),
+  __decorate27([
+    property25(),
     __metadata("design:type", typeof (_o = typeof Image6 !== "undefined" && Image6) === "function" ? _o : Object)
   ], MainView.prototype, "imgSettings", void 0);
-  __decorate22([
-    property20(),
+  __decorate27([
+    property25(),
     __metadata("design:type", typeof (_p = typeof Image6 !== "undefined" && Image6) === "function" ? _p : Object)
   ], MainView.prototype, "imgStart", void 0);
-  __decorate22([
-    property20(),
+  __decorate27([
+    property25(),
     __metadata("design:type", typeof (_q = typeof Box2 !== "undefined" && Box2) === "function" ? _q : Object)
   ], MainView.prototype, "Main", void 0);
-  MainView = __decorate22([
-    regClass20(),
+  MainView = __decorate27([
+    regClass25(),
     __metadata("design:paramtypes", [])
   ], MainView);
 
   // E:/WheelChairMan/src/Scene/MyInfoView.ts
-  var __decorate23 = __$decorate("dd16d8bf-53b3-41cc-81c1-44f39afec08e", "../src/Scene/MyInfoView.ts");
-  var { regClass: regClass21, property: property21 } = Laya;
+  var __decorate28 = __$decorate("dd16d8bf-53b3-41cc-81c1-44f39afec08e", "../src/Scene/MyInfoView.ts");
+  var { regClass: regClass26, property: property26 } = Laya;
   var MyInfoView = /* @__PURE__ */ __name(class MyInfoView2 extends UIBase_default {
   }, "MyInfoView");
-  MyInfoView = __decorate23([
-    regClass21()
+  MyInfoView = __decorate28([
+    regClass26()
   ], MyInfoView);
 
   // E:/WheelChairMan/src/Scene/PauseView.ts
-  var __decorate24 = __$decorate("352c01f5-c61a-4387-bd3b-63f412ac12c7", "../src/Scene/PauseView.ts");
-  var { regClass: regClass22, property: property22 } = Laya;
+  var __decorate29 = __$decorate("352c01f5-c61a-4387-bd3b-63f412ac12c7", "../src/Scene/PauseView.ts");
+  var { regClass: regClass27, property: property27 } = Laya;
   var PauseView = /* @__PURE__ */ __name(class PauseView2 extends UIBase_default {
   }, "PauseView");
-  PauseView = __decorate24([
-    regClass22()
+  PauseView = __decorate29([
+    regClass27()
   ], PauseView);
 
   // E:/WheelChairMan/src/Scene/PrivacyAgreementView.ts
-  var __decorate25 = __$decorate("df9b38f8-2d16-4280-849d-786074a729fe", "../src/Scene/PrivacyAgreementView.ts");
-  var _a10;
-  var _b7;
-  var _c6;
-  var _d3;
-  var Label4 = Laya.Label;
+  var __decorate30 = __$decorate("df9b38f8-2d16-4280-849d-786074a729fe", "../src/Scene/PrivacyAgreementView.ts");
+  var _a14;
+  var _b9;
+  var _c8;
+  var _d6;
+  var Label5 = Laya.Label;
   var Image7 = Laya.Image;
   var Panel = Laya.Panel;
-  var { regClass: regClass23, property: property23 } = Laya;
+  var { regClass: regClass28, property: property28 } = Laya;
   var PrivacyAgreementView = /* @__PURE__ */ __name(class PrivacyAgreementView2 extends UIBase_default {
     constructor() {
       super();
@@ -3428,40 +3902,40 @@ function __$decorate(assetId, codePath) {
       this.close();
     }
   }, "PrivacyAgreementView");
-  __decorate25([
-    property23(),
-    __metadata("design:type", typeof (_a10 = typeof Image7 !== "undefined" && Image7) === "function" ? _a10 : Object)
+  __decorate30([
+    property28(),
+    __metadata("design:type", typeof (_a14 = typeof Image7 !== "undefined" && Image7) === "function" ? _a14 : Object)
   ], PrivacyAgreementView.prototype, "imgSure", void 0);
-  __decorate25([
-    property23(),
-    __metadata("design:type", typeof (_b7 = typeof Image7 !== "undefined" && Image7) === "function" ? _b7 : Object)
+  __decorate30([
+    property28(),
+    __metadata("design:type", typeof (_b9 = typeof Image7 !== "undefined" && Image7) === "function" ? _b9 : Object)
   ], PrivacyAgreementView.prototype, "imgCancel", void 0);
-  __decorate25([
-    property23(),
-    __metadata("design:type", typeof (_c6 = typeof Panel !== "undefined" && Panel) === "function" ? _c6 : Object)
+  __decorate30([
+    property28(),
+    __metadata("design:type", typeof (_c8 = typeof Panel !== "undefined" && Panel) === "function" ? _c8 : Object)
   ], PrivacyAgreementView.prototype, "panel", void 0);
-  __decorate25([
-    property23(),
-    __metadata("design:type", typeof (_d3 = typeof Label4 !== "undefined" && Label4) === "function" ? _d3 : Object)
+  __decorate30([
+    property28(),
+    __metadata("design:type", typeof (_d6 = typeof Label5 !== "undefined" && Label5) === "function" ? _d6 : Object)
   ], PrivacyAgreementView.prototype, "txtAgreement", void 0);
-  PrivacyAgreementView = __decorate25([
-    regClass23(),
+  PrivacyAgreementView = __decorate30([
+    regClass28(),
     __metadata("design:paramtypes", [])
   ], PrivacyAgreementView);
 
   // E:/WheelChairMan/src/Scene/RankingView.ts
-  var __decorate26 = __$decorate("731a1c9f-76c7-4237-ad93-f469eb850bb9", "../src/Scene/RankingView.ts");
-  var _a11;
-  var _b8;
-  var _c7;
-  var _d4;
-  var _e3;
+  var __decorate31 = __$decorate("731a1c9f-76c7-4237-ad93-f469eb850bb9", "../src/Scene/RankingView.ts");
+  var _a15;
+  var _b10;
+  var _c9;
+  var _d7;
+  var _e5;
   var _f2;
   var Text4 = Laya.Text;
   var Image8 = Laya.Image;
   var List4 = Laya.List;
   var Handler7 = Laya.Handler;
-  var { regClass: regClass24, property: property24 } = Laya;
+  var { regClass: regClass29, property: property29 } = Laya;
   var RankingView = /* @__PURE__ */ __name(class RankingView2 extends UIBase_default {
     constructor() {
       super();
@@ -3528,61 +4002,50 @@ function __$decorate(assetId, codePath) {
       }
     }
   }, "RankingView");
-  __decorate26([
-    property24(),
-    __metadata("design:type", typeof (_a11 = typeof Image8 !== "undefined" && Image8) === "function" ? _a11 : Object)
+  __decorate31([
+    property29(),
+    __metadata("design:type", typeof (_a15 = typeof Image8 !== "undefined" && Image8) === "function" ? _a15 : Object)
   ], RankingView.prototype, "imgClose", void 0);
-  __decorate26([
-    property24(),
-    __metadata("design:type", typeof (_b8 = typeof Image8 !== "undefined" && Image8) === "function" ? _b8 : Object)
+  __decorate31([
+    property29(),
+    __metadata("design:type", typeof (_b10 = typeof Image8 !== "undefined" && Image8) === "function" ? _b10 : Object)
   ], RankingView.prototype, "imgHead", void 0);
-  __decorate26([
-    property24(),
-    __metadata("design:type", typeof (_c7 = typeof Text4 !== "undefined" && Text4) === "function" ? _c7 : Object)
+  __decorate31([
+    property29(),
+    __metadata("design:type", typeof (_c9 = typeof Text4 !== "undefined" && Text4) === "function" ? _c9 : Object)
   ], RankingView.prototype, "txtName", void 0);
-  __decorate26([
-    property24(),
-    __metadata("design:type", typeof (_d4 = typeof Text4 !== "undefined" && Text4) === "function" ? _d4 : Object)
+  __decorate31([
+    property29(),
+    __metadata("design:type", typeof (_d7 = typeof Text4 !== "undefined" && Text4) === "function" ? _d7 : Object)
   ], RankingView.prototype, "txtLV", void 0);
-  __decorate26([
-    property24(),
-    __metadata("design:type", typeof (_e3 = typeof Text4 !== "undefined" && Text4) === "function" ? _e3 : Object)
+  __decorate31([
+    property29(),
+    __metadata("design:type", typeof (_e5 = typeof Text4 !== "undefined" && Text4) === "function" ? _e5 : Object)
   ], RankingView.prototype, "txtRank", void 0);
-  __decorate26([
-    property24(),
+  __decorate31([
+    property29(),
     __metadata("design:type", typeof (_f2 = typeof List4 !== "undefined" && List4) === "function" ? _f2 : Object)
   ], RankingView.prototype, "listRanking", void 0);
-  RankingView = __decorate26([
-    regClass24(),
+  RankingView = __decorate31([
+    regClass29(),
     __metadata("design:paramtypes", [])
   ], RankingView);
 
-  // E:/WheelChairMan/src/Enum/PlayerEnum.ts
-  var PlayerEnum = /* @__PURE__ */ ((PlayerEnum2) => {
-    PlayerEnum2[PlayerEnum2["BusinessMan"] = 1001] = "BusinessMan";
-    PlayerEnum2[PlayerEnum2["BombDisEX"] = 1002] = "BombDisEX";
-    PlayerEnum2[PlayerEnum2["GreatMagician"] = 1003] = "GreatMagician";
-    PlayerEnum2[PlayerEnum2["Kingsman"] = 1004] = "Kingsman";
-    PlayerEnum2[PlayerEnum2["ScoutRobot"] = 1005] = "ScoutRobot";
-    PlayerEnum2[PlayerEnum2["RookiePirate"] = 1006] = "RookiePirate";
-    return PlayerEnum2;
-  })(PlayerEnum || {});
-
   // E:/WheelChairMan/src/Scene/SelectPlayerView.ts
-  var __decorate27 = __$decorate("cdfd211f-d5a7-4c9b-9ffb-7956585db6fc", "../src/Scene/SelectPlayerView.ts");
-  var _a12;
-  var _b9;
-  var _c8;
-  var _d5;
-  var _e4;
+  var __decorate32 = __$decorate("cdfd211f-d5a7-4c9b-9ffb-7956585db6fc", "../src/Scene/SelectPlayerView.ts");
+  var _a16;
+  var _b11;
+  var _c10;
+  var _d8;
+  var _e6;
   var _f3;
   var _g2;
   var _h2;
   var _j2;
   var _k2;
-  var Label5 = Laya.Label;
+  var Label6 = Laya.Label;
   var Image9 = Laya.Image;
-  var { regClass: regClass25, property: property25 } = Laya;
+  var { regClass: regClass30, property: property30 } = Laya;
   var SelectPlayerView = /* @__PURE__ */ __name(class SelectPlayerView2 extends UIBase_default {
     constructor() {
       super();
@@ -3668,48 +4131,48 @@ function __$decorate(assetId, codePath) {
     onClosed() {
     }
   }, "SelectPlayerView");
-  __decorate27([
-    property25(),
-    __metadata("design:type", typeof (_a12 = typeof Image9 !== "undefined" && Image9) === "function" ? _a12 : Object)
+  __decorate32([
+    property30(),
+    __metadata("design:type", typeof (_a16 = typeof Image9 !== "undefined" && Image9) === "function" ? _a16 : Object)
   ], SelectPlayerView.prototype, "imgBack", void 0);
-  __decorate27([
-    property25(),
-    __metadata("design:type", typeof (_b9 = typeof Image9 !== "undefined" && Image9) === "function" ? _b9 : Object)
+  __decorate32([
+    property30(),
+    __metadata("design:type", typeof (_b11 = typeof Image9 !== "undefined" && Image9) === "function" ? _b11 : Object)
   ], SelectPlayerView.prototype, "imgNext", void 0);
-  __decorate27([
-    property25(),
-    __metadata("design:type", typeof (_c8 = typeof Image9 !== "undefined" && Image9) === "function" ? _c8 : Object)
+  __decorate32([
+    property30(),
+    __metadata("design:type", typeof (_c10 = typeof Image9 !== "undefined" && Image9) === "function" ? _c10 : Object)
   ], SelectPlayerView.prototype, "imgPrev", void 0);
-  __decorate27([
-    property25(),
-    __metadata("design:type", typeof (_d5 = typeof Image9 !== "undefined" && Image9) === "function" ? _d5 : Object)
+  __decorate32([
+    property30(),
+    __metadata("design:type", typeof (_d8 = typeof Image9 !== "undefined" && Image9) === "function" ? _d8 : Object)
   ], SelectPlayerView.prototype, "imgLock", void 0);
-  __decorate27([
-    property25(),
-    __metadata("design:type", typeof (_e4 = typeof Image9 !== "undefined" && Image9) === "function" ? _e4 : Object)
+  __decorate32([
+    property30(),
+    __metadata("design:type", typeof (_e6 = typeof Image9 !== "undefined" && Image9) === "function" ? _e6 : Object)
   ], SelectPlayerView.prototype, "imgSelect", void 0);
-  __decorate27([
-    property25(),
-    __metadata("design:type", typeof (_f3 = typeof Label5 !== "undefined" && Label5) === "function" ? _f3 : Object)
+  __decorate32([
+    property30(),
+    __metadata("design:type", typeof (_f3 = typeof Label6 !== "undefined" && Label6) === "function" ? _f3 : Object)
   ], SelectPlayerView.prototype, "labelName", void 0);
-  __decorate27([
-    property25(),
-    __metadata("design:type", typeof (_g2 = typeof Label5 !== "undefined" && Label5) === "function" ? _g2 : Object)
+  __decorate32([
+    property30(),
+    __metadata("design:type", typeof (_g2 = typeof Label6 !== "undefined" && Label6) === "function" ? _g2 : Object)
   ], SelectPlayerView.prototype, "labelDic", void 0);
-  __decorate27([
-    property25(),
+  __decorate32([
+    property30(),
     __metadata("design:type", typeof (_h2 = typeof Image9 !== "undefined" && Image9) === "function" ? _h2 : Object)
   ], SelectPlayerView.prototype, "imgUnlock", void 0);
-  __decorate27([
-    property25(),
-    __metadata("design:type", typeof (_j2 = typeof Label5 !== "undefined" && Label5) === "function" ? _j2 : Object)
+  __decorate32([
+    property30(),
+    __metadata("design:type", typeof (_j2 = typeof Label6 !== "undefined" && Label6) === "function" ? _j2 : Object)
   ], SelectPlayerView.prototype, "labelUnlock", void 0);
-  __decorate27([
-    property25(),
+  __decorate32([
+    property30(),
     __metadata("design:type", typeof (_k2 = typeof Image9 !== "undefined" && Image9) === "function" ? _k2 : Object)
   ], SelectPlayerView.prototype, "imgCurrency", void 0);
-  SelectPlayerView = __decorate27([
-    regClass25(),
+  SelectPlayerView = __decorate32([
+    regClass30(),
     __metadata("design:paramtypes", [])
   ], SelectPlayerView);
 
@@ -3758,12 +4221,12 @@ function __$decorate(assetId, codePath) {
   VibrateMgr.$isVibrate = -1;
 
   // E:/WheelChairMan/src/Util/Slider.ts
-  var __decorate28 = __$decorate("35b37bb8-b4f2-4360-8030-42b6c06ee038", "../src/Util/Slider.ts");
-  var _a13;
-  var _b10;
-  var _c9;
+  var __decorate33 = __$decorate("35b37bb8-b4f2-4360-8030-42b6c06ee038", "../src/Util/Slider.ts");
+  var _a17;
+  var _b12;
+  var _c11;
   var Image10 = Laya.Image;
-  var { regClass: regClass26, property: property26 } = Laya;
+  var { regClass: regClass31, property: property31 } = Laya;
   var Slider = /* @__PURE__ */ __name(class Slider2 extends Laya.Script {
     constructor() {
       super();
@@ -3839,37 +4302,37 @@ function __$decorate(assetId, codePath) {
     onDisable() {
     }
   }, "Slider");
-  __decorate28([
-    property26(),
+  __decorate33([
+    property31(),
     __metadata("design:type", Boolean)
   ], Slider.prototype, "isH", void 0);
-  __decorate28([
-    property26(),
-    __metadata("design:type", typeof (_a13 = typeof Image10 !== "undefined" && Image10) === "function" ? _a13 : Object)
+  __decorate33([
+    property31(),
+    __metadata("design:type", typeof (_a17 = typeof Image10 !== "undefined" && Image10) === "function" ? _a17 : Object)
   ], Slider.prototype, "imgLoad", void 0);
-  __decorate28([
-    property26(),
-    __metadata("design:type", typeof (_b10 = typeof Image10 !== "undefined" && Image10) === "function" ? _b10 : Object)
+  __decorate33([
+    property31(),
+    __metadata("design:type", typeof (_b12 = typeof Image10 !== "undefined" && Image10) === "function" ? _b12 : Object)
   ], Slider.prototype, "imgBar", void 0);
-  __decorate28([
-    property26(),
-    __metadata("design:type", typeof (_c9 = typeof Image10 !== "undefined" && Image10) === "function" ? _c9 : Object)
+  __decorate33([
+    property31(),
+    __metadata("design:type", typeof (_c11 = typeof Image10 !== "undefined" && Image10) === "function" ? _c11 : Object)
   ], Slider.prototype, "imgBg", void 0);
-  __decorate28([
-    property26(),
+  __decorate33([
+    property31(),
     __metadata("design:type", Number)
   ], Slider.prototype, "value", void 0);
-  Slider = __decorate28([
-    regClass26(),
+  Slider = __decorate33([
+    regClass31(),
     __metadata("design:paramtypes", [])
   ], Slider);
   var Slider_default = Slider;
 
   // E:/WheelChairMan/src/Util/Toggle.ts
-  var __decorate29 = __$decorate("0f5a24a0-2f83-4219-9165-99195082aa4a", "../src/Util/Toggle.ts");
-  var _a14;
+  var __decorate34 = __$decorate("0f5a24a0-2f83-4219-9165-99195082aa4a", "../src/Util/Toggle.ts");
+  var _a18;
   var Image11 = Laya.Image;
-  var { regClass: regClass27, property: property27 } = Laya;
+  var { regClass: regClass32, property: property32 } = Laya;
   var Toggle = /* @__PURE__ */ __name(class Toggle2 extends Laya.Script {
     constructor() {
       super();
@@ -3907,34 +4370,34 @@ function __$decorate(assetId, codePath) {
       this.$imgBg.off(Laya.Event.CLICK, this, this.changeValue);
     }
   }, "Toggle");
-  __decorate29([
-    property27(),
+  __decorate34([
+    property32(),
     __metadata("design:type", Boolean)
   ], Toggle.prototype, "isON", void 0);
-  __decorate29([
-    property27(),
-    __metadata("design:type", typeof (_a14 = typeof Image11 !== "undefined" && Image11) === "function" ? _a14 : Object)
+  __decorate34([
+    property32(),
+    __metadata("design:type", typeof (_a18 = typeof Image11 !== "undefined" && Image11) === "function" ? _a18 : Object)
   ], Toggle.prototype, "imgItem", void 0);
-  Toggle = __decorate29([
-    regClass27(),
+  Toggle = __decorate34([
+    regClass32(),
     __metadata("design:paramtypes", [])
   ], Toggle);
   var Toggle_default = Toggle;
 
   // E:/WheelChairMan/src/Scene/SettingView.ts
-  var __decorate30 = __$decorate("9811079c-9340-49a7-8d8a-71570d70a98d", "../src/Scene/SettingView.ts");
-  var _a15;
-  var _b11;
-  var _c10;
-  var _d6;
-  var _e5;
+  var __decorate35 = __$decorate("9811079c-9340-49a7-8d8a-71570d70a98d", "../src/Scene/SettingView.ts");
+  var _a19;
+  var _b13;
+  var _c12;
+  var _d9;
+  var _e7;
   var _f4;
   var _g3;
   var _h3;
   var Box3 = Laya.Box;
-  var Label6 = Laya.Label;
+  var Label7 = Laya.Label;
   var Image12 = Laya.Image;
-  var { regClass: regClass28, property: property28 } = Laya;
+  var { regClass: regClass33, property: property33 } = Laya;
   var SettingView = /* @__PURE__ */ __name(class SettingView2 extends UIBase_default {
     constructor() {
       super();
@@ -3979,73 +4442,52 @@ function __$decorate(assetId, codePath) {
     onClosed() {
     }
   }, "SettingView");
-  __decorate30([
-    property28(),
-    __metadata("design:type", typeof (_a15 = typeof Image12 !== "undefined" && Image12) === "function" ? _a15 : Object)
+  __decorate35([
+    property33(),
+    __metadata("design:type", typeof (_a19 = typeof Image12 !== "undefined" && Image12) === "function" ? _a19 : Object)
   ], SettingView.prototype, "imgClose", void 0);
-  __decorate30([
-    property28(),
-    __metadata("design:type", typeof (_b11 = typeof Box3 !== "undefined" && Box3) === "function" ? _b11 : Object)
+  __decorate35([
+    property33(),
+    __metadata("design:type", typeof (_b13 = typeof Box3 !== "undefined" && Box3) === "function" ? _b13 : Object)
   ], SettingView.prototype, "sliderSfx", void 0);
-  __decorate30([
-    property28(),
-    __metadata("design:type", typeof (_c10 = typeof Box3 !== "undefined" && Box3) === "function" ? _c10 : Object)
+  __decorate35([
+    property33(),
+    __metadata("design:type", typeof (_c12 = typeof Box3 !== "undefined" && Box3) === "function" ? _c12 : Object)
   ], SettingView.prototype, "sliderBgm", void 0);
-  __decorate30([
-    property28(),
-    __metadata("design:type", typeof (_d6 = typeof Image12 !== "undefined" && Image12) === "function" ? _d6 : Object)
+  __decorate35([
+    property33(),
+    __metadata("design:type", typeof (_d9 = typeof Image12 !== "undefined" && Image12) === "function" ? _d9 : Object)
   ], SettingView.prototype, "toggleShake", void 0);
-  __decorate30([
-    property28(),
-    __metadata("design:type", typeof (_e5 = typeof Image12 !== "undefined" && Image12) === "function" ? _e5 : Object)
+  __decorate35([
+    property33(),
+    __metadata("design:type", typeof (_e7 = typeof Image12 !== "undefined" && Image12) === "function" ? _e7 : Object)
   ], SettingView.prototype, "imgLanguage", void 0);
-  __decorate30([
-    property28(),
+  __decorate35([
+    property33(),
     __metadata("design:type", typeof (_f4 = typeof Image12 !== "undefined" && Image12) === "function" ? _f4 : Object)
   ], SettingView.prototype, "imgLan", void 0);
-  __decorate30([
-    property28(),
+  __decorate35([
+    property33(),
     __metadata("design:type", typeof (_g3 = typeof Image12 !== "undefined" && Image12) === "function" ? _g3 : Object)
   ], SettingView.prototype, "imgSupport", void 0);
-  __decorate30([
-    property28(),
-    __metadata("design:type", typeof (_h3 = typeof Label6 !== "undefined" && Label6) === "function" ? _h3 : Object)
+  __decorate35([
+    property33(),
+    __metadata("design:type", typeof (_h3 = typeof Label7 !== "undefined" && Label7) === "function" ? _h3 : Object)
   ], SettingView.prototype, "txtAgreement", void 0);
-  SettingView = __decorate30([
-    regClass28(),
+  SettingView = __decorate35([
+    regClass33(),
     __metadata("design:paramtypes", [])
   ], SettingView);
 
-  // E:/WheelChairMan/src/Util/ObjUtil.ts
-  var ObjUtil = class {
-    /**数组去重 */
-    static clearList(arr) {
-      arr.every((item) => {
-      });
-    }
-    /**Set转List */
-    static set2List(_set) {
-      if (_set && _set.size) {
-        let arr = [];
-        for (let item of _set) {
-          arr.push(item);
-        }
-        return arr;
-      }
-      return null;
-    }
-  };
-  __name(ObjUtil, "ObjUtil");
-
   // E:/WheelChairMan/src/Scene/ShopView.ts
-  var __decorate31 = __$decorate("6101acc2-fac8-487c-9045-7d083746b9cd", "../src/Scene/ShopView.ts");
-  var _a16;
-  var _b12;
-  var _c11;
+  var __decorate36 = __$decorate("6101acc2-fac8-487c-9045-7d083746b9cd", "../src/Scene/ShopView.ts");
+  var _a20;
+  var _b14;
+  var _c13;
   var Image13 = Laya.Image;
   var List5 = Laya.List;
   var Handler8 = Laya.Handler;
-  var { regClass: regClass29, property: property29 } = Laya;
+  var { regClass: regClass34, property: property34 } = Laya;
   var ShopView = /* @__PURE__ */ __name(class ShopView2 extends UIBase_default {
     constructor() {
       super();
@@ -4175,41 +4617,41 @@ function __$decorate(assetId, codePath) {
       }
     }
   }, "ShopView");
-  __decorate31([
-    property29(),
-    __metadata("design:type", typeof (_a16 = typeof Image13 !== "undefined" && Image13) === "function" ? _a16 : Object)
+  __decorate36([
+    property34(),
+    __metadata("design:type", typeof (_a20 = typeof Image13 !== "undefined" && Image13) === "function" ? _a20 : Object)
   ], ShopView.prototype, "imgClose", void 0);
-  __decorate31([
-    property29(),
-    __metadata("design:type", typeof (_b12 = typeof List5 !== "undefined" && List5) === "function" ? _b12 : Object)
+  __decorate36([
+    property34(),
+    __metadata("design:type", typeof (_b14 = typeof List5 !== "undefined" && List5) === "function" ? _b14 : Object)
   ], ShopView.prototype, "listTitle", void 0);
-  __decorate31([
-    property29(),
-    __metadata("design:type", typeof (_c11 = typeof List5 !== "undefined" && List5) === "function" ? _c11 : Object)
+  __decorate36([
+    property34(),
+    __metadata("design:type", typeof (_c13 = typeof List5 !== "undefined" && List5) === "function" ? _c13 : Object)
   ], ShopView.prototype, "listShop", void 0);
-  ShopView = __decorate31([
-    regClass29(),
+  ShopView = __decorate36([
+    regClass34(),
     __metadata("design:paramtypes", [])
   ], ShopView);
 
   // E:/WheelChairMan/src/Scene/SignInView.ts
-  var __decorate32 = __$decorate("658fcc51-8109-42a6-a372-0d6e36f801cc", "../src/Scene/SignInView.ts");
-  var { regClass: regClass30, property: property30 } = Laya;
+  var __decorate37 = __$decorate("658fcc51-8109-42a6-a372-0d6e36f801cc", "../src/Scene/SignInView.ts");
+  var { regClass: regClass35, property: property35 } = Laya;
   var SignInView = /* @__PURE__ */ __name(class SignInView2 extends UIBase_default {
   }, "SignInView");
-  SignInView = __decorate32([
-    regClass30()
+  SignInView = __decorate37([
+    regClass35()
   ], SignInView);
 
   // E:/WheelChairMan/src/Scene/SureView.ts
-  var __decorate33 = __$decorate("2eee226a-dcc2-4965-9ad2-4c490d20fbdf", "../src/Scene/SureView.ts");
-  var _a17;
-  var _b13;
-  var _c12;
-  var _d7;
-  var Label7 = Laya.Label;
+  var __decorate38 = __$decorate("2eee226a-dcc2-4965-9ad2-4c490d20fbdf", "../src/Scene/SureView.ts");
+  var _a21;
+  var _b15;
+  var _c14;
+  var _d10;
+  var Label8 = Laya.Label;
   var Image14 = Laya.Image;
-  var { regClass: regClass31, property: property31 } = Laya;
+  var { regClass: regClass36, property: property36 } = Laya;
   var SureView = /* @__PURE__ */ __name(class SureView2 extends UIBase_default {
     constructor() {
       super();
@@ -4252,166 +4694,60 @@ function __$decorate(assetId, codePath) {
       this.imgSure.centerX = 180;
     }
   }, "SureView");
-  __decorate33([
-    property31(),
-    __metadata("design:type", typeof (_a17 = typeof Image14 !== "undefined" && Image14) === "function" ? _a17 : Object)
+  __decorate38([
+    property36(),
+    __metadata("design:type", typeof (_a21 = typeof Image14 !== "undefined" && Image14) === "function" ? _a21 : Object)
   ], SureView.prototype, "imgSure", void 0);
-  __decorate33([
-    property31(),
-    __metadata("design:type", typeof (_b13 = typeof Image14 !== "undefined" && Image14) === "function" ? _b13 : Object)
+  __decorate38([
+    property36(),
+    __metadata("design:type", typeof (_b15 = typeof Image14 !== "undefined" && Image14) === "function" ? _b15 : Object)
   ], SureView.prototype, "imgCancel", void 0);
-  __decorate33([
-    property31(),
-    __metadata("design:type", typeof (_c12 = typeof Label7 !== "undefined" && Label7) === "function" ? _c12 : Object)
+  __decorate38([
+    property36(),
+    __metadata("design:type", typeof (_c14 = typeof Label8 !== "undefined" && Label8) === "function" ? _c14 : Object)
   ], SureView.prototype, "txtTitle", void 0);
-  __decorate33([
-    property31(),
-    __metadata("design:type", typeof (_d7 = typeof Label7 !== "undefined" && Label7) === "function" ? _d7 : Object)
+  __decorate38([
+    property36(),
+    __metadata("design:type", typeof (_d10 = typeof Label8 !== "undefined" && Label8) === "function" ? _d10 : Object)
   ], SureView.prototype, "txtMsg", void 0);
-  SureView = __decorate33([
-    regClass31(),
+  SureView = __decorate38([
+    regClass36(),
     __metadata("design:paramtypes", [])
   ], SureView);
 
   // E:/WheelChairMan/src/Scene/TipsView.ts
-  var __decorate34 = __$decorate("a1b11e33-3318-4f7e-af1d-2bbf5fa13333", "../src/Scene/TipsView.ts");
-  var _a18;
+  var __decorate39 = __$decorate("a1b11e33-3318-4f7e-af1d-2bbf5fa13333", "../src/Scene/TipsView.ts");
+  var _a22;
   var Text5 = Laya.Text;
-  var { regClass: regClass32, property: property32 } = Laya;
+  var { regClass: regClass37, property: property37 } = Laya;
   var TipsView = /* @__PURE__ */ __name(class TipsView2 extends UIBase_default {
     constructor() {
       super();
     }
     onEnable() {
-      let img = this.owner;
-      img.centerX = 0;
-      img.centerY = 200;
+      this.img = this.owner;
+      this.img.centerX = 0;
+      this.img.centerY = 200;
+      this.img.alpha;
     }
     onOpened(param) {
       this.txtMsg.text = param;
-      Timer.get(1500, this, () => {
+      Tween.get(this.owner).set({ scaleX: 0.8, scaleY: 0.8, alpha: 1 }).to({ scaleX: 1, scaleY: 1 }, 300, Laya.Ease.backOut).to({ centerY: 0, alpha: 0.7 }, 1500).call(this, () => {
         this.close();
-      }).once().start();
+      }).start();
     }
   }, "TipsView");
-  __decorate34([
-    property32(),
-    __metadata("design:type", typeof (_a18 = typeof Text5 !== "undefined" && Text5) === "function" ? _a18 : Object)
+  __decorate39([
+    property37(),
+    __metadata("design:type", typeof (_a22 = typeof Text5 !== "undefined" && Text5) === "function" ? _a22 : Object)
   ], TipsView.prototype, "txtMsg", void 0);
-  TipsView = __decorate34([
-    regClass32(),
+  TipsView = __decorate39([
+    regClass37(),
     __metadata("design:paramtypes", [])
   ], TipsView);
 
-  // E:/WheelChairMan/src/Scene3d/GameScene.ts
-  var __decorate35 = __$decorate("0706d1ae-b0b6-47a5-9387-2a6360b2893e", "../src/Scene3d/GameScene.ts");
-  var _a19;
-  var _b14;
-  var _c13;
-  var _d8;
-  var _e6;
-  var Sprite3D2 = Laya.Sprite3D;
-  var Camera = Laya.Camera;
-  var DirectionLight = Laya.DirectionLight;
-  var { regClass: regClass33, property: property33 } = Laya;
-  var GameScene = /* @__PURE__ */ __name(class GameScene2 extends Scene3d_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-      EventMgr.event("GAMESCENELOADED" /* GAMESCENELOADED */, this);
-    }
-    addEvent() {
-    }
-    onClosed() {
-    }
-  }, "GameScene");
-  __decorate35([
-    property33(),
-    __metadata("design:type", typeof (_a19 = typeof Camera !== "undefined" && Camera) === "function" ? _a19 : Object)
-  ], GameScene.prototype, "mainCamera", void 0);
-  __decorate35([
-    property33(),
-    __metadata("design:type", typeof (_b14 = typeof Sprite3D2 !== "undefined" && Sprite3D2) === "function" ? _b14 : Object)
-  ], GameScene.prototype, "groundStage", void 0);
-  __decorate35([
-    property33(),
-    __metadata("design:type", typeof (_c13 = typeof DirectionLight !== "undefined" && DirectionLight) === "function" ? _c13 : Object)
-  ], GameScene.prototype, "light", void 0);
-  __decorate35([
-    property33(),
-    __metadata("design:type", typeof (_d8 = typeof Sprite3D2 !== "undefined" && Sprite3D2) === "function" ? _d8 : Object)
-  ], GameScene.prototype, "playerStage", void 0);
-  __decorate35([
-    property33(),
-    __metadata("design:type", typeof (_e6 = typeof Sprite3D2 !== "undefined" && Sprite3D2) === "function" ? _e6 : Object)
-  ], GameScene.prototype, "zombieStage", void 0);
-  GameScene = __decorate35([
-    regClass33(),
-    __metadata("design:paramtypes", [])
-  ], GameScene);
-
-  // E:/WheelChairMan/src/Scene3d/MainScene.ts
-  var __decorate36 = __$decorate("71c8c727-1736-44b1-984f-02439872df63", "../src/Scene3d/MainScene.ts");
-  var { regClass: regClass34, property: property34 } = Laya;
-  var MainScene = /* @__PURE__ */ __name(class MainScene2 extends Scene3d_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-    }
-  }, "MainScene");
-  MainScene = __decorate36([
-    regClass34(),
-    __metadata("design:paramtypes", [])
-  ], MainScene);
-
-  // E:/WheelChairMan/src/Scene3d/SelectPlayerScene.ts
-  var __decorate37 = __$decorate("34405a80-13b4-48be-ac44-94bb920f1518", "../src/Scene3d/SelectPlayerScene.ts");
-  var _a20;
-  var Sprite3D3 = Laya.Sprite3D;
-  var { regClass: regClass35, property: property35 } = Laya;
-  var SelectPlayerScene = /* @__PURE__ */ __name(class SelectPlayerScene2 extends Scene3d_default {
-    constructor() {
-      super();
-    }
-    onOpened(param) {
-      if (!this.$playerList) {
-        this.$playerList = [];
-        this.$playerList = [];
-        for (let item in PlayerEnum) {
-          if (!isNaN(Number(item))) {
-            this.$playerList.push(Number(item));
-          }
-        }
-      }
-    }
-    addEvent() {
-      this.regEvent("SHOWPLAYER" /* SHOWPLAYER */, this.showPlayer);
-    }
-    showPlayer(playerId) {
-      var _a21;
-      (_a21 = this.$playerObj) === null || _a21 === void 0 ? void 0 : _a21.removeSelf();
-      this.$playerObj = PlayerMgr.instance.getSelectPlayer(playerId);
-      this.$playerObj && this.playerStage.addChild(this.$playerObj);
-      this.$playerObj && (this.$playerObj.transform.position = Sprite3d.ZERO);
-    }
-    onClosed() {
-      var _a21;
-      (_a21 = this.$playerObj) === null || _a21 === void 0 ? void 0 : _a21.removeSelf();
-    }
-  }, "SelectPlayerScene");
-  __decorate37([
-    property35(),
-    __metadata("design:type", typeof (_a20 = typeof Sprite3D3 !== "undefined" && Sprite3D3) === "function" ? _a20 : Object)
-  ], SelectPlayerScene.prototype, "playerStage", void 0);
-  SelectPlayerScene = __decorate37([
-    regClass35(),
-    __metadata("design:paramtypes", [])
-  ], SelectPlayerScene);
-
   // E:/WheelChairMan/src/Util/Base64.ts
-  var __decorate38 = __$decorate("fe62c9ad-c7c3-4baa-8f7c-216a9f051006", "../src/Util/Base64.ts");
+  var __decorate40 = __$decorate("fe62c9ad-c7c3-4baa-8f7c-216a9f051006", "../src/Util/Base64.ts");
   var Base64 = class {
     /**
      * 编码
@@ -4515,8 +4851,8 @@ function __$decorate(assetId, codePath) {
   Base64._keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
   // E:/WheelChairMan/src/Game/BaseItem/BaseItemMgr.ts
-  var __decorate39 = __$decorate("24b34e30-2f17-4824-a3b0-0ba530674c37", "../src/Game/BaseItem/BaseItemMgr.ts");
-  var Vector36 = Laya.Vector3;
+  var __decorate41 = __$decorate("24b34e30-2f17-4824-a3b0-0ba530674c37", "../src/Game/BaseItem/BaseItemMgr.ts");
+  var Vector38 = Laya.Vector3;
   var Quaternion2 = Laya.Quaternion;
   var Pool4 = Laya.Pool;
 })();

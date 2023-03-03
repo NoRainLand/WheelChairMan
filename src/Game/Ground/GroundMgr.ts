@@ -2,7 +2,7 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 11:07:31
+ * @Last Modified time: 2023-03-03 14:55:55
 */
 import { GrassEnum } from "../../Enum/GroundEnum";
 import ResLoader from "../../Util/ResLoader";
@@ -50,14 +50,17 @@ export default class GroundMgr {
             for (let i = 0; i < this.groundList.length; i++) {
                 let groundItem = this.groundList[i];
                 this.$stage.addChild(groundItem.owner);
+                groundItem.init();
             }
         } else {
             this.groundList = [];
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 24; i++) {
                 let grass = ResLoader.instance.getResCloneById(GrassEnum.grass);
-                let groundItem = grass.getComponent(GroundItem);
+                let groundItem = grass.getComponent(GroundItem) as GroundItem;
+                groundItem.index = i;
                 this.$stage.addChild(grass);
                 this.groundList.push(groundItem);
+                groundItem.init();
             }
         }
 

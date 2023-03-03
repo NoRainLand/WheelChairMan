@@ -4,7 +4,7 @@ import Script3d from "../../Script3d/Script3d";
  * @Author: NoRain 
  * @Date: 2023-02-28 17:52:41 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-28 21:21:19
+ * @Last Modified time: 2023-03-03 15:27:05
  */
 const { regClass, property } = Laya;
 /**武器 */
@@ -51,9 +51,9 @@ export default class WeaponItem extends Script3d {
     reLoad() {
         // Tween.get()
 
-    } 
+    }
 
-    
+
 
 
 

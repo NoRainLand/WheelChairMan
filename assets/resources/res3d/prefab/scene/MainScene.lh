@@ -568,41 +568,53 @@
       }
     },
     {
-      "_$id": "wk81f02l",
-      "_$prefab": "bca80fa9-121e-42a7-95a8-3365c3b71fdc",
+      "_$id": "xf6muey0",
+      "_$prefab": "579ef149-4b16-4341-96ab-09bbd00ad5a2",
       "name": "Zombie",
       "active": true,
       "layer": 0,
       "transform": {
         "localPosition": {
           "_$type": "Vector3",
-          "x": 1.9813864417346023,
-          "y": 0.21952926386473115,
-          "z": 3.1079160978155107
+          "x": 2.049161621377062,
+          "y": 0.2563713788986206,
+          "z": 3.300913450335525
         },
         "localRotation": {
           "_$type": "Quaternion",
           "x": 0,
-          "y": -0.9955362682166239,
+          "y": -0.9984952119611391,
           "z": 0,
-          "w": 0.09437975770957627
+          "w": 0.05483896142962696
         }
       },
       "_$child": [
         {
-          "_$override": "#146",
+          "_$override": [
+            "ckwjv5eg",
+            "#146"
+          ],
           "active": false
         },
         {
-          "_$override": "#147",
+          "_$override": [
+            "ckwjv5eg",
+            "#147"
+          ],
           "active": false
         },
         {
-          "_$override": "#148",
+          "_$override": [
+            "ckwjv5eg",
+            "#148"
+          ],
           "active": false
         },
         {
-          "_$override": "#149",
+          "_$override": [
+            "ckwjv5eg",
+            "#149"
+          ],
           "active": false
         }
       ]

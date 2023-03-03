@@ -20,10 +20,7 @@
           "clipEnd": 1,
           "soloTransitions": [
             {
-              "id": "0",
-              "exitByTime": true,
-              "transduration": 0.15,
-              "exitTime": 0.85
+              "id": "0"
             }
           ]
         },
@@ -36,25 +33,36 @@
           "clipEnd": 1
         },
         {
-          "x": 162,
-          "y": 284,
+          "x": 159,
+          "y": 261,
           "id": "0",
           "name": "ZombieIdle",
           "speed": 1,
           "clipEnd": 1,
           "clip": {
-            "_$uuid": "402a5d00-ecb7-405a-b27d-7e864814fce4@lani0"
+            "_$uuid": "402a5d00-ecb7-405a-b27d-7e864814fce4@lani1"
           }
         },
         {
-          "x": 198,
-          "y": 154,
+          "x": 192,
+          "y": 151,
           "id": "1",
           "name": "ZombieWalk",
           "speed": 1,
           "clipEnd": 1,
           "clip": {
-            "_$uuid": "402a5d00-ecb7-405a-b27d-7e864814fce4@lani1"
+            "_$uuid": "402a5d00-ecb7-405a-b27d-7e864814fce4@lani2"
+          }
+        },
+        {
+          "x": 193,
+          "y": 65,
+          "id": "2",
+          "name": "ZombieDeath",
+          "speed": 1,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "402a5d00-ecb7-405a-b27d-7e864814fce4@lani0"
           }
         }
       ],

@@ -73,11 +73,13 @@ export default class PlayerController extends Script3d {
      * @param angle z方向为正方向，逆时针旋转0到180°，顺时针旋转0到-180°
      */
     move(angle: number) {
-        angle = angle / 180 * Math.PI;
-        let offX = Math.sin(angle) * this.moveSpeed;
-        let offY = Math.cos(angle) * this.moveSpeed;
-        this.moveSpeedV3 = new Vector3(offX, 0, offY);
-        this.characterController.move(this.moveSpeedV3);
+        if (!isNaN(angle)) {
+            angle = angle / 180 * Math.PI;
+            let offX = Math.sin(angle) * this.moveSpeed;
+            let offY = Math.cos(angle) * this.moveSpeed;
+            this.moveSpeedV3 = new Vector3(offX, 0, offY);
+            this.characterController.move(this.moveSpeedV3);
+        }
     }
 
 

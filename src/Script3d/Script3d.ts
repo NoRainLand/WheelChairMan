@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-21 11:36:48 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-27 19:35:02
+ * @Last Modified time: 2023-03-03 11:55:42
  */
 import Vector3 = Laya.Vector3;
 import Sprite3D = Laya.Sprite3D;
@@ -24,7 +24,8 @@ export default class Script3d extends Laya.Script {
         super();
     }
 
-
+    /**序列 */
+    index: number = -1;
 
     /**y挂载脚本的对象
       * 同 owner

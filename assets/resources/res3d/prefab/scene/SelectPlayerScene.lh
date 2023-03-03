@@ -103,13 +103,18 @@
           "_$type": "Vector3",
           "x": 1.2988491053831694,
           "y": 0.9416595101356506,
-          "z": -2.766218172836634
+          "z": -2.7662181854248047
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": 0.7071067811865475,
+          "w": 0.7071067811865476
         },
         "localScale": {
           "_$type": "Vector3",
           "x": 16,
-          "y": 9,
-          "z": 1
+          "y": 1,
+          "z": 9
         }
       },
       "_$comp": [
@@ -127,7 +132,8 @@
               "_$uuid": "9324af99-30e4-414a-acb2-4b80543f74ea",
               "_$type": "Material"
             }
-          ]
+          ],
+          "renderMode": null
         }
       ]
     },
@@ -174,36 +180,6 @@
           "w": 1
         }
       }
-    },
-    {
-      "_$id": "bgj91bpq",
-      "_$type": "Sprite3D",
-      "name": "PointLight",
-      "transform": {
-        "localPosition": {
-          "_$type": "Vector3",
-          "x": 0.18146064832330921,
-          "y": 1.2235313653945923,
-          "z": -0.2539633810520172
-        }
-      },
-      "_$comp": [
-        {
-          "_$type": "PointLightCom",
-          "intensity": 0.6,
-          "lightmapBakedType": 0,
-          "shadowMode": 0,
-          "shadowStrength": 1,
-          "shadowDistance": 50,
-          "shadowDepthBias": 1,
-          "shadowNormalBias": 1,
-          "shadowNearPlane": 0.1,
-          "range": 6,
-          "power": 10,
-          "radius": 0.25,
-          "maxBounces": 1024
-        }
-      ]
     },
     {
       "_$id": "ppdroll8",
@@ -339,6 +315,43 @@
           "z": 50
         }
       }
+    },
+    {
+      "_$id": "uxoaqb25",
+      "_$type": "Sprite3D",
+      "name": "SpotLight",
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "x": 0.18146176591039875,
+          "y": 4.495919252653296,
+          "z": -0.559326572996898
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": -0.7071067811865475,
+          "w": 0.7071067811865476
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "SpotLightCom",
+          "intensity": 7.63,
+          "lightmapBakedType": 0,
+          "shadowMode": 0,
+          "shadowStrength": 1,
+          "shadowDistance": 50,
+          "shadowDepthBias": 1,
+          "shadowNormalBias": 1,
+          "shadowNearPlane": 0.1,
+          "range": 5.032991396303254,
+          "spotAngle": 30,
+          "power": 10,
+          "radius": 0.25,
+          "maxBounces": 1024,
+          "blend": 0.15
+        }
+      ]
     }
   ]
 }

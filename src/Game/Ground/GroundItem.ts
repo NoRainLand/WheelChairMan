@@ -17,15 +17,34 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-03-03 10:11:46 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 10:13:10
+ * @Last Modified time: 2023-03-03 15:13:01
  */
 const { regClass, property } = Laya;
 /**地板 */
 @regClass()
 export default class GroundItem extends Script3d {
-    index: number;
     constructor() { super() }
-    changePos(playerPos: Vector3) {
 
+    staticY: number = -0.13;
+
+    init() {
+        this.position = new Vector3(this.index % 6 * 5 - 15, this.staticY, Math.floor(this.index / 6) * 5 - 5);
+    }
+
+    changePos(playerPos: Vector3) {
+        if (this.position.x > playerPos.x + 12) {
+            this.position = new Vector3(this.position.x - 30, this.staticY, this.position.z)
+        }
+        if (this.position.x < playerPos.x - 17) {
+            this.position = new Vector3(this.position.x + 30, this.staticY, this.position.z)
+        }
+
+        if (this.position.z > playerPos.z + 12) {
+            this.position = new Vector3(this.position.x, this.staticY, this.position.z - 20)
+        }
+
+        if (this.position.z < playerPos.z - 7) {
+            this.position = new Vector3(this.position.x, this.staticY, this.position.z + 20)
+        }
     }
 }

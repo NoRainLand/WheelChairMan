@@ -417,6 +417,7 @@
           "anchorX": 0,
           "anchorY": 0,
           "mouseEnabled": true,
+          "bottom": 57,
           "skin": "res://1b1b0b40-4c96-42db-9b3e-3da2031e9e19",
           "sizeGrid": "0,37,0,32,0",
           "_$child": [

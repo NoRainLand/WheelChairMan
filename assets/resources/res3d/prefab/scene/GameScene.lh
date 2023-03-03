@@ -7,8 +7,9 @@
     {
       "_$type": "0706d1ae-b0b6-47a5-9387-2a6360b2893e",
       "scriptPath": "../src/Scene3d/GameScene.ts",
-      "mainCamera": {
-        "_$ref": "6jx8h8bvc6"
+      "cameraItem": {
+        "_$ref": "6jx8h8bvc6",
+        "_$type": "5c31dd90-8819-4905-b33b-ed3d5c647cc8"
       },
       "groundStage": {
         "_$ref": "ea9bkwcu"
@@ -59,7 +60,13 @@
         "width": 1,
         "height": 1
       },
-      "depthTextureFormat": 35
+      "depthTextureFormat": 35,
+      "_$comp": [
+        {
+          "_$type": "5c31dd90-8819-4905-b33b-ed3d5c647cc8",
+          "scriptPath": "../src/Game/CameraItem.ts"
+        }
+      ]
     },
     {
       "_$id": "6ni3p096l5",

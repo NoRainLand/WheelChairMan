@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-07 09:32:30 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 11:52:02
+ * @Last Modified time: 2023-03-03 15:43:47
  */
 import Pool = Laya.Pool;
 
@@ -101,6 +101,7 @@ export default class Timer {
         self.$delay = delay;
         self.$caller = caller;
         self.$callBack = callBack;
+        self.$type = 0;
     }
 
 

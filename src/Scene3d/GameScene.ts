@@ -1,4 +1,5 @@
 import { EventEnum } from "../Enum/EventEnum";
+import CameraItem from "../Game/CameraItem";
 import EventMgr from "../Mgr/EventMgr";
 import Scene3d from "../Scene3dBase/Scene3d";
 import Vector3 = Laya.Vector3;
@@ -21,14 +22,14 @@ import DirectionLight = Laya.DirectionLight;
  * @Author: NoRain 
  * @Date: 2023-02-27 14:09:36 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-27 20:12:44
+ * @Last Modified time: 2023-03-03 14:46:15
  */
 const { regClass, property } = Laya;
 /**游戏界面 */
 @regClass()
 export default class GameScene extends Scene3d {
     @property()
-    mainCamera: Camera;
+    cameraItem: CameraItem;
     @property()
     groundStage: Sprite3D;
     @property()
@@ -38,6 +39,7 @@ export default class GameScene extends Scene3d {
     @property()
     zombieStage: Sprite3D;
 
+    
 
     constructor() { super() }
 

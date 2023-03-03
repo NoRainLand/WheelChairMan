@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-06 19:04:56 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-28 17:13:18
+ * @Last Modified time: 2023-03-03 21:10:37
  */
 /**事件枚举 */
 export enum EventEnum {
@@ -33,6 +33,11 @@ export enum EventEnum {
 
     /**玩家死亡 */
     PLAYERDEAD = "PLAYERDEAD",
+
+    /**游戏暂停 */
+    GAMEPAUSE = "GAMEPAUSE",
+    /**游戏继续 */
+    GAMERESUME = "GAMERESUME"
 
 
 }

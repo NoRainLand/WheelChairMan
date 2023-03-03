@@ -24,7 +24,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-14 10:37:38 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-24 23:35:08
+ * @Last Modified time: 2023-03-03 21:52:06
  */
 const { regClass, property } = Laya;
 /**商城界面 */
@@ -162,7 +162,7 @@ export default class ShopView extends UIBase {
 
 
     buySomething(obj: Object) {
-        console.log(obj);
+        // console.log(obj);
 
         switch (obj["priceId"]) {
             case CurrencyEnum.gold:

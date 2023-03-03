@@ -7,6 +7,7 @@
   "top": 0,
   "bottom": 0,
   "name": "Scene2D",
+  "mouseThrough": true,
   "_$child": [
     {
       "_$id": "n9gjxcltvl",
@@ -110,6 +111,28 @@
               "maxBounces": null
             }
           ]
+        },
+        {
+          "_$id": "iqskl7wh",
+          "_$prefab": "579ef149-4b16-4341-96ab-09bbd00ad5a2",
+          "name": "Zombie",
+          "active": true,
+          "layer": 0,
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 0,
+              "y": 0,
+              "z": 0
+            },
+            "localRotation": {
+              "_$type": "Quaternion",
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "w": 1
+            }
+          }
         }
       ]
     }
