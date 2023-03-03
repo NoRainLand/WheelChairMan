@@ -55,7 +55,10 @@
           }
         }
       ],
-      "defaultStateName": "Animation Base Layer"
+      "defaultStateName": "Animation Base Layer",
+      "stageX": -13.199999999999992,
+      "stageY": 4.599999999999997,
+      "stageScale": 0.9
     },
     {
       "playOnWake": false,

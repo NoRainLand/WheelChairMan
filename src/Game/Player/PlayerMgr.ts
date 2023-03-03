@@ -2,7 +2,7 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-28 17:15:46
+ * @Last Modified time: 2023-02-28 17:55:33
 */
 
 import GameData from "../../Data/GameData";
@@ -39,42 +39,44 @@ export default class PlayerMgr {
     public static get instance(): PlayerMgr {
         return this._instance ? this._instance : this._instance = new PlayerMgr();
     }
-    private $playerMap: Map<number, Object>;
+    private playerMap: Map<number, Object>;
 
-     $selectedPlayerId: number;
+    selectedPlayerId: number;
 
     private $sign: string = "playerId_"
 
-    private $unlockList: number[];
+    private unlockList: number[];
 
 
-    private $playerItem: PlayerItem;
+    private playerItem: PlayerItem;
 
-    private $playerStage: Sprite3D;
+    private playerStage: Sprite3D;
 
     private playerPool: Map<number, Sprite3D>
 
     init() {
-        this.$playerMap = ResLoader.instance.getDataTableById(DataTableEnum.Player);
+        this.playerMap = ResLoader.instance.getDataTableById(DataTableEnum.Player);
     }
 
     startMove(angle: number, value: number) {
-        this.$playerItem && this.$playerItem.startMove(angle, value);
+        this.playerItem && this.playerItem.startMove(angle, value);
     }
     stopMove() {
-        this.$playerItem && this.$playerItem.stopMove();
+        this.playerItem && this.playerItem.stopMove();
     }
 
     startShoot(angle: number, value: number) {
-        this.$playerItem && this.$playerItem.startShoot(angle, value);
+        this.playerItem && this.playerItem.startShoot(angle, value);
     }
     stopShoot() {
-        this.$playerItem && this.$playerItem.stopShoot();
+        this.playerItem && this.playerItem.stopShoot();
     }
 
 
-
-
+    /**获取坐标 */
+    getPlayerPos() {
+        return this.playerItem.position;
+    }
 
 
 
@@ -83,25 +85,25 @@ export default class PlayerMgr {
     getUnlockList(): number[] {
         let str = LocalStorageMgr.getItem(LocalStorageEnum.UNLOCKPLAYERLIST);
         if (str) {
-            this.$unlockList = JSON.parse(str);
+            this.unlockList = JSON.parse(str);
         } else {
-            this.$unlockList = [1001];
-            LocalStorageMgr.setItem(LocalStorageEnum.UNLOCKPLAYERLIST, JSON.stringify(this.$unlockList));
+            this.unlockList = [1001];
+            LocalStorageMgr.setItem(LocalStorageEnum.UNLOCKPLAYERLIST, JSON.stringify(this.unlockList));
         }
-        return this.$unlockList;
+        return this.unlockList;
     }
 
     /**解锁人物 */
     unlockPlayer(playerId: number) {
-        if (playerId && this.$unlockList.indexOf(playerId) == -1) {
+        if (playerId && this.unlockList.indexOf(playerId) == -1) {
             let data = this.getSelectedPlayerData(playerId);
 
             switch (data["currency"]) {
                 case CurrencyEnum.gold:
                     if (GameData.gold >= data["unlockPrice"]) {
                         GameData.gold -= data["unlockPrice"];
-                        this.$unlockList.push(playerId);
-                        LocalStorageMgr.setItem(LocalStorageEnum.UNLOCKPLAYERLIST, JSON.stringify(this.$unlockList));
+                        this.unlockList.push(playerId);
+                        LocalStorageMgr.setItem(LocalStorageEnum.UNLOCKPLAYERLIST, JSON.stringify(this.unlockList));
                         UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.CONGRATULATIONSUNLOCK));
                         EventMgr.event(EventEnum.UNLOCKPLAYER, playerId);
                     } else {
@@ -111,8 +113,8 @@ export default class PlayerMgr {
                 case CurrencyEnum.diamond:
                     if (GameData.diamond >= data["unlockPrice"]) {
                         GameData.diamond -= data["unlockPrice"];
-                        this.$unlockList.push(playerId);
-                        LocalStorageMgr.setItem(LocalStorageEnum.UNLOCKPLAYERLIST, JSON.stringify(this.$unlockList));
+                        this.unlockList.push(playerId);
+                        LocalStorageMgr.setItem(LocalStorageEnum.UNLOCKPLAYERLIST, JSON.stringify(this.unlockList));
                         UIBaseMgr.instance.showTips(LocalizationMgr.getLocalizationByEnum(LocalizationEnum.CONGRATULATIONSUNLOCK));
                         EventMgr.event(EventEnum.UNLOCKPLAYER, playerId);
                     } else {
@@ -137,12 +139,12 @@ export default class PlayerMgr {
 
     /**获取当前选择的玩家数据 */
     getSelectedPlayerData(playerId: number) {
-        return this.$playerMap.get(playerId);
+        return this.playerMap.get(playerId);
     }
 
 
     setSelectedPlayerId(playerId: number) {
-        this.$selectedPlayerId = playerId;
+        this.selectedPlayerId = playerId;
     }
 
 
@@ -159,13 +161,11 @@ export default class PlayerMgr {
             let playerData = this.getSelectedPlayerData(playerId);
             obj = ResLoader.instance.getResCloneById(playerData?.["path"]);
             this.playerPool.set(playerId, obj);
-
             let playerItem = obj.getComponent(PlayerItem);
             if (playerItem) {
-                playerItem.playerData = this.getSelectedPlayerData(this.$selectedPlayerId);
+                playerItem.playerData = playerData;
             }
         }
-
         return obj;
     }
 
@@ -173,13 +173,13 @@ export default class PlayerMgr {
 
 
     gameStart(stage: Sprite3D) {
-        this.$playerStage = stage;
-        let obj = this.getSelectPlayer(this.$selectedPlayerId);
-        if (obj && this.$playerStage) {
-            this.$playerItem = obj.getComponent(PlayerItem);
-            this.$playerItem.position = Sprite3d.ZERO;
-            this.$playerStage.addChild(obj);
-            this.$playerItem.gameStart();
+        this.playerStage = stage;
+        let obj = this.getSelectPlayer(this.selectedPlayerId);
+        if (obj && this.playerStage) {
+            this.playerItem = obj.getComponent(PlayerItem);
+            this.playerItem.position = Sprite3d.ZERO;
+            this.playerStage.addChild(obj);
+            this.playerItem.gameStart();
         }
     }
 

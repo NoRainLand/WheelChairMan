@@ -23,7 +23,13 @@
     },
     {
       "_$type": "778295ff-e54e-4576-82ea-f69285cd3b58",
-      "scriptPath": "../src/Game/Player/PlayerItem.ts"
+      "scriptPath": "../src/Game/Player/PlayerItem.ts",
+      "weaponPoint": {
+        "_$ref": [
+          "8fgn2gkk",
+          "#118"
+        ]
+      }
     },
     {
       "_$type": "f3ea911e-7d9e-4e77-b857-d99a7338285a",
@@ -112,6 +118,17 @@
               ]
             }
           ]
+        },
+        {
+          "_$override": "#118",
+          "transform": {
+            "localScale": {
+              "_$type": "Vector3",
+              "x": 10000,
+              "y": 10000,
+              "z": 10000
+            }
+          }
         },
         {
           "_$override": "#119",

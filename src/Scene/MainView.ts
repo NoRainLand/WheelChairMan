@@ -23,7 +23,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-24 23:51:23
+ * @Last Modified time: 2023-03-03 11:52:15
  */
 const { regClass, property } = Laya;
 /**主界面 */
@@ -116,6 +116,18 @@ export default class MainView extends UIBase {
     }
     openRanking() {
         UIBaseMgr.instance.open(SceneEnum.RankingView);
+
+        // Timer.get(3000, this, () => {
+        //     console.log('寄时器');
+        // }).start();
+        // Timer.clearAll(this);
+
+
+
+        // Tween.get(this.imgRanking)
+        //     .to({ y: 600 }, 4000).start();
+
+        // Tween.clear(this.imgRanking);
     }
 
 

@@ -4,13 +4,15 @@ import EventMgr from "../Mgr/EventMgr";
 import GameScene from "../Scene3d/GameScene";
 import Scene3dMgr from "../Scene3dBase/Scene3dMgr";
 import { GameStepEnum } from "./Enum/GameStepEnum";
+import GroundMgr from "./Ground/GroundMgr";
 import PlayerMgr from "./Player/PlayerMgr";
+import WeaponMgr from "./Weapon/WeaponMgr";
 
 /*
  * @Author: NoRain 
  * @Date: 2023-02-20 15:26:58 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-27 20:15:21
+ * @Last Modified time: 2023-03-03 10:13:18
  */
 const { regClass, property } = Laya;
 /**主游戏逻辑 */
@@ -25,7 +27,7 @@ export default class MainGame {
     private $isInit: boolean = false;
 
 
-    private $gameSetp: GameStepEnum;
+    private $gameStep: GameStepEnum;
 
     private $gameScene: GameScene;
 
@@ -35,12 +37,13 @@ export default class MainGame {
             this.$isInit = true;
             this.addEvent();
             this.reset();
+            WeaponMgr.instance.init();
             PlayerMgr.instance.init();
         }
     }
     /**获取当前游戏的流程 */
     getGameSetp(): number {
-        return this.$gameSetp;
+        return this.$gameStep;
     }
 
 
@@ -52,14 +55,14 @@ export default class MainGame {
 
 
     reset() {
-        this.$gameSetp = GameStepEnum.ResetGame;
+        this.$gameStep = GameStepEnum.ResetGame;
         this.goToMain();
         this.$gameScene = null;
     }
 
     /**开始选择玩家 */
     selectPlayerAndWeapon() {
-        this.$gameSetp = GameStepEnum.SelectPlayer;
+        this.$gameStep = GameStepEnum.SelectPlayer;
         Scene3dMgr.instance.open(Scene3dEnum.SelectPlayerScene);
         Scene3dMgr.instance.close(Scene3dEnum.MainScene);
     }
@@ -70,7 +73,7 @@ export default class MainGame {
     }
 
     loadGameScene() {
-        this.$gameSetp = GameStepEnum.LoadGameScene;
+        this.$gameStep = GameStepEnum.LoadGameScene;
         Scene3dMgr.instance.close(Scene3dEnum.SelectPlayerScene);
         Scene3dMgr.instance.open(Scene3dEnum.GameScene);
     }
@@ -78,14 +81,14 @@ export default class MainGame {
 
     /**游戏开始 */
     gameStart(gameScene: GameScene) {
-        this.$gameSetp = GameStepEnum.GameStart;
+        this.$gameStep = GameStepEnum.GameStart;
 
         this.$gameScene = gameScene;
         // console.log(gameScene);
 
 
 
-        // GroundMgr.instance.gameStart();
+        GroundMgr.instance.gameStart(this.$gameScene.groundStage);
         PlayerMgr.instance.gameStart(this.$gameScene.playerStage);
 
 
@@ -94,22 +97,22 @@ export default class MainGame {
     }
     /**游戏暂停 */
     gamePause() {
-        this.$gameSetp = GameStepEnum.GamePause;
+        this.$gameStep = GameStepEnum.GamePause;
 
     }
     /**游戏继续*/
     gameResume() {
-        this.$gameSetp = GameStepEnum.GameStart;
+        this.$gameStep = GameStepEnum.GameStart;
 
     }
 
     gameWin() {
-        this.$gameSetp = GameStepEnum.GameWin;
+        this.$gameStep = GameStepEnum.GameWin;
 
         this.gameOver();
     }
     gameLose() {
-        this.$gameSetp = GameStepEnum.GameLose;
+        this.$gameStep = GameStepEnum.GameLose;
 
         this.gameOver();
     }

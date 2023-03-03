@@ -31,7 +31,13 @@
     },
     {
       "_$type": "778295ff-e54e-4576-82ea-f69285cd3b58",
-      "scriptPath": "../src/Game/Player/PlayerItem.ts"
+      "scriptPath": "../src/Game/Player/PlayerItem.ts",
+      "weaponPoint": {
+        "_$ref": [
+          "eh0hwiq3",
+          "#132"
+        ]
+      }
     }
   ],
   "_$child": [
@@ -98,8 +104,30 @@
               ]
             }
           ]
+        },
+        {
+          "_$override": "#132",
+          "transform": {
+            "localScale": {
+              "_$type": "Vector3",
+              "x": 10000,
+              "y": 10000,
+              "z": 10000
+            }
+          }
         }
       ]
+    },
+    {
+      "_$id": "em5233eg",
+      "_$type": "Sprite3D",
+      "name": "Sprite3D",
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "y": 1.4742014863292972
+        }
+      }
     }
   ]
 }

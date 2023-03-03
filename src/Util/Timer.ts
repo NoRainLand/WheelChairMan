@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-07 09:32:30 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-10 17:16:18
+ * @Last Modified time: 2023-03-03 11:52:02
  */
 import Pool = Laya.Pool;
 
@@ -10,7 +10,9 @@ import Pool = Laya.Pool;
 export default class Timer {
 
     /**对象池标志 */
-    private static $sign: string = "$myTimer"
+    private static $sign: string = "MyTimer"
+
+    private static $cache: string = "$" + Timer.$sign;
 
 
     /**作用域 */
@@ -72,11 +74,10 @@ export default class Timer {
      * @returns Timer
      */
     static get(delay: number, caller: any, callBack: Function): Timer {
+        let self = this;
         if (delay > 0 && caller != null && callBack != null) {
-            let timer = <Timer>Pool.getItemByClass(this.$sign, Timer);
-            timer.$delay = delay;
-            timer.$caller = caller;
-            timer.$callBack = callBack;
+            let timer = <Timer>Pool.getItemByClass(self.$sign, Timer);
+            timer.$init(delay, caller, callBack);
             return timer;
         } else {
             console.log("参数为空");
@@ -92,6 +93,17 @@ export default class Timer {
         this.$lastTime = 0;
         this.$runTime = 0;
     }
+
+    private $init(delay: number, caller: any, callBack: Function) {
+        let self = this;
+        let timerCache = caller[Timer.$cache] || (caller[Timer.$cache] = []);
+        timerCache.push(self);
+        self.$delay = delay;
+        self.$caller = caller;
+        self.$callBack = callBack;
+    }
+
+
     /**定时执行一次 */
     once(): Timer {
         this.$type = 0;
@@ -132,6 +144,14 @@ export default class Timer {
         this.$lastTime = Date.now();
         return this;
     }
+
+    /**重新开始计时器 */
+    reStart(): Timer {
+        this.$runTime = this.$runCount = 0;
+        this.$lastTime = Date.now();
+        return this;
+    }
+
     /**暂停 */
     pause() {
         this.$isRunning = false;
@@ -160,13 +180,21 @@ export default class Timer {
         this.reset();
         Laya.timer.clear(this, this.update);
         Pool.recover(Timer.$sign, this);
+
+        if (this.$caller) {
+            let timerCache = this.$caller[Timer.$cache];
+            if (timerCache && timerCache instanceof Array) {
+                let index = timerCache.indexOf(this);
+                if (index != -1) {
+                    timerCache.splice(index, 1);
+                }
+                timerCache.length = 0 && (delete this.$caller[Timer.$cache]);
+            }
+        }
+
+        this.$caller = this.$callBack = null;
     }
-    /**清理全部 */
-    clearAll() {
-        this.reset();
-        Laya.timer.clearAll(this);
-        Pool.recover(Timer.$sign, this);
-    }
+
 
     /**更新 */
     protected update() {
@@ -180,5 +208,17 @@ export default class Timer {
             }
         }
     }
+
+    /**清理 */
+    static clearAll(target: Object) {
+        let timerCache = target[Timer.$cache];
+        if (timerCache && timerCache instanceof Array) {
+            for (let i = 0; i < timerCache.length; i++) {
+                let timer = timerCache[i];
+                timer instanceof Timer&&timer.clear();
+            }
+        }
+    }
+
 
 }

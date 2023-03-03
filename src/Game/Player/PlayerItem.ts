@@ -2,9 +2,12 @@ import { EventEnum } from "../../Enum/EventEnum";
 import EventMgr from "../../Mgr/EventMgr";
 import AnimatorTool from "../../Util/AnimatorTool";
 import PlayerController from "../../Util/PlayerController";
+import Sprite3d from "../../Util/Sprite3d";
 import BaseItem from "../BaseItem/BaseItem";
 import { PlayerAniEnum } from "../Enum/PlayerAniEnum";
 import { PlayerStatusEnum } from "../Enum/PlayerStatusEnum";
+import WeaponItem from "../Weapon/WeaponItem";
+import WeaponMgr from "../Weapon/WeaponMgr";
 import Vector3 = Laya.Vector3;
 import Sprite3D = Laya.Sprite3D;
 import Quaternion = Laya.Quaternion;
@@ -25,13 +28,15 @@ import Color = Laya.Color;
  * @Author: NoRain 
  * @Date: 2023-02-25 19:27:37 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-28 17:30:08
+ * @Last Modified time: 2023-02-28 22:09:27
  */
 const { regClass, property } = Laya;
 /**玩家类 */
 @regClass()
 export default class PlayerItem extends BaseItem {
 
+    @property()
+    weaponPoint: Sprite3D;
 
     constructor() { super() }
 
@@ -45,6 +50,8 @@ export default class PlayerItem extends BaseItem {
     private $health: number = 0;
 
     private totalHealth: number = 0;
+
+    private weaponItem: WeaponItem;
 
 
     get health(): number {
@@ -94,11 +101,26 @@ export default class PlayerItem extends BaseItem {
             this.obj.addChild(this.pixelLineSprite3D);
             this.pixelLineSprite3D.addLine(new Vector3(0, 1.3, 0), new Vector3(0, 1.3, 5), new Color(1 / 255, 114 / 255, 1 / 255), new Color(1 / 255, 114 / 255, 1 / 255));
         }
+
+        this.initWeapon();
+    }
+
+    initWeapon() {
+        if (!this.weaponItem) {
+            console.log(this.playerData["weaponId"]);
+            this.weaponItem = WeaponMgr.instance.getSelectWeapon(this.playerData["weaponId"]);
+            this.weaponPoint.addChild(this.weaponItem.owner);
+        } else {
+            this.weaponItem.owner.active = true;
+        }
+        this.weaponItem.localPosition = Sprite3d.ZERO;
+        this.weaponItem.localRotationEuler = Sprite3d.ZERO;
     }
 
 
     /**血量改变 */
     healthChange(oldHealth: number) {
+        EventMgr.event(EventEnum.HEALTHCHANGE, this.health);
         if (this.health == 0) {
             EventMgr.event(EventEnum.PLAYERDEAD);
             this.playerStatus = PlayerStatusEnum.death;

@@ -11,6 +11,12 @@
       "z": 5.095305442810059
     }
   },
+  "_$comp": [
+    {
+      "_$type": "303c1b70-94df-4fd5-afab-45556c45c044",
+      "scriptPath": "../src/Game/Weapon/WeaponItem.ts"
+    }
+  ],
   "_$child": [
     {
       "_$id": "#42",

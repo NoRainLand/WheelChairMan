@@ -2,10 +2,13 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-27 19:42:38
+ * @Last Modified time: 2023-03-03 11:07:31
 */
-
-import BaseItemMgr from "../BaseItem/BaseItemMgr";
+import { GrassEnum } from "../../Enum/GroundEnum";
+import ResLoader from "../../Util/ResLoader";
+import Timer from "../../Util/Timer";
+import PlayerMgr from "../Player/PlayerMgr";
+import GroundItem from "./GroundItem";
 import Vector3 = Laya.Vector3;
 import Sprite3D = Laya.Sprite3D;
 import Quaternion = Laya.Quaternion;
@@ -21,31 +24,53 @@ import PhysicsCollider = Laya.PhysicsCollider;
 import CharacterController = Laya.CharacterController;
 import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
 /**地板 */
-export default class GroundMgr extends BaseItemMgr {
+export default class GroundMgr {
     private static _instance: GroundMgr;
     public static get instance(): GroundMgr {
         return this._instance ? this._instance : this._instance = new GroundMgr();
     }
 
-    private $pool: Sprite3D;
+    private $stage: Sprite3D;
     private $grass: Sprite3D;
 
-    private $grassPool: Array<Sprite3D>;
+    private groundList: Array<GroundItem>;
 
     init() {
-        // if (!this.$grass) {
-        //     this.$grass = ResLoader.instance.getResCloneById(GrassEnum.grass);
-        // }
-        // if (!this.$grassPool) {
-        //     this.$grassPool = [];
-        // }
-        // if (!this.$grassPool.length) {
+        if (!this.$grass) {
+            this.$grass = ResLoader.instance.getResCloneById(GrassEnum.grass);
+        }
 
-        // }
 
     }
 
-    gameStart() {
+    gameStart(grassStage: Sprite3D) {
+        this.$stage = grassStage;
+
+        if (this.groundList) {
+            for (let i = 0; i < this.groundList.length; i++) {
+                let groundItem = this.groundList[i];
+                this.$stage.addChild(groundItem.owner);
+            }
+        } else {
+            this.groundList = [];
+            for (let i = 0; i < 20; i++) {
+                let grass = ResLoader.instance.getResCloneById(GrassEnum.grass);
+                let groundItem = grass.getComponent(GroundItem);
+                this.$stage.addChild(grass);
+                this.groundList.push(groundItem);
+            }
+        }
+
+
+
+        Timer.get(16, this, () => {
+            let pos = PlayerMgr.instance.getPlayerPos();
+            for (let i = 0; i < this.groundList.length; i++) {
+                let groundItem = this.groundList[i];
+                groundItem.changePos(pos);
+            }
+        }).frameLoop().start();
+
 
     }
 
@@ -54,7 +79,7 @@ export default class GroundMgr extends BaseItemMgr {
     }
 
     gameOver() {
-
+        Timer.clearAll(this);
     }
 
 

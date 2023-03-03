@@ -31,7 +31,13 @@
     },
     {
       "_$type": "778295ff-e54e-4576-82ea-f69285cd3b58",
-      "scriptPath": "../src/Game/Player/PlayerItem.ts"
+      "scriptPath": "../src/Game/Player/PlayerItem.ts",
+      "weaponPoint": {
+        "_$ref": [
+          "d95nthtc",
+          "#133"
+        ]
+      }
     }
   ],
   "_$child": [
@@ -112,6 +118,17 @@
               ]
             }
           ]
+        },
+        {
+          "_$override": "#133",
+          "transform": {
+            "localScale": {
+              "_$type": "Vector3",
+              "x": 10000,
+              "y": 10000,
+              "z": 10000
+            }
+          }
         }
       ]
     }
