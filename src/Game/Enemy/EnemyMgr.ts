@@ -53,7 +53,7 @@ export default class EnemyMgr {
         Timer.get(200, this, () => {
             this.createZombie();
             index++;
-            if (index >= this.maxZombieNum) {
+            if (index >= 1) {
                 Timer.clearAll(this);
             }
         }).loop().start();
@@ -66,7 +66,7 @@ export default class EnemyMgr {
             let point = ObjUtil.randomRingPos(18, 13);
             let pos = PlayerMgr.instance.getPlayerPos();
             let zombieItem = zombie.getComponent(ZombieItem) as ZombieItem;
-            zombieItem.position = new Vector3(pos.x + point.x, pos.y, pos.z + point.y);
+            zombieItem.position = new Vector3(4,0,4);//pos.x + point.x, pos.y, pos.z + point.y
             this.enemyStage.addChild(zombie);
             zombieItem.init();
         }

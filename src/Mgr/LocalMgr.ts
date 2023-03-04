@@ -9,6 +9,9 @@ import { LocalStorageEnum } from "../Enum/LocalStorageEnum";
 import LocalStorage = Laya.LocalStorage;
 /**持久化管理类 */
 export default class LocalStorageMgr {
+
+
+
     /**
     * 获取指定键名的值。
     * @param key 键名。
@@ -25,6 +28,7 @@ export default class LocalStorageMgr {
     static setItem(key: LocalStorageEnum, value: string | number) {
         LocalStorage.setItem(`${ProjectConfig.projectName}_${key}`, typeof value === "string" ? value : value.toString());
     }
+
 
 
 

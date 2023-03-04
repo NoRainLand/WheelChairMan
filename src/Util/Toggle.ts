@@ -35,7 +35,6 @@ export default class Toggle extends Laya.Script {
     onEnable(): void {
         this.$imgBg = this.owner as Image;
         this.$imgBg.on(Laya.Event.CLICK, this, this.changeValue);
-        this.changeItem();
     }
 
     init(caller: any, callback: Function, isON?: boolean) {
@@ -43,7 +42,8 @@ export default class Toggle extends Laya.Script {
             this.isON = isON;
         }
         this.$caller = caller;
-        this.$callback = callback
+        this.$callback = callback;
+        this.changeItem();
     }
 
     private changeItem() {

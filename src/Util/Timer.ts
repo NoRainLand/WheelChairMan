@@ -27,9 +27,10 @@ export default class Timer {
     /**间隔 */
     private $delay: number = 1;
 
-
-    // /**开始时间 */
-    // private $startTime: number = 0;
+    /**时间进度
+     * 循环默认为0
+     */
+    private timeValue: number = 0;
 
     /**上次运行时间 */
     private $lastTime: number = 0;
@@ -203,7 +204,12 @@ export default class Timer {
             this.$runTime += Date.now() - this.$lastTime;
             this.$lastTime = Date.now();
             this.$runCount++;
-            this.$callBack.call(this.$caller);
+            // if (this.$type == 0) {
+            //     this.timeValue = this.runTime / this.$delay;
+            // } else if (this.$type == 2) {
+            //     this.timeValue = this.runCount / this.$delay;
+            // }
+            this.$callBack.call(this.$caller);//, this.timeValue
             if (this.$type == 0 || this.$type == 2) {
                 this.$isRunning = false;
             }
@@ -216,7 +222,7 @@ export default class Timer {
         if (timerCache && timerCache instanceof Array) {
             for (let i = 0; i < timerCache.length; i++) {
                 let timer = timerCache[i];
-                timer instanceof Timer&&timer.clear();
+                timer instanceof Timer && timer.clear();
             }
         }
     }

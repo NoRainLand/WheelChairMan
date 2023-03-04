@@ -37,6 +37,10 @@
           "eh0hwiq3",
           "#132"
         ]
+      },
+      "playerSkinMaterial": {
+        "_$uuid": "f39ae5c8-fe91-4981-a06e-98d3d26aa3c7",
+        "_$type": "Material"
       }
     }
   ],
@@ -223,17 +227,6 @@
           }
         }
       ]
-    },
-    {
-      "_$id": "em5233eg",
-      "_$type": "Sprite3D",
-      "name": "Sprite3D",
-      "transform": {
-        "localPosition": {
-          "_$type": "Vector3",
-          "y": 1.4742014863292972
-        }
-      }
     }
   ]
 }

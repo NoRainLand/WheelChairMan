@@ -18,7 +18,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-14 10:37:38 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 21:22:18
+ * @Last Modified time: 2023-03-04 17:00:41
  */
 const { regClass, property } = Laya;
 /**游戏界面 */

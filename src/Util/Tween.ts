@@ -37,7 +37,7 @@ export type TEaseFun = (t: number, a: number, b: number, c: number) => number;
 type TToParam = [TEaseFun, any, any];
 
 /**toFun 的属性格式 */
-type TToFunProp = { [key: number]: (t: number) => number }
+type TToFunProp = { [key: string]: (t: number) => number }
 
 
 
@@ -51,7 +51,7 @@ export default class Tween {
     /**计时器 */
     private $timer: Timer;
     /**目标 */
-    private $target: Node | Transform;
+    private $target: Node | Transform | Object;
     /**循环次数 -1 为无限循环 */
     private $loopTime: number = 1;
     /**步骤 */
@@ -64,7 +64,7 @@ export default class Tween {
     private $curTime: number;
 
     /**初始化 */
-    private $init(target: Node | Transform): void {
+    private $init(target: Node | Transform | Object): void {
         let self = this;
         let tweens = target[Tween.cache] || (target[Tween.cache] = []);
         tweens.push(self);
@@ -83,11 +83,11 @@ export default class Tween {
     private $update() {
         let self = this;
         let steps = self.$steps, cSteps = self.$cSteps;
-        // //复制
-        // if (self.$needCopy) {
-        //     self.$needCopy = false;
-        //     cSteps.push.apply(cSteps, steps);
-        // }
+        //复制
+        if (self.$needCopy) {
+            self.$needCopy = false;
+            cSteps.push.apply(cSteps, steps);
+        }
         //执行
         let runTime = self.$timer.runTime, remove = 0;
         for (let i = 0, len = steps.length; i < len; i++) {
@@ -106,7 +106,7 @@ export default class Tween {
         steps = self.$steps;
 
         if (steps && steps.length == 0) {
-            if (self.$loopTime > 0) {
+            if (self.$loopTime > 1) {
                 self.$loopTime--;
                 self.$timer.reStart();
                 self.$steps = cSteps.concat();
@@ -239,7 +239,7 @@ export default class Tween {
     //-------------外部方法--------------
 
     /**获取一个缓动 */
-    static get(target: Node | Transform) {
+    static get(target: Node | Transform | Object) {
         var tween = <Tween>Laya.Pool.getItemByClass(Tween.sign, Tween);
         tween.$init(target);
         return tween;
@@ -254,7 +254,7 @@ export default class Tween {
     * Laya.stage.addChild(sp);
     * Tween.get(sp).set({x: 100, y: 100}).toFrom({x:function(t) {return 100 * t + 100}})
     */
-    toFrom(props: TToFunProp, duration?: number) {
+    toFun(props: TToFunProp, duration?: number) {
         var self = this;
         if (isNaN(duration) || duration <= 0) {
             let obj = {};
@@ -308,8 +308,8 @@ export default class Tween {
 
     }
     /**循环 */
-    loop() {
-        this.$loopTime = -1;
+    loop(loopTime: number = -1) {
+        this.$loopTime = loopTime;
         return this;
     }
     pause() {
@@ -359,7 +359,7 @@ export default class Tween {
             delete target[Tween.cache];
         }
     }
-    static clearAll(root: Laya.Sprite | Laya.Transform) {
+    static clearAll(root: Laya.Sprite | Laya.Transform | Object) {
         Tween.clear(root);
         if (root instanceof Laya.Node) {
             for (let i = 0, len = root.numChildren; i < len; i++) {

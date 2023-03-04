@@ -1,5 +1,6 @@
 import Script3d from "../Script3d/Script3d";
 import Sprite3d from "./Sprite3d";
+import Tween from "./Tween";
 import Vector3 = Laya.Vector3;
 import Sprite3D = Laya.Sprite3D;
 import Quaternion = Laya.Quaternion;
@@ -14,6 +15,7 @@ import Animator = Laya.Animator;
 import PhysicsCollider = Laya.PhysicsCollider;
 import CharacterController = Laya.CharacterController;
 import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
+
 /*
  * @Author: NoRain 
  * @Date: 2023-02-25 17:21:37 
@@ -45,6 +47,17 @@ export default class PlayerController extends Script3d {
 
     jumpTimes: number = 0;
 
+    /**正在被攻击 */
+    private isBeHit: boolean = false;
+    /**被击退 */
+    private beHitSpeed = { value: 0 };
+    /**临时状态 */
+    private angleCache: number = 180;
+    /**击退力度 */
+    private hitStrength: number = 15;
+
+
+
 
 
     onEnable(): void {
@@ -53,6 +66,8 @@ export default class PlayerController extends Script3d {
             console.log("characterController is undefined");
         }
     }
+
+
 
 
     onStart(): void {
@@ -74,22 +89,62 @@ export default class PlayerController extends Script3d {
      */
     move(angle: number) {
         if (!isNaN(angle)) {
+            this.angleCache = angle;
             angle = angle / 180 * Math.PI;
-            let offX = Math.sin(angle) * this.moveSpeed;
-            let offY = Math.cos(angle) * this.moveSpeed;
-            this.moveSpeedV3 = new Vector3(offX, 0, offY);
+            let offX = Math.sin(angle);
+            let offY = Math.cos(angle);
+            this.moveSpeedV3 = new Vector3(offX * this.moveSpeed, 0, offY * this.moveSpeed);
             this.characterController.move(this.moveSpeedV3);
         }
     }
 
+    /**
+     * 被击退
+     * @param angle 击退方向
+     * @param strength 击退力度(0.01-1)
+     */
+    beHit(angle: number, strength?: number) {
+        if (!isNaN(angle)) {
+            if (isNaN(strength)) {
+                strength = 0.01;
+            } else {
+                strength = strength < 0.01 ? 0.01 : strength;
+                strength = strength > 1 ? 1 : strength;
+            }
+            angle = angle / 180 * Math.PI;
+            let offX = Math.sin(angle);
+            let offY = Math.cos(angle);
+            let self = this;
+            this.beHitSpeed = { value: self.hitStrength * this.moveSpeed };
 
+            Tween.get(self.beHitSpeed)
+                .toFun({
+                    value: (t) => {
+                        self.moveSpeedV3 = new Vector3(offX * self.beHitSpeed.value * strength, 0, offY * self.beHitSpeed.value * strength);
+                        self.characterController.move(self.moveSpeedV3);
+                        let num = self.hitStrength * self.moveSpeed - t * self.hitStrength * self.moveSpeed;
+                        return num;
+                    }
+                }, 350)
+                .call(self, () => {
+                    if (self.angleCache == 180) {
+                        self.characterController.move(Sprite3d.ZERO);
+                    } else {
+                        self.move(this.angleCache);
+                    }
+                })
+                .start();
+
+
+        }
+    }
 
 
 
     /**停止移动 */
     stopMove() {
         this.characterController.move(Sprite3d.ZERO);
-        console.log('----stopMove---');
+        this.angleCache = 180;
     }
     /**跳跃 */
     jump() {

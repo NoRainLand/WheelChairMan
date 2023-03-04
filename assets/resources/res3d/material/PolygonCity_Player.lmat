@@ -65,12 +65,12 @@
     "u_SmoothnessScale": 1,
     "u_OcclusionStrength": 1,
     "u_EmissionColor": [
-      1,
-      1,
-      1,
+      0.7131782945736435,
+      0.7131782945736435,
+      0.7131782945736435,
       1
     ],
-    "u_EmissionIntensity": 1,
+    "u_EmissionIntensity": 0,
     "u_DetailTillingOffset": [
       1,
       1,
@@ -81,7 +81,8 @@
     "u_Metallic": 0,
     "u_AlphaTestValue": 0.5,
     "defines": [
-      "ALBEDOTEXTURE"
+      "ALBEDOTEXTURE",
+      "EMISSION"
     ]
   }
 }

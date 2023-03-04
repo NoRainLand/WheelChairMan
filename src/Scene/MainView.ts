@@ -78,7 +78,6 @@ export default class MainView extends UIBase {
 
 
 
-
     }
     addEvent(): void {
         this.regEvent(EventEnum.GOLDCHANGE, this.changeGold, true);

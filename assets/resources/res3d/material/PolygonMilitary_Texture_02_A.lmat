@@ -70,7 +70,7 @@
       1,
       1
     ],
-    "u_EmissionIntensity": 1,
+    "u_EmissionIntensity": 0,
     "u_DetailTillingOffset": [
       1,
       1,
@@ -81,7 +81,8 @@
     "u_Metallic": 0,
     "u_AlphaTestValue": 0.5,
     "defines": [
-      "ALBEDOTEXTURE"
+      "ALBEDOTEXTURE",
+      "EMISSION"
     ]
   }
 }

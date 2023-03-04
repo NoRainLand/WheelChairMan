@@ -1,5 +1,6 @@
 import Script3d from "../../Script3d/Script3d";
 import AnimatorTool from "../../Util/AnimatorTool";
+import Physics3DUtils from "../../Util/Physics3DUtils";
 import PlayerController from "../../Util/PlayerController";
 import Sprite3d from "../../Util/Sprite3d";
 import { GameStepEnum } from "../Enum/GameStepEnum";
@@ -25,7 +26,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-03-03 16:00:31 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 20:43:23
+ * @Last Modified time: 2023-03-04 17:06:01
  */
 const { regClass, property } = Laya;
 /**丧尸 */
@@ -104,6 +105,10 @@ export default class ZombieItem extends Script3d {
     init() {
 
         this.zombieStatus = ZombieStatusEnum.idle;
+
+        this.playerController.characterController.collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER2;
+        this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER3;
+
     }
 
 
@@ -120,7 +125,7 @@ export default class ZombieItem extends Script3d {
             this.skin2.active = true;
         } else if (ran >= 0.6 && ran < 0.75) {
             this.skin3.active = true;
-        } else if (ran >= 0.75 && ran > 0.9) {
+        } else if (ran >= 0.75 && ran < 0.9) {
             this.skin4.active = true;
         } else if (ran >= 0.9) {
             this.skin5.active = true;
@@ -183,7 +188,8 @@ export default class ZombieItem extends Script3d {
 
 
     beHit(pos: Vector3) {
-
+        let angle = Sprite3d.getAngle(pos, this.position)
+        this.playerController.beHit(angle);
     }
 
 

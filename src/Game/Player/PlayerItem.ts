@@ -1,8 +1,12 @@
 import { EventEnum } from "../../Enum/EventEnum";
 import EventMgr from "../../Mgr/EventMgr";
+import VibrateMgr from "../../Mgr/VibrateMgr";
 import AnimatorTool from "../../Util/AnimatorTool";
+import Physics3DUtils from "../../Util/Physics3DUtils";
 import PlayerController from "../../Util/PlayerController";
 import Sprite3d from "../../Util/Sprite3d";
+import Timer from "../../Util/Timer";
+import Tween from "../../Util/Tween";
 import BaseItem from "../BaseItem/BaseItem";
 import { PlayerAniEnum } from "../Enum/PlayerAniEnum";
 import { PlayerStatusEnum } from "../Enum/PlayerStatusEnum";
@@ -28,7 +32,7 @@ import Color = Laya.Color;
  * @Author: NoRain 
  * @Date: 2023-02-25 19:27:37 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 16:27:41
+ * @Last Modified time: 2023-03-04 17:05:13
  */
 const { regClass, property } = Laya;
 /**玩家类 */
@@ -37,6 +41,9 @@ export default class PlayerItem extends BaseItem {
 
     @property()
     weaponPoint: Sprite3D;
+
+    @property()
+    playerSkinMaterial: Material;
 
     constructor() { super() }
 
@@ -70,20 +77,8 @@ export default class PlayerItem extends BaseItem {
 
     private pixelLineSprite3D: PixelLineSprite3D;
 
-
-    onEnable(): void {
-        this.rotNode = this.obj.getChildAt(0) as Sprite3D;
-        this.animator = this.rotNode.getComponent(Animator);
-        if (this.playerData) {
-            this.totalHealth = this.health = this.playerData.health;
-            this.playerController.moveSpeed = this.playerData.speed;
-        }
-        this.playerStatus = PlayerStatusEnum.idle;
-        if (this.pixelLineSprite3D) {
-            this.pixelLineSprite3D.active = false;
-        }
-    }
-
+    /**是否无敌 */
+    isGod: boolean = false;
 
     private $playerController: PlayerController;
 
@@ -96,13 +91,29 @@ export default class PlayerItem extends BaseItem {
 
 
     gameStart() {
+
+        this.rotNode = this.obj.getChildAt(0) as Sprite3D;
+        this.animator = this.rotNode.getComponent(Animator);
+        if (this.playerData) {
+            this.totalHealth = this.health = this.playerData.health;
+            this.playerController.moveSpeed = this.playerData.speed;
+        }
+        this.playerStatus = PlayerStatusEnum.idle;
+
+
+        this.playerController.characterController.collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER1;
+        this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER2;
+
+
         if (!this.pixelLineSprite3D) {
             this.pixelLineSprite3D = new PixelLineSprite3D(1);
             this.obj.addChild(this.pixelLineSprite3D);
             this.pixelLineSprite3D.addLine(new Vector3(0, 1.3, 0), new Vector3(0, 1.3, 5), new Color(1 / 255, 114 / 255, 1 / 255), new Color(1 / 255, 114 / 255, 1 / 255));
+            this.pixelLineSprite3D.active = false;
         }
 
         this.initWeapon();
+
     }
 
     initWeapon() {
@@ -205,6 +216,43 @@ export default class PlayerItem extends BaseItem {
             this.changeAni();
         }
         this.pixelLineSprite3D.active = false;
+    }
+
+
+    onCollisionEnter(collision: Laya.Collision): void {
+        if (!this.isGod) {
+            this.isGod = true;
+            Timer.get(1000, this, () => {
+                this.isGod = false;
+            }).start();
+            this.health--;
+            VibrateMgr.vibrateLong();
+            this.shakeSkin();
+        }
+    }
+
+
+    shakeSkin() {
+        let num = this.playerSkinMaterial.getFloat("u_EmissionIntensity");
+        let data = { value: num }
+        Tween.get(data)
+            .toFun({
+                value: (t) => {
+                    this.playerSkinMaterial.setFloat("u_EmissionIntensity", data.value);
+                    return t * 4 + num;
+                }
+            }, 120)
+            .toFun({
+                value: (t) => {
+                    this.playerSkinMaterial.setFloat("u_EmissionIntensity", data.value);
+                    return (1 - t) * 4 + num;
+                }
+            }, 120)
+            .loop(4)
+            .call(this, () => {
+                this.playerSkinMaterial.setFloat("u_EmissionIntensity", num);
+            })
+            .start();
     }
 
 }

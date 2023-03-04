@@ -38,6 +38,9 @@ export enum LocalStorageEnum {
     PLAYERID = "PLAYERID",
 
     /**已经解锁角色列表 */
-    UNLOCKPLAYERLIST = "UNLOCKPLAYERLIST"
+    UNLOCKPLAYERLIST = "UNLOCKPLAYERLIST",
+
+    /**是否震动 */
+    ISVIBRATE = "ISVIBRATE",
 
 }

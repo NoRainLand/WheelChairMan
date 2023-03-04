@@ -1,5 +1,6 @@
 
 import ProjectConfig from "./Config/ProjectConfig";
+import PlatformMgr from "./Platform/PlatformMgr";
 import UIBaseMgr from "./UIBase/UIBaseMgr";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
@@ -13,7 +14,7 @@ import Sprite = Laya.Sprite;
  * @Author: NoRain 
  * @Date: 2023-02-06 16:41:32 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 11:07:15
+ * @Last Modified time: 2023-03-04 16:52:44
  */
 const { regClass, property } = Laya;
 
@@ -45,6 +46,7 @@ export class GameEntry extends Laya.Script {
         // Laya.Shader3D.PERIOD_MATERIAL
         this.GameEntry = this.owner as Scene;
         this.UIBase = this.GameEntry.getChildByName("UIBase") as Box;
+        PlatformMgr.instance.init();
         UIBaseMgr.instance.init(this.UIBase);
         UIBaseMgr.instance.openLoadView();
     }

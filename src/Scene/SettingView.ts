@@ -60,7 +60,7 @@ export default class SettingView extends UIBase {
 
         this.$sliderBgm.init(this, this.bgmChange);
         this.$sliderSfx.init(this, this.sfxChange);
-        this.$toggleShake.init(this, this.shakeChange);
+        this.$toggleShake.init(this, this.shakeChange,VibrateMgr.isVibrate);
 
 
     }
@@ -84,6 +84,8 @@ export default class SettingView extends UIBase {
     }
     shakeChange(value: boolean) {
         VibrateMgr.isVibrate = value;
+
+
     }
     changeLanguageIcon() {
         this.imgLan.skin = ResLoader.instance.getUrlById(LocalizationMgr.getFlagSkinIdById(LocalizationMgr.Language));
