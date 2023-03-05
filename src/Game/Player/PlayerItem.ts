@@ -32,7 +32,7 @@ import Color = Laya.Color;
  * @Author: NoRain 
  * @Date: 2023-02-25 19:27:37 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-04 17:05:13
+ * @Last Modified time: 2023-03-05 21:14:21
  */
 const { regClass, property } = Laya;
 /**玩家类 */
@@ -44,6 +44,9 @@ export default class PlayerItem extends BaseItem {
 
     @property()
     playerSkinMaterial: Material;
+
+    @property()
+    shootPos: Sprite3D;
 
     constructor() { super() }
 
@@ -107,13 +110,21 @@ export default class PlayerItem extends BaseItem {
 
         if (!this.pixelLineSprite3D) {
             this.pixelLineSprite3D = new PixelLineSprite3D(1);
-            this.obj.addChild(this.pixelLineSprite3D);
-            this.pixelLineSprite3D.addLine(new Vector3(0, 1.3, 0), new Vector3(0, 1.3, 5), new Color(1 / 255, 114 / 255, 1 / 255), new Color(1 / 255, 114 / 255, 1 / 255));
+            this.shootPos.addChild(this.pixelLineSprite3D);
+            this.pixelLineSprite3D.addLine(new Vector3(0, 1.3, 1.2), new Vector3(0, 1.3, 5), new Color(1 / 255, 114 / 255, 1 / 255), new Color(1 / 255, 114 / 255, 1 / 255));
             this.pixelLineSprite3D.active = false;
         }
 
         this.initWeapon();
 
+    }
+
+
+    update(time: number): void {
+
+
+        // let rig:Rigidbody3D;
+        // rig.wakeUp();
     }
 
     initWeapon() {
@@ -125,6 +136,7 @@ export default class PlayerItem extends BaseItem {
         }
         this.weaponItem.localPosition = Sprite3d.ZERO;
         this.weaponItem.localRotationEuler = Sprite3d.ZERO;
+        this.weaponItem.shootPos = this.shootPos;
     }
 
 
@@ -203,8 +215,10 @@ export default class PlayerItem extends BaseItem {
             this.playerStatus = PlayerStatusEnum.runAndShoot;
             this.changeAni();
         }
-        this.pixelLineSprite3D.transform.localRotationEulerY = angle;
         this.pixelLineSprite3D.active = true;
+
+        this.weaponItem.shoot(angle);
+
     }
     stopShoot() {
         if (this.playerStatus == PlayerStatusEnum.death) return;
@@ -216,6 +230,9 @@ export default class PlayerItem extends BaseItem {
             this.changeAni();
         }
         this.pixelLineSprite3D.active = false;
+
+
+        this.weaponItem.stopShoot()
     }
 
 
@@ -230,6 +247,8 @@ export default class PlayerItem extends BaseItem {
             this.shakeSkin();
         }
     }
+
+
 
 
     shakeSkin() {

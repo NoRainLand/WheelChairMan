@@ -22,7 +22,7 @@ import DirectionLight = Laya.DirectionLight;
  * @Author: NoRain 
  * @Date: 2023-02-27 14:09:36 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 14:46:15
+ * @Last Modified time: 2023-03-05 18:16:25
  */
 const { regClass, property } = Laya;
 /**游戏界面 */
@@ -38,8 +38,9 @@ export default class GameScene extends Scene3d {
     playerStage: Sprite3D;
     @property()
     zombieStage: Sprite3D;
+    @property()
+    bulletStage: Sprite3D;
 
-    
 
     constructor() { super() }
 

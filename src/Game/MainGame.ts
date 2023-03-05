@@ -5,6 +5,7 @@ import EventMgr from "../Mgr/EventMgr";
 import GameScene from "../Scene3d/GameScene";
 import Scene3dMgr from "../Scene3dBase/Scene3dMgr";
 import Timer from "../Util/Timer";
+import BulletMgr from "./Bullet/BulletMgr";
 import EnemyMgr from "./Enemy/EnemyMgr";
 import { GameStepEnum } from "./Enum/GameStepEnum";
 import GroundMgr from "./Ground/GroundMgr";
@@ -29,7 +30,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-02-20 15:26:58 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 21:22:51
+ * @Last Modified time: 2023-03-05 20:31:11
  */
 const { regClass, property } = Laya;
 /**主游戏逻辑 */
@@ -46,7 +47,7 @@ export default class MainGame {
 
     private $gameStep: GameStepEnum;
 
-    private $gameScene: GameScene;
+    private gameScene: GameScene;
 
     gameTime: number;
     gameTimer: Timer;
@@ -59,10 +60,12 @@ export default class MainGame {
             WeaponMgr.instance.init();
             PlayerMgr.instance.init();
             EnemyMgr.instance.init();
+            BulletMgr.instance.init();
+
         }
     }
     /**获取当前游戏的流程 */
-    getGameStep(): number {
+    get gameStep(): number {
         return this.$gameStep;
     }
 
@@ -77,7 +80,7 @@ export default class MainGame {
     reset() {
         this.$gameStep = GameStepEnum.ResetGame;
         this.goToMain();
-        this.$gameScene = null;
+        this.gameScene = null;
     }
 
     /**开始选择玩家 */
@@ -103,20 +106,22 @@ export default class MainGame {
     gameStart(gameScene: GameScene) {
         this.$gameStep = GameStepEnum.GameStart;
 
-        this.$gameScene = gameScene;
+        this.gameScene = gameScene;
         // console.log(gameScene);
 
 
 
-        GroundMgr.instance.gameStart(this.$gameScene.groundStage);
-        PlayerMgr.instance.gameStart(this.$gameScene.playerStage);
+        GroundMgr.instance.gameStart(this.gameScene.groundStage);
+        PlayerMgr.instance.gameStart(this.gameScene.playerStage);
+        BulletMgr.instance.gameStart(this.gameScene.bulletStage);
+        WeaponMgr.instance.gameStart();
 
-        this.$gameScene.cameraItem.initFallowTarget(PlayerMgr.instance.$playerItem.owner as Sprite3D);
+        this.gameScene.cameraItem.initFallowTarget(PlayerMgr.instance.$playerItem.owner as Sprite3D);
 
 
 
         Timer.get(1400, this, () => {
-            EnemyMgr.instance.gameStart(this.$gameScene.zombieStage);
+            EnemyMgr.instance.gameStart(this.gameScene.zombieStage);
         }).start();
 
         this.setGameTime();

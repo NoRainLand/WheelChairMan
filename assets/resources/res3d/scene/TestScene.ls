@@ -7,6 +7,7 @@
   "top": 0,
   "bottom": 0,
   "name": "Scene2D",
+  "mouseThrough": true,
   "_$child": [
     {
       "_$id": "n9gjxcltvl",
@@ -48,6 +49,20 @@
         "_$uuid": "42939f11-7ed8-41e3-a5f1-67585c907054",
         "_$type": "LightingSettings"
       },
+      "_$comp": [
+        {
+          "_$type": "703165f6-1bb3-483a-b1f7-918d3418e246",
+          "scriptPath": "../src/TestPhy.ts",
+          "player1": {
+            "_$ref": "wgjfihkp",
+            "_$type": "CharacterController"
+          },
+          "player2": {
+            "_$ref": "a5fbhnz4",
+            "_$type": "CharacterController"
+          }
+        }
+      ],
       "_$child": [
         {
           "_$id": "6jx8h8bvc6",
@@ -160,7 +175,8 @@
                   "_$uuid": "6f90bbb0-bcb2-4311-8a9d-3d8277522098",
                   "_$type": "Material"
                 }
-              ]
+              ],
+              "renderMode": null
             }
           ]
         },
@@ -213,22 +229,28 @@
                   "_$uuid": "9324af99-30e4-414a-acb2-4b80543f74ea",
                   "_$type": "Material"
                 }
-              ]
+              ],
+              "renderMode": null
             }
           ]
         },
         {
-          "_$id": "527b38tp",
-          "_$prefab": "bca80fa9-121e-42a7-95a8-3365c3b71fdc",
+          "_$id": "1pbeo0xf",
+          "_$type": "Sprite3D",
+          "name": "GameScene"
+        },
+        {
+          "_$id": "a5fbhnz4",
+          "_$prefab": "579ef149-4b16-4341-96ab-09bbd00ad5a2",
           "name": "Zombie",
           "active": true,
           "layer": 0,
           "transform": {
             "localPosition": {
               "_$type": "Vector3",
-              "x": 0,
-              "y": 0,
-              "z": 0
+              "x": -2.599147137516411e-7,
+              "y": -6.541129238257781e-8,
+              "z": -6.500518168195413e-8
             },
             "localRotation": {
               "_$type": "Quaternion",
@@ -240,9 +262,26 @@
           }
         },
         {
-          "_$id": "1pbeo0xf",
-          "_$type": "Sprite3D",
-          "name": "GameScene"
+          "_$id": "wgjfihkp",
+          "_$prefab": "12145054-5d9c-45e3-870c-db05a181778e",
+          "name": "BusinessMan",
+          "active": true,
+          "layer": 0,
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": -2.599147137516411e-7,
+              "y": -6.541129238257781e-8,
+              "z": -7.332542398122381
+            },
+            "localRotation": {
+              "_$type": "Quaternion",
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "w": 1
+            }
+          }
         }
       ]
     }

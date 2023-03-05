@@ -41,6 +41,9 @@
       "playerSkinMaterial": {
         "_$uuid": "f39ae5c8-fe91-4981-a06e-98d3d26aa3c7",
         "_$type": "Material"
+      },
+      "shootPos": {
+        "_$ref": "et71k2rk"
       }
     }
   ],
@@ -223,6 +226,18 @@
               "x": 10000,
               "y": 10000,
               "z": 10000
+            }
+          }
+        },
+        {
+          "_$id": "et71k2rk",
+          "_$type": "Sprite3D",
+          "name": "ShootPos",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "y": 1.5,
+              "z": 1.2000000476837158
             }
           }
         }

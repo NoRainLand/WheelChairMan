@@ -1,0 +1,156 @@
+{
+  "_$ver": 1,
+  "_$id": "j646dvjj",
+  "_$type": "Sprite3D",
+  "name": "Bullet_Revolver",
+  "transform": {
+    "localPosition": {
+      "_$type": "Vector3",
+      "y": 0.3718132673968948
+    }
+  },
+  "_$comp": [
+    {
+      "_$type": "c08609ed-ebe2-4062-8e7f-0779439120be",
+      "scriptPath": "../src/Game/Bullet/BulletItem.ts",
+      "phy": {
+        "_$ref": "j646dvjj",
+        "_$type": "PhysicsCollider"
+      }
+    },
+    {
+      "_$type": "PhysicsCollider",
+      "isTrigger": true,
+      "colliderShape": {
+        "_$type": "BoxColliderShape",
+        "sizeX": 0.15,
+        "sizeY": 0.15,
+        "sizeZ": 0.2
+      }
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "#40",
+      "_$type": "Sprite3D",
+      "name": "Bullet_Revolver",
+      "transform": {
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": -0.7081770951931118,
+          "y": 8.659550744536745e-17,
+          "z": 8.659550744536745e-17,
+          "w": 0.706034844638596
+        },
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 0.009999999776482582,
+          "y": 0.010000002570450306,
+          "z": 0.010000002570450306
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "MeshFilter",
+          "sharedMesh": {
+            "_$uuid": "c179dad4-6b2e-493a-bef2-f1cf078f3bff@lm0",
+            "_$type": "Mesh"
+          }
+        },
+        {
+          "_$type": "MeshRenderer",
+          "receiveShadow": true,
+          "castShadow": true,
+          "sharedMaterials": [
+            {
+              "_$uuid": "64c4d288-cfe0-42da-ade8-7058702b4b7b",
+              "_$type": "Material"
+            }
+          ],
+          "renderMode": null
+        }
+      ]
+    },
+    {
+      "_$id": "pkgd5h60",
+      "_$type": "Sprite3D",
+      "name": "Sprite3D",
+      "_$comp": [
+        {
+          "_$type": "TrailRenderer",
+          "sharedMaterials": [
+            {
+              "_$uuid": "0040663a-315f-41f6-b22a-30224056f720",
+              "_$type": "Material"
+            }
+          ],
+          "renderMode": null,
+          "_trailFilter": {
+            "alignment": 1,
+            "widthCurve": [
+              {
+                "_$type": "FloatKeyframe",
+                "inTangent": 0,
+                "outTangent": 0,
+                "value": 1,
+                "inWeight": 0.33333,
+                "outWeight": 0.33333,
+                "weightedMode": 0,
+                "time": 0
+              },
+              {
+                "_$type": "FloatKeyframe",
+                "inTangent": 0,
+                "outTangent": 0,
+                "value": 0.4529411764705883,
+                "inWeight": 0.33333,
+                "outWeight": 0.33333,
+                "weightedMode": 0,
+                "time": 0.9923224568138196
+              }
+            ],
+            "colorGradient": {
+              "_$type": "Gradient",
+              "_alphaElements": {
+                "_$type": "Float32Array",
+                "value": [
+                  0,
+                  1,
+                  1,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "_colorAlphaKeysCount": 2,
+              "_rgbElements": {
+                "_$type": "Float32Array",
+                "value": [
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "_colorRGBKeysCount": 2
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

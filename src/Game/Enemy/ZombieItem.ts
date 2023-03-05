@@ -1,6 +1,5 @@
 import Script3d from "../../Script3d/Script3d";
 import AnimatorTool from "../../Util/AnimatorTool";
-import Physics3DUtils from "../../Util/Physics3DUtils";
 import PlayerController from "../../Util/PlayerController";
 import Sprite3d from "../../Util/Sprite3d";
 import { GameStepEnum } from "../Enum/GameStepEnum";
@@ -26,7 +25,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-03-03 16:00:31 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-04 17:06:01
+ * @Last Modified time: 2023-03-05 20:42:34
  */
 const { regClass, property } = Laya;
 /**丧尸 */
@@ -106,8 +105,8 @@ export default class ZombieItem extends Script3d {
 
         this.zombieStatus = ZombieStatusEnum.idle;
 
-        this.playerController.characterController.collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER2;
-        this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER3;
+        // this.playerController.characterController.collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER2;
+        // this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER3 | Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER1;
 
     }
 
@@ -133,7 +132,7 @@ export default class ZombieItem extends Script3d {
     }
 
     update(time: number): void {
-        if (MainGame.instance.getGameStep() == GameStepEnum.GameStart) {
+        if (MainGame.instance.gameStep == GameStepEnum.GameStart) {
             this.logicTime += time;
             if (this.logicTime > 4 * 15) {
                 this.logicTime = 0;
@@ -192,5 +191,13 @@ export default class ZombieItem extends Script3d {
         this.playerController.beHit(angle);
     }
 
+
+    onTriggerEnter(other: Laya.PhysicsComponent | Laya.ColliderBase, self?: Laya.ColliderBase, contact?: any): void {
+        console.log('zombie_onTriggerEnter');
+    }
+
+    onCollisionEnter(collision: Laya.Collision): void {
+        console.log("zombie_onCollisionEnter");
+    }
 
 }

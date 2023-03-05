@@ -2,7 +2,7 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-28 21:46:31
+ * @Last Modified time: 2023-03-05 19:38:21
 */
 
 import { DataTableEnum } from "../../Enum/DataTableEnum";
@@ -36,6 +36,8 @@ export default class WeaponMgr {
     private weaponMap: Map<number, Sprite3D>;
     selectWeaponId: number = 0;
 
+    weaponItem: WeaponItem;
+
     init() {
         this.weaponDataMap = ResLoader.instance.getDataTableById(DataTableEnum.Weapon);
     }
@@ -58,9 +60,14 @@ export default class WeaponMgr {
                 weaponItem.weaponData = weaponData;
             }
         }
+        this.weaponItem = weaponItem;
+        weaponItem.init();
         return weaponItem;
     }
 
+    gameStart() {
+        // this.weaponItem && this.weaponItem.gameStart();
+    }
 
     /**获取当前选择的武器数据 */
     getSelectedWeaponData(weaponId: number) {

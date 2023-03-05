@@ -37,6 +37,13 @@
           "2jl6mdjv",
           "#134"
         ]
+      },
+      "playerSkinMaterial": {
+        "_$uuid": "6667f011-0a3b-4e54-a832-55bc0d17542f",
+        "_$type": "Material"
+      },
+      "shootPos": {
+        "_$ref": "czzqjjkd"
       }
     }
   ],
@@ -166,6 +173,18 @@
               ]
             }
           ]
+        },
+        {
+          "_$id": "czzqjjkd",
+          "_$type": "Sprite3D",
+          "name": "ShootPos",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "y": 1.5,
+              "z": 1.2000000476837158
+            }
+          }
         }
       ]
     }

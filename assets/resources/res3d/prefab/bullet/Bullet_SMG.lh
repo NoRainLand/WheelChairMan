@@ -1,0 +1,33 @@
+{
+  "_$ver": 1,
+  "_$id": "m6jvju7a",
+  "_$type": "Sprite3D",
+  "name": "Bullet_SMG",
+  "transform": {
+    "localPosition": {
+      "_$type": "Vector3",
+      "y": 0.05262788894184006,
+      "z": 0.5775658767232783
+    }
+  },
+  "_$comp": [
+    {
+      "_$type": "PhysicsCollider",
+      "isTrigger": true,
+      "colliderShape": {
+        "_$type": "BoxColliderShape",
+        "sizeX": 0.1,
+        "sizeY": 0.1,
+        "sizeZ": 0.1
+      }
+    },
+    {
+      "_$type": "c08609ed-ebe2-4062-8e7f-0779439120be",
+      "scriptPath": "../src/Game/Bullet/BulletItem.ts",
+      "phy": {
+        "_$ref": "m6jvju7a",
+        "_$type": "PhysicsCollider"
+      }
+    }
+  ]
+}

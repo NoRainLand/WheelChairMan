@@ -37,6 +37,13 @@
           "uv0c4xnx",
           "#132"
         ]
+      },
+      "playerSkinMaterial": {
+        "_$uuid": "8146bace-20e7-4dc1-b1d2-a5919af653b1",
+        "_$type": "Material"
+      },
+      "shootPos": {
+        "_$ref": "32t13obs"
       }
     }
   ],
@@ -72,20 +79,126 @@
           "controllerLayers": [
             {
               "_$type": "AnimatorControllerLayer",
-              "name": "Animation Base Layer",
+              "name": "main",
               "states": [
                 {
                   "_$type": "AnimatorState",
-                  "name": "Animation Base Layer",
+                  "name": "death",
                   "clipStart": 0,
                   "clip": {
                     "_$uuid": "3efb5f12-0b66-4836-adb8-dc36b0d4c718@lani0",
                     "_$type": "AnimationClip"
                   },
                   "soloTransitions": []
+                },
+                {
+                  "_$type": "AnimatorState",
+                  "name": "idle",
+                  "clipStart": 0,
+                  "clip": {
+                    "_$uuid": "3efb5f12-0b66-4836-adb8-dc36b0d4c718@lani1",
+                    "_$type": "AnimationClip"
+                  },
+                  "soloTransitions": []
                 }
               ],
-              "defaultStateName": "Animation Base Layer"
+              "defaultStateName": "idle"
+            },
+            {
+              "_$type": "AnimatorControllerLayer",
+              "name": "up",
+              "playOnWake": false,
+              "states": [
+                {
+                  "_$type": "AnimatorState",
+                  "name": "idle",
+                  "clipStart": 0,
+                  "clip": {
+                    "_$uuid": "3efb5f12-0b66-4836-adb8-dc36b0d4c718@lani1",
+                    "_$type": "AnimationClip"
+                  },
+                  "soloTransitions": []
+                },
+                {
+                  "_$type": "AnimatorState",
+                  "name": "death",
+                  "clipStart": 0,
+                  "clip": {
+                    "_$uuid": "3efb5f12-0b66-4836-adb8-dc36b0d4c718@lani0",
+                    "_$type": "AnimationClip"
+                  },
+                  "soloTransitions": []
+                },
+                {
+                  "_$type": "AnimatorState",
+                  "name": "runUp",
+                  "clipStart": 0,
+                  "clip": {
+                    "_$uuid": "3efb5f12-0b66-4836-adb8-dc36b0d4c718@lani3",
+                    "_$type": "AnimationClip"
+                  },
+                  "soloTransitions": []
+                },
+                {
+                  "_$type": "AnimatorState",
+                  "name": "shoot",
+                  "clipStart": 0,
+                  "clip": {
+                    "_$uuid": "3efb5f12-0b66-4836-adb8-dc36b0d4c718@lani4",
+                    "_$type": "AnimationClip"
+                  },
+                  "soloTransitions": []
+                }
+              ],
+              "defaultStateName": "shoot"
+            },
+            {
+              "_$type": "AnimatorControllerLayer",
+              "name": "down",
+              "playOnWake": false,
+              "states": [
+                {
+                  "_$type": "AnimatorState",
+                  "name": "idle",
+                  "clipStart": 0,
+                  "clip": {
+                    "_$uuid": "3efb5f12-0b66-4836-adb8-dc36b0d4c718@lani1",
+                    "_$type": "AnimationClip"
+                  },
+                  "soloTransitions": []
+                },
+                {
+                  "_$type": "AnimatorState",
+                  "name": "death",
+                  "clipStart": 0,
+                  "clip": {
+                    "_$uuid": "3efb5f12-0b66-4836-adb8-dc36b0d4c718@lani0",
+                    "_$type": "AnimationClip"
+                  },
+                  "soloTransitions": []
+                },
+                {
+                  "_$type": "AnimatorState",
+                  "name": "stand",
+                  "clipStart": 0,
+                  "clip": {
+                    "_$uuid": "3efb5f12-0b66-4836-adb8-dc36b0d4c718@lani5",
+                    "_$type": "AnimationClip"
+                  },
+                  "soloTransitions": []
+                },
+                {
+                  "_$type": "AnimatorState",
+                  "name": "runDown",
+                  "clipStart": 0,
+                  "clip": {
+                    "_$uuid": "3efb5f12-0b66-4836-adb8-dc36b0d4c718@lani2",
+                    "_$type": "AnimationClip"
+                  },
+                  "soloTransitions": []
+                }
+              ],
+              "defaultStateName": "runDown"
             }
           ]
         }
@@ -113,6 +226,18 @@
               "x": 100,
               "y": 100,
               "z": 100
+            }
+          }
+        },
+        {
+          "_$id": "32t13obs",
+          "_$type": "Sprite3D",
+          "name": "ShootPos",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "y": 1.5,
+              "z": 1.2000000476837158
             }
           }
         }
