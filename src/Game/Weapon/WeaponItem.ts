@@ -3,6 +3,7 @@ import Timer from "../../Util/Timer";
 import BulletMgr from "../Bullet/BulletMgr";
 import { GameStepEnum } from "../Enum/GameStepEnum";
 import MainGame from "../MainGame";
+import PlayerItem from "../Player/PlayerItem";
 import Vector3 = Laya.Vector3;
 import Sprite3D = Laya.Sprite3D;
 import Quaternion = Laya.Quaternion;
@@ -21,7 +22,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-02-28 17:52:41 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-05 21:17:17
+ * @Last Modified time: 2023-03-06 11:39:32
  */
 const { regClass, property } = Laya;
 /**武器 */
@@ -61,6 +62,8 @@ export default class WeaponItem extends Script3d {
 
 
     shootPos: Sprite3D;
+
+    playerItem: PlayerItem;
 
     constructor() { super() }
 
@@ -104,6 +107,7 @@ export default class WeaponItem extends Script3d {
             this.bulletNum = this.totalBulletNum;
             this.isReload = false;
         }).start();
+        this.playerItem?.reloadTips?.showTips(this.reloadTime);
     }
 
 
@@ -121,6 +125,7 @@ export default class WeaponItem extends Script3d {
             if (this.canShoot == false) {
                 this.waitShootInterval += time;
                 if (this.waitShootInterval >= this.shotInterval) {
+                    this.waitShootInterval = 0;
                     this.canShoot = true;
 
                 }

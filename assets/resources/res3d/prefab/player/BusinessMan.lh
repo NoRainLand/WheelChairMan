@@ -44,6 +44,9 @@
       },
       "shootPos": {
         "_$ref": "et71k2rk"
+      },
+      "UI3D": {
+        "_$ref": "bo4ilmfd"
       }
     }
   ],
@@ -239,6 +242,33 @@
               "y": 1.5,
               "z": 1.2000000476837158
             }
+          }
+        }
+      ]
+    },
+    {
+      "_$id": "bo4ilmfd",
+      "_$type": "Sprite3D",
+      "name": "3DUI",
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "y": 2.5
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "UI3D",
+          "renderMode": 2,
+          "prefab": {
+            "_$uuid": "7fd2816b-dce1-40f9-9382-0a811ea06aaa",
+            "_$type": "Prefab"
+          },
+          "resolutionRate": 400,
+          "scale": {
+            "_$type": "Vector2",
+            "x": 2.249,
+            "y": 0.4
           }
         }
       ]

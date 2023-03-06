@@ -49,20 +49,6 @@
         "_$uuid": "42939f11-7ed8-41e3-a5f1-67585c907054",
         "_$type": "LightingSettings"
       },
-      "_$comp": [
-        {
-          "_$type": "703165f6-1bb3-483a-b1f7-918d3418e246",
-          "scriptPath": "../src/TestPhy.ts",
-          "player1": {
-            "_$ref": "wgjfihkp",
-            "_$type": "CharacterController"
-          },
-          "player2": {
-            "_$ref": "a5fbhnz4",
-            "_$type": "CharacterController"
-          }
-        }
-      ],
       "_$child": [
         {
           "_$id": "6jx8h8bvc6",
@@ -181,107 +167,9 @@
           ]
         },
         {
-          "_$id": "5yl83wjw",
-          "_$type": "Sprite3D",
-          "name": "Plane",
-          "isStatic": true,
-          "transform": {
-            "localPosition": {
-              "_$type": "Vector3",
-              "x": -7.369790540365005,
-              "y": 0.449368914323244,
-              "z": 3.279586469433659
-            },
-            "localRotation": {
-              "_$type": "Quaternion",
-              "x": -0.7071067811865475,
-              "w": 0.7071067811865476
-            },
-            "localScale": {
-              "_$type": "Vector3",
-              "x": 100,
-              "y": 100,
-              "z": 1
-            }
-          },
-          "_$comp": [
-            {
-              "_$type": "MeshFilter",
-              "sharedMesh": {
-                "_$uuid": "4a4afb22-ef83-40a2-a6a8-212a2d20c52f",
-                "_$type": "Mesh"
-              }
-            },
-            {
-              "_$type": "MeshRenderer",
-              "receiveShadow": true,
-              "castShadow": true,
-              "lightmapIndex": 0,
-              "lightmapScaleOffset": {
-                "_$type": "Vector4",
-                "x": 0.992,
-                "y": 0.992,
-                "z": 0.008,
-                "w": 0.008
-              },
-              "sharedMaterials": [
-                {
-                  "_$uuid": "9324af99-30e4-414a-acb2-4b80543f74ea",
-                  "_$type": "Material"
-                }
-              ],
-              "renderMode": null
-            }
-          ]
-        },
-        {
           "_$id": "1pbeo0xf",
           "_$type": "Sprite3D",
           "name": "GameScene"
-        },
-        {
-          "_$id": "a5fbhnz4",
-          "_$prefab": "579ef149-4b16-4341-96ab-09bbd00ad5a2",
-          "name": "Zombie",
-          "active": true,
-          "layer": 0,
-          "transform": {
-            "localPosition": {
-              "_$type": "Vector3",
-              "x": -2.599147137516411e-7,
-              "y": -6.541129238257781e-8,
-              "z": -6.500518168195413e-8
-            },
-            "localRotation": {
-              "_$type": "Quaternion",
-              "x": 0,
-              "y": 0,
-              "z": 0,
-              "w": 1
-            }
-          }
-        },
-        {
-          "_$id": "wgjfihkp",
-          "_$prefab": "12145054-5d9c-45e3-870c-db05a181778e",
-          "name": "BusinessMan",
-          "active": true,
-          "layer": 0,
-          "transform": {
-            "localPosition": {
-              "_$type": "Vector3",
-              "x": -2.599147137516411e-7,
-              "y": -6.541129238257781e-8,
-              "z": -7.332542398122381
-            },
-            "localRotation": {
-              "_$type": "Quaternion",
-              "x": 0,
-              "y": 0,
-              "z": 0,
-              "w": 1
-            }
-          }
         }
       ]
     }

@@ -4,10 +4,12 @@ import VibrateMgr from "../../Mgr/VibrateMgr";
 import AnimatorTool from "../../Util/AnimatorTool";
 import Physics3DUtils from "../../Util/Physics3DUtils";
 import PlayerController from "../../Util/PlayerController";
+import ReloadTips from "../../Util/ReloadTips";
 import Sprite3d from "../../Util/Sprite3d";
 import Timer from "../../Util/Timer";
 import Tween from "../../Util/Tween";
 import BaseItem from "../BaseItem/BaseItem";
+import EnemyMgr from "../Enemy/EnemyMgr";
 import { PlayerAniEnum } from "../Enum/PlayerAniEnum";
 import { PlayerStatusEnum } from "../Enum/PlayerStatusEnum";
 import WeaponItem from "../Weapon/WeaponItem";
@@ -32,7 +34,7 @@ import Color = Laya.Color;
  * @Author: NoRain 
  * @Date: 2023-02-25 19:27:37 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-05 21:14:21
+ * @Last Modified time: 2023-03-06 16:27:54
  */
 const { regClass, property } = Laya;
 /**玩家类 */
@@ -47,6 +49,9 @@ export default class PlayerItem extends BaseItem {
 
     @property()
     shootPos: Sprite3D;
+
+    @property()
+    UI3D: Sprite3D;
 
     constructor() { super() }
 
@@ -92,6 +97,14 @@ export default class PlayerItem extends BaseItem {
         return this.$playerController;
     }
 
+    /**换弹提示 */
+    reloadTips: ReloadTips;
+
+
+    onEnable(): void {
+
+
+    }
 
     gameStart() {
 
@@ -111,12 +124,13 @@ export default class PlayerItem extends BaseItem {
         if (!this.pixelLineSprite3D) {
             this.pixelLineSprite3D = new PixelLineSprite3D(1);
             this.shootPos.addChild(this.pixelLineSprite3D);
-            this.pixelLineSprite3D.addLine(new Vector3(0, 1.3, 1.2), new Vector3(0, 1.3, 5), new Color(1 / 255, 114 / 255, 1 / 255), new Color(1 / 255, 114 / 255, 1 / 255));
+            this.pixelLineSprite3D.addLine(new Vector3(0, -0.1, 0), new Vector3(0, -0.1, 3), new Color(1 / 255, 114 / 255, 1 / 255, 0.7), new Color(1 / 255, 114 / 255, 1 / 255, 0.3));
             this.pixelLineSprite3D.active = false;
         }
 
         this.initWeapon();
 
+        this.reloadTips = Sprite3d.get3DUIScript(this.UI3D, ReloadTips);
     }
 
 
@@ -129,7 +143,7 @@ export default class PlayerItem extends BaseItem {
 
     initWeapon() {
         if (!this.weaponItem) {
-            this.weaponItem = WeaponMgr.instance.getSelectWeapon(this.playerData["weaponId"]);
+            this.weaponItem = WeaponMgr.instance.getSelectWeapon(this.playerData["weaponId"], this);
             this.weaponPoint.addChild(this.weaponItem.owner);
         } else {
             this.weaponItem.owner.active = true;
@@ -243,11 +257,11 @@ export default class PlayerItem extends BaseItem {
                 this.isGod = false;
             }).start();
             this.health--;
+            EnemyMgr.instance.explode(this.position, 2.5, 0);
             VibrateMgr.vibrateLong();
             this.shakeSkin();
         }
     }
-
 
 
 

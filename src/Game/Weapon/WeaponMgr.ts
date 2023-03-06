@@ -2,11 +2,12 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-05 19:38:21
+ * @Last Modified time: 2023-03-06 11:38:29
 */
 
 import { DataTableEnum } from "../../Enum/DataTableEnum";
 import ResLoader from "../../Util/ResLoader";
+import PlayerItem from "../Player/PlayerItem";
 import WeaponItem from "./WeaponItem";
 import Vector3 = Laya.Vector3;
 import Sprite3D = Laya.Sprite3D;
@@ -42,7 +43,7 @@ export default class WeaponMgr {
         this.weaponDataMap = ResLoader.instance.getDataTableById(DataTableEnum.Weapon);
     }
 
-    getSelectWeapon(weaponId: number): WeaponItem {
+    getSelectWeapon(weaponId: number, owner: PlayerItem): WeaponItem {
         console.log(weaponId);
         let obj: Sprite3D;
         let weaponItem: WeaponItem;
@@ -61,6 +62,7 @@ export default class WeaponMgr {
             }
         }
         this.weaponItem = weaponItem;
+        weaponItem.playerItem = owner;
         weaponItem.init();
         return weaponItem;
     }

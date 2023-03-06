@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-25 17:15:05 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-27 19:34:46
+ * @Last Modified time: 2023-03-06 16:11:55
  */
 
 import EventMgr from "../../Mgr/EventMgr";
@@ -129,9 +129,9 @@ export default class BaseItem extends Script3d {
                     Pool.recover(this.obj.name, this.obj);
                 }
             }
-            this.destroy();
+            // this.destroy();
         } else {
-            this.destroy();
+            // this.destroy();
         }
     }
     /**额外清理

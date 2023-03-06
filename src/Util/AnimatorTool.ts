@@ -42,7 +42,7 @@ export default class AnimatorTool {
      * @param callback 回调函数
      * @param layerIndex 层级
      */
-    static initEvent(ani: Laya.Animator, name: string, caller: any, callback: Function, layerIndex: number = 0) {
+    static addEvent(ani: Laya.Animator, name: string, caller: any, callback: Function, layerIndex: number = 0) {
         let layer: Laya.AnimatorControllerLayer = ani.getControllerLayer(layerIndex);
         let aniStatus: Laya.AnimatorState = layer.getAnimatorState(name);
         if (aniStatus) {

@@ -12,11 +12,7 @@
   "_$comp": [
     {
       "_$type": "c08609ed-ebe2-4062-8e7f-0779439120be",
-      "scriptPath": "../src/Game/Bullet/BulletItem.ts",
-      "phy": {
-        "_$ref": "j646dvjj",
-        "_$type": "PhysicsCollider"
-      }
+      "scriptPath": "../src/Game/Bullet/BulletItem.ts"
     },
     {
       "_$type": "PhysicsCollider",
@@ -44,9 +40,9 @@
         },
         "localScale": {
           "_$type": "Vector3",
-          "x": 0.009999999776482582,
-          "y": 0.010000002570450306,
-          "z": 0.010000002570450306
+          "x": 0.03,
+          "y": 0.03,
+          "z": 0.03
         }
       },
       "_$comp": [
@@ -75,6 +71,12 @@
       "_$id": "pkgd5h60",
       "_$type": "Sprite3D",
       "name": "Sprite3D",
+      "transform": {
+        "localPosition": {
+          "_$type": "Vector3",
+          "z": -0.16025747948360286
+        }
+      },
       "_$comp": [
         {
           "_$type": "TrailRenderer",
@@ -86,7 +88,6 @@
           ],
           "renderMode": null,
           "_trailFilter": {
-            "alignment": 1,
             "widthCurve": [
               {
                 "_$type": "FloatKeyframe",
@@ -117,11 +118,7 @@
                   0,
                   1,
                   1,
-                  1,
-                  0,
-                  0,
-                  0,
-                  0
+                  0.30000001192092896
                 ]
               },
               "_colorAlphaKeysCount": 2,
@@ -129,21 +126,13 @@
                 "_$type": "Float32Array",
                 "value": [
                   0,
-                  1,
-                  1,
-                  1,
-                  1,
-                  1,
-                  1,
-                  1,
                   0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0
+                  0.7801596522331238,
+                  0.8837209343910217,
+                  1,
+                  0.007451475132256746,
+                  0.213021919131279,
+                  0.24031007289886475
                 ]
               },
               "_colorRGBKeysCount": 2

@@ -23,11 +23,48 @@
     },
     {
       "_$type": "c08609ed-ebe2-4062-8e7f-0779439120be",
-      "scriptPath": "../src/Game/Bullet/BulletItem.ts",
-      "phy": {
-        "_$ref": "m6jvju7a",
-        "_$type": "PhysicsCollider"
-      }
+      "scriptPath": "../src/Game/Bullet/BulletItem.ts"
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "jwaglvr2",
+      "_$type": "Sprite3D",
+      "name": "Bullet_Pistol",
+      "transform": {
+        "localRotation": {
+          "_$type": "Quaternion",
+          "x": -0.7071067811865475,
+          "w": 0.7071067811865476
+        },
+        "localScale": {
+          "_$type": "Vector3",
+          "x": 0.015,
+          "y": 0.015,
+          "z": 0.015
+        }
+      },
+      "_$comp": [
+        {
+          "_$type": "MeshFilter",
+          "sharedMesh": {
+            "_$uuid": "bd33bb2f-87d5-4e27-9bf9-91631a0dbca1@lm0",
+            "_$type": "Mesh"
+          }
+        },
+        {
+          "_$type": "MeshRenderer",
+          "receiveShadow": true,
+          "castShadow": true,
+          "sharedMaterials": [
+            {
+              "_$uuid": "f22a4a3d-4c48-4a22-bacc-83d12f0156eb",
+              "_$type": "Material"
+            }
+          ],
+          "renderMode": null
+        }
+      ]
     }
   ]
 }

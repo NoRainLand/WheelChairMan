@@ -20,7 +20,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-02-25 17:21:37 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-25 19:33:57
+ * @Last Modified time: 2023-03-06 16:28:23
  */
 const { regClass, property } = Laya;
 /**第三人称控制器 */
@@ -106,7 +106,7 @@ export default class PlayerController extends Script3d {
     beHit(angle: number, strength?: number) {
         if (!isNaN(angle)) {
             if (isNaN(strength)) {
-                strength = 0.01;
+                strength = 1;
             } else {
                 strength = strength < 0.01 ? 0.01 : strength;
                 strength = strength > 1 ? 1 : strength;

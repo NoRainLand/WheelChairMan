@@ -29,6 +29,8 @@
     "materialRenderMode": 0,
     "s_Cull": 2,
     "s_Blend": 0,
+    "s_BlendSrc": 1,
+    "s_BlendDst": 0,
     "s_DepthTest": 1,
     "s_DepthWrite": true,
     "u_AlbedoColor": [
@@ -43,17 +45,17 @@
       0,
       0
     ],
-    "u_NormalScale": 1,
+    "u_NormalScale": 1.89,
     "u_Smoothness": 0.5,
     "u_SmoothnessScale": 1,
     "u_OcclusionStrength": 1,
     "u_EmissionColor": [
-      0,
-      0.6775072674418605,
-      0.7674418604651163,
+      0.09022895258698393,
+      0.6333329108076436,
+      0.7054263565891472,
       1
     ],
-    "u_EmissionIntensity": 1,
+    "u_EmissionIntensity": 2.849,
     "u_DetailTillingOffset": [
       1,
       1,

@@ -1,0 +1,85 @@
+{
+  "_$ver": 1,
+  "_$id": "q2z3m6wv",
+  "_$type": "Box",
+  "name": "ReloadTips",
+  "width": 900,
+  "height": 150,
+  "anchorX": 0,
+  "anchorY": 0,
+  "_$comp": [
+    {
+      "_$type": "9e09e05b-3c95-4846-bea9-6bed64839712",
+      "scriptPath": "../src/Util/ReloadTips.ts",
+      "imgLoad": {
+        "_$ref": "mwbqg4x0"
+      },
+      "Main": {
+        "_$ref": "fyx71u6d"
+      }
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "fyx71u6d",
+      "_$type": "Sprite",
+      "name": "Main",
+      "width": 0,
+      "height": 0,
+      "anchorX": 0,
+      "anchorY": 0,
+      "_$child": [
+        {
+          "_$id": "lzmz08ae",
+          "_$type": "Image",
+          "name": "Image",
+          "x": 9,
+          "y": 91,
+          "width": 880,
+          "height": 52,
+          "anchorX": 0,
+          "anchorY": 0,
+          "skin": "res://1d6945bb-f701-43d2-ba67-0d491c4e6007",
+          "sizeGrid": "1,1,1,1,0"
+        },
+        {
+          "_$id": "mwbqg4x0",
+          "_$type": "Image",
+          "name": "imgLoad",
+          "x": 9,
+          "y": 91,
+          "width": 880,
+          "height": 52,
+          "anchorX": 0,
+          "anchorY": 0,
+          "skin": "res://c05a03a5-9e60-4729-99e9-7554f03085be",
+          "sizeGrid": "1,1,1,1,0"
+        },
+        {
+          "_$id": "a4hf2kk4",
+          "_$type": "Label",
+          "name": "Text",
+          "x": 11,
+          "y": 7,
+          "width": 324,
+          "height": 82,
+          "anchorX": 0,
+          "anchorY": 0,
+          "text": "Reloading",
+          "fontSize": 70,
+          "color": "rgba(242, 110, 33, 1)",
+          "valign": "middle",
+          "leading": 0,
+          "padding": "0,0,0,0",
+          "_$comp": [
+            {
+              "_$type": "5a62e727-31ad-49bf-b53f-96fbff2b0a39",
+              "scriptPath": "../src/Localization/LocalizationText.ts",
+              "localizationKey": "RELOADING"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

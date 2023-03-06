@@ -16,7 +16,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-02-25 17:53:53 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-25 19:11:27
+ * @Last Modified time: 2023-03-06 17:18:59
  */
 /**3d对象的工具类 */
 export default class Sprite3d {
@@ -26,9 +26,9 @@ export default class Sprite3d {
     }
 
 
-    constructor() {
 
-    }
+
+
 
     private static _ZERO: Vector3;
     /**零向量 */
@@ -144,9 +144,48 @@ export default class Sprite3d {
         return null;
     }
 
+    /**获取3DUI节点上的脚本 */
+    static get3DUIScript(node: Sprite3D, _class: any): any {
+        if (node && _class) {
+            let uiScript = node.getComponent(Laya.UI3D);
+            return uiScript?.sprite?.getComponent(_class);
+        }
+        return null;
+    }
+
+    /**
+     * 判定点是否再扇形区域上
+     * @param startX 圆心X
+     * @param startY 圆心Y
+     * @param angle 扇形中心方向
+     * @param rad 扇形弧度
+     * @param r 圆半径
+     * @param targetX 目标X
+     * @param targetY 目标Y
+     * @returns 
+     */
+    static pointInPie(startX: number, startY: number, angle: number, rad: number, r: number, targetX: number, targetY: number): boolean {
+        let dis = this.getDistance(startX, startY, targetX, targetY);
+        let offAngle = Math.atan2(targetY - startY, targetX - startY) * 180 / Math.PI;
+        offAngle = Math.abs(angle - offAngle);
+        let rag = rad * 180 / Math.PI / 2;
+        if (offAngle <= rag && dis <= r) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**获取两点距离 */
+    static getDistance(x1: number, y1: number, x2: number, y2: number): number {
+        return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    }
 
 
 
+
+    //--------------------------获取节点------------------------
 
     //步骤1：获取目标节点的所有子节点，将所有子节点放入数组并返回
     public static getChildNodesArray(target: Laya.Node): Laya.Node[] {

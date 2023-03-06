@@ -14,8 +14,17 @@
       "_$type": "c08609ed-ebe2-4062-8e7f-0779439120be",
       "scriptPath": "../src/Game/Bullet/BulletItem.ts",
       "phy": {
-        "_$ref": "jw3tt8t3",
+        "_$ref": "wlxuyodr",
         "_$type": "PhysicsCollider"
+      }
+    },
+    {
+      "_$type": "PhysicsCollider",
+      "colliderShape": {
+        "_$type": "BoxColliderShape",
+        "sizeX": 0.1,
+        "sizeY": 0.1,
+        "sizeZ": 0.1
       }
     }
   ],

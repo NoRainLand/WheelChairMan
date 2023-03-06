@@ -80,4 +80,11 @@ export enum LocalizationEnum {
     REVOLVER_DESCRIPTION = 2405,
     DOUBLEBARREL_DESCRIPTION = 2406,
 
+    //--------------------敌人------------
+    ZOMBIE = 2501,
+
+
+    //--------------------游戏提示------------
+    RELOADING = 2601,
+
 }

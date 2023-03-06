@@ -30,7 +30,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-02-20 15:26:58 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-05 20:31:11
+ * @Last Modified time: 2023-03-06 16:17:55
  */
 const { regClass, property } = Laya;
 /**主游戏逻辑 */
@@ -49,9 +49,15 @@ export default class MainGame {
 
     private gameScene: GameScene;
 
+
+    /**游戏计时 */
     gameTime: number;
+    /**游戏计时器 */
     gameTimer: Timer;
 
+
+    /**击杀计数器 */
+    killNum: number = 0;
     init() {
         if (!this.$isInit) {
             this.$isInit = true;
@@ -72,6 +78,7 @@ export default class MainGame {
 
     addEvent() {
         EventMgr.on(EventEnum.GAMESCENELOADED, this, this.gameStart);
+        EventMgr.on(EventEnum.ENEMYDEATH, this, this.skillEnemy);
     }
 
 
@@ -108,7 +115,7 @@ export default class MainGame {
 
         this.gameScene = gameScene;
         // console.log(gameScene);
-
+        this.killNum = 0;
 
 
         GroundMgr.instance.gameStart(this.gameScene.groundStage);
@@ -138,6 +145,12 @@ export default class MainGame {
                 this.gameWin();//倒计时结束直接win
             }
         }).loop().start();
+    }
+
+
+    skillEnemy() {
+        this.killNum++;
+
     }
 
 

@@ -1,7 +1,12 @@
-import Script3d from "../../Script3d/Script3d";
+import { EventEnum } from "../../Enum/EventEnum";
+import EventMgr from "../../Mgr/EventMgr";
 import AnimatorTool from "../../Util/AnimatorTool";
+import Physics3DUtils from "../../Util/Physics3DUtils";
 import PlayerController from "../../Util/PlayerController";
 import Sprite3d from "../../Util/Sprite3d";
+import Timer from "../../Util/Timer";
+import BaseItem from "../BaseItem/BaseItem";
+import { EnemyEnum } from "../Enum/EnemyEnum";
 import { GameStepEnum } from "../Enum/GameStepEnum";
 import { ZombieAniEnum } from "../Enum/ZombieAniEnum";
 import { ZombieStatusEnum } from "../Enum/ZombieStatusEnum";
@@ -25,12 +30,12 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-03-03 16:00:31 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-05 20:42:34
+ * @Last Modified time: 2023-03-06 17:35:46
  */
 const { regClass, property } = Laya;
 /**丧尸 */
 @regClass()
-export default class ZombieItem extends Script3d {
+export default class ZombieItem extends BaseItem {
 
 
 
@@ -70,10 +75,13 @@ export default class ZombieItem extends Script3d {
     skin5: SkinnedMeshSprite3D;
 
 
-
+    /**逻辑间隔 */
     logicTime: number = 0;
-
+    /**丧尸状态 */
     zombieStatus: ZombieStatusEnum;
+
+    /**移动速度 */
+    speed: number = 0;
 
 
     constructor() { super() }
@@ -105,10 +113,16 @@ export default class ZombieItem extends Script3d {
 
         this.zombieStatus = ZombieStatusEnum.idle;
 
-        // this.playerController.characterController.collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER2;
-        // this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER3 | Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER1;
+        this.playerController.characterController.collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER2;
+        this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER;
 
+
+        this.health = this.zombieData["health"];
+        this.speed = this.zombieData["speed"];
+
+        this.playerController.moveSpeed = this.speed;
     }
+
 
 
     randomSkin() {
@@ -180,15 +194,29 @@ export default class ZombieItem extends Script3d {
 
     }
 
+    stopMove() {
+
+    }
+
     dead() {
         this.zombieStatus = ZombieStatusEnum.death;
         this.changeAni();
+        this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER10;
+        this.playerController.stopMove();
+        // this.playerController.characterController.simulation.clearForces();
+        Timer.get(2500, this, () => {
+            this.clear();
+            EventMgr.event(EventEnum.ENEMYDEATH, EnemyEnum.zombie);
+        }).start();
     }
 
 
-    beHit(pos: Vector3) {
-        let angle = Sprite3d.getAngle(pos, this.position)
-        this.playerController.beHit(angle);
+    beHit(pos: Vector3, damage: number) {
+        if (this.zombieStatus != ZombieStatusEnum.death) {
+            this.health -= damage;
+            let angle = Sprite3d.getAngle(pos, this.position)
+            this.playerController.beHit(angle);
+        }
     }
 
 

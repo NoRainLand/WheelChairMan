@@ -20,7 +20,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-03-05 17:27:06 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-05 21:17:45
+ * @Last Modified time: 2023-03-06 14:53:48
  */
 /**子弹管理类 */
 export default class BulletMgr {
@@ -54,7 +54,8 @@ export default class BulletMgr {
         bulletItem.position = shootPos.transform.position;
         bulletItem.rotationEuler = shootPos.transform.rotationEuler;
         bulletItem.bulletData = bulletData;
-        bulletItem.init();
+        bulletItem.objName = PoolEnum.BUllET + bulletId;
         this.bulletStage.addChild(bullet);
+        bulletItem.init();
     }
 }

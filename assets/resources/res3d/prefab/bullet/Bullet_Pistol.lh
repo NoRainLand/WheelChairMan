@@ -16,11 +16,7 @@
     },
     {
       "_$type": "c08609ed-ebe2-4062-8e7f-0779439120be",
-      "scriptPath": "../src/Game/Bullet/BulletItem.ts",
-      "phy": {
-        "_$ref": "oinsvfpp",
-        "_$type": "PhysicsCollider"
-      }
+      "scriptPath": "../src/Game/Bullet/BulletItem.ts"
     }
   ],
   "_$child": [
@@ -36,9 +32,9 @@
         },
         "localScale": {
           "_$type": "Vector3",
-          "x": 0.009999999776482582,
-          "y": 0.009999999776482582,
-          "z": 0.009999999776482582
+          "x": 0.025,
+          "y": 0.025,
+          "z": 0.025
         }
       },
       "_$comp": [

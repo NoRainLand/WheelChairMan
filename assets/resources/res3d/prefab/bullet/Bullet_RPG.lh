@@ -20,11 +20,7 @@
     },
     {
       "_$type": "c08609ed-ebe2-4062-8e7f-0779439120be",
-      "scriptPath": "../src/Game/Bullet/BulletItem.ts",
-      "phy": {
-        "_$ref": "22h8c7rl",
-        "_$type": "PhysicsCollider"
-      }
+      "scriptPath": "../src/Game/Bullet/BulletItem.ts"
     }
   ],
   "_$child": [
@@ -54,8 +50,6 @@
         },
         {
           "_$type": "MeshRenderer",
-          "receiveShadow": true,
-          "castShadow": true,
           "sharedMaterials": [
             {
               "_$uuid": "8f525afa-32fc-4c15-93dc-e2ff9475ce63",
