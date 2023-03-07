@@ -115,7 +115,7 @@ window.Laya = (function (exports) {
                 return new cls();
             var pool = Pool.getPoolBySign(sign);
             if (pool.length) {
-                var rst = pool.pop();
+                var rst = pool.shift();
                 rst[Pool.POOLSIGN] = false;
             }
             else {

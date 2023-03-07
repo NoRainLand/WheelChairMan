@@ -3,6 +3,8 @@ import Timer from "../../Util/Timer";
 import BaseItem from "../BaseItem/BaseItem";
 import EnemyMgr from "../Enemy/EnemyMgr";
 import ZombieItem from "../Enemy/ZombieItem";
+import { GameStepEnum } from "../Enum/GameStepEnum";
+import MainGame from "../MainGame";
 import Vector3 = Laya.Vector3;
 import Sprite3D = Laya.Sprite3D;
 import Quaternion = Laya.Quaternion;
@@ -21,7 +23,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-03-05 17:09:01 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-06 17:40:35
+ * @Last Modified time: 2023-03-06 21:47:36
  */
 const { regClass, property } = Laya;
 /**子弹 */
@@ -46,6 +48,9 @@ export default class BulletItem extends BaseItem {
     /**开始坐标 */
     startPos: Vector3;
 
+    /**是否存在 */
+    isActive: boolean = true;
+
     constructor() { super() }
 
     init() {
@@ -59,6 +64,7 @@ export default class BulletItem extends BaseItem {
 
 
             this.startPos = this.position.clone();
+            this.isActive = true;
         }
 
         this.phy = this.obj.getComponent(PhysicsCollider);
@@ -66,18 +72,16 @@ export default class BulletItem extends BaseItem {
         if (this.phy) {
             this.phy.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER2;
             this.phy.collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER4;
-
-            console.log(this.phy.isTrigger);
         }
     }
 
     update(time: number): void {
-
-
-        this.transform.translate(new Vector3(0, 0, this.speed));
-        let len = Vector3.distance(this.startPos, this.position);
-        if (len >= this.flightDis) {
-            this.overDis();
+        if (MainGame.instance.gameStep == GameStepEnum.GameStart) {
+            this.transform.translate(new Vector3(0, 0, this.speed));
+            let len = Vector3.distance(this.startPos, this.position);
+            if (len >= this.flightDis) {
+                this.overDis();
+            }
         }
 
     }
@@ -145,9 +149,11 @@ export default class BulletItem extends BaseItem {
         EnemyMgr.instance.explode2(this.position, this.localRotationEulerY, Math.PI / 2, range, this.damage);
         Timer.get(500, this, () => {
             this.clear();
-        })
-            .start();
+        }).start();
     }
 
+    protected clearOthers(): void {
+        this.isActive = false;
+    }
 
 }

@@ -10,8 +10,10 @@ import Timer from "../../Util/Timer";
 import Tween from "../../Util/Tween";
 import BaseItem from "../BaseItem/BaseItem";
 import EnemyMgr from "../Enemy/EnemyMgr";
+import { GameStepEnum } from "../Enum/GameStepEnum";
 import { PlayerAniEnum } from "../Enum/PlayerAniEnum";
 import { PlayerStatusEnum } from "../Enum/PlayerStatusEnum";
+import MainGame from "../MainGame";
 import WeaponItem from "../Weapon/WeaponItem";
 import WeaponMgr from "../Weapon/WeaponMgr";
 import Vector3 = Laya.Vector3;
@@ -85,8 +87,15 @@ export default class PlayerItem extends BaseItem {
 
     private pixelLineSprite3D: PixelLineSprite3D;
 
+
+    private $isGod: boolean = false;
     /**是否无敌 */
-    isGod: boolean = false;
+    get isGod(): boolean {
+        return this.$isGod;
+    }
+    set isGod(value: boolean) {
+        this.$isGod = value;
+    }
 
     private $playerController: PlayerController;
 
@@ -102,35 +111,45 @@ export default class PlayerItem extends BaseItem {
 
 
     onEnable(): void {
+        this.rotNode = this.obj.getChildAt(0) as Sprite3D;
+        this.animator = this.rotNode.getComponent(Animator);
 
+        this.initWeapon();
 
+        if (!this.reloadTips) {
+            this.reloadTips = Sprite3d.get3DUIScript(this.UI3D, ReloadTips);
+        }
     }
 
     gameStart() {
 
-        this.rotNode = this.obj.getChildAt(0) as Sprite3D;
-        this.animator = this.rotNode.getComponent(Animator);
         if (this.playerData) {
             this.totalHealth = this.health = this.playerData.health;
             this.playerController.moveSpeed = this.playerData.speed;
         }
         this.playerStatus = PlayerStatusEnum.idle;
+        this.changeAni();
+        this.position = Sprite3d.ZERO;
+        this.localRotationEuler = Sprite3d.ZERO;
 
-
+        this.isGod = false;
         this.playerController.characterController.collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER1;
         this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER2;
-
-
         if (!this.pixelLineSprite3D) {
             this.pixelLineSprite3D = new PixelLineSprite3D(1);
             this.shootPos.addChild(this.pixelLineSprite3D);
             this.pixelLineSprite3D.addLine(new Vector3(0, -0.1, 0), new Vector3(0, -0.1, 3), new Color(1 / 255, 114 / 255, 1 / 255, 0.7), new Color(1 / 255, 114 / 255, 1 / 255, 0.3));
             this.pixelLineSprite3D.active = false;
         }
+    }
 
-        this.initWeapon();
 
-        this.reloadTips = Sprite3d.get3DUIScript(this.UI3D, ReloadTips);
+
+    selectPlayer() {
+        this.playerStatus = PlayerStatusEnum.idle;
+        this.changeAni();
+        this.position = Sprite3d.ZERO;
+        this.localRotationEuler = Sprite3d.ZERO;
     }
 
 
@@ -164,12 +183,27 @@ export default class PlayerItem extends BaseItem {
         }
     }
 
+    /**复活 */
+    resurrection() {
+        this.health = this.totalHealth;
+        this.isGod = true;
+        this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER9;
+        Timer.get(3000, this, () => {
+            this.isGod = false;
+            this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER2;
+        }).start();
+
+        this.playerStatus = PlayerStatusEnum.idle;
+        this.changeAni();
+
+        this.shakeSkin(3000);
+    }
 
     changeAni() {
-        this.weaponItem.owner.active = true;
+        this.weaponItem && (this.weaponItem.owner.active = true);
         switch (this.playerStatus) {
             case PlayerStatusEnum.idle:
-                this.weaponItem.owner.active = false;
+                this.weaponItem && (this.weaponItem.owner.active = false);
                 AnimatorTool.play(this.animator, PlayerAniEnum.idle, true, 1, 1, false, 0.2);
                 AnimatorTool.play(this.animator, PlayerAniEnum.idle, true, 1, 2, false, 0.2);
                 break;
@@ -194,7 +228,7 @@ export default class PlayerItem extends BaseItem {
 
 
     startMove(angle: number, value: number) {
-        if (this.playerStatus == PlayerStatusEnum.death) return;
+        if (this.playerStatus == PlayerStatusEnum.death || MainGame.instance.gameStep != GameStepEnum.GameStart) return;
         this.playerController.move(angle);
         if (this.playerStatus == PlayerStatusEnum.idle) {
             this.playerStatus = PlayerStatusEnum.run;
@@ -207,7 +241,7 @@ export default class PlayerItem extends BaseItem {
 
 
     stopMove() {
-        if (this.playerStatus == PlayerStatusEnum.death) return;
+        if (this.playerStatus == PlayerStatusEnum.death || MainGame.instance.gameStep != GameStepEnum.GameStart) return;
         this.playerController.stopMove();
         if (this.playerStatus == PlayerStatusEnum.run) {
             this.playerStatus = PlayerStatusEnum.idle;
@@ -220,7 +254,7 @@ export default class PlayerItem extends BaseItem {
 
 
     startShoot(angle: number, value: number) {
-        if (this.playerStatus == PlayerStatusEnum.death) return;
+        if (this.playerStatus == PlayerStatusEnum.death || MainGame.instance.gameStep != GameStepEnum.GameStart) return;
         this.rotNode.transform.localRotationEulerY = angle;
         if (this.playerStatus == PlayerStatusEnum.idle) {
             this.playerStatus = PlayerStatusEnum.standAndShoot;
@@ -235,7 +269,7 @@ export default class PlayerItem extends BaseItem {
 
     }
     stopShoot() {
-        if (this.playerStatus == PlayerStatusEnum.death) return;
+        if (this.playerStatus == PlayerStatusEnum.death || MainGame.instance.gameStep != GameStepEnum.GameStart) return;
         if (this.playerStatus == PlayerStatusEnum.standAndShoot) {
             this.playerStatus = PlayerStatusEnum.idle;
             this.changeAni();
@@ -251,21 +285,23 @@ export default class PlayerItem extends BaseItem {
 
 
     onCollisionEnter(collision: Laya.Collision): void {
-        if (!this.isGod) {
+        if (!this.isGod && PlayerStatusEnum.death != this.playerStatus && MainGame.instance.gameStep == GameStepEnum.GameStart) {
             this.isGod = true;
+            this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER9;
             Timer.get(1000, this, () => {
                 this.isGod = false;
+                this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER2;
             }).start();
             this.health--;
             EnemyMgr.instance.explode(this.position, 2.5, 0);
             VibrateMgr.vibrateLong();
-            this.shakeSkin();
+            this.shakeSkin(1000);
         }
     }
 
 
 
-    shakeSkin() {
+    shakeSkin(time: number) {
         let num = this.playerSkinMaterial.getFloat("u_EmissionIntensity");
         let data = { value: num }
         Tween.get(data)
@@ -281,11 +317,14 @@ export default class PlayerItem extends BaseItem {
                     return (1 - t) * 4 + num;
                 }
             }, 120)
-            .loop(4)
+            .loop(Math.ceil(time / 250))
             .call(this, () => {
                 this.playerSkinMaterial.setFloat("u_EmissionIntensity", num);
             })
             .start();
     }
+
+
+
 
 }

@@ -42,5 +42,18 @@ export enum EventEnum {
     /**怪物死亡 */
     ENEMYDEATH = "ENEMYDEATH",
 
+    /**玩家重生 */
+    PLAEYRRESURRECTION = 'PLAEYRRESURRECTION',
+
+    /**游戏重开 */
+    GAMERESTART = "GAMERESTART",
+
+    /**游戏结束 */
+    GAMEOVER = "GAMEOVER",
+    /**游戏胜利 */
+    GAMEWIN = "GAMEWIN",
+    /**游戏失败 */
+    GAMELOSE = "GAMELOSE",
+
 
 }

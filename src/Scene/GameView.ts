@@ -1,7 +1,11 @@
+import GameData from "../Data/GameData";
 import { EventEnum } from "../Enum/EventEnum";
+import { SceneEnum } from "../Enum/SceneEnum";
 import MainGame from "../Game/MainGame";
 import PlayerMgr from "../Game/Player/PlayerMgr";
+import EventMgr from "../Mgr/EventMgr";
 import UIBase from "../UIBase/UIBase";
+import UIBaseMgr from "../UIBase/UIBaseMgr";
 import RockerBox from "../Util/RockerBox";
 import Timer from "../Util/Timer";
 import PrefabImpl = Laya.PrefabImpl;
@@ -34,6 +38,9 @@ export default class GameView extends UIBase {
     @property()
     labelTime: Label;
 
+    @property()
+    imgPause: Image;
+
 
 
     private playerData: any;
@@ -64,8 +71,32 @@ export default class GameView extends UIBase {
     addEvent(): void {
         this.listHealth.renderHandler = new Handler(this, this.changeHealthItem);
         this.regEvent(EventEnum.HEALTHCHANGE, this.changeHealth, true);
+        this.regEvent(EventEnum.PLAYERDEAD, this.playerDeath);
+        this.regEvent(EventEnum.GAMEOVER, this.gameOver);
+        this.regEvent(EventEnum.GAMERESTART, this.gameRestart);
+        this.regEvent(EventEnum.GAMEWIN, this.gameWin);
+        this.regEvent(EventEnum.GAMELOSE, this.ganeLose);
 
+        this.regClick(this.imgPause, this.pause);
+    }
 
+    pause() {
+        EventMgr.event(EventEnum.GAMEPAUSE);
+        UIBaseMgr.instance.open(SceneEnum.PauseView);
+    }
+
+    gameOver() {
+        this.close();
+        UIBaseMgr.instance.open(SceneEnum.MainView);
+    }
+    gameRestart() {
+
+    }
+    gameWin() {
+        UIBaseMgr.instance.open(SceneEnum.CompleteView);
+    }
+    ganeLose() {
+        UIBaseMgr.instance.open(SceneEnum.LoseView);
     }
 
     changeHealth(health: number) {
@@ -81,6 +112,13 @@ export default class GameView extends UIBase {
         this.listHealth.array = this.healthList;
     }
 
+    playerDeath() {
+        if (MainGame.instance.resurrectionTimes >= GameData.resurrectionTimes) {
+            UIBaseMgr.instance.open(SceneEnum.LoseView);
+        } else {
+            UIBaseMgr.instance.open(SceneEnum.ResurrectionView);
+        }
+    }
 
 
 

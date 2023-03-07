@@ -2,8 +2,9 @@
  * @Author: NoRain 
  * @Date: 2023-02-07 09:32:30 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 15:43:47
+ * @Last Modified time: 2023-03-07 21:29:31
  */
+import Tween from "./Tween";
 import Pool = Laya.Pool;
 
 /**时间管理器 */
@@ -48,6 +49,9 @@ export default class Timer {
      */
     private $type: number = 0;
 
+    /**循环次数 */
+    private $loopTime: number = -99;
+
 
     /**是否正在运行 */
     get isRunning(): boolean {
@@ -77,7 +81,7 @@ export default class Timer {
     static get(delay: number, caller: any, callBack: Function): Timer {
         let self = this;
         if (delay > 0 && caller != null && callBack != null) {
-            let timer = <Timer>Pool.getItemByClass(self.$sign, Timer);
+            let timer = <Timer>Pool.getItemByClass(Timer.$sign, Timer);
             timer.$init(delay, caller, callBack);
             return timer;
         } else {
@@ -93,10 +97,12 @@ export default class Timer {
         this.$delay = 1;
         this.$lastTime = 0;
         this.$runTime = 0;
+        this.$loopTime = -99;
     }
 
     private $init(delay: number, caller: any, callBack: Function) {
         let self = this;
+        self.reset();
         let timerCache = caller[Timer.$cache] || (caller[Timer.$cache] = []);
         timerCache.push(self);
         self.$delay = delay;
@@ -112,8 +118,11 @@ export default class Timer {
         return this;
     }
     /**定时重复执行 */
-    loop(): Timer {
+    loop(loopTime: number = -99): Timer {
         this.$type = 1;
+        if (loopTime > 0) {
+            this.$loopTime = loopTime;
+        }
         return this;
     }
     /**定时执行一次(基于帧率) */
@@ -177,44 +186,60 @@ export default class Timer {
         }
     }
 
-    /**清理 */
-    clear() {
-        this.reset();
-        Laya.timer.clear(this, this.update);
-        Pool.recover(Timer.$sign, this);
 
-        if (this.$caller) {
-            let timerCache = this.$caller[Timer.$cache];
-            if (timerCache && timerCache instanceof Array) {
-                let index = timerCache.indexOf(this);
-                if (index != -1) {
-                    timerCache.splice(index, 1);
-                }
-                timerCache.length = 0 && (delete this.$caller[Timer.$cache]);
-            }
-        }
-
-        this.$caller = this.$callBack = null;
-    }
 
 
     /**更新 */
     protected update() {
-        if (this.$isRunning) {
-            this.$runTime += Date.now() - this.$lastTime;
-            this.$lastTime = Date.now();
-            this.$runCount++;
-            // if (this.$type == 0) {
-            //     this.timeValue = this.runTime / this.$delay;
-            // } else if (this.$type == 2) {
-            //     this.timeValue = this.runCount / this.$delay;
+        let self = this;
+        if (self.$isRunning) {
+            self.$runTime += Date.now() - self.$lastTime;
+            self.$lastTime = Date.now();
+            self.$runCount++;
+            // if (self.$type == 0) {
+            //     self.timeValue = self.runTime / self.$delay;
+            // } else if (self.$type == 2) {
+            //     self.timeValue = self.runCount / self.$delay;
             // }
-            this.$callBack.call(this.$caller);//, this.timeValue
-            if (this.$type == 0 || this.$type == 2) {
-                this.$isRunning = false;
+            self.$callBack.call(self.$caller);//, self.timeValue
+            if (self.$type == 0 || self.$type == 2) {
+                self.$isRunning = false;
+                self.clear();
+            } else {
+                if (this.$loopTime != -99 && this.$loopTime > 0) {
+                    this.$loopTime--;
+                    if (this.$loopTime == 0) {
+                        self.$isRunning = false;
+                        self.clear();
+                    }
+                }
             }
         }
     }
+
+
+
+    /**清理 */
+    clear() {
+        let self = this;
+        self.$isRunning = false;
+        Laya.timer.clear(self, self.update);
+        if (self.$caller) {
+            let timerCache = self.$caller[Timer.$cache];
+            if (timerCache && timerCache instanceof Array) {
+                let index = timerCache.indexOf(self);
+                if (index != -1) {
+                    timerCache.splice(index, 1);
+                }
+                timerCache.length == 0 && (delete self.$caller[Timer.$cache]);
+            }
+        }
+        Laya.timer.frameOnce(1, self, () => { ////为什么要这么写呢？看不懂就对了，我也看不懂。
+            Pool.recover(Timer.$sign, self);
+        })
+        self.reset();
+    }
+
 
     /**清理 */
     static clearAll(target: Object) {
@@ -222,7 +247,16 @@ export default class Timer {
         if (timerCache && timerCache instanceof Array) {
             for (let i = 0; i < timerCache.length; i++) {
                 let timer = timerCache[i];
-                timer instanceof Timer && timer.clear();
+                if (timer instanceof Timer) {
+                    let caller = timer.$caller;
+                    if (caller && caller instanceof Tween) {
+                        console.log("不允许清理");
+                    } else {
+                        timer.clear();
+                    }
+                }
+                // console.log("clearAll");
+                // timer instanceof Timer && timer.clear();
             }
         }
     }

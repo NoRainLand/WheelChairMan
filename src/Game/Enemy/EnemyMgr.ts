@@ -2,7 +2,7 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-06 17:22:56
+ * @Last Modified time: 2023-03-06 21:50:46
 */
 
 import { DataTableEnum } from "../../Enum/DataTableEnum";
@@ -12,7 +12,6 @@ import EventMgr from "../../Mgr/EventMgr";
 import ObjUtil from "../../Util/ObjUtil";
 import ResLoader from "../../Util/ResLoader";
 import Sprite3d from "../../Util/Sprite3d";
-import Timer from "../../Util/Timer";
 import { EnemyEnum } from "../Enum/EnemyEnum";
 import PlayerMgr from "../Player/PlayerMgr";
 import ZombieItem from "./ZombieItem";
@@ -49,19 +48,29 @@ export default class EnemyMgr {
     init() {
         this.enemyDataMap = ResLoader.instance.getDataTableById(DataTableEnum.Enemy);
         this.zombieList = [];
-        EventMgr.on(EventEnum.ENEMYDEATH, this, this.enemyDeath)
+        this.addEvent();
+    }
+
+
+    addEvent() {
+        EventMgr.on(EventEnum.ENEMYDEATH, this, this.enemyDeath);
+        EventMgr.on(EventEnum.PLAYERDEAD, this, this.playerDeath);
+        EventMgr.on(EventEnum.GAMEWIN, this, this.gameWin);
+        EventMgr.on(EventEnum.GAMELOSE, this, this.gameLose);
     }
 
     gameStart(stage: Sprite3D) {
         this.enemyStage = stage;
         let index = 0;
-        Timer.get(200, this, () => {
-            this.createZombie();
-            index++;
-            if (index >= 1) {
-                Timer.clearAll(this);
-            }
-        }).loop().start();
+        this.createZombie();
+
+        // Timer.get(200, this, () => {
+        //     this.createZombie();
+        //     index++;
+        //     if (index >= 1) {
+        //         Timer.clearAll(this);
+        //     }
+        // }).loop().start();
     }
 
 
@@ -72,6 +81,61 @@ export default class EnemyMgr {
                 break;
         }
     }
+
+    playerDeath() {
+        for (let i = 0; i < this.zombieList.length; i++) {
+            let zombieItem = this.zombieList[i];
+            if (zombieItem?.health > 0) {
+                zombieItem.playerDeath();
+            }
+        }
+    }
+    playerResurrection() {
+        for (let i = 0; i < this.zombieList.length; i++) {
+            let zombieItem = this.zombieList[i];
+            if (zombieItem?.health > 0) {
+                zombieItem.playerResurrection();
+            }
+        }
+    }
+
+    gameOver() {
+        for (let i = 0; i < this.zombieList.length; i++) {
+            let zombieItem = this.zombieList[i];
+            if (zombieItem?.health > 0) {
+                zombieItem.clear();
+            }
+        }
+    }
+
+    gamePause() {
+        for (let i = 0; i < this.zombieList.length; i++) {
+            let zombieItem = this.zombieList[i];
+            if (zombieItem?.health > 0) {
+                zombieItem.stopMove();
+            }
+        }
+    }
+
+    gameWin() {
+        for (let i = 0; i < this.zombieList.length; i++) {
+            let zombieItem = this.zombieList[i];
+            if (zombieItem?.health > 0) {
+                zombieItem.stopMove();
+            }
+        }
+    }
+
+    gameLose() {
+        for (let i = 0; i < this.zombieList.length; i++) {
+            let zombieItem = this.zombieList[i];
+            if (zombieItem?.health > 0) {
+                zombieItem.stopMove();
+            }
+        }
+    }
+
+
 
     createZombie() {
         if (this.zombieList.length < this.maxZombieNum) {
@@ -99,7 +163,7 @@ export default class EnemyMgr {
             let zombieItem = this.zombieList[i];
             if (zombieItem && zombieItem.health > 0) {
                 if (range > Vector3.distance(pos, zombieItem.position)) {
-                    zombieItem.beHit(pos, damage);
+                    zombieItem.beHit(pos, damage, 0.4);
                 }
             }
         }
@@ -110,7 +174,7 @@ export default class EnemyMgr {
             let zombieItem = this.zombieList[i];
             if (zombieItem && zombieItem.health > 0) {
                 if (Sprite3d.pointInPie(pos.x, pos.z, angle, rad, r, zombieItem.position.x, zombieItem.position.z)) {
-                    zombieItem.beHit(pos, damage);
+                    zombieItem.beHit(pos, damage, 0.2);
                 }
             }
         }

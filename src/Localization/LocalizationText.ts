@@ -42,6 +42,14 @@ export default class LocalizationText extends Laya.Script {
             if (value) {
                 this.text.text = value;
             }
+        } else {
+            if (this.text.text != "") {
+                this.localizationKey = this.text.text;
+                let value = LocalizationMgr.$getLocalizationByKey(this.localizationKey);
+                if (value) {
+                    this.text.text = value;
+                }
+            }
         }
     }
     onDisable(): void {

@@ -30,7 +30,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-03-03 16:00:31 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-06 17:35:46
+ * @Last Modified time: 2023-03-06 21:49:07
  */
 const { regClass, property } = Laya;
 /**丧尸 */
@@ -195,8 +195,11 @@ export default class ZombieItem extends BaseItem {
     }
 
     stopMove() {
-
+        this.playerController.stopMove();
+        this.idle();
     }
+
+
 
     dead() {
         this.zombieStatus = ZombieStatusEnum.death;
@@ -210,12 +213,22 @@ export default class ZombieItem extends BaseItem {
         }).start();
     }
 
+    playerDeath() {
+        this.stopMove();
+    }
 
-    beHit(pos: Vector3, damage: number) {
+    playerResurrection() {
+        // this.
+    }
+
+
+
+
+    beHit(pos: Vector3, damage: number, value: number = 0.01) {
         if (this.zombieStatus != ZombieStatusEnum.death) {
             this.health -= damage;
             let angle = Sprite3d.getAngle(pos, this.position)
-            this.playerController.beHit(angle);
+            this.playerController.beHit(angle, value);
         }
     }
 
@@ -226,6 +239,11 @@ export default class ZombieItem extends BaseItem {
 
     onCollisionEnter(collision: Laya.Collision): void {
         console.log("zombie_onCollisionEnter");
+    }
+
+
+    protected clearOthers(): void {
+
     }
 
 }

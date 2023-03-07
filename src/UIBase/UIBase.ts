@@ -18,7 +18,7 @@ import Node = Laya.Node;
  * @Author: NoRain 
  * @Date: 2023-02-08 10:03:24 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 21:46:08
+ * @Last Modified time: 2023-03-07 21:28:25
  */
 const { regClass, property } = Laya;
 
@@ -69,43 +69,50 @@ export default class UIBase extends Laya.Script {
 
     /**动画节点，默认为Main */
     @property()
-    aniNode: Sprite;
+    Main: Sprite;
+
+    /**关闭节点 */
+    @property()
+    imgClose: Sprite;
+
 
     /**是否播放完特效 */
-    aniFinish: boolean = false;
+    $aniFinish: boolean = false;
 
-    /**特效对象 */
-    private $Main: Node;
+
     /**开启特效 */
     openAni() {
-        if (!this.aniNode) {
-            this.aniNode = this.owner.getChildByName("Main") as Sprite;
+        if (!this.Main) {
+            this.Main = this.owner.getChildByName("Main") as Sprite;
         }
-        if (this.aniNode) {
-            this.$Main = this.owner.getChildByName("Main");
+        if (this.Main) {
             switch (this.AniType) {
                 default:
                 case 0:
-                    this.aniFinish = true;
+                    this.$aniFinish = true;
                     break;
                 case 1:
-                    Tween.get(this.aniNode)
-                        // this.aniNode.scaleX
+                    Tween.get(this.Main)
                         .set({ scaleX: 0.8, scaleY: 0.8 })
                         .to({ scaleX: 1, scaleY: 1 }, 300, Laya.Ease.backOut)
                         .call(this, () => {
-                            this.aniFinish = true;
+                            this.$aniFinish = true;
                         })
                         .start();
+                        console.log(this.Main);
                     break;
                 case 2:
-                    // Tween.get(this.aniNode)
-                    // .set({x:1920})
-                    // .to()
+                    Tween.get(this.Main)
+                        .set({ x: 1920 })
+                        .to({ x: 0 }, 300, Laya.Ease.circOut)
+                        .call(this, () => {
+                            this.$aniFinish = true;
+                        })
+                        .start();
                     break
             }
         } else {
-            this.aniFinish = true;
+            this.$aniFinish = true;
         }
     }
 
@@ -170,7 +177,7 @@ export default class UIBase extends Laya.Script {
             node[once ? "once" : "on"](Laya.Event.CLICK, caller, (e: Laya.Event) => {
                 let now = Date.now();
                 e.stopPropagation();
-                if (now - clickTime > time && this.aniFinish) {
+                if (now - clickTime > time && this.$aniFinish) {
                     if (data !== void 0) {
                         params[evtIdx] = data;
                         evtIdx = 1;

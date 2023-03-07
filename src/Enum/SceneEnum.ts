@@ -44,4 +44,6 @@ export enum SceneEnum {
     SignInView = 1020,
     /**选择人物界面 */
     SelectPlayerView = 1021,
+    /**复活界面 */
+    ResurrectionView = 1022,
 }

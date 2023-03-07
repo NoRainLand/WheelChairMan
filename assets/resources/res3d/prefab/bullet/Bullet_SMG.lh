@@ -3,13 +3,6 @@
   "_$id": "m6jvju7a",
   "_$type": "Sprite3D",
   "name": "Bullet_SMG",
-  "transform": {
-    "localPosition": {
-      "_$type": "Vector3",
-      "y": 0.05262788894184006,
-      "z": 0.5775658767232783
-    }
-  },
   "_$comp": [
     {
       "_$type": "PhysicsCollider",

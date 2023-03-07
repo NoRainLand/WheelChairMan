@@ -7,6 +7,8 @@
 
 import EventMgr from "../../Mgr/EventMgr";
 import Script3d from "../../Script3d/Script3d";
+import Timer from "../../Util/Timer";
+import Tween from "../../Util/Tween";
 import Vector3 = Laya.Vector3;
 import Sprite3D = Laya.Sprite3D;
 import Quaternion = Laya.Quaternion;
@@ -113,7 +115,8 @@ export default class BaseItem extends Script3d {
         this.clearOthers();
         this.unRegEvent();
         Laya.timer.clearAll(this);
-        // Tween.clear(this.transform);
+        Timer.clearAll(this);
+        Tween.clearAll(this.transform);
         this.index = -1;
         this.objData = null;
         this.posData = null;

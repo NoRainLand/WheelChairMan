@@ -61,8 +61,12 @@ export default class RockerBox extends Laya.Script {
 
     onEnable(): void {
         this.rockerBox = this.owner as Box;
-    }
-    onStart(): void {
+        this.touchId = -1;
+        this.rockerIsDown = false;
+        this.freeBar.selected = false;
+        this.rockerBox.alpha = 0.2;
+
+
         this.initBarX = this.freeBar.x;
         this.initBarY = this.freeBar.y;
         this.mousePoint = new Point(0, 0);
@@ -70,8 +74,9 @@ export default class RockerBox extends Laya.Script {
         this.freeBar.on(Laya.Event.MOUSE_DOWN, this, this.rockerDown);
         Laya.stage.on(Laya.Event.MOUSE_MOVE, this, this.rockerMove);
         Laya.stage.on(Laya.Event.MOUSE_UP, this, this.rockerUp);
-
     }
+
+
     rockerDown(evt: Laya.Event): void {
         if (this.touchId != -1) return;
         evt.stopPropagation();
@@ -82,6 +87,7 @@ export default class RockerBox extends Laya.Script {
         this.mouseDownX = this.rockerBox.mouseX;
         this.mouseDownY = this.rockerBox.mouseY;
 
+        this.rockerBox.alpha = 0.8;
     }
 
     rockerMove(evt: Laya.Event): void {
@@ -97,9 +103,6 @@ export default class RockerBox extends Laya.Script {
         let offX = mouseX - this.mouseDownX;
         let offY = mouseY - this.mouseDownY;
         this.rockerAngle = Math.atan2(offX, offY) * 180 / Math.PI;
-
-        // console.log(this.rockerAngle);
-
         let dis = Math.sqrt((this.mouseDownX - mouseX) * (this.mouseDownX - mouseX) + (this.mouseDownY - mouseY) * (this.mouseDownY - mouseY));
         dis = dis < 0 ? -dis : dis;
         if (dis < this.dropLen) {
@@ -126,6 +129,7 @@ export default class RockerBox extends Laya.Script {
             this.freeBar.y = this.initBarY;
             this.freeBar.selected = false;
             this.stopMove();
+            this.rockerBox.alpha = 0.2;
         }
     }
 

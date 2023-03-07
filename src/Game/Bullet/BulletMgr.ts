@@ -33,15 +33,15 @@ export default class BulletMgr {
 
     private bulletStage: Sprite3D;
 
+    private bulletList: Array<BulletItem>;
+
     init() {
         this.bulletData = ResLoader.instance.getDataTableById(DataTableEnum.Bullet);
-        console.log(this.bulletData);
-
     }
 
     gameStart(stage: Sprite3D) {
         this.bulletStage = stage;
-
+        this.bulletList = [];
     }
 
     createBullet(bulletId: number, shootPos: Sprite3D) {
@@ -57,5 +57,17 @@ export default class BulletMgr {
         bulletItem.objName = PoolEnum.BUllET + bulletId;
         this.bulletStage.addChild(bullet);
         bulletItem.init();
+        this.bulletList.push(bulletItem);
+
     }
+
+    gameOver() {
+        for (let i = 0; i < this.bulletList.length; i++) {
+            let item = this.bulletList[i];
+            if (item && item.isActive) {
+                item.clear();
+            }
+        }
+    }
+
 }

@@ -16,7 +16,6 @@ import EventMgr from "../../Mgr/EventMgr";
 import LocalStorageMgr from "../../Mgr/LocalMgr";
 import UIBaseMgr from "../../UIBase/UIBaseMgr";
 import ResLoader from "../../Util/ResLoader";
-import Sprite3d from "../../Util/Sprite3d";
 import PlayerItem from "./PlayerItem";
 import Vector3 = Laya.Vector3;
 import Sprite3D = Laya.Sprite3D;
@@ -48,35 +47,50 @@ export default class PlayerMgr {
     private unlockList: number[];
 
 
-     $playerItem: PlayerItem;
+    playerItem: PlayerItem;
 
     private playerStage: Sprite3D;
 
-    private playerPool: Map<number, Sprite3D>
+    private playerPool: Map<number, PlayerItem>
 
     init() {
         this.playerMap = ResLoader.instance.getDataTableById(DataTableEnum.Player);
     }
 
     startMove(angle: number, value: number) {
-        this.$playerItem && this.$playerItem.startMove(angle, value);
+        this.playerItem && this.playerItem.startMove(angle, value);
     }
     stopMove() {
-        this.$playerItem && this.$playerItem.stopMove();
+        this.playerItem && this.playerItem.stopMove();
     }
 
     startShoot(angle: number, value: number) {
-        this.$playerItem && this.$playerItem.startShoot(angle, value);
+        this.playerItem && this.playerItem.startShoot(angle, value);
     }
     stopShoot() {
-        this.$playerItem && this.$playerItem.stopShoot();
+        this.playerItem && this.playerItem.stopShoot();
     }
 
 
     /**获取坐标 */
     getPlayerPos() {
-        return this.$playerItem?.position;
+        return this.playerItem?.position;
     }
+
+
+    playerResurrection() {
+        this.playerItem?.resurrection();
+    }
+
+
+    gameOver() {
+        this.playerItem.clear();
+    }
+
+
+
+
+
 
 
 
@@ -150,23 +164,24 @@ export default class PlayerMgr {
 
 
     /**获取当前人物 */
-    getSelectPlayer(playerId: number): Sprite3D {
+    getSelectPlayer(playerId: number): PlayerItem {
         let obj: Sprite3D;
+        let playerItem: PlayerItem;
         if (this.playerPool) {
-            obj = this.playerPool.get(playerId);
+            playerItem = this.playerPool.get(playerId);
         } else {
             this.playerPool = new Map;
         }
         if (!obj) {
             let playerData = this.getSelectedPlayerData(playerId);
             obj = ResLoader.instance.getResCloneById(playerData?.["path"]);
-            this.playerPool.set(playerId, obj);
-            let playerItem = obj.getComponent(PlayerItem);
+            playerItem = obj.getComponent(PlayerItem);
+            this.playerPool.set(playerId, playerItem);
             if (playerItem) {
                 playerItem.playerData = playerData;
             }
         }
-        return obj;
+        return playerItem;
     }
 
 
@@ -174,13 +189,12 @@ export default class PlayerMgr {
 
     gameStart(stage: Sprite3D) {
         this.playerStage = stage;
-        let obj = this.getSelectPlayer(this.selectedPlayerId);
-        if (obj && this.playerStage) {
-            this.$playerItem = obj.getComponent(PlayerItem);
-            this.$playerItem.position = Sprite3d.ZERO;
-            this.playerStage.addChild(obj);
-            this.$playerItem.gameStart();
+        this.playerItem = this.getSelectPlayer(this.selectedPlayerId);
+        if (this.playerItem && this.playerStage) {
+            this.playerStage.addChild(this.playerItem.obj);
+            this.playerItem.gameStart();
         }
+
     }
 
 }

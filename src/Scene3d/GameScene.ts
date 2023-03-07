@@ -46,7 +46,12 @@ export default class GameScene extends Scene3d {
 
     onOpened(param?: any): void {
         EventMgr.event(EventEnum.GAMESCENELOADED, this);
+
     }
+
+
+
+
 
 
     addEvent(): void {

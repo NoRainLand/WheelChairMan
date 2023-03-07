@@ -34,7 +34,7 @@ export default class WeaponMgr {
 
     private weaponDataMap: Map<number, Object>;
 
-    private weaponMap: Map<number, Sprite3D>;
+    private weaponMap: Map<number, WeaponItem>;
     selectWeaponId: number = 0;
 
     weaponItem: WeaponItem;
@@ -44,19 +44,18 @@ export default class WeaponMgr {
     }
 
     getSelectWeapon(weaponId: number, owner: PlayerItem): WeaponItem {
-        console.log(weaponId);
         let obj: Sprite3D;
         let weaponItem: WeaponItem;
         if (!this.weaponMap) {
             this.weaponMap = new Map;
         } else {
-            obj = this.weaponMap.get(weaponId);
+            weaponItem = this.weaponMap.get(weaponId);
         }
         if (!obj) {
             let weaponData = this.getSelectedWeaponData(weaponId);
             obj = ResLoader.instance.getResCloneById(weaponData["path"]);
-            this.weaponMap.set(weaponId, obj);
             weaponItem = obj.getComponent(WeaponItem);
+            this.weaponMap.set(weaponId, weaponItem);
             if (weaponItem) {
                 weaponItem.weaponData = weaponData;
             }

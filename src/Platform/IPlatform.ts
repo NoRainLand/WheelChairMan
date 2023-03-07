@@ -6,4 +6,7 @@ export default interface IPlatform {
     vibrateShort();
     /**长震动 */
     vibrateLong();
+
+    /**播放激励视频 */
+    showVideo(caller: any, callback: Function);
 }

@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-06 17:30:20 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-18 10:26:33
+ * @Last Modified time: 2023-03-07 11:45:25
  */
 
 import { LocalStorageEnum } from "../Enum/LocalStorageEnum";
@@ -130,7 +130,6 @@ export default class GameData {
     static get key(): number {
         if (this.$key == -1) {
             let key = Number(LocalStorageMgr.getItem(LocalStorageEnum.KEY));
-            console.log(key);
             if (isNaN(key)) {
                 this.$key = 0;
                 LocalStorageMgr.setItem(LocalStorageEnum.KEY, this.$key);
@@ -149,7 +148,14 @@ export default class GameData {
 
 
 
-    /**单局游戏时长 */
-    static gameTime: number = 180;
+    /**单局游戏时长 单位s*/
+    static gameTime: number = 4;
+
+
+    /**复活倒计时 单位s*/
+    static countdown: number = 5;
+
+    /**最大复活次数 */
+    static resurrectionTimes: number = 1;
 
 }

@@ -1,3 +1,6 @@
+import { EventEnum } from "../Enum/EventEnum";
+import MainGame from "../Game/MainGame";
+import EventMgr from "../Mgr/EventMgr";
 import UIBase from "../UIBase/UIBase";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
@@ -19,5 +22,29 @@ const { regClass, property } = Laya;
 /** */
 @regClass()
 export default class LoseView extends UIBase {
+    @property()
+    imgHome: Image;
+    @property()
+    imgRestart: Image;
+    @property()
+    labelGold: Label;
+    constructor() { super() }
+
+    onOpened(param?: any): void {
+        this.labelGold.text = (MainGame.instance.killNum * 10).toString();
+    }
+    addEvent(): void {
+        this.regClick(this.imgHome, this.gotoHome);
+        this.regClick(this.imgRestart, this.gameRestart);
+    }
+
+    gotoHome() {
+        EventMgr.event(EventEnum.GAMEOVER);
+        this.close();
+    }
+    gameRestart() {
+        EventMgr.event(EventEnum.GAMERESTART);
+        this.close();
+    }
 
 }

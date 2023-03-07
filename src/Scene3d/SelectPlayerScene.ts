@@ -1,8 +1,8 @@
 import { EventEnum } from "../Enum/EventEnum";
 import { PlayerEnum } from "../Enum/PlayerEnum";
+import PlayerItem from "../Game/Player/PlayerItem";
 import PlayerMgr from "../Game/Player/PlayerMgr";
 import Scene3d from "../Scene3dBase/Scene3d";
-import Sprite3d from "../Util/Sprite3d";
 import Vector3 = Laya.Vector3;
 import Sprite3D = Laya.Sprite3D;
 import Quaternion = Laya.Quaternion;
@@ -34,7 +34,7 @@ export default class SelectPlayerScene extends Scene3d {
 
     private $playerList: Array<number>;
 
-    private $playerObj: Sprite3D;
+    private playerItem: PlayerItem;
 
     onOpened(param?: any): void {
         if (!this.$playerList) {
@@ -52,13 +52,14 @@ export default class SelectPlayerScene extends Scene3d {
         this.regEvent(EventEnum.SHOWPLAYER, this.showPlayer);
     }
     showPlayer(playerId: number) {
-        this.$playerObj?.removeSelf();
-        this.$playerObj = PlayerMgr.instance.getSelectPlayer(playerId);
-        this.$playerObj && this.playerStage.addChild(this.$playerObj);
-        this.$playerObj && (this.$playerObj.transform.position = Sprite3d.ZERO);
+        this.playerItem?.clear();
+        this.playerItem = PlayerMgr.instance.getSelectPlayer(playerId);
+        this.playerItem && this.playerStage.addChild(this.playerItem.obj);
+        this.playerItem?.selectPlayer();
+
     }
     onClosed(): void {
-        this.$playerObj?.removeSelf();
+        this.playerItem?.clear()
     }
 
 }

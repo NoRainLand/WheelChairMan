@@ -16,7 +16,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-02-25 17:53:53 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-06 17:18:59
+ * @Last Modified time: 2023-03-07 21:03:53
  */
 /**3d对象的工具类 */
 export default class Sprite3d {
@@ -145,7 +145,7 @@ export default class Sprite3d {
     }
 
     /**获取3DUI节点上的脚本 */
-    static get3DUIScript(node: Sprite3D, _class: any): any {
+    static get3DUIScript<T extends Laya.Component>(node: Sprite3D, _class: new () => T): T {
         if (node && _class) {
             let uiScript = node.getComponent(Laya.UI3D);
             return uiScript?.sprite?.getComponent(_class);

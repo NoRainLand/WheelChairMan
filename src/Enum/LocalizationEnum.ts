@@ -37,7 +37,17 @@ export enum LocalizationEnum {
     STARTFIGHTING = 1029,
     UNLOCK = 1030,
     CONGRATULATIONSUNLOCK = 1031,
-
+    PAUSE = 1032,
+    CONTINUE = 1033,
+    RESTART = 1034,
+    QUIT = 1035,
+    RESURRECTION = 1036,
+    WATCH = 1037,
+    WATCH2REVIVE = 1038,
+    DEFEAT = 1039,
+    TRYAGAIN = 1040,
+    COMPLETE = 1041,
+    CONGRATULATIONSONPASSING = 1042,
 
 
     //--------------------人物------------

@@ -41,14 +41,11 @@ export default class CameraItem extends Script3d {
         // this.camera.orthographicVerticalSize = 20;
     }
 
-    onAwake(): void {
+    gameStart() {
+        this.camera.transform.position = new Vector3(0,12,5.5);
+        this.camera.transform.localRotationEuler = new Vector3(-65.001, 0, 0);
 
     }
-
-    onDisable(): void {
-
-    }
-
 
 
     initFallowTarget(target: Sprite3D) {

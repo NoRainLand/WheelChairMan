@@ -8,6 +8,7 @@ import { SceneEnum } from "../Enum/SceneEnum";
 import EventMgr from "../Mgr/EventMgr";
 import SceneUrl from "../Url/SceneUrl";
 import ResLoader from "../Util/ResLoader";
+import Timer from "../Util/Timer";
 import UIBase from "./UIBase";
 
 import PrefabImpl = Laya.PrefabImpl;
@@ -132,7 +133,7 @@ export default class UIBaseMgr {
             base.$assetsId = sceneName;
             base.isOpen = true;
 
-            base.aniFinish = false;
+            base.$aniFinish = false;
             base.openAni();
             base.onOpened(param);
             base.addEvent();
@@ -148,7 +149,6 @@ export default class UIBaseMgr {
             } else {
                 this.$sceneScriptPool.set(sceneName, [base]);
             }
-
 
         } else {
             console.log("UIData或者UIBase缺失")
@@ -167,6 +167,7 @@ export default class UIBaseMgr {
                     script.isOpen = false;
                     script.owner.removeSelf();
                     script.onClosed();
+                    Timer.clearAll(script);
                     let events = script.$event;
                     for (let name in events) {
                         EventMgr.off(name, script, events.get(name));

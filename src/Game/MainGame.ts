@@ -41,6 +41,7 @@ export default class MainGame {
         return this._instance ? this._instance : this._instance = new MainGame();
     }
 
+
     private $scene3dMap: Map<number, Object>;
     private $isInit: boolean = false;
 
@@ -55,9 +56,13 @@ export default class MainGame {
     /**游戏计时器 */
     gameTimer: Timer;
 
+    /**复活次数 */
+    resurrectionTimes: number = 0;
+
 
     /**击杀计数器 */
     killNum: number = 0;
+
     init() {
         if (!this.$isInit) {
             this.$isInit = true;
@@ -79,6 +84,12 @@ export default class MainGame {
     addEvent() {
         EventMgr.on(EventEnum.GAMESCENELOADED, this, this.gameStart);
         EventMgr.on(EventEnum.ENEMYDEATH, this, this.skillEnemy);
+        EventMgr.on(EventEnum.PLAYERDEAD, this, this.playerDeath);
+        EventMgr.on(EventEnum.PLAEYRRESURRECTION, this, this.playerResurrection);
+        EventMgr.on(EventEnum.GAMEPAUSE, this, this.gamePause);
+        EventMgr.on(EventEnum.GAMERESUME, this, this.gameResume);
+        EventMgr.on(EventEnum.GAMERESTART, this, this.gameRestart);
+        EventMgr.on(EventEnum.GAMEOVER, this, this.gameOver);
     }
 
 
@@ -88,6 +99,8 @@ export default class MainGame {
         this.$gameStep = GameStepEnum.ResetGame;
         this.goToMain();
         this.gameScene = null;
+        this.killNum = 0;
+        this.resurrectionTimes = 0;
     }
 
     /**开始选择玩家 */
@@ -115,15 +128,15 @@ export default class MainGame {
 
         this.gameScene = gameScene;
         // console.log(gameScene);
-        this.killNum = 0;
 
+        this.gameScene.cameraItem.gameStart();
 
         GroundMgr.instance.gameStart(this.gameScene.groundStage);
         PlayerMgr.instance.gameStart(this.gameScene.playerStage);
         BulletMgr.instance.gameStart(this.gameScene.bulletStage);
         WeaponMgr.instance.gameStart();
 
-        this.gameScene.cameraItem.initFallowTarget(PlayerMgr.instance.$playerItem.owner as Sprite3D);
+        this.gameScene.cameraItem.initFallowTarget(PlayerMgr.instance.playerItem.owner as Sprite3D);
 
 
 
@@ -133,6 +146,20 @@ export default class MainGame {
 
         this.setGameTime();
     }
+
+    /**游戏重开 */
+    gameRestart() {
+        this.killNum = 0;
+        this.resurrectionTimes = 0;
+        PlayerMgr.instance.gameOver();
+        EnemyMgr.instance.gameOver();
+        BulletMgr.instance.gameOver();
+        Timer.clearAll(this);
+        this.gameStart(this.gameScene);
+    }
+
+
+
 
 
     /**开启一个游戏倒计时,倒计时结束游戏胜利 */
@@ -145,42 +172,57 @@ export default class MainGame {
                 this.gameWin();//倒计时结束直接win
             }
         }).loop().start();
+
     }
 
-
+    /**击杀 */
     skillEnemy() {
         this.killNum++;
+    }
 
+    /**玩家死亡 */
+    playerDeath() {
+        this.gamePause();
+    }
+
+    /**玩家复活 */
+    playerResurrection() {
+        this.resurrectionTimes++;
+        this.gameResume();
+        PlayerMgr.instance.playerResurrection();
+        EnemyMgr.instance.playerResurrection();
     }
 
 
     /**游戏暂停 */
     gamePause() {
         this.$gameStep = GameStepEnum.GamePause;
-
         this.gameTimer.pause();
-
+        EnemyMgr.instance.gamePause();
     }
     /**游戏继续*/
     gameResume() {
         this.$gameStep = GameStepEnum.GameStart;
         this.gameTimer.resume();
-
     }
 
     gameWin() {
         this.$gameStep = GameStepEnum.GameWin;
-
-        this.gameOver();
+        EventMgr.event(EventEnum.GAMEWIN);
+        // this.gameOver();
     }
     gameLose() {
         this.$gameStep = GameStepEnum.GameLose;
 
-        this.gameOver();
+        // this.gameOver();
     }
 
     gameOver() {
-
+        EnemyMgr.instance.gameOver();
+        PlayerMgr.instance.gameOver();
+        BulletMgr.instance.gameOver();
+        Scene3dMgr.instance.close(Scene3dEnum.GameScene);
+        this.reset();
     }
 
 
