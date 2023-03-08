@@ -49,6 +49,16 @@
         "_$uuid": "42939f11-7ed8-41e3-a5f1-67585c907054",
         "_$type": "LightingSettings"
       },
+      "_$comp": [
+        {
+          "_$type": "703165f6-1bb3-483a-b1f7-918d3418e246",
+          "scriptPath": "../src/TestPhy.ts",
+          "bullet": {
+            "_$uuid": "7ef2368a-e43e-4fe1-bf1d-52790f0b35e9",
+            "_$type": "Prefab"
+          }
+        }
+      ],
       "_$child": [
         {
           "_$id": "6jx8h8bvc6",
@@ -57,7 +67,7 @@
           "transform": {
             "localPosition": {
               "_$type": "Vector3",
-              "x": -5.635611057281494,
+              "x": 16.71630663055267,
               "y": 8.925015330431831,
               "z": 9.090217548142132
             },
@@ -128,14 +138,6 @@
           "_$type": "Sprite3D",
           "name": "Cube",
           "isStatic": true,
-          "transform": {
-            "localPosition": {
-              "_$type": "Vector3",
-              "x": -5.5,
-              "y": 2,
-              "z": 5.5
-            }
-          },
           "_$comp": [
             {
               "_$type": "MeshFilter",
@@ -169,7 +171,258 @@
         {
           "_$id": "1pbeo0xf",
           "_$type": "Sprite3D",
-          "name": "GameScene"
+          "name": "GameScene",
+          "_$comp": [
+            {
+              "_$type": "UI3D",
+              "resolutionRate": 128,
+              "scale": {
+                "_$type": "Vector2",
+                "x": 1,
+                "y": 1
+              }
+            }
+          ]
+        },
+        {
+          "_$id": "35tnnv28",
+          "_$type": "Sprite3D",
+          "name": "Trail",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 9.069472725137752,
+              "y": -1.1533825983178758e-7,
+              "z": 2.2683497036268818e-7
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "TrailRenderer",
+              "sharedMaterials": [
+                {
+                  "_$uuid": "db42ad88-9d69-48e5-8c97-901e33356b70",
+                  "_$type": "Material"
+                }
+              ],
+              "renderMode": null,
+              "_trailFilter": {
+                "alignment": 1,
+                "widthCurve": [
+                  {
+                    "_$type": "FloatKeyframe",
+                    "inTangent": 0,
+                    "outTangent": 0,
+                    "value": 1,
+                    "inWeight": 0.33333,
+                    "outWeight": 0.33333,
+                    "weightedMode": 0,
+                    "time": 0
+                  },
+                  {
+                    "_$type": "FloatKeyframe",
+                    "inTangent": 0,
+                    "outTangent": 0,
+                    "value": 1,
+                    "inWeight": 0.33333,
+                    "outWeight": 0.33333,
+                    "weightedMode": 0,
+                    "time": 1
+                  }
+                ],
+                "colorGradient": {
+                  "_$type": "Gradient",
+                  "_alphaElements": {
+                    "_$type": "Float32Array",
+                    "value": [
+                      0,
+                      1,
+                      1,
+                      1,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  },
+                  "_colorAlphaKeysCount": 2,
+                  "_rgbElements": {
+                    "_$type": "Float32Array",
+                    "value": [
+                      0,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0
+                    ]
+                  },
+                  "_colorRGBKeysCount": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "_$id": "hklj9loj",
+          "_$type": "Sprite3D",
+          "name": "Bullet_Revolver",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "x": 1.0187596907350565,
+              "z": 3.718546252455413
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "c08609ed-ebe2-4062-8e7f-0779439120be",
+              "scriptPath": "../src/Game/Bullet/BulletItem.ts"
+            },
+            {
+              "_$type": "PhysicsCollider",
+              "isTrigger": true,
+              "colliderShape": {
+                "_$type": "BoxColliderShape",
+                "sizeX": 0.15,
+                "sizeY": 0.15,
+                "sizeZ": 0.2
+              }
+            }
+          ],
+          "_$child": [
+            {
+              "_$id": "nvl94bsm",
+              "_$type": "Sprite3D",
+              "name": "Bullet_Revolver",
+              "transform": {
+                "localRotation": {
+                  "_$type": "Quaternion",
+                  "x": -0.7081770951931118,
+                  "y": 8.659550744536745e-17,
+                  "z": 8.659550744536745e-17,
+                  "w": 0.706034844638596
+                },
+                "localScale": {
+                  "_$type": "Vector3",
+                  "x": 0.03,
+                  "y": 0.03,
+                  "z": 0.03
+                }
+              },
+              "_$comp": [
+                {
+                  "_$type": "MeshFilter",
+                  "sharedMesh": {
+                    "_$uuid": "c179dad4-6b2e-493a-bef2-f1cf078f3bff@lm0",
+                    "_$type": "Mesh"
+                  }
+                },
+                {
+                  "_$type": "MeshRenderer",
+                  "receiveShadow": true,
+                  "castShadow": true,
+                  "sharedMaterials": [
+                    {
+                      "_$uuid": "64c4d288-cfe0-42da-ade8-7058702b4b7b",
+                      "_$type": "Material"
+                    }
+                  ],
+                  "renderMode": null
+                }
+              ]
+            },
+            {
+              "_$id": "x1vs4pwi",
+              "_$type": "Sprite3D",
+              "name": "Trail",
+              "transform": {
+                "localPosition": {
+                  "_$type": "Vector3",
+                  "z": -0.16106832027435303
+                },
+                "localRotation": {
+                  "_$type": "Quaternion",
+                  "y": -0.7071067811865475,
+                  "w": 0.7071067811865476
+                }
+              },
+              "_$comp": [
+                {
+                  "_$type": "TrailRenderer",
+                  "sharedMaterials": [
+                    {
+                      "_$uuid": "db42ad88-9d69-48e5-8c97-901e33356b70",
+                      "_$type": "Material"
+                    }
+                  ],
+                  "renderMode": null,
+                  "_trailFilter": {
+                    "alignment": 1,
+                    "widthCurve": [
+                      {
+                        "_$type": "FloatKeyframe",
+                        "inTangent": 0,
+                        "outTangent": 0,
+                        "value": 0.04411764705882448,
+                        "inWeight": 0.33333,
+                        "outWeight": 0.33333,
+                        "weightedMode": 0,
+                        "time": 0
+                      },
+                      {
+                        "_$type": "FloatKeyframe",
+                        "inTangent": 0,
+                        "outTangent": 0,
+                        "value": 0.008823529411765285,
+                        "inWeight": 0.33333,
+                        "outWeight": 0.33333,
+                        "weightedMode": 0,
+                        "time": 1
+                      }
+                    ],
+                    "colorGradient": {
+                      "_$type": "Gradient",
+                      "_alphaElements": {
+                        "_$type": "Float32Array",
+                        "value": [
+                          0,
+                          1,
+                          1,
+                          0.20000000298023224
+                        ]
+                      },
+                      "_colorAlphaKeysCount": 2,
+                      "_rgbElements": {
+                        "_$type": "Float32Array",
+                        "value": [
+                          0,
+                          0.5338690280914307,
+                          0.028363680467009544,
+                          0.9147287011146545,
+                          1,
+                          0.5110607743263245,
+                          0.03701700642704964,
+                          0.8682170510292053
+                        ]
+                      },
+                      "_colorRGBKeysCount": 2
+                    }
+                  }
+                }
+              ]
+            }
+          ]
         }
       ]
     }

@@ -33,10 +33,8 @@
       "transform": {
         "localRotation": {
           "_$type": "Quaternion",
-          "x": -0.7081770951931118,
-          "y": 8.659550744536745e-17,
-          "z": 8.659550744536745e-17,
-          "w": 0.706034844638596
+          "x": 0.7071067811865476,
+          "w": -0.7071067811865475
         },
         "localScale": {
           "_$type": "Vector3",
@@ -68,13 +66,18 @@
       ]
     },
     {
-      "_$id": "pkgd5h60",
+      "_$id": "e1a3ecfu",
       "_$type": "Sprite3D",
-      "name": "Sprite3D",
+      "name": "Trail",
       "transform": {
         "localPosition": {
           "_$type": "Vector3",
-          "z": -0.16025747948360286
+          "z": -0.16106835508836792
+        },
+        "localRotation": {
+          "_$type": "Quaternion",
+          "y": -0.7071067811865475,
+          "w": 0.7071067811865476
         }
       },
       "_$comp": [
@@ -82,18 +85,20 @@
           "_$type": "TrailRenderer",
           "sharedMaterials": [
             {
-              "_$uuid": "0040663a-315f-41f6-b22a-30224056f720",
+              "_$uuid": "db42ad88-9d69-48e5-8c97-901e33356b70",
               "_$type": "Material"
             }
           ],
+          "renderMode": null,
           "_trailFilter": {
+            "time": 0.2,
             "alignment": 1,
             "widthCurve": [
               {
                 "_$type": "FloatKeyframe",
                 "inTangent": 0,
                 "outTangent": 0,
-                "value": 1,
+                "value": 0.017647058823530366,
                 "inWeight": 0.33333,
                 "outWeight": 0.33333,
                 "weightedMode": 0,
@@ -103,11 +108,11 @@
                 "_$type": "FloatKeyframe",
                 "inTangent": 0,
                 "outTangent": 0,
-                "value": 0.4529411764705883,
+                "value": 0.008823529411765285,
                 "inWeight": 0.33333,
                 "outWeight": 0.33333,
                 "weightedMode": 0,
-                "time": 0.9923224568138196
+                "time": 1
               }
             ],
             "colorGradient": {
@@ -118,7 +123,7 @@
                   0,
                   1,
                   1,
-                  0.30000001192092896
+                  0.20000000298023224
                 ]
               },
               "_colorAlphaKeysCount": 2,
@@ -126,13 +131,13 @@
                 "_$type": "Float32Array",
                 "value": [
                   0,
-                  0,
-                  0.7801596522331238,
-                  0.8837209343910217,
+                  0.13340544700622559,
+                  0.5380439758300781,
+                  0.930232584476471,
                   1,
-                  0.007451475132256746,
-                  0.213021919131279,
-                  0.24031007289886475
+                  0.03628439083695412,
+                  0.03244997188448906,
+                  0.5232558250427246
                 ]
               },
               "_colorRGBKeysCount": 2

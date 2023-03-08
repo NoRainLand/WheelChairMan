@@ -38,7 +38,7 @@ import Color = Laya.Color;
  * @Author: NoRain 
  * @Date: 2023-02-25 19:27:37 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-08 16:24:12
+ * @Last Modified time: 2023-03-08 22:51:05
  */
 const { regClass, property } = Laya;
 /**玩家类 */
@@ -56,6 +56,10 @@ export default class PlayerItem extends BaseItem {
 
     @property()
     UI3D: Sprite3D;
+
+    @property()
+    playerDirection: Sprite3D;
+
 
     constructor() { super() }
 
@@ -87,7 +91,7 @@ export default class PlayerItem extends BaseItem {
 
     private playerStatus: PlayerStatusEnum;
 
-    private pixelLineSprite3D: PixelLineSprite3D;
+    // private pixelLineSprite3D: PixelLineSprite3D;
 
 
     private $isGod: boolean = false;
@@ -137,12 +141,15 @@ export default class PlayerItem extends BaseItem {
         this.isGod = false;
         this.playerController.characterController.collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER1;
         this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER2;
-        if (!this.pixelLineSprite3D) {
-            this.pixelLineSprite3D = new PixelLineSprite3D(1);
-            this.shootPos.addChild(this.pixelLineSprite3D);
-            this.pixelLineSprite3D.addLine(new Vector3(0, -0.1, 0), new Vector3(0, -0.1, 3), new Color(1 / 255, 114 / 255, 1 / 255, 0.7), new Color(1 / 255, 114 / 255, 1 / 255, 0.3));
-            this.pixelLineSprite3D.active = false;
-        }
+
+        this.playerDirection.active = true;
+
+        // if (!this.pixelLineSprite3D) {
+        //     this.pixelLineSprite3D = new PixelLineSprite3D(1);
+        //     this.shootPos.addChild(this.pixelLineSprite3D);
+        //     this.pixelLineSprite3D.addLine(new Vector3(0, -0.1, 0), new Vector3(0, -0.1, 3), new Color(1 / 255, 114 / 255, 1 / 255, 0.7), new Color(1 / 255, 114 / 255, 1 / 255, 0.3));
+        //     this.pixelLineSprite3D.active = false;
+        // }
     }
 
 
@@ -152,6 +159,7 @@ export default class PlayerItem extends BaseItem {
         this.changeAni();
         this.position = Sprite3d.ZERO;
         this.localRotationEuler = Sprite3d.ZERO;
+        this.playerDirection.active = false;
     }
 
 
@@ -271,7 +279,7 @@ export default class PlayerItem extends BaseItem {
             this.playerStatus = PlayerStatusEnum.runAndShoot;
             this.changeAni();
         }
-        this.pixelLineSprite3D.active = true;
+
 
         this.weaponItem.shoot(angle);
 
@@ -285,7 +293,6 @@ export default class PlayerItem extends BaseItem {
             this.playerStatus = PlayerStatusEnum.run;
             this.changeAni();
         }
-        this.pixelLineSprite3D.active = false;
 
 
         this.weaponItem.stopShoot()

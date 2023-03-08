@@ -47,6 +47,9 @@
       },
       "UI3D": {
         "_$ref": "vgy0e50x"
+      },
+      "playerDirection": {
+        "_$ref": "o1cpxgli"
       }
     }
   ],
@@ -248,6 +251,7 @@
         },
         {
           "_$id": "mh3sbt7w",
+          "_$index": 1,
           "_$type": "Sprite3D",
           "name": "ShootPos",
           "transform": {
@@ -257,6 +261,41 @@
               "z": 1.2000000476837158
             }
           }
+        },
+        {
+          "_$id": "o1cpxgli",
+          "_$type": "Sprite3D",
+          "name": "playerDirection",
+          "transform": {
+            "localPosition": {
+              "_$type": "Vector3",
+              "y": 0.1
+            },
+            "localRotation": {
+              "_$type": "Quaternion",
+              "y": -0.9238795325112867,
+              "w": 0.38268343236508984
+            }
+          },
+          "_$comp": [
+            {
+              "_$type": "MeshFilter",
+              "sharedMesh": {
+                "_$uuid": "4a4afb22-ef83-40a2-a6a8-212a2d20c52f",
+                "_$type": "Mesh"
+              }
+            },
+            {
+              "_$type": "MeshRenderer",
+              "sharedMaterials": [
+                {
+                  "_$uuid": "b3f0483e-7b60-4a5b-9816-944761a09114",
+                  "_$type": "Material"
+                }
+              ],
+              "renderMode": null
+            }
+          ]
         }
       ]
     },
