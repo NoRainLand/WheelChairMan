@@ -1,0 +1,57 @@
+{
+  "_$type": "Animator",
+  "enabled": true,
+  "controller": null,
+  "cullingMode": 0,
+  "controllerLayers": [
+    {
+      "_$type": "AnimatorControllerLayer",
+      "name": "Layer0",
+      "playOnWake": true,
+      "blendingMode": 0,
+      "defaultWeight": 1,
+      "avatarMask": null,
+      "states": [
+        {
+          "_$type": "AnimatorState",
+          "name": "Layer0",
+          "speed": 1,
+          "clipStart": 0,
+          "clipEnd": 1,
+          "clip": {
+            "_$uuid": "8cdb7859-db96-4d90-b6ca-f4da837a9f0f@lani0",
+            "_$type": "AnimationClip"
+          },
+          "soloTransitions": [],
+          "scripts": null,
+          "x": 421.16008793329075,
+          "y": 122.15414112351272,
+          "id": "0"
+        },
+        {
+          "x": 10,
+          "y": 100,
+          "id": "-1",
+          "name": "进入",
+          "speed": 1,
+          "clipEnd": 1,
+          "soloTransitions": [
+            {
+              "id": "0"
+            }
+          ]
+        },
+        {
+          "x": 391,
+          "y": 100,
+          "id": "-2",
+          "name": "任何状态",
+          "speed": 1,
+          "clipEnd": 1
+        }
+      ],
+      "defaultStateName": "Layer0"
+    }
+  ],
+  "layerW": 150
+}

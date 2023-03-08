@@ -87,8 +87,8 @@
           "clipEnd": 1
         },
         {
-          "x": 180,
-          "y": 311,
+          "x": 178,
+          "y": 184,
           "id": "0",
           "name": "runUp",
           "speed": 1,
@@ -102,7 +102,7 @@
           "y": 300,
           "id": "1",
           "name": "shoot",
-          "speed": 1,
+          "speed": 2,
           "clipEnd": 1,
           "clip": {
             "_$uuid": "8287d397-af18-44c2-9e76-da4686c36825@lani4"

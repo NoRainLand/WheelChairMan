@@ -86,8 +86,8 @@
               "_$type": "Material"
             }
           ],
-          "renderMode": null,
           "_trailFilter": {
+            "alignment": 1,
             "widthCurve": [
               {
                 "_$type": "FloatKeyframe",

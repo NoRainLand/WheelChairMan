@@ -32,7 +32,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-03-03 16:00:31 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-08 16:43:12
+ * @Last Modified time: 2023-03-08 20:05:17
  */
 const { regClass, property } = Laya;
 /**丧尸 */
@@ -244,11 +244,11 @@ export default class ZombieItem extends BaseItem {
 
 
     onTriggerEnter(other: Laya.PhysicsComponent | Laya.ColliderBase, self?: Laya.ColliderBase, contact?: any): void {
-        console.log('zombie_onTriggerEnter');
+        // console.log('zombie_onTriggerEnter');
     }
 
     onCollisionEnter(collision: Laya.Collision): void {
-        console.log("zombie_onCollisionEnter");
+        // console.log("zombie_onCollisionEnter");
     }
 
 

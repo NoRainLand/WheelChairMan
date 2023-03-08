@@ -2,7 +2,7 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-06 21:50:46
+ * @Last Modified time: 2023-03-08 19:56:34
 */
 
 import { DataTableEnum } from "../../Enum/DataTableEnum";
@@ -12,6 +12,7 @@ import EventMgr from "../../Mgr/EventMgr";
 import ObjUtil from "../../Util/ObjUtil";
 import ResLoader from "../../Util/ResLoader";
 import Sprite3d from "../../Util/Sprite3d";
+import Timer from "../../Util/Timer";
 import { EnemyEnum } from "../Enum/EnemyEnum";
 import PlayerMgr from "../Player/PlayerMgr";
 import ZombieItem from "./ZombieItem";
@@ -62,15 +63,15 @@ export default class EnemyMgr {
     gameStart(stage: Sprite3D) {
         this.enemyStage = stage;
         let index = 0;
-        this.createZombie();
+        // this.createZombie();
 
-        // Timer.get(200, this, () => {
-        //     this.createZombie();
-        //     index++;
-        //     if (index >= 1) {
-        //         Timer.clearAll(this);
-        //     }
-        // }).loop().start();
+        Timer.get(200, this, () => {
+            this.createZombie();
+            index++;
+            if (index >= this.maxZombieNum) {
+                Timer.clearAll(this);
+            }
+        }).loop().start();
     }
 
 
@@ -148,7 +149,7 @@ export default class EnemyMgr {
             let point = ObjUtil.randomRingPos(18, 13);
             let pos = PlayerMgr.instance.getPlayerPos();
             let zombieItem = zombie.getComponent(ZombieItem) as ZombieItem;
-            zombieItem.position = new Vector3(4, 0, 4);//pos.x + point.x, pos.y, pos.z + point.y
+            zombieItem.position = new Vector3(pos.x + point.x, pos.y, pos.z + point.y);//pos.x + point.x, pos.y, pos.z + point.y
             this.enemyStage.addChild(zombie);
             zombieItem.objName = PoolEnum.ZOMBIE;
             zombieItem.index++;
@@ -162,7 +163,9 @@ export default class EnemyMgr {
         for (let i = 0; i < this.zombieList.length; i++) {
             let zombieItem = this.zombieList[i];
             if (zombieItem && zombieItem.health > 0) {
-                if (range > Vector3.distance(pos, zombieItem.position)) {
+                let dis = Vector3.distance(pos, zombieItem.position);
+                console.log(dis, range);
+                if (range > dis) {
                     zombieItem.beHit(pos, damage, 0.4);
                 }
             }

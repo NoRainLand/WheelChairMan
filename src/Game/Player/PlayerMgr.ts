@@ -2,7 +2,7 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-08 15:59:40
+ * @Last Modified time: 2023-03-08 19:44:04
 */
 
 import GameData from "../../Data/GameData";
@@ -40,7 +40,7 @@ export default class PlayerMgr {
     }
     private playerMap: Map<number, Object>;
 
-    selectedPlayerId: number;
+    private $selectedPlayerId: number = -1;
 
     private $sign: string = "playerId_"
 
@@ -161,9 +161,26 @@ export default class PlayerMgr {
     }
 
 
-    setSelectedPlayerId(playerId: number) {
-        this.selectedPlayerId = playerId;
+    get selectedPlayerId(): number {
+        if (this.$selectedPlayerId == -1) {
+            let str = LocalStorageMgr.getItem(LocalStorageEnum.SELECTEDPLAYERID);
+            if (str == null) {
+                this.$selectedPlayerId = 1001;
+                LocalStorageMgr.setItem(LocalStorageEnum.SELECTEDPLAYERID, this.$selectedPlayerId);
+            } else {
+                this.$selectedPlayerId = Number(str);
+            }
+        }
+        return this.$selectedPlayerId;
     }
+
+    set selectedPlayerId(playerId: number) {
+        this.$selectedPlayerId = playerId;
+        LocalStorageMgr.setItem(LocalStorageEnum.SELECTEDPLAYERID, this.$selectedPlayerId);
+    }
+
+
+
 
 
 
@@ -193,7 +210,7 @@ export default class PlayerMgr {
 
     gameStart(stage: Sprite3D) {
         this.playerStage = stage;
-        this.playerItem = this.getSelectPlayer(this.selectedPlayerId);
+        this.playerItem = this.getSelectPlayer(this.$selectedPlayerId);
         if (this.playerItem && this.playerStage) {
             this.playerStage.addChild(this.playerItem.obj);
             this.playerItem.gameStart();

@@ -23,7 +23,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-24 20:04:35 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-27 20:15:54
+ * @Last Modified time: 2023-03-08 19:44:04
  */
 const { regClass, property } = Laya;
 /**选择玩家界面 */
@@ -67,7 +67,6 @@ export default class SelectPlayerView extends UIBase {
 
     onOpened(param?: any): void {
         this.$viewIndex = 0;
-        this.$selectIndex = 0;
 
         if (!this.$playerList) {
             this.$playerList = [];
@@ -78,6 +77,7 @@ export default class SelectPlayerView extends UIBase {
             }
         }
 
+        this.$selectIndex = this.$playerList.indexOf(PlayerMgr.instance.selectedPlayerId);
         this.showPlayer();
 
     }
@@ -147,7 +147,7 @@ export default class SelectPlayerView extends UIBase {
         this.showPlayer();
     }
     selectPlayer() {//
-        PlayerMgr.instance.setSelectedPlayerId(this.$playerList[this.$selectIndex]);
+        PlayerMgr.instance.selectedPlayerId = this.$playerList[this.$selectIndex];
         MainGame.instance.loadGameScene();
         UIBaseMgr.instance.open(SceneEnum.GameView);
         this.close();

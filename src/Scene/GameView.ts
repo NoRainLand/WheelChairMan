@@ -55,7 +55,7 @@ export default class GameView extends UIBase {
     onOpened(param?: any): void {
         this.rocketBoxL.initTarget(PlayerMgr.instance, PlayerMgr.instance.startMove, PlayerMgr.instance.stopMove);
         this.rocketBoxR.initTarget(PlayerMgr.instance, PlayerMgr.instance.startShoot, PlayerMgr.instance.stopShoot);
-        this.playerData = PlayerMgr.instance.getSelectedPlayerData(PlayerMgr.instance.selectedPlayerId);
+        this.playerData = PlayerMgr.instance.getSelectedPlayerData(PlayerMgr.instance.$selectedPlayerId);
         this.totalHealth = this.health = this.playerData.health;
 
 

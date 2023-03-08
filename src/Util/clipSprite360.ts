@@ -1,4 +1,9 @@
-// 360扇形裁剪
+/*
+ * @Author: @GreenPack(1220792244);
+ * @Date: 2023-03-08 19:08:42 
+ * @Last Modified by: NoRain
+ * @Last Modified time: 2023-03-08 19:10:21
+ */
 
 export class ClipSprite360 extends Laya.Sprite {
     public renderTexture = null;

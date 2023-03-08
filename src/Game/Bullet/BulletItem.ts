@@ -1,3 +1,7 @@
+import { SoundEnum } from "../../Enum/SoundEnum";
+import { VFXEnum } from "../../Enum/VFXEnum";
+import SoundMgr from "../../Mgr/SoundMgr";
+import VFXMgr from "../../Mgr/VFXMgr";
 import Physics3DUtils from "../../Util/Physics3DUtils";
 import Timer from "../../Util/Timer";
 import BaseItem from "../BaseItem/BaseItem";
@@ -23,7 +27,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-03-05 17:09:01 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-06 21:47:36
+ * @Last Modified time: 2023-03-08 20:04:22
  */
 const { regClass, property } = Laya;
 /**子弹 */
@@ -51,6 +55,9 @@ export default class BulletItem extends BaseItem {
     /**是否存在 */
     isActive: boolean = true;
 
+    /**最大允许击杀 */
+    maxKillNum: number = 0;
+
     constructor() { super() }
 
     init() {
@@ -61,6 +68,7 @@ export default class BulletItem extends BaseItem {
             this.expRange = this.bulletData["expRange"];
             this.flightDis = this.bulletData["flightDis"];
             this.damage = this.bulletData["damage"];
+            this.maxKillNum = this.bulletData["maxKillNum"];
 
 
             this.startPos = this.position.clone();
@@ -111,8 +119,15 @@ export default class BulletItem extends BaseItem {
                 baseItem.beHit(this.position, this.damage);
                 break;
             case 4:
-                // baseItem.beHit(this.position, this.damage);
+
                 break;
+        }
+
+        if (this.maxKillNum > 0) {
+            this.maxKillNum--;
+            if (this.maxKillNum <= 0) {
+                this.clear();
+            }
         }
     }
 
@@ -141,7 +156,9 @@ export default class BulletItem extends BaseItem {
 
 
     explode(range: number) {
+        SoundMgr.instance.playSound(SoundEnum.Explosion1);
         EnemyMgr.instance.explode(this.position, range, this.damage);
+        VFXMgr.instance.createVFX(VFXEnum.Explode1, 500, this.position, this.owner.parent as Sprite3D);
     }
 
 

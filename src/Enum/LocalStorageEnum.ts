@@ -48,4 +48,7 @@ export enum LocalStorageEnum {
 
     /**音效音量 */
     SOUNDVOLUME = "SOUNDVOLUME",
+
+    /**当前选择人物 */
+    SELECTEDPLAYERID = "SELECTEDPLAYERID",
 }
