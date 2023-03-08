@@ -1,5 +1,7 @@
 import { EventEnum } from "../../Enum/EventEnum";
+import { SoundEnum } from "../../Enum/SoundEnum";
 import EventMgr from "../../Mgr/EventMgr";
+import SoundMgr from "../../Mgr/SoundMgr";
 import VibrateMgr from "../../Mgr/VibrateMgr";
 import AnimatorTool from "../../Util/AnimatorTool";
 import Physics3DUtils from "../../Util/Physics3DUtils";
@@ -36,7 +38,7 @@ import Color = Laya.Color;
  * @Author: NoRain 
  * @Date: 2023-02-25 19:27:37 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-06 16:27:54
+ * @Last Modified time: 2023-03-08 16:24:12
  */
 const { regClass, property } = Laya;
 /**玩家类 */
@@ -199,6 +201,12 @@ export default class PlayerItem extends BaseItem {
         this.shakeSkin(3000);
     }
 
+    win() {
+        this.stopMove();
+        this.playerStatus = PlayerStatusEnum.idle;
+        this.changeAni();
+    }
+
     changeAni() {
         this.weaponItem && (this.weaponItem.owner.active = true);
         switch (this.playerStatus) {
@@ -293,6 +301,7 @@ export default class PlayerItem extends BaseItem {
                 this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER2;
             }).start();
             this.health--;
+            SoundMgr.instance.playSound(SoundEnum.hit);
             EnemyMgr.instance.explode(this.position, 2.5, 0);
             VibrateMgr.vibrateLong();
             this.shakeSkin(1000);

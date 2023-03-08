@@ -80,7 +80,7 @@ $by NoRainLand$
 
     1,UI图片导入之后需要设定为SpriteTexture.
 
-    2,@pro 暴露出去的属性如果是bool值,必须默认设定为false
+    2,@pro 暴露出去的属性如果是bool值,必须默认设定为false，已修复。
 
     3,无法切断(UnpackPrefab)预设.
 
@@ -88,4 +88,10 @@ $by NoRainLand$
 
     5,预设属性可能修改失败,实在不行就去.lh文件手动修改吧.
 
-    6,
+    6,使用对象池的时候小心Laya.timer导致的bug，对象池是pop取值，而不是shift。
+
+    7,雾化BUG，已修复。
+
+    8,刚体碰撞不到的情况：分组，休眠，碰撞盒子。
+
+    9,

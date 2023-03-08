@@ -1,7 +1,9 @@
 import ProjectConfig from "../Config/ProjectConfig";
 import GameData from "../Data/GameData";
 import { EventEnum } from "../Enum/EventEnum";
+import { SoundEnum } from "../Enum/SoundEnum";
 import EventMgr from "../Mgr/EventMgr";
+import SoundMgr from "../Mgr/SoundMgr";
 import PlatformMgr from "../Platform/PlatformMgr";
 import UIBase from "../UIBase/UIBase";
 import Tween from "../Util/Tween";
@@ -19,7 +21,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-03-07 11:32:13 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-07 11:50:35
+ * @Last Modified time: 2023-03-08 15:54:46
  */
 const { regClass, property } = Laya;
 /**复活界面 */
@@ -43,6 +45,7 @@ export default class ResurrectionView extends UIBase {
             .call(this, () => {
                 this.countdown--;
                 this.labelTime.text = this.countdown.toString();
+                SoundMgr.instance.playSound(SoundEnum.countdown, 1);
                 if (this.countdown == 0) {
                     Tween.clear(this.labelTime);
                     this.goDie();
@@ -50,6 +53,7 @@ export default class ResurrectionView extends UIBase {
             })
             .loop()
             .start()
+
     }
 
     addEvent(): void {

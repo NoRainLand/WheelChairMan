@@ -1,6 +1,8 @@
 import { EventEnum } from "../Enum/EventEnum";
+import { SoundEnum } from "../Enum/SoundEnum";
 import MainGame from "../Game/MainGame";
 import EventMgr from "../Mgr/EventMgr";
+import SoundMgr from "../Mgr/SoundMgr";
 import UIBase from "../UIBase/UIBase";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
@@ -16,7 +18,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-14 10:37:38 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 10:44:53
+ * @Last Modified time: 2023-03-08 15:46:13
  */
 const { regClass, property } = Laya;
 /**胜利界面 */
@@ -49,6 +51,8 @@ export default class CompleteView extends UIBase {
         this.imgStar1.visible = true;
         this.imgStar2.visible = true;
         this.imgStar3.visible = false;
+
+        SoundMgr.instance.playSound(SoundEnum.win);
     }
     addEvent(): void {
         this.regClick(this.imgNext, this.goHome);

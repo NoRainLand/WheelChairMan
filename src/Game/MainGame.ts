@@ -30,7 +30,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-02-20 15:26:58 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-06 16:17:55
+ * @Last Modified time: 2023-03-08 15:58:57
  */
 const { regClass, property } = Laya;
 /**主游戏逻辑 */
@@ -209,6 +209,7 @@ export default class MainGame {
     gameWin() {
         this.$gameStep = GameStepEnum.GameWin;
         EventMgr.event(EventEnum.GAMEWIN);
+        PlayerMgr.instance.gameWin();
         // this.gameOver();
     }
     gameLose() {

@@ -19,18 +19,21 @@
       "depth": 1,
       "isSingleton": true,
       "AniType": 1,
-      "aniNode": null,
+      "Main": null,
       "imgClose": {
         "_$ref": "fdfzx0c2"
       },
       "sliderSfx": {
-        "_$ref": "fesjb1bw"
+        "_$ref": "fesjb1bw",
+        "_$type": "35b37bb8-b4f2-4360-8030-42b6c06ee038"
       },
       "sliderBgm": {
-        "_$ref": "7ieswmrh"
+        "_$ref": "7ieswmrh",
+        "_$type": "35b37bb8-b4f2-4360-8030-42b6c06ee038"
       },
       "toggleShake": {
-        "_$ref": "s0tb81qk"
+        "_$ref": "s0tb81qk",
+        "_$type": "0f5a24a0-2f83-4219-9165-99195082aa4a"
       },
       "imgLanguage": {
         "_$ref": "iv4wae3k"

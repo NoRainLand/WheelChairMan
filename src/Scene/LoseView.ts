@@ -1,6 +1,8 @@
 import { EventEnum } from "../Enum/EventEnum";
+import { SoundEnum } from "../Enum/SoundEnum";
 import MainGame from "../Game/MainGame";
 import EventMgr from "../Mgr/EventMgr";
+import SoundMgr from "../Mgr/SoundMgr";
 import UIBase from "../UIBase/UIBase";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
@@ -16,7 +18,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-14 10:37:38 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 10:38:08
+ * @Last Modified time: 2023-03-08 15:46:41
  */
 const { regClass, property } = Laya;
 /** */
@@ -32,6 +34,7 @@ export default class LoseView extends UIBase {
 
     onOpened(param?: any): void {
         this.labelGold.text = (MainGame.instance.killNum * 10).toString();
+        SoundMgr.instance.playSound(SoundEnum.lose);
     }
     addEvent(): void {
         this.regClick(this.imgHome, this.gotoHome);

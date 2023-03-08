@@ -18,7 +18,7 @@ import Node = Laya.Node;
  * @Author: NoRain 
  * @Date: 2023-02-08 10:03:24 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-07 21:28:25
+ * @Last Modified time: 2023-03-08 16:01:23
  */
 const { regClass, property } = Laya;
 
@@ -99,7 +99,6 @@ export default class UIBase extends Laya.Script {
                             this.$aniFinish = true;
                         })
                         .start();
-                        console.log(this.Main);
                     break;
                 case 2:
                     Tween.get(this.Main)

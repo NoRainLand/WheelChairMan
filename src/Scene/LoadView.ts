@@ -3,6 +3,7 @@ import MainGame from "../Game/MainGame";
 import LocalizationMgr from "../Localization/LocalizationMgr";
 import CurrencyMgr from "../Mgr/CurrencyMgr";
 import LevelMgr from "../Mgr/LevelMgr";
+import SoundMgr from "../Mgr/SoundMgr";
 import Scene3dMgr from "../Scene3dBase/Scene3dMgr";
 import UIBase from "../UIBase/UIBase";
 import UIBaseMgr from "../UIBase/UIBaseMgr";
@@ -15,7 +16,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 21:50:26
+ * @Last Modified time: 2023-03-08 15:21:25
  */
 const { regClass, property } = Laya;
 
@@ -78,6 +79,7 @@ export default class LoadView extends UIBase {
         CurrencyMgr.init();
         Scene3dMgr.instance.init();
         MainGame.instance.init();
+        SoundMgr.instance.playBgm();
     }
 
     /**打开页面 */

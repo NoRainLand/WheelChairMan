@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-16 20:31:48 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 16:41:28
+ * @Last Modified time: 2023-03-08 15:19:19
  */
 
 import PrefabImpl = Laya.PrefabImpl;
@@ -69,14 +69,21 @@ export default class ObjUtil {
         let point = new Point;
         let r = Math.random() * (De - d) + d;
         let angle = Math.random() * 360;
-
-
         point.x = Math.cos(angle / 2 / Math.PI) * r;
         point.y = Math.sin(angle / 2 / Math.PI) * r;
-
-
-
         return point;
+    }
+
+
+    /**随机排序数组 */
+    public static shuffle(arr) {
+        let i = arr.length, t, j;
+        while (--i) {
+            j = Math.floor(Math.random() * i);
+            t = arr[i];
+            arr[i] = arr[j];
+            arr[j] = t;
+        }
     }
 
 

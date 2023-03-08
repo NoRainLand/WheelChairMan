@@ -22,7 +22,7 @@ import List = Laya.List;
  * @Author: NoRain 
  * @Date: 2023-02-10 18:36:22 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-24 23:35:07
+ * @Last Modified time: 2023-03-08 16:05:24
  */
 const { regClass, property } = Laya;
 /**设置界面 */
@@ -31,11 +31,11 @@ export default class SettingView extends UIBase {
     @property()
     imgClose: Image;
     @property()
-    sliderSfx: Box;
+    sliderSfx: Slider;
     @property()
-    sliderBgm: Box;
+    sliderBgm: Slider;
     @property()
-    toggleShake: Image;
+    toggleShake: Toggle;
     @property()
     imgLanguage: Image;
     @property()
@@ -48,19 +48,14 @@ export default class SettingView extends UIBase {
 
     constructor() { super() }
 
-    private $sliderBgm: Slider;
-    private $sliderSfx: Slider;
-    private $toggleShake: Toggle;
 
 
     onOpened(param?: any): void {
-        this.$sliderBgm = this.sliderBgm.getComponent(Slider);
-        this.$sliderSfx = this.sliderSfx.getComponent(Slider);
-        this.$toggleShake = this.toggleShake.getComponent(Toggle);
 
-        this.$sliderBgm.init(this, this.bgmChange);
-        this.$sliderSfx.init(this, this.sfxChange);
-        this.$toggleShake.init(this, this.shakeChange,VibrateMgr.isVibrate);
+
+        this.sliderBgm.init(this, this.bgmChange, SoundMgr.instance.MusicVolume);
+        this.sliderSfx.init(this, this.sfxChange, SoundMgr.instance.SoundVolume);
+        this.toggleShake.init(this, this.shakeChange, VibrateMgr.isVibrate);
 
 
     }
@@ -77,14 +72,16 @@ export default class SettingView extends UIBase {
     }
 
     bgmChange(value: number) {
-        SoundMgr.changeMusicVolume(value);
+        SoundMgr.instance.MusicVolume = value;
     }
     sfxChange(value: number) {
-        SoundMgr.changeSoundVolume(value);
+        SoundMgr.instance.SoundVolume = value;
     }
     shakeChange(value: boolean) {
         VibrateMgr.isVibrate = value;
-
+        if (value) {
+            VibrateMgr.vibrateShort();
+        }
 
     }
     changeLanguageIcon() {

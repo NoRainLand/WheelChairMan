@@ -1,5 +1,7 @@
 import { EventEnum } from "../../Enum/EventEnum";
+import { SoundEnum } from "../../Enum/SoundEnum";
 import EventMgr from "../../Mgr/EventMgr";
+import SoundMgr from "../../Mgr/SoundMgr";
 import AnimatorTool from "../../Util/AnimatorTool";
 import Physics3DUtils from "../../Util/Physics3DUtils";
 import PlayerController from "../../Util/PlayerController";
@@ -30,7 +32,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-03-03 16:00:31 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-06 21:49:07
+ * @Last Modified time: 2023-03-08 16:43:12
  */
 const { regClass, property } = Laya;
 /**丧尸 */
@@ -207,6 +209,14 @@ export default class ZombieItem extends BaseItem {
         this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER10;
         this.playerController.stopMove();
         // this.playerController.characterController.simulation.clearForces();
+        let ran = Math.random();
+        if (ran > 0.66) {
+            SoundMgr.instance.playSound(SoundEnum.zombie1);
+        } else if (ran > 0.33) {
+            SoundMgr.instance.playSound(SoundEnum.zombie2);
+        } else {
+            SoundMgr.instance.playSound(SoundEnum.zombie3);
+        }
         Timer.get(2500, this, () => {
             this.clear();
             EventMgr.event(EventEnum.ENEMYDEATH, EnemyEnum.zombie);

@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-06 17:30:20 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-07 11:45:25
+ * @Last Modified time: 2023-03-08 16:15:47
  */
 
 import { LocalStorageEnum } from "../Enum/LocalStorageEnum";
@@ -149,7 +149,7 @@ export default class GameData {
 
 
     /**单局游戏时长 单位s*/
-    static gameTime: number = 4;
+    static gameTime: number = 180;
 
 
     /**复活倒计时 单位s*/

@@ -2,7 +2,7 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 14:52:21
+ * @Last Modified time: 2023-03-08 15:59:40
 */
 
 import GameData from "../../Data/GameData";
@@ -87,6 +87,10 @@ export default class PlayerMgr {
         this.playerItem.clear();
     }
 
+
+    gameWin() {
+        this.playerItem.win();
+    }
 
 
 

@@ -12,7 +12,7 @@ import List = Laya.List;
  * @Author: NoRain 
  * @Date: 2023-02-10 18:48:21 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-11 13:57:08
+ * @Last Modified time: 2023-03-08 15:40:57
  */
 const { regClass, property } = Laya;
 /**滑条 */
@@ -106,7 +106,11 @@ export default class Slider extends Laya.Script {
 
 
     /**初始化 */
-    init(caller: any, callback: Function) {
+    init(caller: any, callback: Function, value: number = 1) {
+        if (!isNaN(value)) {
+            this.value = value;
+            this.changeMask();
+        }
         this.$caller = caller;
         this.$callback = callback;
     }
@@ -114,10 +118,10 @@ export default class Slider extends Laya.Script {
     private changeMask() {
         if (this.isH) {
             this.$imgMask.width = this.imgLoad.width * this.value;
-            this.imgBar.x = this.imgLoad.width * this.value+this.imgBg.x;
+            this.imgBar.x = this.imgLoad.width * this.value + this.imgBg.x;
         } else {
             this.$imgMask.height = this.imgLoad.height * this.value;
-            this.imgBar.y = this.imgLoad.height * this.value +this.imgBg.y;
+            this.imgBar.y = this.imgLoad.height * this.value + this.imgBg.y;
         }
     }
 

@@ -1,3 +1,4 @@
+import SoundMgr from "../../Mgr/SoundMgr";
 import Script3d from "../../Script3d/Script3d";
 import Timer from "../../Util/Timer";
 import BulletMgr from "../Bullet/BulletMgr";
@@ -22,7 +23,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-02-28 17:52:41 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-06 11:39:32
+ * @Last Modified time: 2023-03-08 16:13:17
  */
 const { regClass, property } = Laya;
 /**武器 */
@@ -56,6 +57,11 @@ export default class WeaponItem extends Script3d {
     /**对应子弹ID */
     bulletId: number;
 
+    /**对应开火音效 */
+    fireSound: number;
+    /**爆炸音效 */
+    expSound: number;
+
 
     /**是否正在射击 */
     isShooting: boolean = false;
@@ -82,6 +88,9 @@ export default class WeaponItem extends Script3d {
         this.$bulletNum = this.totalBulletNum = this.weaponData["prep"];
         this.reloadTime = this.weaponData["reloadTime"];
         this.shotInterval = this.weaponData["shotInterval"];
+
+        this.fireSound = this.weaponData["sound"]
+        this.expSound = this.weaponData["expSound"];
     }
 
 
@@ -118,6 +127,7 @@ export default class WeaponItem extends Script3d {
                 if (this.canShoot && this.isReload == false) {
                     BulletMgr.instance.createBullet(this.bulletId, this.shootPos);
                     this.canShoot = false;
+                    SoundMgr.instance.playSound(this.fireSound, 1);
                     this.bulletNum--;
                 }
             }

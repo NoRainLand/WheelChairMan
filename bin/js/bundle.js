@@ -623,7 +623,7 @@ function __$decorate(assetId, codePath) {
           }
           tweens.length == 0 && delete target[_Tween.cache];
         }
-        self.$timer.tweenClear();
+        self.$timer.clear();
         self.$timer = self.$steps = self.$cSteps = self.$target = null;
         Laya.Pool.recover(_Tween.sign, self);
       }
@@ -723,7 +723,6 @@ function __$decorate(assetId, codePath) {
       let self = this;
       if (delay > 0 && caller != null && callBack != null) {
         let timer = Pool.getItemByClass(_Timer.$sign, _Timer);
-        console.log("-------------na----------");
         timer.$init(delay, caller, callBack);
         return timer;
       } else {
@@ -845,23 +844,6 @@ function __$decorate(assetId, codePath) {
       }
     }
     /**清理 */
-    tweenClear() {
-      let self = this;
-      Laya.timer.clear(self, self.update);
-      if (self.$caller) {
-        let timerCache = self.$caller[_Timer.$cache];
-        if (timerCache && timerCache instanceof Array) {
-          let index = timerCache.indexOf(self);
-          if (index != -1) {
-            timerCache.splice(index, 1);
-          }
-          timerCache.length == 0 && delete self.$caller[_Timer.$cache];
-        }
-      }
-      Pool.recover(_Timer.$sign, self);
-      self.reset();
-    }
-    /**清理 */
     clear() {
       let self = this;
       self.$isRunning = false;
@@ -880,18 +862,15 @@ function __$decorate(assetId, codePath) {
         Pool.recover(_Timer.$sign, self);
       });
       self.reset();
-      console.log("-------------huishou----------");
     }
     /**清理 */
     static clearAll(target) {
       let timerCache = target[_Timer.$cache];
-      console.log(target);
       if (timerCache && timerCache instanceof Array) {
         for (let i = 0; i < timerCache.length; i++) {
           let timer = timerCache[i];
           if (timer instanceof _Timer) {
             let caller = timer.$caller;
-            console.log(timer);
             if (caller && caller instanceof Tween) {
               console.log("\u4E0D\u5141\u8BB8\u6E05\u7406");
             } else {
@@ -936,12 +915,9 @@ function __$decorate(assetId, codePath) {
             this.$aniFinish = true;
             break;
           case 1:
-            console.log("TweenStart");
             Tween.get(this.Main).set({ scaleX: 0.8, scaleY: 0.8 }).to({ scaleX: 1, scaleY: 1 }, 300, Laya.Ease.backOut).call(this, () => {
               this.$aniFinish = true;
-              console.log("TweenEnd");
             }).start();
-            console.log(this.Main);
             break;
           case 2:
             Tween.get(this.Main).set({ x: 1920 }).to({ x: 0 }, 300, Laya.Ease.circOut).call(this, () => {
@@ -1601,7 +1577,7 @@ function __$decorate(assetId, codePath) {
   GameData.$experience = -1;
   GameData.$key = -1;
   /**单局游戏时长 单位s*/
-  GameData.gameTime = 4;
+  GameData.gameTime = 180;
   /**复活倒计时 单位s*/
   GameData.countdown = 5;
   /**最大复活次数 */
@@ -1902,6 +1878,16 @@ function __$decorate(assetId, codePath) {
       point.x = Math.cos(angle / 2 / Math.PI) * r;
       point.y = Math.sin(angle / 2 / Math.PI) * r;
       return point;
+    }
+    /**随机排序数组 */
+    static shuffle(arr) {
+      let i = arr.length, t, j;
+      while (--i) {
+        j = Math.floor(Math.random() * i);
+        t = arr[i];
+        arr[i] = arr[j];
+        arr[j] = t;
+      }
     }
   };
   __name(ObjUtil, "ObjUtil");
@@ -2223,6 +2209,126 @@ function __$decorate(assetId, codePath) {
   /**持久化标志 */
   LocalizationMgr.$sign = "language_";
 
+  // E:/WheelChairMan/src/Enum/MusicEnum.ts
+  var MusicEnum = /* @__PURE__ */ ((MusicEnum2) => {
+    MusicEnum2[MusicEnum2["bgm1"] = 2501] = "bgm1";
+    MusicEnum2[MusicEnum2["bgm2"] = 2502] = "bgm2";
+    MusicEnum2[MusicEnum2["bgm3"] = 2503] = "bgm3";
+    MusicEnum2[MusicEnum2["bgm4"] = 2504] = "bgm4";
+    MusicEnum2[MusicEnum2["bgm5"] = 2505] = "bgm5";
+    MusicEnum2[MusicEnum2["bgm6"] = 2506] = "bgm6";
+    MusicEnum2[MusicEnum2["bgm7"] = 2507] = "bgm7";
+    MusicEnum2[MusicEnum2["bgm8"] = 2508] = "bgm8";
+    MusicEnum2[MusicEnum2["bgm9"] = 2509] = "bgm9";
+    MusicEnum2[MusicEnum2["bgm10"] = 2510] = "bgm10";
+    MusicEnum2[MusicEnum2["bgm11"] = 2511] = "bgm11";
+    return MusicEnum2;
+  })(MusicEnum || {});
+
+  // E:/WheelChairMan/src/Mgr/SoundMgr.ts
+  var SoundManager = Laya.SoundManager;
+  var Handler3 = Laya.Handler;
+  var SoundMgr = class {
+    constructor() {
+      this.$MusicVolume = -1;
+      this.$SoundVolume = -1;
+    }
+    static get instance() {
+      return this._instance ? this._instance : this._instance = new SoundMgr();
+    }
+    /**背景音乐音量 */
+    get MusicVolume() {
+      if (this.$MusicVolume == -1) {
+        let str = LocalStorageMgr.getItem("MUSICVOLUME" /* MUSICVOLUME */);
+        if (str === null) {
+          this.$MusicVolume = 0.7;
+          LocalStorageMgr.setItem("MUSICVOLUME" /* MUSICVOLUME */, this.$MusicVolume.toString());
+        } else {
+          this.$MusicVolume = Number(str);
+        }
+      }
+      return this.$MusicVolume;
+    }
+    set MusicVolume(value) {
+      if (!isNaN(value)) {
+        this.$MusicVolume = value;
+        SoundManager.musicVolume = value;
+        this.musicChannel && (this.musicChannel.volume = value);
+        LocalStorageMgr.setItem("MUSICVOLUME" /* MUSICVOLUME */, this.$MusicVolume.toString());
+      }
+    }
+    /**背景音乐音量 */
+    get SoundVolume() {
+      if (this.$SoundVolume == -1) {
+        let str = LocalStorageMgr.getItem("SOUNDVOLUME" /* SOUNDVOLUME */);
+        if (str === null) {
+          this.$SoundVolume = 0.7;
+          LocalStorageMgr.setItem("SOUNDVOLUME" /* SOUNDVOLUME */, this.$SoundVolume.toString());
+        } else {
+          this.$SoundVolume = Number(str);
+        }
+      }
+      return this.$SoundVolume;
+    }
+    set SoundVolume(value) {
+      if (!isNaN(value)) {
+        this.$SoundVolume = value;
+        SoundManager.soundVolume = value;
+        LocalStorageMgr.setItem("SOUNDVOLUME" /* SOUNDVOLUME */, this.$SoundVolume.toString());
+      }
+    }
+    /**播放音乐 */
+    playMusic(musicEnum, complete, loopTimes = 0) {
+      let url = ResLoader.instance.getUrlById(musicEnum);
+      if (url) {
+        this.musicChannel = SoundManager.playMusic(url, loopTimes, complete);
+        if (this.musicChannel) {
+          this.musicChannel.volume = SoundManager.musicVolume;
+        } else {
+          console.log(this.musicChannel);
+        }
+      }
+    }
+    /**暂停音乐 */
+    pauseMusic() {
+      if (this.musicChannel) {
+        this.musicChannel.pause();
+      }
+    }
+    /**继续音乐 */
+    resumeMusic() {
+      if (this.musicChannel) {
+        this.musicChannel.resume();
+      }
+    }
+    /**播放音效 */
+    playSound(soundEnum, loopTimes = 1) {
+      let url = ResLoader.instance.getUrlById(soundEnum);
+      if (url) {
+        SoundManager.playSound(url, loopTimes);
+      }
+    }
+    playBgm(index = 0) {
+      if (!this.musicList) {
+        this.musicList = [];
+        for (let value in MusicEnum) {
+          if (!isNaN(Number(value))) {
+            this.musicList.push(Number(value));
+          }
+        }
+        ObjUtil.shuffle(this.musicList);
+      }
+      this.playMusic(this.musicList[index], Handler3.create(this, () => {
+        index++;
+        if (index > this.musicList.length) {
+          index = 0;
+        }
+        this.playBgm(index);
+      }), 1);
+    }
+  };
+  __name(SoundMgr, "SoundMgr");
+
   // E:/WheelChairMan/src/Mgr/VibrateMgr.ts
   var VibrateMgr = class {
     /**是否震动 */
@@ -2523,6 +2629,8 @@ function __$decorate(assetId, codePath) {
       this.$bulletNum = this.totalBulletNum = this.weaponData["prep"];
       this.reloadTime = this.weaponData["reloadTime"];
       this.shotInterval = this.weaponData["shotInterval"];
+      this.fireSound = this.weaponData["sound"];
+      this.expSound = this.weaponData["expSound"];
     }
     get bulletNum() {
       return this.$bulletNum;
@@ -2551,6 +2659,7 @@ function __$decorate(assetId, codePath) {
           if (this.canShoot && this.isReload == false) {
             BulletMgr.instance.createBullet(this.bulletId, this.shootPos);
             this.canShoot = false;
+            SoundMgr.instance.playSound(this.fireSound, 1);
             this.bulletNum--;
           }
         }
@@ -2730,6 +2839,11 @@ function __$decorate(assetId, codePath) {
       this.changeAni();
       this.shakeSkin(3e3);
     }
+    win() {
+      this.stopMove();
+      this.playerStatus = 1001 /* idle */;
+      this.changeAni();
+    }
     changeAni() {
       this.weaponItem && (this.weaponItem.owner.active = true);
       switch (this.playerStatus) {
@@ -2816,6 +2930,7 @@ function __$decorate(assetId, codePath) {
           this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER2;
         }).start();
         this.health--;
+        SoundMgr.instance.playSound(2614 /* hit */);
         EnemyMgr.instance.explode(this.position, 2.5, 0);
         VibrateMgr.vibrateLong();
         this.shakeSkin(1e3);
@@ -2895,6 +3010,9 @@ function __$decorate(assetId, codePath) {
     }
     gameOver() {
       this.playerItem.clear();
+    }
+    gameWin() {
+      this.playerItem.win();
     }
     /**获取已经解锁的人物 */
     getUnlockList() {
@@ -3104,6 +3222,14 @@ function __$decorate(assetId, codePath) {
       this.changeAni();
       this.playerController.characterController.canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_CUSTOMFILTER10;
       this.playerController.stopMove();
+      let ran = Math.random();
+      if (ran > 0.66) {
+        SoundMgr.instance.playSound(2611 /* zombie1 */);
+      } else if (ran > 0.33) {
+        SoundMgr.instance.playSound(2612 /* zombie2 */);
+      } else {
+        SoundMgr.instance.playSound(2613 /* zombie3 */);
+      }
       Timer.get(2500, this, () => {
         this.clear();
         EventMgr.event("ENEMYDEATH" /* ENEMYDEATH */, 1001 /* zombie */);
@@ -3122,10 +3248,8 @@ function __$decorate(assetId, codePath) {
       }
     }
     onTriggerEnter(other, self, contact) {
-      console.log("zombie_onTriggerEnter");
     }
     onCollisionEnter(collision) {
-      console.log("zombie_onCollisionEnter");
     }
     clearOthers() {
     }
@@ -3627,6 +3751,7 @@ function __$decorate(assetId, codePath) {
     gameWin() {
       this.$gameStep = 1009 /* GameWin */;
       EventMgr.event("GAMEWIN" /* GAMEWIN */);
+      PlayerMgr.instance.gameWin();
     }
     gameLose() {
       this.$gameStep = 1008 /* GameLose */;
@@ -3714,6 +3839,7 @@ function __$decorate(assetId, codePath) {
       this.imgStar1.visible = true;
       this.imgStar2.visible = true;
       this.imgStar3.visible = false;
+      SoundMgr.instance.playSound(2609 /* win */);
     }
     addEvent() {
       this.regClick(this.imgNext, this.goHome);
@@ -3774,7 +3900,7 @@ function __$decorate(assetId, codePath) {
   var Box = Laya.Box;
   var Image3 = Laya.Image;
   var List = Laya.List;
-  var Handler3 = Laya.Handler;
+  var Handler4 = Laya.Handler;
   var { regClass: regClass16, property: property16 } = Laya;
   var DebugView = /* @__PURE__ */ __name(class DebugView2 extends UIBase_default {
     constructor() {
@@ -3790,8 +3916,8 @@ function __$decorate(assetId, codePath) {
     }
     onOpened(param) {
       this.regClick(this.imgShow, this.showHidePanel);
-      this.listCommand.renderHandler = new Handler3(this, this.changeItem);
-      this.listCommand.selectHandler = new Handler3(this, this.selectItem);
+      this.listCommand.renderHandler = new Handler4(this, this.changeItem);
+      this.listCommand.selectHandler = new Handler4(this, this.selectItem);
       this.listCommand.array = this.commandList;
     }
     showHidePanel() {
@@ -3968,7 +4094,7 @@ function __$decorate(assetId, codePath) {
   var Label3 = Laya.Label;
   var Image4 = Laya.Image;
   var List2 = Laya.List;
-  var Handler4 = Laya.Handler;
+  var Handler5 = Laya.Handler;
   var { regClass: regClass18, property: property18 } = Laya;
   var GameView = /* @__PURE__ */ __name(class GameView2 extends UIBase_default {
     constructor() {
@@ -3988,7 +4114,7 @@ function __$decorate(assetId, codePath) {
       }).frameLoop().start();
     }
     addEvent() {
-      this.listHealth.renderHandler = new Handler4(this, this.changeHealthItem);
+      this.listHealth.renderHandler = new Handler5(this, this.changeHealthItem);
       this.regEvent("HEALTHCHANGE" /* HEALTHCHANGE */, this.changeHealth, true);
       this.regEvent("PLAYERDEAD" /* PLAYERDEAD */, this.playerDeath);
       this.regEvent("GAMEOVER" /* GAMEOVER */, this.gameOver);
@@ -4106,7 +4232,7 @@ function __$decorate(assetId, codePath) {
   var _b9;
   var Image6 = Laya.Image;
   var List3 = Laya.List;
-  var Handler5 = Laya.Handler;
+  var Handler6 = Laya.Handler;
   var { regClass: regClass20, property: property20 } = Laya;
   var LanguageView = /* @__PURE__ */ __name(class LanguageView2 extends UIBase_default {
     constructor() {
@@ -4115,8 +4241,8 @@ function __$decorate(assetId, codePath) {
     }
     onOpened(param) {
       this.regClick(this.$imgClose, this.close);
-      this.$listLanguage.renderHandler = new Handler5(this, this.changeItem);
-      this.$listLanguage.selectHandler = new Handler5(this, this.selectItem);
+      this.$listLanguage.renderHandler = new Handler6(this, this.changeItem);
+      this.$listLanguage.selectHandler = new Handler6(this, this.selectItem);
       let arr = [];
       for (let i in LanguageEnum) {
         if (!isNaN(Number(i))) {
@@ -4348,7 +4474,7 @@ function __$decorate(assetId, codePath) {
   var _c6;
   var Image7 = Laya.Image;
   var Label4 = Laya.Label;
-  var Handler6 = Laya.Handler;
+  var Handler7 = Laya.Handler;
   var { regClass: regClass22, property: property22 } = Laya;
   var LoadView = /* @__PURE__ */ __name(class LoadView2 extends UIBase_default {
     constructor() {
@@ -4364,7 +4490,7 @@ function __$decorate(assetId, codePath) {
     }
     /**开始预加载全局资源 */
     startPreLoad() {
-      ResLoader.instance.preloadRes(Handler6.create(this, this.onCompleted), Handler6.create(this, this._onProgress));
+      ResLoader.instance.preloadRes(Handler7.create(this, this.onCompleted), Handler7.create(this, this._onProgress));
     }
     /**刷新进度条 */
     _onProgress(value) {
@@ -4384,6 +4510,7 @@ function __$decorate(assetId, codePath) {
       CurrencyMgr.init();
       Scene3dMgr.instance.init();
       MainGame_default.instance.init();
+      SoundMgr.instance.playBgm();
     }
     /**打开页面 */
     openScene() {
@@ -4423,6 +4550,7 @@ function __$decorate(assetId, codePath) {
     }
     onOpened(param) {
       this.labelGold.text = (MainGame_default.instance.killNum * 10).toString();
+      SoundMgr.instance.playSound(2604 /* lose */);
     }
     addEvent() {
       this.regClick(this.imgHome, this.gotoHome);
@@ -4777,7 +4905,7 @@ function __$decorate(assetId, codePath) {
   var Text4 = Laya.Text;
   var Image13 = Laya.Image;
   var List4 = Laya.List;
-  var Handler7 = Laya.Handler;
+  var Handler8 = Laya.Handler;
   var { regClass: regClass29, property: property29 } = Laya;
   var RankingView = /* @__PURE__ */ __name(class RankingView2 extends UIBase_default {
     constructor() {
@@ -4809,7 +4937,7 @@ function __$decorate(assetId, codePath) {
     }
     addEvent() {
       this.regClick(this.imgClose, this.close);
-      this.listRanking.renderHandler = new Handler7(this, this.changeItem);
+      this.listRanking.renderHandler = new Handler8(this, this.changeItem);
       this.listRanking.array = this.rankingList;
     }
     changeItem(box, index) {
@@ -4892,6 +5020,7 @@ function __$decorate(assetId, codePath) {
       Tween.get(this.labelTime).set({ scaleX: 1.3, scaleY: 1.3 }).to({ scaleX: 1, scaleY: 1 }, 1e3).call(this, () => {
         this.countdown--;
         this.labelTime.text = this.countdown.toString();
+        SoundMgr.instance.playSound(2601 /* countdown */, 1);
         if (this.countdown == 0) {
           Tween.clear(this.labelTime);
           this.goDie();
@@ -5087,32 +5216,6 @@ function __$decorate(assetId, codePath) {
     __metadata("design:paramtypes", [])
   ], SelectPlayerView);
 
-  // E:/WheelChairMan/src/Mgr/SoundMgr.ts
-  var SoundManager = Laya.SoundManager;
-  var SoundMgr = class {
-    /**修改音乐音量 */
-    static changeMusicVolume(value) {
-      SoundManager.musicVolume = value;
-    }
-    /**修改音效音量 */
-    static changeSoundVolume(value) {
-      SoundManager.soundVolume = value;
-    }
-    /**播放音效 */
-    static playSound(soundEnum, loopTimes) {
-      SoundManager.playSound(this.$soundBaseUrl + soundEnum + this.$soundUrlStuff, loopTimes);
-    }
-  };
-  __name(SoundMgr, "SoundMgr");
-  /**音乐路径 */
-  SoundMgr.$musicBaseUrl = "";
-  /**音乐后缀 */
-  SoundMgr.$musicUrlStuff = ".mp3";
-  /**声音路径 */
-  SoundMgr.$soundBaseUrl = "";
-  /**声音后缀 */
-  SoundMgr.$soundUrlStuff = ".mp3";
-
   // E:/WheelChairMan/src/Util/Slider.ts
   var __decorate34 = __$decorate("35b37bb8-b4f2-4360-8030-42b6c06ee038", "../src/Util/Slider.ts");
   var _a21;
@@ -5173,7 +5276,11 @@ function __$decorate(assetId, codePath) {
       this.$isTouch = false;
     }
     /**初始化 */
-    init(caller, callback) {
+    init(caller, callback, value = 1) {
+      if (!isNaN(value)) {
+        this.value = value;
+        this.changeMask();
+      }
       this.$caller = caller;
       this.$callback = callback;
     }
@@ -5287,7 +5394,6 @@ function __$decorate(assetId, codePath) {
   var _f5;
   var _g4;
   var _h4;
-  var Box3 = Laya.Box;
   var Label10 = Laya.Label;
   var Image18 = Laya.Image;
   var { regClass: regClass34, property: property34 } = Laya;
@@ -5296,12 +5402,9 @@ function __$decorate(assetId, codePath) {
       super();
     }
     onOpened(param) {
-      this.$sliderBgm = this.sliderBgm.getComponent(Slider_default);
-      this.$sliderSfx = this.sliderSfx.getComponent(Slider_default);
-      this.$toggleShake = this.toggleShake.getComponent(Toggle_default);
-      this.$sliderBgm.init(this, this.bgmChange);
-      this.$sliderSfx.init(this, this.sfxChange);
-      this.$toggleShake.init(this, this.shakeChange, VibrateMgr.isVibrate);
+      this.sliderBgm.init(this, this.bgmChange, SoundMgr.instance.MusicVolume);
+      this.sliderSfx.init(this, this.sfxChange, SoundMgr.instance.SoundVolume);
+      this.toggleShake.init(this, this.shakeChange, VibrateMgr.isVibrate);
     }
     addEvent() {
       this.regClick(this.imgClose, this.close);
@@ -5311,13 +5414,16 @@ function __$decorate(assetId, codePath) {
       this.regEvent("LANGUAGECHANGE" /* LANGUAGECHANGE */, this.changeLanguageIcon, true);
     }
     bgmChange(value) {
-      SoundMgr.changeMusicVolume(value);
+      SoundMgr.instance.MusicVolume = value;
     }
     sfxChange(value) {
-      SoundMgr.changeSoundVolume(value);
+      SoundMgr.instance.SoundVolume = value;
     }
     shakeChange(value) {
       VibrateMgr.isVibrate = value;
+      if (value) {
+        VibrateMgr.vibrateShort();
+      }
     }
     changeLanguageIcon() {
       this.imgLan.skin = ResLoader.instance.getUrlById(LocalizationMgr.getFlagSkinIdById(LocalizationMgr.Language));
@@ -5341,15 +5447,15 @@ function __$decorate(assetId, codePath) {
   ], SettingView.prototype, "imgClose", void 0);
   __decorate36([
     property34(),
-    __metadata("design:type", typeof (_b20 = typeof Box3 !== "undefined" && Box3) === "function" ? _b20 : Object)
+    __metadata("design:type", typeof (_b20 = typeof Slider_default !== "undefined" && Slider_default) === "function" ? _b20 : Object)
   ], SettingView.prototype, "sliderSfx", void 0);
   __decorate36([
     property34(),
-    __metadata("design:type", typeof (_c15 = typeof Box3 !== "undefined" && Box3) === "function" ? _c15 : Object)
+    __metadata("design:type", typeof (_c15 = typeof Slider_default !== "undefined" && Slider_default) === "function" ? _c15 : Object)
   ], SettingView.prototype, "sliderBgm", void 0);
   __decorate36([
     property34(),
-    __metadata("design:type", typeof (_d10 = typeof Image18 !== "undefined" && Image18) === "function" ? _d10 : Object)
+    __metadata("design:type", typeof (_d10 = typeof Toggle_default !== "undefined" && Toggle_default) === "function" ? _d10 : Object)
   ], SettingView.prototype, "toggleShake", void 0);
   __decorate36([
     property34(),
@@ -5379,7 +5485,7 @@ function __$decorate(assetId, codePath) {
   var _c16;
   var Image19 = Laya.Image;
   var List5 = Laya.List;
-  var Handler8 = Laya.Handler;
+  var Handler9 = Laya.Handler;
   var { regClass: regClass35, property: property35 } = Laya;
   var ShopView = /* @__PURE__ */ __name(class ShopView2 extends UIBase_default {
     constructor() {
@@ -5405,9 +5511,9 @@ function __$decorate(assetId, codePath) {
     }
     addEvent() {
       this.regClick(this.imgClose, this.close);
-      this.listTitle.renderHandler = new Handler8(this, this.changeTitleItem);
-      this.listTitle.selectHandler = new Handler8(this, this.selectTitleItem);
-      this.listShop.renderHandler = new Handler8(this, this.changeShopItem);
+      this.listTitle.renderHandler = new Handler9(this, this.changeTitleItem);
+      this.listTitle.selectHandler = new Handler9(this, this.selectTitleItem);
+      this.listShop.renderHandler = new Handler9(this, this.changeShopItem);
       this.regEvent("LANGUAGECHANGE" /* LANGUAGECHANGE */, this.changeLanguage, true);
     }
     changeTitleItem(box, index) {
