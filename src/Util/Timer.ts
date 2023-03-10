@@ -255,8 +255,6 @@ export default class Timer {
                         timer.clear();
                     }
                 }
-                // console.log("clearAll");
-                // timer instanceof Timer && timer.clear();
             }
         }
     }

@@ -4,7 +4,5 @@
   "includedScenes": [
     "res://63a6c640-8384-40ee-931e-b24bc717fafa"
   ],
-  "alwaysIncluded": [
-    "res://bcd859dd-1c38-438f-8260-6a8a9fcc60b0"
-  ]
+  "alwaysIncluded": []
 }
