@@ -9,7 +9,6 @@ import { DataTableEnum } from "../../Enum/DataTableEnum";
 import { EventEnum } from "../../Enum/EventEnum";
 import { PoolEnum } from "../../Enum/PoolEnum";
 import EventMgr from "../../Mgr/EventMgr";
-import ObjUtil from "../../Util/ObjUtil";
 import ResLoader from "../../Util/ResLoader";
 import Sprite3d from "../../Util/Sprite3d";
 import Timer from "../../Util/Timer";
@@ -139,24 +138,53 @@ export default class EnemyMgr {
 
 
     createZombie() {
-        if (this.zombieList.length < this.maxZombieNum) {
-            let zombie: Sprite3D;
-            zombie = Pool.getItem(PoolEnum.ZOMBIE);
-            if (!zombie) {
-                zombie = ResLoader.instance.getResCloneById(this.enemyDataMap.get(EnemyEnum.zombie)?.["path"]);
-            }
-
-            let point = ObjUtil.randomRingPos(18, 13);
-            let pos = PlayerMgr.instance.getPlayerPos();
-            let zombieItem = zombie.getComponent(ZombieItem) as ZombieItem;
-            zombieItem.position = new Vector3(pos.x + point.x, pos.y, pos.z + point.y);//pos.x + point.x, pos.y, pos.z + point.y
-            this.enemyStage.addChild(zombie);
-            zombieItem.objName = PoolEnum.ZOMBIE;
-            zombieItem.index++;
-            zombieItem.zombieData = this.enemyDataMap.get(EnemyEnum.zombie);
-            zombieItem.init();
-            this.zombieList.push(zombieItem);
+        let zombie: Sprite3D;
+        zombie = Pool.getItem(PoolEnum.ZOMBIE);
+        if (!zombie) {
+            zombie = ResLoader.instance.getResCloneById(this.enemyDataMap.get(EnemyEnum.zombie)?.["path"]);
         }
+
+        let point = this.getNewPos();
+
+
+
+        let pos = PlayerMgr.instance.getPlayerPos();
+        let zombieItem = zombie.getComponent(ZombieItem) as ZombieItem;
+        zombieItem.position = new Vector3(pos.x + point.x, pos.y, pos.z + point.y);//pos.x + point.x, pos.y, pos.z + point.y
+        this.enemyStage.addChild(zombie);
+        zombieItem.objName = PoolEnum.ZOMBIE;
+        zombieItem.index++;
+        zombieItem.zombieData = this.enemyDataMap.get(EnemyEnum.zombie);
+        zombieItem.init();
+        this.zombieList.push(zombieItem);
+
+    }
+
+
+    getNewPos(ran?: number) {
+        if (isNaN(ran)) {
+            ran = Math.floor(Math.random() * 4);
+        }
+        let point = new Laya.Point;
+        switch (ran) {
+            case 0:
+                point.x = -9;
+                point.y = -6 + Math.random() * 12;
+                break
+            case 1:
+                point.x = 9;
+                point.y = -6 + Math.random() * 12;
+                break
+            case 2:
+                point.x = -9 + Math.random() * 18;
+                point.y = -6;
+                break
+            case 3:
+                point.x = -9 + Math.random() * 18;
+                point.y = 6;
+                break
+        }
+        return point;
     }
 
     explode(pos: Vector3, range: number, damage: number) {
@@ -164,7 +192,6 @@ export default class EnemyMgr {
             let zombieItem = this.zombieList[i];
             if (zombieItem && zombieItem.health > 0) {
                 let dis = Vector3.distance(pos, zombieItem.position);
-                console.log(dis, range);
                 if (range > dis) {
                     zombieItem.beHit(pos, damage, 0.4);
                 }

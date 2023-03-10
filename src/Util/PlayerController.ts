@@ -54,7 +54,7 @@ export default class PlayerController extends Script3d {
     /**临时状态 */
     private angleCache: number = 180;
     /**击退力度 */
-    private hitStrength: number = 15;
+    private hitStrength: number = 20;
 
 
 

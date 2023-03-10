@@ -7,25 +7,42 @@
     "localPosition": {
       "_$type": "Vector3",
       "z": 1
+    },
+    "localScale": {
+      "_$type": "Vector3",
+      "x": 0.1,
+      "y": 0.1,
+      "z": 0.1
     }
   },
   "_$comp": [
     {
       "_$type": "c08609ed-ebe2-4062-8e7f-0779439120be",
-      "scriptPath": "../src/Game/Bullet/BulletItem.ts",
-      "phy": {
-        "_$ref": "wlxuyodr",
-        "_$type": "PhysicsCollider"
-      }
+      "scriptPath": "../src/Game/Bullet/BulletItem.ts"
     },
     {
       "_$type": "PhysicsCollider",
+      "isTrigger": true,
       "colliderShape": {
-        "_$type": "BoxColliderShape",
-        "sizeX": 0.1,
-        "sizeY": 0.1,
-        "sizeZ": 0.1
+        "_$type": "BoxColliderShape"
       }
+    },
+    {
+      "_$type": "MeshFilter",
+      "sharedMesh": {
+        "_$uuid": "6e013e32-fec7-4397-80d1-f918a07607be",
+        "_$type": "Mesh"
+      }
+    },
+    {
+      "_$type": "MeshRenderer",
+      "sharedMaterials": [
+        {
+          "_$uuid": "6f90bbb0-bcb2-4311-8a9d-3d8277522098",
+          "_$type": "Material"
+        }
+      ],
+      "renderMode": null
     }
   ],
   "_$child": [
@@ -48,6 +65,7 @@
             "startLifetimeType": 2,
             "startLifetimeConstantMin": 0.5,
             "startLifetimeConstantMax": 0.6,
+            "startSpeedConstant": 0.1,
             "startSizeType": 2,
             "startSizeConstant": 0.5,
             "startSizeConstantMin": 0.5,
@@ -104,10 +122,8 @@
               "emissionRateOverDistance": 1000
             },
             "shape": {
-              "_$type": "ConeShape",
-              "angleDEG": 17.681,
-              "radius": 0.001,
-              "length": 2.2
+              "_$type": "SphereShape",
+              "radius": 0.1
             },
             "velocityOverLifetime": {
               "_$type": "VelocityOverLifetime",

@@ -6,6 +6,7 @@ import GameScene from "../Scene3d/GameScene";
 import Scene3dMgr from "../Scene3dBase/Scene3dMgr";
 import Timer from "../Util/Timer";
 import BulletMgr from "./Bullet/BulletMgr";
+import CameraItem from "./CameraItem";
 import EnemyMgr from "./Enemy/EnemyMgr";
 import { GameStepEnum } from "./Enum/GameStepEnum";
 import GroundMgr from "./Ground/GroundMgr";
@@ -50,6 +51,7 @@ export default class MainGame {
 
     private gameScene: GameScene;
 
+    cameraItem: CameraItem;
 
     /**游戏计时 */
     gameTime: number;
@@ -127,6 +129,8 @@ export default class MainGame {
         this.$gameStep = GameStepEnum.GameStart;
 
         this.gameScene = gameScene;
+        this.cameraItem = this.gameScene.cameraItem;
+
         // console.log(gameScene);
 
         this.gameScene.cameraItem.gameStart();

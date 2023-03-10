@@ -41,6 +41,8 @@ export default class GameView extends UIBase {
     @property()
     imgPause: Image;
 
+    @property()
+    labelKill: Label;
 
 
     private playerData: any;
@@ -55,7 +57,7 @@ export default class GameView extends UIBase {
     onOpened(param?: any): void {
         this.rocketBoxL.initTarget(PlayerMgr.instance, PlayerMgr.instance.startMove, PlayerMgr.instance.stopMove);
         this.rocketBoxR.initTarget(PlayerMgr.instance, PlayerMgr.instance.startShoot, PlayerMgr.instance.stopShoot);
-        this.playerData = PlayerMgr.instance.getSelectedPlayerData(PlayerMgr.instance.$selectedPlayerId);
+        this.playerData = PlayerMgr.instance.getSelectedPlayerData(PlayerMgr.instance.selectedPlayerId);
         this.totalHealth = this.health = this.playerData.health;
 
 
@@ -64,6 +66,16 @@ export default class GameView extends UIBase {
             let sec = MainGame.instance.gameTime % 60;
 
             this.labelTime.text = "0" + min + ":" + (sec < 10 ? "0" + sec : sec);
+
+            let num = MainGame.instance.killNum;
+            if (num < 10) {
+                this.labelKill.text = "000" + num;
+            } else if (num < 100) {
+                this.labelKill.text = "00" + num;
+            } else if (num < 1000) {
+                this.labelKill.text = "0" + num;
+            }
+
 
         }).frameLoop().start();
     }

@@ -122,6 +122,8 @@ declare module Laya {
         /**在IOS下，一些字体会找不到，引擎提供了字体映射功能，比如默认会把 "黑体" 映射为 "黑体-简"，更多映射，可以自己添加*/
         static fontFamilyMap: any;
         static defaultFontStr(): string;
+        /**tempConfig Fixed number of frames */
+        static fixedFrames: boolean;
     }
     /**
      * <code>Config3D</code> 类用于创建3D初始化配置。
@@ -341,16 +343,18 @@ declare module Laya {
     function regClass(): any;
     /**
      * 设置类型的额外信息。
+     * @param info 类型的额外信息
      */
     function classInfo(info?: Partial<TypeDescriptor>): any;
     /**
-     * 设置组件可以在编辑器环境中激活。
+     * 设置组件可以在编辑器环境中执行完整声明周期。
      */
     function runInEditor(constructor: Function): void;
     /**
      * 使用这个装饰器，可以使属性显示在编辑器属性设置面板上，并且能序列化保存。
+     * @param info 如果是字符串，是属性的标题；如果是数组，例如[Number]，可以定义属性为数组类型；也可以是PropertyDescriptor，定义详细的属性信息。
      */
-    function property(info?: string | Partial<PropertyDescriptor>): any;
+    function property(info?: string | Array<any> | Partial<PropertyDescriptor>): any;
     /**开始播放时调度。
      * @eventType Event.PLAYED
      * */
@@ -902,13 +906,6 @@ declare module Laya {
         set source(value: string);
         /**
          * 动画类型
-         */
-        get aniMode(): number;
-        set aniMode(value: number);
-        /**
-         * 初始化动画
-         * @param	templet		模板
-         * @param	aniMode		动画模式
          * <table>
          * 	<tr><th>模式</th><th>描述</th></tr>
          * 	<tr>
@@ -922,12 +919,17 @@ declare module Laya {
          * </tr>
          * </table>
          */
+        get aniMode(): number;
+        set aniMode(value: number);
+        /**
+         * 初始化动画
+         * @param	templet		模板
+         */
         protected init(templet: Templet): void;
         /**
          * 通过加载直接创建动画
          * @param	path		要加载的动画文件路径
          * @param	complete	加载完成的回调函数
-         * @param	aniMode		与<code>Skeleton.init</code>的<code>aniMode</code>作用一致
          */
         load(path: string, complete?: Handler): void;
         private _checkIsAllParsed;
@@ -1697,6 +1699,7 @@ declare module Laya {
         states: TypeAnimatorState[];
         playOnWake: boolean;
         defaultWeight: number;
+        avatarMask?: Record<string, boolean>;
         stageX?: number;
         stageY?: number;
         stageScale?: number;
@@ -2610,6 +2613,18 @@ declare module Laya {
          */
         getCurrentAnimatorPlayState(layerInex?: number): AnimatorPlayState;
     }
+    class AnimatorController extends Resource {
+        data: TypeAnimatorControllerData;
+        clipsID: string[];
+        constructor(data: any);
+        private getLayers;
+        updateTo(a: Animator): void;
+        private createState;
+        private setExitTransition;
+        private setTransitions;
+        private getState;
+        private addConditions;
+    }
     /**
      * <code>AnimatorControllerLayer</code> 类用于创建动画控制器层。
      */
@@ -2980,6 +2995,7 @@ declare module Laya {
          * @param data
          */
         set lods(data: LODInfo[]);
+        get nowRate(): number;
         /**
          * 获得LOD包围盒
          */
@@ -3568,9 +3584,9 @@ declare module Laya {
         /** skyRender */
         private _skyRenderer;
         /** 前向量*/
-        private _forward;
+        _forward: Vector3;
         /** up向量 */
-        private _up;
+        _up: Vector3;
         /** 是否正交 */
         protected _orthographic: boolean;
         /**摄像机的清除颜色,默认颜色为CornflowerBlue。*/
@@ -5087,6 +5103,7 @@ declare module Laya {
          * @param texture
          */
         setTextureByIndex(uniformIndex: number, texture: BaseTexture): void;
+        private reSetTexture;
         /**
          * 获得纹理
          * @param uniformIndex 属性索引
@@ -5631,6 +5648,7 @@ declare module Laya {
          */
         get sharedMesh(): Mesh;
         set sharedMesh(value: Mesh);
+        protected _onDestroy(): void;
     }
     /**
      * <code>MeshRenderer</code> 类用于网格渲染器。
@@ -9020,6 +9038,11 @@ declare module Laya {
         /** 光照贴图方向。 */
         lightmapDirection: Texture2D;
     }
+    enum FogMode {
+        Linear = 0,
+        EXP = 1,
+        EXP2 = 2
+    }
     /**
      * 用于实现3D场景。
      */
@@ -9059,7 +9082,6 @@ declare module Laya {
         _reflectionsResolution: string;
         /**ide配置文件使用 */
         _reflectionsIblSamples: number;
-        private _sceneReflectionProb;
         /**@interanl */
         _sundir: Vector3;
         /** @interanl */
@@ -9083,6 +9105,11 @@ declare module Laya {
         get enableFog(): boolean;
         set enableFog(value: boolean);
         /**
+         * 场景雾模式
+         */
+        get fogMode(): FogMode;
+        set fogMode(value: FogMode);
+        /**
          * 雾化颜色。
          */
         get fogColor(): Color;
@@ -9093,10 +9120,16 @@ declare module Laya {
         get fogStart(): number;
         set fogStart(value: number);
         /**
-         * 雾化范围。
+         * 雾化end范围。
          */
-        get fogRange(): number;
-        set fogRange(value: number);
+        get fogEnd(): number;
+        set fogEnd(value: number);
+        /**
+         * 雾化密度
+         */
+        get fogDensity(): number;
+        set fogDensity(value: number);
+        set fogParams(value: Vector4);
         set GIRotate(value: number);
         get GIRotate(): number;
         /**
@@ -9210,6 +9243,11 @@ declare module Laya {
          * @param value 渲染数据值
          */
         setGlobalShaderValue(name: string, type: ShaderDataType, value: ShaderDataItem): void;
+        /**
+         * @deprecated
+         */
+        get fogRange(): number;
+        set fogRange(value: number);
         /**
          * @deprecated
          * 设置光照贴图。
@@ -9608,7 +9646,7 @@ declare module Laya {
     class TrailRenderer extends BaseRender {
         protected _projectionViewWorldMatrix: Matrix4x4;
         /**
-         *
+         * 实例化一个拖尾渲染器
          */
         constructor();
         protected _onAdded(): void;
@@ -9928,34 +9966,66 @@ declare module Laya {
      * <code>BaseCamera</code> 类用于创建摄像机的父类。
      */
     class UI3D extends BaseRender {
-        static temp0: Vector3;
-        static temp1: Vector3;
-        static temp2: Vector3;
+        private _shellSprite;
         /**
          * 3D渲染的UI节点
          */
         set sprite(value: Sprite);
         get sprite(): Sprite;
-        get UIRender(): BaseTexture;
-        constructor();
-        private _resizeRT;
         /**
-         * 更新Sprite的RT
+         * 3D渲染的UI预制体
          */
-        _submitRT(): void;
-        _changePlane(): void;
-        protected _onAdded(): void;
-        protected _onDisable(): void;
+        set prefab(value: Prefab);
+        get prefab(): Prefab;
+        /**
+         * UI3DmeshScale
+         */
+        set scale(value: Vector2);
+        get scale(): Vector2;
+        /**
+         * UI渲染模式
+         */
+        set renderMode(value: MaterialRenderMode);
+        get renderMode(): number;
+        /**
+         * 分辨率比例
+         */
+        get resolutionRate(): number;
+        set resolutionRate(value: number);
+        /**
+         * 面向相机模式
+         */
+        get billboard(): boolean;
+        set billboard(value: boolean);
+        /**
+         * 检测鼠标事件(关闭优化性能)，开启可以触发鼠标事件
+         */
+        get enableHit(): boolean;
+        set enableHit(value: boolean);
+        /**
+         * 实例化一个UI3D
+         */
+        constructor();
+        private _updatePlane;
+        /**
+        * 分析碰撞点
+        * @param hit
+        */
+        private _parseHit;
+        /**
+         * 获得ui渲染图
+         */
+        getUITexture(): BaseTexture;
+        /**
+         * get camera distance
+         * @param rayOri
+         * @returns
+         */
+        _getCameraDistane(rayOri: Vector3): number;
+        private _transByRotate;
     }
     class UI3DGeometry extends GeometryElement {
-        private _vertexBuffer;
-        private _vertex;
-        private _indexBuffer;
-        private _index;
-        private _scale;
-        private _offset;
-        private _bound;
-        constructor(owner: UI3D);
+        private _changeVertex;
         /**
          * @inheritDoc
          * @override
@@ -9963,11 +10033,18 @@ declare module Laya {
         destroy(): void;
     }
     class UI3DManager {
-        private _UI3Dlist;
+        _UI3Dlist: SingletonList<UI3D>;
         constructor();
         add(value: UI3D): void;
         remove(value: UI3D): void;
         update(): void;
+        /**
+         * 判断是否碰撞
+         */
+        rayCast(ray: Ray): import("../../../display/Sprite").Sprite;
+        /**
+         * Destroy
+         */
         destory(): void;
     }
     /**
@@ -12724,6 +12801,7 @@ declare module Laya {
          * @return	 克隆副本。
          */
         clone(): any;
+        destroy(): void;
     }
     class NativeShadowCullInfo implements IShadowCullInfo {
         private _position;
@@ -13754,6 +13832,7 @@ declare module Laya {
     class Utils3D {
         private static _tempVector3_0;
         private static _tempVector3_1;
+        private static _tempVector3_2;
         private static _tempArray16_0;
         private static _tempArray16_1;
         private static _tempArray16_2;
@@ -13774,6 +13853,22 @@ declare module Laya {
          * @param outOffset 结果矩阵数组的偏移。
          */
         private static _rotationTransformScaleSkinAnimation;
+        static _tempV0: Vector3;
+        static _tempV1: Vector3;
+        /**
+         * 将顶点进行billboard转换
+         */
+        static billboardTrans(v0: Vector3, cameraDir: Vector3, cameraUp: Vector3, out: Vector3): void;
+        /**
+         * 判断P点是否在ABC组成的三角形中
+         * https://mathworld.wolfram.com/BarycentricCoordinates.html
+         * @param A
+         * @param B
+         * @param C
+         * @param P
+         * @returns
+         */
+        static PointinTriangle(A: Vector3, B: Vector3, C: Vector3, P: Vector3): boolean;
         /**
          * 根据四元数旋转三维向量。
          * @param	source 源三维向量。
@@ -14775,6 +14870,8 @@ declare module Laya {
         static framesMap: any;
         /**@private */
         protected _frames: any[];
+        private _images;
+        private _autoPlay;
         /**
          * 创建一个新的 <code>Animation</code> 实例。
          */
@@ -14819,6 +14916,8 @@ declare module Laya {
          * @param value	数据源。比如：图集："xx/a1.atlas"；图片集合："a1.png,a2.png,a3.png"；LayaAir IDE动画"xx/a1.ani"。
          */
         set source(value: string);
+        set images(arr: string[]);
+        get images(): string[];
         /**
          * 设置自动播放的动画名称，在LayaAir IDE中可以创建的多个动画组成的动画集合，选择其中一个动画名称进行播放。
          */
@@ -14827,6 +14926,7 @@ declare module Laya {
          * 是否自动播放，默认为false。如果设置为true，则动画被创建并添加到舞台后自动播放。
          */
         set autoPlay(value: boolean);
+        get autoPlay(): boolean;
         /**
          * 停止动画播放，并清理对象属性。之后可存入对象池，方便对象复用。
          * @override
@@ -17137,10 +17237,6 @@ declare module Laya {
         _scene3D: any;
         /**@private 相对布局组件*/
         protected _widget: Widget;
-        /**X锚点，值为0-1，设置anchorX值最终通过pivotX值来改变节点轴心点。*/
-        protected _anchorX: number;
-        /**Y锚点，值为0-1，设置anchorY值最终通过pivotY值来改变节点轴心点。*/
-        protected _anchorY: number;
         /**场景时钟*/
         private _timer;
         /**@private */
@@ -17200,42 +17296,12 @@ declare module Laya {
          * @inheritDoc
          * @override
          */
-        set scaleX(value: number);
+        get_width(): number;
         /**
          * @inheritDoc
          * @override
          */
-        get scaleX(): number;
-        /**
-         * @inheritDoc
-         * @override
-         */
-        set scaleY(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get scaleY(): number;
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get width(): number;
-        /**
-         * @inheritDoc
-         * @override
-         */
-        set width(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get height(): number;
-        /**
-         * @inheritDoc
-         * @override
-         */
-        set height(value: number);
+        get_height(): number;
         /**
          * 场景时钟
          * @override
@@ -17273,12 +17339,7 @@ declare module Laya {
          */
         get centerY(): number;
         set centerY(value: number);
-        /**X锚点，值为0-1，设置anchorX值最终通过pivotX值来改变节点轴心点。*/
-        get anchorX(): number;
-        set anchorX(value: number);
-        /**Y锚点，值为0-1，设置anchorY值最终通过pivotY值来改变节点轴心点。*/
-        get anchorY(): number;
-        set anchorY(value: number);
+        protected _shouldRefreshLayout(): void;
         /**
          * @private
          * @override
@@ -17605,6 +17666,7 @@ declare module Laya {
         set height(value: number);
         set_height(value: number): void;
         get_height(): number;
+        protected _shouldRefreshLayout(): void;
         /**
          * <p>对象的显示宽度（以像素为单位）。</p>
          */
@@ -17683,6 +17745,16 @@ declare module Laya {
         /**Y轴 轴心点的位置，单位为像素，默认为0。轴心点会影响对象位置，缩放中心，旋转中心。*/
         get pivotY(): number;
         set pivotY(value: number);
+        /**X锚点，值为0-1，设置anchorX值最终通过pivotX值来改变节点轴心点。*/
+        get anchorX(): number;
+        get_anchorX(): number;
+        set anchorX(value: number);
+        set_anchorX(value: number): void;
+        /**Y锚点，值为0-1，设置anchorY值最终通过pivotY值来改变节点轴心点。*/
+        get anchorY(): number;
+        get_anchorY(): number;
+        set anchorY(value: number);
+        set_anchorY(value: number): void;
         /**透明度，值为0-1，默认值为1，表示不透明。更改alpha值会影响drawcall。*/
         get alpha(): number;
         set alpha(value: number);
@@ -18128,16 +18200,16 @@ declare module Laya {
          */
         private _isInputting;
         /**@inheritDoc @override*/
-        set width(value: number);
+        set_width(value: number): void;
         /**
          * @inheritDoc
          * @override
          */
-        get width(): number;
+        get_width(): number;
         /**@inheritDoc @override */
-        set height(value: number);
+        set_height(value: number): void;
         /** @override*/
-        get height(): number;
+        get_height(): number;
         /**@override*/
         set transform(value: Matrix);
         /**@inheritDoc @override*/
@@ -18405,13 +18477,9 @@ declare module Laya {
         protected _charSize: any;
         /**@private */
         protected _valign: string;
+        _overflow: string;
         /**@private */
         private _singleCharRender;
-        /**
-         * <p>overflow 指定文本超出文本域后的行为。其值为"hidden"、"visible"和"scroll"之一。</p>
-         * <p>性能从高到低依次为：hidden > visible > scroll。</p>
-         */
-        overflow: string;
         /**
          * 创建一个新的 <code>Text</code> 实例。
          */
@@ -18450,20 +18518,20 @@ declare module Laya {
          * @inheritDoc
          * @override
          */
-        get width(): number;
+        get_width(): number;
         /**
          * @override
          */
-        set width(value: number);
+        _setWidth(value: number): void;
         /**
          * @inheritDoc
          * @override
          */
-        get height(): number;
+        get_height(): number;
         /**
          * @override
          */
-        set height(value: number);
+        _setHeight(value: number): void;
         /**
          * 表示文本的宽度，以像素为单位。
          */
@@ -18586,6 +18654,12 @@ declare module Laya {
          */
         get strokeColor(): string;
         set strokeColor(value: string);
+        /**
+         * <p>overflow 指定文本超出文本域后的行为。其值为"hidden"、"visible"和"scroll"之一。</p>
+         * <p>性能从高到低依次为：hidden > visible > scroll。</p>
+         */
+        get overflow(): string;
+        set overflow(value: string);
         /**
          * @private
          * 一个布尔值，表示文本的属性是否有改变。若为true表示有改变。
@@ -20443,9 +20517,18 @@ declare module Laya {
         load(task: ILoadTask): Promise<any>;
     }
     const TypedArrayClasses: Record<string, any>;
+    interface IDecodeObjOptions {
+        outErrors?: Array<string>;
+        getNodeByRef?: (id: string | string[]) => Node;
+        getNodeData?: (node: Node) => any;
+    }
     class SerializeUtil {
-        static decodeObj(data: any, obj?: any, type?: string, nodeFinder?: (id: string | Array<string>) => Node, errors?: Array<any>): any;
+        static isDeserializing: boolean;
+        static decodeObj(data: any, obj?: any, options?: IDecodeObjOptions): any;
+        private static _decodeObj;
         static getLoadTypeByEngineType(type: string): string;
+        static bakeOverrideData(overrideData: any): Record<string, any[]>;
+        static applyOverrideData(nodeData: any, overrideDataMap: Record<string, Array<any>>): any;
     }
     /**
      * @private
@@ -22253,6 +22336,13 @@ declare module Laya {
          */
         static scale(a: Vector2, b: number, out: Vector2): void;
         /**
+         * 判断两个二维向量是否相等。
+         * @param	a 三维向量。
+         * @param	b 三维向量。
+         * @return  是否相等。
+         */
+        static equals(a: Vector2, b: Vector2): boolean;
+        /**
          * 从Array数组拷贝值。
          * @param  array 数组。
          * @param  offset 数组偏移。
@@ -23800,13 +23890,13 @@ declare module Laya {
      * <code>Loader</code> 类可用来加载文本、JSON、XML、二进制、图像等资源。
      */
     class Loader extends EventDispatcher {
-        /**文本类型，加载完成后返回string。*/
+        /**文本类型，加载完成后返回包含string的TextResource对象。*/
         static TEXT: string;
-        /**JSON 类型，加载完成后返回json数据。*/
+        /**JSON 类型，加载完成后返回包含json数据的TextResource对象。*/
         static JSON: string;
-        /**XML 类型，加载完成后返回domXML。*/
+        /**XML 类型，加载完成后返回包含domXML的TextResource对象。*/
         static XML: string;
-        /**二进制类型，加载完成后返回arraybuffer。*/
+        /**二进制类型，加载完成后返回包含arraybuffer的TextResource对象。*/
         static BUFFER: string;
         /**纹理类型，加载完成后返回Texture。*/
         static IMAGE: string;
@@ -24158,16 +24248,18 @@ declare module Laya {
          * @param port		服务器端口。
          * @param byteClass	用于接收和发送数据的 Byte 类。如果为 null ，则使用 Byte 类，也可传入 Byte 类的子类。
          * @param protocols	子协议名称。子协议名称字符串，或由多个子协议名称字符串构成的数组
+         * @param isSecure  是否使用WebSocket安全协议wss，默认（false）使用普通协议ws
          * @see laya.utils.Byte
          */
-        constructor(host?: string | null, port?: number, byteClass?: new () => any, protocols?: any[] | null);
+        constructor(host?: string | null, port?: number, byteClass?: new () => any, protocols?: any[] | null, isSecure?: boolean);
         /**
          * <p>连接到指定的主机和端口。</p>
          * <p>连接成功派发 Event.OPEN 事件；连接失败派发 Event.ERROR 事件；连接被关闭派发 Event.CLOSE 事件；接收到数据派发 Event.MESSAGE 事件； 除了 Event.MESSAGE 事件参数为数据内容，其他事件参数都是原生的 HTML DOM Event 对象。</p>
          * @param host	服务器地址。
          * @param port	服务器端口。
+         * @param isSecure  是否使用WebSocket安全协议wss，默认（false）使用普通协议ws
          */
-        connect(host: string, port: number): void;
+        connect(host: string, port: number, isSecure?: boolean): void;
         /**
          * <p>连接到指定的服务端 WebSocket URL。 URL 类似 ws://yourdomain:port。</p>
          * <p>连接成功派发 Event.OPEN 事件；连接失败派发 Event.ERROR 事件；连接被关闭派发 Event.CLOSE 事件；接收到数据派发 Event.MESSAGE 事件； 除了 Event.MESSAGE 事件参数为数据内容，其他事件参数都是原生的 HTML DOM Event 对象。</p>
@@ -24232,10 +24324,10 @@ declare module Laya {
         private _url;
         /**@private */
         private _path;
-        /**@private */
         private static overrideFileExts;
         private static hasExtOverrides;
         static __init__(): void;
+        static initMiniGameExtensionOverrides(): void;
         /**创建一个新的 <code>URL</code> 实例。*/
         constructor(url: string);
         /**格式化后的地址。*/
@@ -24293,7 +24385,6 @@ declare module Laya {
          * @targetExt 要转换为的扩展名。例如"json"。
          */
         static overrideExtension(originalExts: Array<string>, targetExt: string): void;
-        static set exportSceneToJson(value: boolean);
     }
     /**
      * @private
@@ -26065,6 +26156,7 @@ declare module Laya {
         propertyIDToName(id: number): string;
         uploadUniforms(shader: IRenderShaderInstance, commandEncoder: CommandEncoder, shaderData: any, uploadUnTexture: boolean): number;
         uploadCustomUniforms(shader: IRenderShaderInstance, custom: any[], index: number, data: any): number;
+        unbindVertexState(): void;
     }
     /**
      * 将继承修改为类似 WebGLRenderingContextBase, WebGLRenderingContextOverloads 多继承 ?
@@ -26426,6 +26518,7 @@ declare module Laya {
         propertyNameToID(name: string): number;
         propertyIDToName(id: number): string;
         createRenderStateComand(): RenderStateCommand;
+        unbindVertexState(): void;
     }
     class WebGLInternalRT extends GLObject implements InternalRenderTarget {
         _gl: WebGLRenderingContext | WebGL2RenderingContext;
@@ -26927,6 +27020,7 @@ declare module Laya {
         getUBOPointer(name: string): number;
         clearStatisticsInfo(info: RenderStatisticsInfo): void;
         getStatisticsInfo(info: RenderStatisticsInfo): number;
+        unbindVertexState(): void;
     }
     interface IRenderOBJCreate {
         createShaderInstance(vs: string, ps: string, attributeMap: {
@@ -27430,7 +27524,8 @@ declare module Laya {
         /**是否开启调试模式。 */
         static debugMode: boolean;
         /**调试着色器变种集合。 */
-        static readonly debugShaderVariantCollection: ShaderVariantCollection;
+        static debugShaderVariantCollection: ShaderVariantCollection;
+        static init(): void;
         /**
          * 注册宏定义。
          * @param name
@@ -27656,6 +27751,7 @@ declare module Laya {
          * @return  纹理。
          */
         getTexture(index: number): BaseTexture;
+        getSourceIndex(value: any): number;
         /**
          * set shader data
          * @deprecated
@@ -29574,6 +29670,8 @@ declare module Laya {
         static normalTexture: Texture2D;
         /**错误纹理 */
         static erroTextur: Texture2D;
+        /**Default Toggle Texture */
+        static defalutUITexture: Texture2D;
         /**
          * 加载纹理
          * @param url 路径
@@ -30154,6 +30252,7 @@ declare module Laya {
          * @private
          */
         protected _stateChanged: boolean;
+        _graphics: AutoBitmap;
         /**
          * 创建一个新的 <code>Button</code> 类实例。
          * @param skin 皮肤资源地址。
@@ -30329,22 +30428,12 @@ declare module Laya {
          * @inheritDoc
          * @override
          */
-        set width(value: number);
+        _setWidth(value: number): void;
         /**
          * @inheritDoc
          * @override
          */
-        get width(): number;
-        /**
-         * @inheritDoc
-         * @override
-         */
-        set height(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get height(): number;
+        _setHeight(value: number): void;
         /**
          * @inheritDoc
          * @override
@@ -30355,9 +30444,6 @@ declare module Laya {
         set iconOffset(value: string);
         /**@private */
         protected _setStateChanged(): void;
-    }
-    interface Button {
-        _graphics: AutoBitmap;
     }
     /**
      * 当按钮的选中状态（ <code>selected</code> 属性）发生改变时调度。
@@ -30594,6 +30680,7 @@ declare module Laya {
         protected _group: string;
         /**@private */
         protected _toIndex: number;
+        _graphics: AutoBitmap;
         /**
          * 创建一个新的 <code>Clip</code> 示例。
          * @param url 资源类库名或者地址
@@ -30656,22 +30743,12 @@ declare module Laya {
          * @inheritDoc
          * @override
          */
-        set width(value: number);
+        _setWidth(value: number): void;
         /**
          * @inheritDoc
          * @override
          */
-        get width(): number;
-        /**
-         * @inheritDoc
-         * @override
-         */
-        set height(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get height(): number;
+        _setHeight(value: number): void;
         /**
          * @inheritDoc
          * @override
@@ -30737,9 +30814,6 @@ declare module Laya {
         set_dataSource(value: any): void;
         /**@private */
         protected _setClipChanged(): void;
-    }
-    interface Clip {
-        _graphics: AutoBitmap;
     }
     /**
      * 选择项改变后调度。
@@ -31192,7 +31266,7 @@ declare module Laya {
          * @inheritDoc
          * @override
          */
-        set width(value: number);
+        _setWidth(value: number): void;
         /**
          * 下拉列表文本的边距Padding
          * @readme <p><b>格式：</b>上边距,右边距,下边距,左边距</p>
@@ -31203,17 +31277,7 @@ declare module Laya {
          * @inheritDoc
          * @override
          */
-        get width(): number;
-        /**
-         * @inheritDoc
-         * @override
-         */
-        set height(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get height(): number;
+        _setHeight(value: number): void;
         /**
          * 标签集合字符串。
          */
@@ -31751,23 +31815,15 @@ declare module Laya {
         /**渲染数值*/
         protected changeValue(): void;
         /**
+         * @inheritDoc
          * @override
          */
-        set width(value: number);
+        _setWidth(value: number): void;
         /**
          * @inheritDoc
          * @override
          */
-        get width(): number;
-        /**
-         * @override
-         */
-        set height(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get height(): number;
+        _setHeight(value: number): void;
         /**
          * @override
          */
@@ -31812,12 +31868,7 @@ declare module Laya {
          * @inheritDoc
          * @override
          */
-        set height(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get height(): number;
+        _setHeight(value: number): void;
         /**
          * @inheritDoc
          * @override
@@ -32081,6 +32132,8 @@ declare module Laya {
         protected _skin: string;
         /**@private */
         protected _group: string;
+        protected _useSourceSize: boolean;
+        _graphics: AutoBitmap;
         /**
          * 创建一个 <code>Image</code> 实例。
          * @param skin 皮肤资源地址。
@@ -32112,6 +32165,8 @@ declare module Laya {
          */
         get group(): string;
         set group(value: string);
+        get useSourceSize(): boolean;
+        set useSourceSize(value: boolean);
         /**
          * @private
          * 设置皮肤资源。
@@ -32131,22 +32186,12 @@ declare module Laya {
          * @inheritDoc
          * @override
          */
-        set width(value: number);
+        _setWidth(value: number): void;
         /**
          * @inheritDoc
          * @override
          */
-        get width(): number;
-        /**
-         * @inheritDoc
-         * @override
-         */
-        set height(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get height(): number;
+        _setHeight(value: number): void;
         /**
          * <p>当前实例的位图 <code>AutoImage</code> 实例的有效缩放网格数据。</p>
          * <p>数据格式："上边距,右边距,下边距,左边距,是否重复填充(值为0：不重复填充，1：重复填充)"，以逗号分隔。
@@ -32160,9 +32205,6 @@ declare module Laya {
          * @override
          */
         set_dataSource(value: any): void;
-    }
-    interface Image {
-        _graphics: AutoBitmap;
     }
     /**
      * <code>ISelect</code> 接口，实现对象的 <code>selected</code> 属性和 <code>clickHandler</code> 选择回调函数处理器。
@@ -32404,22 +32446,22 @@ declare module Laya {
          * @inheritDoc
          * @override
          */
-        get width(): number;
+        get_width(): number;
         /**
          * @inheritDoc
          * @override
          */
-        set width(value: number);
+        _setWidth(value: number): void;
         /**
          * @inheritDoc
          * @override
          */
-        get height(): number;
+        get_height(): number;
         /**
          * @inheritDoc
          * @override
          */
-        set height(value: number);
+        _setHeight(value: number): void;
         /**
          * @inheritDoc
          * @override
@@ -32764,22 +32806,12 @@ declare module Laya {
          * @inheritDoc
          * @override
         */
-        set width(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get width(): number;
+        _setWidth(value: number): void;
         /**
          * @inheritDoc
          * @override
         */
-        set height(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get height(): number;
+        _setHeight(value: number): void;
         /**
          * 水平方向显示的单元格数量。
          */
@@ -33058,16 +33090,9 @@ declare module Laya {
          * @inheritDoc
          * @override
          */
-        set width(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get width(): number;
+        _setWidth(value: number): void;
         /**@inheritDoc @override*/
-        set height(value: number);
-        /**@inheritDoc @override*/
-        get height(): number;
+        _setHeight(value: number): void;
         get scrollType(): ScrollType;
         set scrollType(value: ScrollType);
         private createHScrollBar;
@@ -34127,21 +34152,13 @@ declare module Laya {
         /**
          * @override
          */
-        set width(value: number);
+        _setWidth(value: number): void;
         /**
-         * @inheritDoc
-         * @override
-         */
-        get width(): number;
+    
         /**
          * @override
          */
-        set height(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get height(): number;
+        _setHeight(value: number): void;
         get scrollType(): ScrollType;
         set scrollType(value: ScrollType);
         private createHScrollBar;
@@ -34274,6 +34291,7 @@ declare module Laya {
     class TextInput extends Label {
         /** @private */
         protected _skin: string;
+        _graphics: AutoBitmap;
         /**
          * 创建一个新的 <code>TextInput</code> 类实例。
          * @param text 文本内容。
@@ -34338,22 +34356,12 @@ declare module Laya {
          * @inheritDoc
          * @override
          */
-        set width(value: number);
+        _setWidth(value: number): void;
         /**
          * @inheritDoc
          * @override
          */
-        get width(): number;
-        /**
-         * @inheritDoc
-         * @override
-         */
-        set height(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get height(): number;
+        _setHeight(value: number): void;
         /**
          * <p>指示当前是否是文本域。</p>
          * 值为true表示当前是文本域，否则不是文本域。
@@ -34396,9 +34404,6 @@ declare module Laya {
         get type(): string;
         set type(value: string);
         setSelection(startIndex: number, endIndex: number): void;
-    }
-    interface TextInput {
-        _graphics: AutoBitmap;
     }
     /**鼠标提示管理类*/
     class TipManager extends UIComponent {
@@ -34856,10 +34861,6 @@ declare module Laya {
      * <p>生命周期：preinitialize > createChildren > initialize > 组件构造函数</p>
      */
     class UIComponent extends Sprite {
-        /**X锚点，值为0-1，设置anchorX值最终通过pivotX值来改变节点轴心点。*/
-        protected _anchorX: number;
-        /**Y锚点，值为0-1，设置anchorY值最终通过pivotY值来改变节点轴心点。*/
-        protected _anchorY: number;
         /**@private 控件的数据源。 */
         protected _dataSource: any;
         /**@private 鼠标悬停提示 */
@@ -34897,12 +34898,6 @@ declare module Laya {
          */
         protected initialize(): void;
         /**
-         * <p>表示显示对象的宽度，以像素为单位。</p>
-         * <p><b>注：</b>当值为0时，宽度为自适应大小。</p>
-         *@override
-         */
-        get width(): number;
-        /**
          * @override
          */
         get_width(): number;
@@ -34917,12 +34912,6 @@ declare module Laya {
          * @see #runCallLater()
          */
         protected commitMeasure(): void;
-        /**
-         * <p>表示显示对象的高度，以像素为单位。</p>
-         * <p><b>注：</b>当值为0时，高度为自适应大小。</p>
-         * @override
-         */
-        get height(): number;
         /**
          * @override
          */
@@ -34979,6 +34968,7 @@ declare module Laya {
          */
         get centerY(): number;
         set centerY(value: number);
+        protected _shouldRefreshLayout(): void;
         protected _sizeChanged(): void;
         /**
          * <p>对象的标签。</p>
@@ -35029,64 +35019,8 @@ declare module Laya {
          * <p>获取对象的布局样式。请不要直接修改此对象</p>
          */
         private _getWidget;
-        /**
-         * @inheritDoc
-         * @override
-        */
-        set scaleX(value: number);
-        /**
-         * @override
-         */
-        set_scaleX(value: number): void;
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get scaleX(): number;
-        /**
-         * @inheritDoc
-         * @override
-        */
-        set scaleY(value: number);
-        /**
-         * @override
-         */
-        set_scaleY(value: number): void;
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get scaleY(): number;
         /**@private */
         protected onCompResize(): void;
-        /**
-         * @inheritDoc
-         * @override
-        */
-        set width(value: number);
-        /**
-         * @override
-         */
-        set_width(value: number): void;
-        /**
-         * @inheritDoc
-         * @override
-        */
-        set height(value: number);
-        /**
-         * @override
-         */
-        set_height(value: number): void;
-        /**X锚点，值为0-1，设置anchorX值最终通过pivotX值来改变节点轴心点。*/
-        get anchorX(): number;
-        get_anchorX(): number;
-        set anchorX(value: number);
-        set_anchorX(value: number): void;
-        /**Y锚点，值为0-1，设置anchorY值最终通过pivotY值来改变节点轴心点。*/
-        get anchorY(): number;
-        get_anchorY(): number;
-        set anchorY(value: number);
-        set_anchorY(value: number): void;
         /**
          *
          * @param child
@@ -35397,12 +35331,7 @@ declare module Laya {
         /**
          * @override
          */
-        set width(value: number);
-        /**
-         * @inheritDoc
-         * @override
-         */
-        get width(): number;
+        _setWidth(value: number): void;
         /**
          * @inheritDoc
          * @override
@@ -35677,19 +35606,11 @@ declare module Laya {
         /**
          * @override
          */
-        set width(value: number);
+        _setWidth(value: number): void;
         /**
          * @override
          */
-        get width(): number;
-        /**
-         * @override
-         */
-        set height(value: number);
-        /**
-         * @override
-         */
-        get height(): number;
+        _setHeight(value: number): void;
         /**
          * @override
          */
@@ -37072,6 +36993,7 @@ declare module Laya {
          * @param	y Y轴显示位置。
          */
         show(x: number, y: number, views: any): void;
+        showToggle(x: number, y: number, views: any): void;
         /**激活性能统计*/
         enable(): void;
         /**
@@ -37336,6 +37258,11 @@ declare module Laya {
         units: StatUnit;
         mode: StatMode;
     }
+    interface StatToggleUIParams {
+        title: string;
+        value: string;
+        color: StatColor;
+    }
     class Stat {
         static FPSStatUIParams: StatUIParams;
         static NodeStatUIParams: StatUIParams;
@@ -37359,12 +37286,14 @@ declare module Laya {
         static BufferMemory: StatUIParams;
         static AllShow: Array<StatUIParams>;
         static memoryShow: Array<StatUIParams>;
-        static renderShaow: Array<StatUIParams>;
+        static renderShow: Array<StatUIParams>;
+        static AllToggle: Array<StatToggleUIParams>;
+        static RenderModeToggle: Array<StatToggleUIParams>;
+        static RenderFuncToggle: Array<StatToggleUIParams>;
         /** 每秒帧数。*/
         static FPS: number;
         /**主舞台 <code>Stage</code> 渲染次数计数。 */
         static loopCount: number;
-        /** 精灵<code>Sprite</code> 的数量。*/
         /** 精灵渲染使用缓存<code>Sprite</code> 的数量。*/
         static spriteRenderUseCacheCount: number;
         /** 画布 canvas 使用标准渲染的次数。*/
@@ -37382,12 +37311,14 @@ declare module Laya {
         /**@interanl */
         static bufferMemory: number;
         static _currentShowArray: Array<StatUIParams>;
+        static _currentToggleArray: Array<StatToggleUIParams>;
         /**
          * 显示性能统计信息。
          * @param	x X轴显示位置。
          * @param	y Y轴显示位置。
          */
         static show(x?: number, y?: number, views?: Array<StatUIParams>): void;
+        static showToggle(x?: number, y?: number, views?: Array<StatToggleUIParams>): void;
         /**
          * 设置自定义的Stat
          * @param stat
@@ -37417,6 +37348,7 @@ declare module Laya {
      */
     class StatUI extends IStatRender {
         private static _fontSize;
+        private static _toggleSize;
         private _txt;
         private _leftText;
         private _canvas;
@@ -37426,6 +37358,7 @@ declare module Laya {
         private _width;
         private _height;
         private _view;
+        private _toggleView;
         /**
          * @override
          * 显示性能统计信息。
@@ -37433,7 +37366,12 @@ declare module Laya {
          * @param	y Y轴显示位置。
          */
         show(x: number, y: number, views: Array<StatUIParams>): void;
-        private createUIPre;
+        showToggle(x: number, y: number, views: Array<StatToggleUIParams>): void;
+        private _toggleSprite;
+        private _toggletxt;
+        private _checkBoxArray;
+        private _toggleleftText;
+        private createToggleUI;
         private createUI;
         /**
          * @override
@@ -37456,10 +37394,6 @@ declare module Laya {
          */
         loop(): void;
         private renderInfo;
-        /**
-         * @override
-         */
-        isCanvasRender(): boolean;
         /**
          * @override
          * 非canvas模式的渲染

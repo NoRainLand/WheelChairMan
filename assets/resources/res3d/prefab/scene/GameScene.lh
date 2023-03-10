@@ -75,6 +75,7 @@
       "_$id": "6ni3p096l5",
       "_$type": "Sprite3D",
       "name": "Direction Light",
+      "isStatic": true,
       "transform": {
         "localPosition": {
           "_$type": "Vector3",
@@ -101,12 +102,12 @@
           },
           "intensity": 1,
           "lightmapBakedType": 1,
-          "shadowMode": 0,
+          "shadowMode": 3,
           "shadowStrength": 1,
-          "shadowDistance": 50,
-          "shadowDepthBias": 1,
+          "shadowDistance": 15,
+          "shadowDepthBias": 1.664,
           "shadowNormalBias": 1,
-          "shadowNearPlane": 0.1,
+          "shadowNearPlane": 5.084,
           "shadowCascadesMode": 0,
           "strength": null,
           "angle": null,
@@ -133,6 +134,26 @@
       "_$id": "36ig6w24",
       "_$type": "Sprite3D",
       "name": "BulletStage"
+    },
+    {
+      "_$id": "xbc98gc9",
+      "_$type": "Sprite3D",
+      "name": "Sprite3D",
+      "isStatic": true,
+      "_$comp": [
+        {
+          "_$type": "PhysicsCollider",
+          "colliderShape": {
+            "_$type": "BoxColliderShape",
+            "localOffset": {
+              "_$type": "Vector3",
+              "y": -0.5
+            },
+            "sizeX": 100000,
+            "sizeZ": 100000
+          }
+        }
+      ]
     }
   ]
 }

@@ -12,6 +12,7 @@
           "_$type": "Vector3",
           "y": 1
         },
+        "radius": 0.7,
         "length": 2
       },
       "fallSpeed": 0,

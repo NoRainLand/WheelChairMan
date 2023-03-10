@@ -15,6 +15,6 @@ export enum PlayerEnum {
     Kingsman = 1004,
     /**斥候机器人 */
     ScoutRobot = 1005,
-    /**菜鸟海盗 */
-    RookiePirate = 1006,
+    // /**菜鸟海盗 */
+    // RookiePirate = 1006,
 }

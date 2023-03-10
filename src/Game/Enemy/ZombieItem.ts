@@ -14,6 +14,7 @@ import { ZombieAniEnum } from "../Enum/ZombieAniEnum";
 import { ZombieStatusEnum } from "../Enum/ZombieStatusEnum";
 import MainGame from "../MainGame";
 import PlayerMgr from "../Player/PlayerMgr";
+import EnemyMgr from "./EnemyMgr";
 import Vector3 = Laya.Vector3;
 import Sprite3D = Laya.Sprite3D;
 import Quaternion = Laya.Quaternion;
@@ -154,6 +155,13 @@ export default class ZombieItem extends BaseItem {
                 this.logicTime = 0;
 
                 let pos = PlayerMgr.instance.getPlayerPos();
+
+                if (Math.abs(pos.x - this.position.x) > 10|| Math.abs(pos.z - this.position.z) > 13) {
+                    let point = EnemyMgr.instance.getNewPos();
+                    this.position = new Vector3(pos.x + point.x, 0, pos.z + point.y);
+                }
+
+
                 let angle = Sprite3d.getAngle(this.position, pos);
                 this.move(angle);
             }
@@ -192,6 +200,8 @@ export default class ZombieItem extends BaseItem {
                 this.playerController.move(angle);
                 this.rotNode.transform.localRotationEulerY = angle;
             }
+
+
         }
 
     }

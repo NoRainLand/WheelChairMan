@@ -27,7 +27,7 @@
           "_$type": "Vector3",
           "x": 0.009999999776482582,
           "y": 0.009999999776482582,
-          "z": 0.009999999776482582
+          "z": 0.007
         }
       },
       "_$comp": [
@@ -47,7 +47,8 @@
               "_$uuid": "4c1be71b-66b4-40f3-8a3c-a12a764da552",
               "_$type": "Material"
             }
-          ]
+          ],
+          "renderMode": null
         }
       ],
       "_$child": [
@@ -80,7 +81,8 @@
                   "_$uuid": "4c1be71b-66b4-40f3-8a3c-a12a764da552",
                   "_$type": "Material"
                 }
-              ]
+              ],
+              "renderMode": null
             }
           ]
         },
@@ -113,7 +115,8 @@
                   "_$uuid": "4c1be71b-66b4-40f3-8a3c-a12a764da552",
                   "_$type": "Material"
                 }
-              ]
+              ],
+              "renderMode": null
             }
           ]
         }

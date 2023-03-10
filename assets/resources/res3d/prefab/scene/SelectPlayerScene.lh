@@ -23,6 +23,7 @@
       "_$id": "30ar9xkf",
       "_$type": "Camera",
       "name": "Camera",
+      "isStatic": true,
       "transform": {
         "localPosition": {
           "_$type": "Vector3",
@@ -55,6 +56,7 @@
       "_$id": "6ni3p096l5",
       "_$type": "Sprite3D",
       "name": "Direction Light",
+      "isStatic": true,
       "transform": {
         "localPosition": {
           "_$type": "Vector3",
@@ -98,6 +100,7 @@
       "_$id": "c98woa5z",
       "_$type": "Sprite3D",
       "name": "Plane",
+      "isStatic": true,
       "transform": {
         "localPosition": {
           "_$type": "Vector3",

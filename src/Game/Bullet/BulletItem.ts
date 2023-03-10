@@ -58,6 +58,9 @@ export default class BulletItem extends BaseItem {
     /**最大允许击杀 */
     maxKillNum: number = 0;
 
+    /**是否超出距离 */
+    isOverDis: boolean = false;
+
     constructor() { super() }
 
     init() {
@@ -73,6 +76,7 @@ export default class BulletItem extends BaseItem {
 
             this.startPos = this.position.clone();
             this.isActive = true;
+            this.isOverDis = false;
         }
 
         this.phy = this.obj.getComponent(PhysicsCollider);
@@ -85,10 +89,12 @@ export default class BulletItem extends BaseItem {
 
     update(time: number): void {
         if (MainGame.instance.gameStep == GameStepEnum.GameStart) {
-            this.transform.translate(new Vector3(0, 0, this.speed));
-            let len = Vector3.distance(this.startPos, this.position);
-            if (len >= this.flightDis) {
-                this.overDis();
+            if (!this.isOverDis) {
+                this.transform.translate(new Vector3(0, 0, this.speed));
+                let len = Vector3.distance(this.startPos, this.position);
+                if (len >= this.flightDis) {
+                    this.overDis();
+                }
             }
         }
 
@@ -133,6 +139,7 @@ export default class BulletItem extends BaseItem {
 
 
     overDis() {
+        this.isOverDis = true;
         switch (this.type) {
             case 0:
                 this.clear();

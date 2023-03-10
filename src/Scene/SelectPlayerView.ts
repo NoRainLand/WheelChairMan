@@ -9,6 +9,8 @@ import CurrencyMgr from "../Mgr/CurrencyMgr";
 import EventMgr from "../Mgr/EventMgr";
 import UIBase from "../UIBase/UIBase";
 import UIBaseMgr from "../UIBase/UIBaseMgr";
+import Timer from "../Util/Timer";
+import Tween from "../Util/Tween";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
 import Box = Laya.Box;
@@ -51,6 +53,9 @@ export default class SelectPlayerView extends UIBase {
     @property()
     imgCurrency: Image;
 
+    @property()
+    boxMsg: Box;
+
 
 
     private $viewIndex: number = 0;
@@ -82,6 +87,10 @@ export default class SelectPlayerView extends UIBase {
 
     }
 
+
+
+
+
     addEvent(): void {
         this.regClick(this.imgBack, this.goBack);
         this.regClick(this.imgNext, this.nextItem);
@@ -93,9 +102,19 @@ export default class SelectPlayerView extends UIBase {
     }
 
     changeData() {
+        this.boxMsg.right = -1000;
+
+
         this.$playerData = PlayerMgr.instance.getSelectedPlayerData(this.$playerList[this.$selectIndex]);
         this.labelName.text = LocalizationMgr.getLocalizationByEnum(this.$playerData.localizationKey);
         this.labelDic.text = LocalizationMgr.getLocalizationByEnum(this.$playerData.descriptionKey);
+
+
+
+        Tween.get(this.boxMsg)
+            .to({ right: 0 }, 350, Laya.Ease.circOut)
+            .start();
+
 
         if (PlayerMgr.instance.isUnlock(this.$playerList[this.$selectIndex])) {
             this.imgLock.visible = false;
@@ -114,15 +133,22 @@ export default class SelectPlayerView extends UIBase {
 
 
     changeNexPrev() {
-        if (this.$selectIndex <= 0) {
-            this.imgPrev.visible = false;
-        } else if (this.$selectIndex >= this.$playerList.length - 1) {
-            this.imgNext.visible = false;
-        } else {
-            this.imgPrev.visible = true;
-            this.imgNext.visible = true;
-        }
         this.changeData();
+
+        this.imgPrev.visible = false;
+        this.imgNext.visible = false;
+
+        Timer.get(400, this, () => {
+            if (this.$selectIndex <= 0) {
+                this.imgNext.visible = true;
+            } else if (this.$selectIndex >= this.$playerList.length - 1) {
+                this.imgPrev.visible = true;
+            } else {
+                this.imgPrev.visible = true;
+                this.imgNext.visible = true;
+            }
+        }).start();
+
     }
     goBack() {
         this.close();

@@ -19,6 +19,10 @@
       "depth": 2,
       "isSingleton": true,
       "AniType": 0,
+      "Main": {
+        "_$ref": "27daa8ks"
+      },
+      "imgClose": null,
       "txtGold": {
         "_$ref": "iibb3hfk"
       },
@@ -60,9 +64,6 @@
       },
       "imgStart": {
         "_$ref": "ve72tsb8"
-      },
-      "Main": {
-        "_$ref": "27daa8ks"
       }
     }
   ],
@@ -344,7 +345,7 @@
               "anchorY": 0,
               "text": "username",
               "fontSize": 32,
-              "color": "rgba(221, 198, 171, 1)",
+              "color": "rgba(255, 203, 135, 1)",
               "leading": 0,
               "padding": "0,0,0,0"
             }
@@ -391,7 +392,7 @@
               "anchorY": 0,
               "text": "Shop",
               "fontSize": 36,
-              "color": "rgba(178, 155, 123, 1)",
+              "color": "rgba(255, 203, 135, 1)",
               "align": "center",
               "valign": "middle",
               "leading": 0,
@@ -447,7 +448,7 @@
               "anchorY": 0,
               "text": "Ranking\n",
               "fontSize": 36,
-              "color": "rgba(178, 155, 123, 1)",
+              "color": "rgba(255, 203, 135, 1)",
               "align": "center",
               "valign": "middle",
               "leading": 0,
@@ -503,7 +504,7 @@
               "anchorY": 0,
               "text": "Settings",
               "fontSize": 36,
-              "color": "rgba(178, 155, 123, 1)",
+              "color": "rgba(255, 203, 135, 1)",
               "align": "center",
               "valign": "middle",
               "leading": 0,

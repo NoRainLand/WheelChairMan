@@ -75,6 +75,7 @@ export default class ResurrectionView extends UIBase {
 
 
     goDie() {
+        Tween.clearAll(this.labelTime);
         EventMgr.event(EventEnum.GAMELOSE);
         this.close();
     }

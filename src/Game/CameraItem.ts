@@ -42,7 +42,7 @@ export default class CameraItem extends Script3d {
     }
 
     gameStart() {
-        this.camera.transform.position = new Vector3(0,12,5.5);
+        this.camera.transform.position = new Vector3(0, 12, 5.5);
         this.camera.transform.localRotationEuler = new Vector3(-65.001, 0, 0);
 
     }
@@ -65,6 +65,15 @@ export default class CameraItem extends Script3d {
 
             this.fallowTarget.transform.position.cloneTo(this.curpos);
         }
+    }
+
+
+    /**是否能被相机看见 */
+    IsVisible(pos: Vector3): boolean {
+        let outpos = new Laya.Vector4();
+        this.camera.viewport.project(pos, this.camera.projectionViewMatrix, outpos);
+        if (outpos.z < 1) return true;
+        return false;
     }
 
 }

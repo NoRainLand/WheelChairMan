@@ -1,6 +1,8 @@
 import GameData from "../Data/GameData";
 import { EventEnum } from "../Enum/EventEnum";
+import { LocalStorageEnum } from "../Enum/LocalStorageEnum";
 import EventMgr from "../Mgr/EventMgr";
+import LocalStorageMgr from "../Mgr/LocalMgr";
 import UIBase from "../UIBase/UIBase";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
@@ -39,8 +41,6 @@ export class DebugView extends UIBase {
             "添加5000金币",
             "添加5000钻石",
             "清零金币钻石",
-            "游戏立刻胜利(必须先开始游戏)",
-            "游戏立刻失败(必须先开始游戏)",
             "锁定额外皮肤",
         ]
 
@@ -72,14 +72,13 @@ export class DebugView extends UIBase {
                 EventMgr.event(EventEnum.DIAMONDCHANGE);
                 break;
             case 2:
-                GameData.diamond =0;
-                GameData.gold =0;
+                GameData.diamond = 0;
+                GameData.gold = 0;
                 EventMgr.event(EventEnum.DIAMONDCHANGE);
                 EventMgr.event(EventEnum.GOLDCHANGE);
                 break;
             case 3:
-                break;
-            case 4:
+                LocalStorageMgr.setItem(LocalStorageEnum.UNLOCKPLAYERLIST, JSON.stringify([1001]));
                 break;
         }
         this.listCommand.selectedIndex = -1;

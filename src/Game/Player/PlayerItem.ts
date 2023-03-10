@@ -91,8 +91,6 @@ export default class PlayerItem extends BaseItem {
 
     private playerStatus: PlayerStatusEnum;
 
-    // private pixelLineSprite3D: PixelLineSprite3D;
-
 
     private $isGod: boolean = false;
     /**是否无敌 */
@@ -144,12 +142,6 @@ export default class PlayerItem extends BaseItem {
 
         this.playerDirection.active = true;
 
-        // if (!this.pixelLineSprite3D) {
-        //     this.pixelLineSprite3D = new PixelLineSprite3D(1);
-        //     this.shootPos.addChild(this.pixelLineSprite3D);
-        //     this.pixelLineSprite3D.addLine(new Vector3(0, -0.1, 0), new Vector3(0, -0.1, 3), new Color(1 / 255, 114 / 255, 1 / 255, 0.7), new Color(1 / 255, 114 / 255, 1 / 255, 0.3));
-        //     this.pixelLineSprite3D.active = false;
-        // }
     }
 
 
@@ -165,9 +157,6 @@ export default class PlayerItem extends BaseItem {
 
     update(time: number): void {
 
-
-        // let rig:Rigidbody3D;
-        // rig.wakeUp();
     }
 
     initWeapon() {
