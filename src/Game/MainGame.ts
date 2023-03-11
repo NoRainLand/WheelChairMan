@@ -130,9 +130,6 @@ export default class MainGame {
 
         this.gameScene = gameScene;
         this.cameraItem = this.gameScene.cameraItem;
-
-        // console.log(gameScene);
-
         this.gameScene.cameraItem.gameStart();
 
         GroundMgr.instance.gameStart(this.gameScene.groundStage);

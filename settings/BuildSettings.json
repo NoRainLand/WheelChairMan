@@ -4,5 +4,8 @@
   "includedScenes": [
     "res://63a6c640-8384-40ee-931e-b24bc717fafa"
   ],
-  "alwaysIncluded": []
+  "alwaysIncluded": [],
+  "excludeFilesRule": [
+    ".xlsx"
+  ]
 }

@@ -91,7 +91,6 @@ export default class SoundMgr {
     }
 
 
-
     /**暂停音乐 */
     pauseMusic() {
         if (this.musicChannel) {
