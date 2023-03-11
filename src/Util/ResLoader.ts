@@ -116,18 +116,13 @@ export default class ResLoader {
             this.$onCompleted = onCompleted;
             this.$onProgress = _onProgress;
             this.load(ResUrl.AssetPath).then((path: TextResource) => {
-
-
                 this.$dicAssetsPath = this.stringParser(path.data, true);
-                console.log(this.$dicAssetsPath)
                 for (let [, value] of this.$dicAssetsPath) {
                     if (value && value["preload"] == 1) {
                         this.$total_num++;
                         this.load(value["path"], Handler.create(this, this.$load_one_onCompleted));
                     }
                 }
-
-
             }).catch((err) => {
                 console.warn("无法加载配置文件");
             })

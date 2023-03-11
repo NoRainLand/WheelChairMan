@@ -84,10 +84,8 @@ export default class SoundMgr {
         let url = ResLoader.instance.getUrlById(musicEnum);
         if (url) {
             this.musicChannel = SoundManager.playMusic(url, loopTimes, complete);
-            if(this.musicChannel){
-                this.musicChannel .volume = SoundManager.musicVolume;
-            }else{
-                console.log(this.musicChannel);
+            if (this.musicChannel) {
+                this.musicChannel.volume = SoundManager.musicVolume;
             }
         }
     }

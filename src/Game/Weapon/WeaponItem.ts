@@ -106,7 +106,7 @@ export default class WeaponItem extends Script3d {
             if (value == 0) {
                 this.reLoad()
                 this.canShoot = false;
-            }
+            } 
         }
     }
 
@@ -117,6 +117,9 @@ export default class WeaponItem extends Script3d {
             this.isReload = false;
         }).start();
         this.playerItem?.reloadTips?.showTips(this.reloadTime);
+
+        // Tween.get(this.)
+
     }
 
 

@@ -54,7 +54,6 @@ export default class RankingView extends UIBase {
 
     onOpened(param?: any): void {
         let data = this.rankingList.find((value) => { //临时数据
-            console.log(value);
             return value.UID == "654"
         })
 
@@ -82,6 +81,7 @@ export default class RankingView extends UIBase {
         txtLV.text = "LV" + data.lv.toString();
         txtName.text = data.name.toString();
         txtRank.text = data.rank.toString();
+        txtRank.visible = false;
         let imgRank = box.getChildByName("imgRank") as Image;
         switch (data.rank) {
             case 1:
@@ -103,7 +103,7 @@ export default class RankingView extends UIBase {
                 let data4 = this.$rankingMap.get(RankingEnum.default)
                 txtRank.color = data4["color"];
                 imgRank.skin = ResLoader.instance.getUrlById(data4["imgId"]);
-
+                txtRank.visible = true;
                 break;
         }
     }

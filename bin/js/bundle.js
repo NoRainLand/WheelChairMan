@@ -285,7 +285,6 @@ function __$decorate(assetId, codePath) {
         this.$onProgress = _onProgress;
         this.load(ResUrl.AssetPath).then((path) => {
           this.$dicAssetsPath = this.stringParser(path.data, true);
-          console.log(this.$dicAssetsPath);
           for (let [, value] of this.$dicAssetsPath) {
             if (value && value["preload"] == 1) {
               this.$total_num++;
@@ -1860,8 +1859,6 @@ function __$decorate(assetId, codePath) {
         this.musicChannel = SoundManager.playMusic(url, loopTimes, complete);
         if (this.musicChannel) {
           this.musicChannel.volume = SoundManager.musicVolume;
-        } else {
-          console.log(this.musicChannel);
         }
       }
     }
@@ -4018,7 +4015,8 @@ function __$decorate(assetId, codePath) {
         "\u6DFB\u52A05000\u91D1\u5E01",
         "\u6DFB\u52A05000\u94BB\u77F3",
         "\u6E05\u96F6\u91D1\u5E01\u94BB\u77F3",
-        "\u9501\u5B9A\u989D\u5916\u76AE\u80A4"
+        "\u9501\u5B9A\u989D\u5916\u76AE\u80A4",
+        "\u6E05\u7406\u6240\u6709\u672C\u5730\u6301\u4E45\u5316"
       ];
     }
     onOpened(param) {
@@ -4052,6 +4050,9 @@ function __$decorate(assetId, codePath) {
           break;
         case 3:
           LocalStorageMgr.setItem("UNLOCKPLAYERLIST" /* UNLOCKPLAYERLIST */, JSON.stringify([1001]));
+          break;
+        case 4:
+          Laya.LocalStorage.clear();
           break;
       }
       this.listCommand.selectedIndex = -1;
@@ -4826,8 +4827,6 @@ function __$decorate(assetId, codePath) {
       UIBaseMgr.instance.open(1017 /* RankingView */);
     }
     checkFirstTime() {
-      let value = LocalStorageMgr.getItem("FIRESTTIME" /* FIRSTTIME */);
-      console.log(value);
       this.selectPlayer();
     }
     showGuide() {
@@ -5044,7 +5043,6 @@ function __$decorate(assetId, codePath) {
     }
     onOpened(param) {
       let data = this.rankingList.find((value) => {
-        console.log(value);
         return value.UID == "654";
       });
       if (data) {
@@ -5067,6 +5065,7 @@ function __$decorate(assetId, codePath) {
       txtLV.text = "LV" + data.lv.toString();
       txtName.text = data.name.toString();
       txtRank.text = data.rank.toString();
+      txtRank.visible = false;
       let imgRank = box.getChildByName("imgRank");
       switch (data.rank) {
         case 1:
@@ -5088,6 +5087,7 @@ function __$decorate(assetId, codePath) {
           let data4 = this.$rankingMap.get(1004 /* default */);
           txtRank.color = data4["color"];
           imgRank.skin = ResLoader.instance.getUrlById(data4["imgId"]);
+          txtRank.visible = true;
           break;
       }
     }

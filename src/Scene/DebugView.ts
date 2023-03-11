@@ -42,6 +42,7 @@ export class DebugView extends UIBase {
             "添加5000钻石",
             "清零金币钻石",
             "锁定额外皮肤",
+            "清理所有本地持久化",
         ]
 
     onOpened(param: any): void {
@@ -79,6 +80,9 @@ export class DebugView extends UIBase {
                 break;
             case 3:
                 LocalStorageMgr.setItem(LocalStorageEnum.UNLOCKPLAYERLIST, JSON.stringify([1001]));
+                break;
+            case 4:
+                Laya.LocalStorage.clear();
                 break;
         }
         this.listCommand.selectedIndex = -1;

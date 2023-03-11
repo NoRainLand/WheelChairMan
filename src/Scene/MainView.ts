@@ -1,11 +1,9 @@
 import GameData from "../Data/GameData";
 import { CurrencyEnum } from "../Enum/CurrencyEnum";
 import { EventEnum } from "../Enum/EventEnum";
-import { LocalStorageEnum } from "../Enum/LocalStorageEnum";
 import { SceneEnum } from "../Enum/SceneEnum";
 import MainGame from "../Game/MainGame";
 import LevelMgr from "../Mgr/LevelMgr";
-import LocalStorageMgr from "../Mgr/LocalMgr";
 import UIBase from "../UIBase/UIBase";
 import UIBaseMgr from "../UIBase/UIBaseMgr";
 import StringUtil from "../Util/StringUtil";
@@ -115,31 +113,12 @@ export default class MainView extends UIBase {
     }
     openRanking() {
         UIBaseMgr.instance.open(SceneEnum.RankingView);
-
-        // Timer.get(3000, this, () => {
-        //     console.log('寄时器');
-        // }).start();
-        // Timer.clearAll(this);
-
-
-
-        // Tween.get(this.imgRanking)
-        //     .to({ y: 600 }, 4000).start();
-
-        // Tween.clear(this.imgRanking);
     }
 
 
 
 
     checkFirstTime() {
-        let value = LocalStorageMgr.getItem(LocalStorageEnum.FIRSTTIME);
-        console.log(value)
-        // if (value && Number(value) == 1) {
-        //     this.selectPlayer();
-        // } else {
-        //     this.showGuide();
-        // }
         this.selectPlayer();
     }
 
