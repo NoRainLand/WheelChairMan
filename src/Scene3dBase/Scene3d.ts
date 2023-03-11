@@ -48,7 +48,6 @@ export default class Scene3d extends Laya.Script {
 
 
 
-
     /**
         * 注册监听事件，不需要销毁
         * @param event 事件枚举

@@ -57,6 +57,7 @@
         "g": 0.5843,
         "b": 0.9294
       },
+      "fxaa": true,
       "cullingMask": 2147483647,
       "normalizedViewport": {
         "_$type": "Viewport",

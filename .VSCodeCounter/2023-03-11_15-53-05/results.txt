@@ -1,0 +1,163 @@
+Date : 2023-03-11 15:53:05
+Directory : e:\WheelChairMan\src
+Total : 112 files,  6727 codes, 1648 comments, 1567 blanks, all 9942 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| TypeScript |        111 |      6,678 |      1,648 |      1,518 |      9,844 |
+| Markdown   |          1 |         49 |          0 |         49 |         98 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                  | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                     |        112 |      6,727 |      1,648 |      1,567 |      9,942 |
+| . (Files)                                             |          3 |        120 |         13 |         67 |        200 |
+| Config                                                |          1 |          9 |         14 |         10 |         33 |
+| Data                                                  |          1 |        114 |         17 |         30 |        161 |
+| DataTable                                             |          1 |          2 |          6 |          1 |          9 |
+| Enum                                                  |         20 |        235 |        263 |         49 |        547 |
+| Game                                                  |         21 |      1,720 |        290 |        436 |      2,446 |
+| Game (Files)                                          |          2 |        215 |         34 |         64 |        313 |
+| Game\BaseItem                                         |          2 |        226 |         64 |         45 |        335 |
+| Game\Bullet                                           |          2 |        194 |         24 |         38 |        256 |
+| Game\Enemy                                            |          2 |        368 |         26 |         90 |        484 |
+| Game\Enum                                             |          7 |         43 |         74 |          0 |        117 |
+| Game\Ground                                           |          2 |        103 |         14 |         28 |        145 |
+| Game\Player                                           |          2 |        413 |         27 |        116 |        556 |
+| Game\Weapon                                           |          2 |        158 |         27 |         55 |        240 |
+| Localization                                          |          2 |        129 |         27 |         29 |        185 |
+| Mgr                                                   |         10 |        298 |        129 |         96 |        523 |
+| Platform                                              |          3 |         53 |         30 |         22 |        105 |
+| Scene3d                                               |          3 |        119 |         22 |         28 |        169 |
+| Scene3dBase                                           |          2 |        121 |         30 |         40 |        191 |
+| Script3d                                              |          1 |        131 |         33 |         31 |        195 |
+| UIBase                                                |          3 |        276 |        105 |         63 |        444 |
+| UIBase (Files)                                        |          2 |        273 |         98 |         63 |        434 |
+| UIBase\Interface                                      |          1 |          3 |          7 |          0 |         10 |
+| Url                                                   |          3 |          8 |         23 |          4 |         35 |
+| Util                                                  |         17 |      2,021 |        487 |        358 |      2,866 |
+| View                                                  |         21 |      1,371 |        159 |        303 |      1,833 |
++-------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                              | language   | code       | comment    | blank      | total      |
++-------------------------------------------------------+------------+------------+------------+------------+------------+
+| e:\WheelChairMan\src\Config\ProjectConfig.ts          | TypeScript |          9 |         14 |         10 |         33 |
+| e:\WheelChairMan\src\DataTable\DataTableMgr.ts        | TypeScript |          2 |          6 |          1 |          9 |
+| e:\WheelChairMan\src\Data\GameData.ts                 | TypeScript |        114 |         17 |         30 |        161 |
+| e:\WheelChairMan\src\Enum\AgreementEnum.ts            | TypeScript |          3 |          8 |          0 |         11 |
+| e:\WheelChairMan\src\Enum\AniEnum.ts                  | TypeScript |          2 |          7 |          1 |         10 |
+| e:\WheelChairMan\src\Enum\CurrencyEnum.ts             | TypeScript |          7 |         12 |          0 |         19 |
+| e:\WheelChairMan\src\Enum\DataTableEnum.ts            | TypeScript |         14 |         19 |          1 |         34 |
+| e:\WheelChairMan\src\Enum\EventEnum.ts                | TypeScript |         20 |         25 |         14 |         59 |
+| e:\WheelChairMan\src\Enum\GroundEnum.ts               | TypeScript |          3 |          7 |          0 |         10 |
+| e:\WheelChairMan\src\Enum\ImageEnum.ts                | TypeScript |         13 |         18 |          0 |         31 |
+| e:\WheelChairMan\src\Enum\LanguageEnum.ts             | TypeScript |          4 |          9 |          1 |         14 |
+| e:\WheelChairMan\src\Enum\LocalStorageEnum.ts         | TypeScript |         17 |         22 |         15 |         54 |
+| e:\WheelChairMan\src\Enum\LocalizationEnum.ts         | TypeScript |         70 |         13 |         17 |        100 |
+| e:\WheelChairMan\src\Enum\LuckyBoxEnum.ts             | TypeScript |          7 |         12 |          0 |         19 |
+| e:\WheelChairMan\src\Enum\MusicEnum.ts                | TypeScript |          7 |          6 |          0 |         13 |
+| e:\WheelChairMan\src\Enum\PlayerEnum.ts               | TypeScript |          7 |         13 |          0 |         20 |
+| e:\WheelChairMan\src\Enum\PoolEnum.ts                 | TypeScript |          4 |          9 |          0 |         13 |
+| e:\WheelChairMan\src\Enum\RankingEnum.ts              | TypeScript |          6 |         11 |          0 |         17 |
+| e:\WheelChairMan\src\Enum\Scene3dEnum.ts              | TypeScript |          5 |         10 |          0 |         15 |
+| e:\WheelChairMan\src\Enum\SkyBoxEnum.ts               | TypeScript |          5 |          7 |          0 |         12 |
+| e:\WheelChairMan\src\Enum\SoundEnum.ts                | TypeScript |         16 |         20 |          0 |         36 |
+| e:\WheelChairMan\src\Enum\VFXEnum.ts                  | TypeScript |          3 |          8 |          0 |         11 |
+| e:\WheelChairMan\src\Enum\ViewEnum.ts                 | TypeScript |         22 |         27 |          0 |         49 |
+| e:\WheelChairMan\src\GameEntry.ts                     | TypeScript |         33 |         12 |          9 |         54 |
+| e:\WheelChairMan\src\Game\BaseItem\BaseItem.ts        | TypeScript |         93 |         33 |         20 |        146 |
+| e:\WheelChairMan\src\Game\BaseItem\BaseItemMgr.ts     | TypeScript |        133 |         31 |         25 |        189 |
+| e:\WheelChairMan\src\Game\Bullet\BulletItem.ts        | TypeScript |        137 |         17 |         29 |        183 |
+| e:\WheelChairMan\src\Game\Bullet\BulletMgr.ts         | TypeScript |         57 |          7 |          9 |         73 |
+| e:\WheelChairMan\src\Game\CameraItem.ts               | TypeScript |         55 |         10 |         14 |         79 |
+| e:\WheelChairMan\src\Game\Enemy\EnemyMgr.ts           | TypeScript |        174 |          8 |         33 |        215 |
+| e:\WheelChairMan\src\Game\Enemy\ZombieItem.ts         | TypeScript |        194 |         18 |         57 |        269 |
+| e:\WheelChairMan\src\Game\Enum\BaseStatusEnum.ts      | TypeScript |          4 |         10 |          0 |         14 |
+| e:\WheelChairMan\src\Game\Enum\EnemyEnum.ts           | TypeScript |          3 |          7 |          0 |         10 |
+| e:\WheelChairMan\src\Game\Enum\GameStepEnum.ts        | TypeScript |         11 |         16 |          0 |         27 |
+| e:\WheelChairMan\src\Game\Enum\PlayerAniEnum.ts       | TypeScript |          8 |         12 |          0 |         20 |
+| e:\WheelChairMan\src\Game\Enum\PlayerStatusEnum.ts    | TypeScript |          7 |         11 |          0 |         18 |
+| e:\WheelChairMan\src\Game\Enum\ZombieAniEnum.ts       | TypeScript |          5 |          9 |          0 |         14 |
+| e:\WheelChairMan\src\Game\Enum\ZombieStatusEnum.ts    | TypeScript |          5 |          9 |          0 |         14 |
+| e:\WheelChairMan\src\Game\Ground\GroundItem.ts        | TypeScript |         38 |          7 |          5 |         50 |
+| e:\WheelChairMan\src\Game\Ground\GroundMgr.ts         | TypeScript |         65 |          7 |         23 |         95 |
+| e:\WheelChairMan\src\Game\MainGame.ts                 | TypeScript |        160 |         24 |         50 |        234 |
+| e:\WheelChairMan\src\Game\Player\PlayerItem.ts        | TypeScript |        258 |         14 |         63 |        335 |
+| e:\WheelChairMan\src\Game\Player\PlayerMgr.ts         | TypeScript |        155 |         13 |         53 |        221 |
+| e:\WheelChairMan\src\Game\Weapon\WeaponItem.ts        | TypeScript |        100 |         18 |         42 |        160 |
+| e:\WheelChairMan\src\Game\Weapon\WeaponMgr.ts         | TypeScript |         58 |          9 |         13 |         80 |
+| e:\WheelChairMan\src\Localization\LocalizationMgr.ts  | TypeScript |         81 |         19 |         27 |        127 |
+| e:\WheelChairMan\src\Localization\LocalizationText.ts | TypeScript |         48 |          8 |          2 |         58 |
+| e:\WheelChairMan\src\Mgr\AniMgr.ts                    | TypeScript |          0 |          0 |          1 |          1 |
+| e:\WheelChairMan\src\Mgr\CurrencyMgr.ts               | TypeScript |         23 |         10 |          6 |         39 |
+| e:\WheelChairMan\src\Mgr\DebugToolMgr.ts              | TypeScript |          2 |          7 |          1 |         10 |
+| e:\WheelChairMan\src\Mgr\EventMgr.ts                  | TypeScript |         46 |         51 |         10 |        107 |
+| e:\WheelChairMan\src\Mgr\HttpsMgr.ts                  | TypeScript |          0 |          0 |          1 |          1 |
+| e:\WheelChairMan\src\Mgr\LevelMgr.ts                  | TypeScript |         21 |          9 |          7 |         37 |
+| e:\WheelChairMan\src\Mgr\LocalMgr.ts                  | TypeScript |         11 |         17 |          7 |         35 |
+| e:\WheelChairMan\src\Mgr\SoundMgr.ts                  | TypeScript |        101 |         14 |         39 |        154 |
+| e:\WheelChairMan\src\Mgr\VFXMgr.ts                    | TypeScript |         44 |          8 |          5 |         57 |
+| e:\WheelChairMan\src\Mgr\VibrateMgr.ts                | TypeScript |         50 |         13 |         19 |         82 |
+| e:\WheelChairMan\src\Platform\IPlatform.ts            | TypeScript |          5 |          6 |          1 |         12 |
+| e:\WheelChairMan\src\Platform\PlatformMgr.ts          | TypeScript |         34 |          9 |         10 |         53 |
+| e:\WheelChairMan\src\Platform\PlatformType.ts         | TypeScript |         14 |         15 |         11 |         40 |
+| e:\WheelChairMan\src\README.md                        | Markdown   |         49 |          0 |         49 |         98 |
+| e:\WheelChairMan\src\Scene3dBase\Scene3d.ts           | TypeScript |         33 |         20 |         16 |         69 |
+| e:\WheelChairMan\src\Scene3dBase\Scene3dMgr.ts        | TypeScript |         88 |         10 |         24 |        122 |
+| e:\WheelChairMan\src\Scene3d\GameScene.ts             | TypeScript |         44 |          7 |         14 |         65 |
+| e:\WheelChairMan\src\Scene3d\MainScene.ts             | TypeScript |         24 |          7 |          8 |         39 |
+| e:\WheelChairMan\src\Scene3d\SelectPlayerScene.ts     | TypeScript |         51 |          8 |          6 |         65 |
+| e:\WheelChairMan\src\Script3d\Script3d.ts             | TypeScript |        131 |         33 |         31 |        195 |
+| e:\WheelChairMan\src\TestPhy.ts                       | TypeScript |         38 |          1 |          9 |         48 |
+| e:\WheelChairMan\src\UIBase\Interface\IUIBase.ts      | TypeScript |          3 |          7 |          0 |         10 |
+| e:\WheelChairMan\src\UIBase\UIBase.ts                 | TypeScript |        114 |         56 |         32 |        202 |
+| e:\WheelChairMan\src\UIBase\UIBaseMgr.ts              | TypeScript |        159 |         42 |         31 |        232 |
+| e:\WheelChairMan\src\Url\ResUrl.ts                    | TypeScript |          3 |          8 |          2 |         13 |
+| e:\WheelChairMan\src\Url\SceneUrl.ts                  | TypeScript |          3 |          8 |          1 |         12 |
+| e:\WheelChairMan\src\Url\SubPackageUrl.ts             | TypeScript |          2 |          7 |          1 |         10 |
+| e:\WheelChairMan\src\Util\AnimatorTool.ts             | TypeScript |         35 |         25 |          0 |         60 |
+| e:\WheelChairMan\src\Util\Base64.ts                   | TypeScript |         92 |         14 |          6 |        112 |
+| e:\WheelChairMan\src\Util\Calc.ts                     | TypeScript |         26 |         35 |          2 |         63 |
+| e:\WheelChairMan\src\Util\Md5.ts                      | TypeScript |        332 |         19 |         33 |        384 |
+| e:\WheelChairMan\src\Util\ObjUtil.ts                  | TypeScript |         63 |         16 |         11 |         90 |
+| e:\WheelChairMan\src\Util\Physics3DUtils.ts           | TypeScript |         13 |         17 |          4 |         34 |
+| e:\WheelChairMan\src\Util\PlayerController.ts         | TypeScript |        110 |         25 |         37 |        172 |
+| e:\WheelChairMan\src\Util\ReloadTips.ts               | TypeScript |         35 |          7 |          6 |         48 |
+| e:\WheelChairMan\src\Util\ResLoader.ts                | TypeScript |        159 |         41 |         27 |        227 |
+| e:\WheelChairMan\src\Util\RockerBox.ts                | TypeScript |        115 |         18 |         29 |        162 |
+| e:\WheelChairMan\src\Util\Slider.ts                   | TypeScript |        102 |         10 |         28 |        140 |
+| e:\WheelChairMan\src\Util\Sprite3d.ts                 | TypeScript |        205 |         55 |         41 |        301 |
+| e:\WheelChairMan\src\Util\StringUtil.ts               | TypeScript |        101 |         31 |         11 |        143 |
+| e:\WheelChairMan\src\Util\Timer.ts                    | TypeScript |        178 |         52 |         33 |        263 |
+| e:\WheelChairMan\src\Util\Toggle.ts                   | TypeScript |         52 |          7 |         10 |         69 |
+| e:\WheelChairMan\src\Util\Tween.ts                    | TypeScript |        239 |         94 |         46 |        379 |
+| e:\WheelChairMan\src\Util\clipSprite360.ts            | TypeScript |        164 |         21 |         34 |        219 |
+| e:\WheelChairMan\src\View\CompleteView.ts             | TypeScript |         60 |          7 |          6 |         73 |
+| e:\WheelChairMan\src\View\DebugView.ts                | TypeScript |         75 |          7 |         12 |         94 |
+| e:\WheelChairMan\src\View\GameView.ts                 | TypeScript |        116 |          7 |         33 |        156 |
+| e:\WheelChairMan\src\View\GuideView.ts                | TypeScript |         34 |          7 |          6 |         47 |
+| e:\WheelChairMan\src\View\LanguageView.ts             | TypeScript |         62 |          7 |          7 |         76 |
+| e:\WheelChairMan\src\View\LevelUpView.ts              | TypeScript |         15 |          7 |          1 |         23 |
+| e:\WheelChairMan\src\View\LoadView.ts                 | TypeScript |         58 |         13 |         22 |         93 |
+| e:\WheelChairMan\src\View\LoseView.ts                 | TypeScript |         43 |          7 |          3 |         53 |
+| e:\WheelChairMan\src\View\LuckyBoxView.ts             | TypeScript |         49 |          7 |         17 |         73 |
+| e:\WheelChairMan\src\View\MainView.ts                 | TypeScript |        108 |          7 |         34 |        149 |
+| e:\WheelChairMan\src\View\MyInfoView.ts               | TypeScript |         15 |          7 |          1 |         23 |
+| e:\WheelChairMan\src\View\PauseView.ts                | TypeScript |         43 |          7 |          8 |         58 |
+| e:\WheelChairMan\src\View\PrivacyAgreementView.ts     | TypeScript |         40 |          7 |          9 |         56 |
+| e:\WheelChairMan\src\View\RankingView.ts              | TypeScript |         94 |          8 |         11 |        113 |
+| e:\WheelChairMan\src\View\ResurrectionView.ts         | TypeScript |         66 |          7 |         10 |         83 |
+| e:\WheelChairMan\src\View\SelectPlayerView.ts         | TypeScript |        140 |          8 |         41 |        189 |
+| e:\WheelChairMan\src\View\SettingView.ts              | TypeScript |         80 |          7 |         22 |        109 |
+| e:\WheelChairMan\src\View\ShopView.ts                 | TypeScript |        159 |         10 |         43 |        212 |
+| e:\WheelChairMan\src\View\SignInView.ts               | TypeScript |         15 |          7 |          1 |         23 |
+| e:\WheelChairMan\src\View\SureView.ts                 | TypeScript |         63 |          8 |         11 |         82 |
+| e:\WheelChairMan\src\View\TipsView.ts                 | TypeScript |         36 |          7 |          5 |         48 |
+| Total                                                 |            |      6,727 |      1,648 |      1,567 |      9,942 |
++-------------------------------------------------------+------------+------------+------------+------------+------------+

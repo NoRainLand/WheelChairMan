@@ -6,6 +6,6 @@
   ],
   "alwaysIncluded": [],
   "excludeFilesRule": [
-    ".xlsx"
+    "resources/datatables/excel/**"
   ]
 }

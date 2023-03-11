@@ -1,0 +1,174 @@
+{
+  "_$ver": 1,
+  "_$id": "iqfz8yz5",
+  "_$type": "View",
+  "name": "DebugView",
+  "width": 1920,
+  "height": 1080,
+  "anchorX": 0,
+  "anchorY": 0,
+  "mouseEnabled": true,
+  "mouseThrough": true,
+  "left": 0,
+  "right": 0,
+  "top": 0,
+  "bottom": 0,
+  "_$comp": [
+    {
+      "_$type": "5ca51831-1d23-46b6-a853-a10d5da54d6c",
+      "scriptPath": ".../src/View/DebugView.ts",
+      "depth": 0,
+      "isSingleton": true,
+      "AniType": 0,
+      "Main": null,
+      "imgClose": null,
+      "imgShow": {
+        "_$ref": "dhcnhq1t"
+      },
+      "MainPanel": {
+        "_$ref": "v5sqi417"
+      },
+      "listCommand": {
+        "_$ref": "711uyiv1"
+      }
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "v5sqi417",
+      "_$type": "Box",
+      "name": "Main",
+      "width": 1920,
+      "height": 1080,
+      "anchorX": 0,
+      "anchorY": 0,
+      "visible": false,
+      "alpha": 0.7,
+      "mouseEnabled": true,
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "bottom": 0,
+      "bgColor": "rgba(0, 0, 0, 1)",
+      "_$child": [
+        {
+          "_$id": "711uyiv1",
+          "_$type": "List",
+          "name": "listCommand",
+          "x": 167,
+          "y": 117,
+          "width": 724,
+          "height": 963,
+          "anchorX": 0,
+          "anchorY": 0,
+          "mouseEnabled": true,
+          "left": 167,
+          "top": 117,
+          "bottom": 0,
+          "itemTemplate": {
+            "_$ref": "f0y79fy3",
+            "_$tmpl": "itemRender"
+          },
+          "repeatX": 1,
+          "repeatY": 20,
+          "spaceX": 10,
+          "spaceY": 10,
+          "scrollType": 2,
+          "selectEnable": true,
+          "_$child": [
+            {
+              "_$id": "f0y79fy3",
+              "_$type": "Box",
+              "name": "render",
+              "width": 724,
+              "height": 104,
+              "anchorX": 0,
+              "anchorY": 0,
+              "left": 0,
+              "right": 0,
+              "bgColor": "rgba(78, 78, 78, 1)",
+              "_$child": [
+                {
+                  "_$id": "tnyum7qn",
+                  "_$type": "Label",
+                  "name": "Label",
+                  "width": 724,
+                  "height": 104,
+                  "anchorX": 0,
+                  "anchorY": 0,
+                  "left": 0,
+                  "right": 0,
+                  "top": 0,
+                  "bottom": 0,
+                  "text": "添加5000金币",
+                  "fontSize": 40,
+                  "color": "#FFFFFF",
+                  "valign": "middle",
+                  "leading": 0,
+                  "padding": "0,0,0,0"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_$id": "dhcnhq1t",
+      "_$type": "Image",
+      "name": "imgShow",
+      "x": 3,
+      "y": 462,
+      "width": 146,
+      "height": 119,
+      "anchorX": 0,
+      "anchorY": 0,
+      "alpha": 0.2,
+      "mouseEnabled": true,
+      "left": 3,
+      "top": 462,
+      "skin": "res://cc6ab823-f690-4a05-bbfa-913d70bf15e3",
+      "_$child": [
+        {
+          "_$id": "n0xdsad3",
+          "_$type": "Label",
+          "name": "Label",
+          "x": 22,
+          "y": 14,
+          "width": 98,
+          "height": 79,
+          "anchorX": 0,
+          "anchorY": 0,
+          "text": "开关\n调试\n",
+          "fontSize": 40,
+          "color": "#FFFFFF",
+          "align": "center",
+          "valign": "middle",
+          "leading": 0,
+          "padding": "0,0,0,0"
+        }
+      ]
+    },
+    {
+      "_$id": "6uior2lq",
+      "_$type": "Label",
+      "name": "Label",
+      "x": 16,
+      "y": 16,
+      "width": 912,
+      "height": 69,
+      "anchorX": 0,
+      "anchorY": 0,
+      "left": 16,
+      "top": 16,
+      "text": "当前游戏处于处于测试状态，请勿上传！",
+      "fontSize": 50,
+      "color": "rgba(22, 214, 22, 1)",
+      "italic": true,
+      "align": "center",
+      "valign": "middle",
+      "leading": 0,
+      "padding": "0,0,0,0"
+    }
+  ]
+}

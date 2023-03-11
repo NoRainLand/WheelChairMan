@@ -4,7 +4,7 @@
  * @Last Modified by: NoRain
  * @Last Modified time: 2023-02-25 15:46:01
  */
-import { SceneEnum } from "../Enum/SceneEnum";
+import { ViewEnum } from "../Enum/ViewEnum";
 import EventMgr from "../Mgr/EventMgr";
 import SceneUrl from "../Url/SceneUrl";
 import ResLoader from "../Util/ResLoader";
@@ -75,7 +75,7 @@ export default class UIBaseMgr {
         if (!this.$isOpenLoadView) {
             this.$isOpenLoadView = true;
             ResLoader.instance.load(SceneUrl.LoadView, Handler.create(this, () => {
-                this.initScene(ResLoader.instance.getResCloneByUrl(SceneUrl.LoadView), SceneEnum.LoadView);
+                this.initScene(ResLoader.instance.getResCloneByUrl(SceneUrl.LoadView), ViewEnum.LoadView);
             }))
         }
     }
@@ -88,7 +88,7 @@ export default class UIBaseMgr {
      * @param caller 作用域
      * @param callback 回调
      */
-    open(sceneId: SceneEnum, param?: any, caller?: any, callback?: Function) {
+    open(sceneId: ViewEnum, param?: any, caller?: any, callback?: Function) {
         let scripts = this.$sceneScriptPool.get(sceneId);
         if (scripts && scripts[0] && scripts[0].isSingleton) {
             console.log("这个页面已经存在并且不允许重复打开");
@@ -109,7 +109,7 @@ export default class UIBaseMgr {
     }
 
     /**初始化界面 */
-    private initScene(scene: Scene, sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
+    private initScene(scene: Scene, sceneName: ViewEnum, param?: any, caller?: any, callback?: Function) {
         let base: UIBase = scene.getComponent(UIBase);
         if (base) {
             switch (base.depth) {
@@ -157,7 +157,7 @@ export default class UIBaseMgr {
 
 
     /**关闭页面 */
-    close(sceneName: SceneEnum, id: number) {
+    close(sceneName: ViewEnum, id: number) {
         let scripts = this.$sceneScriptPool.get(sceneName);
         if (scripts && scripts.length > 0) {
             let arr = [];
@@ -184,7 +184,7 @@ export default class UIBaseMgr {
     }
 
     /**是否打开某个界面 */
-    isOpen(sceneName: SceneEnum): boolean {
+    isOpen(sceneName: ViewEnum): boolean {
         let arr = this.$sceneScriptPool.get(sceneName);
         if (arr && arr.length > 0) {
             return true;
@@ -193,7 +193,7 @@ export default class UIBaseMgr {
     }
 
     /**加载场景 */
-    private loadScene(sceneName: SceneEnum, param?: any, caller?: any, callback?: Function) {
+    private loadScene(sceneName: ViewEnum, param?: any, caller?: any, callback?: Function) {
         this.$scenePool.set(sceneName, ResLoader.instance.getResById(sceneName));
         if (this.$scenePool.get(sceneName)) {
             this.open(sceneName, param, caller, callback);
@@ -201,12 +201,12 @@ export default class UIBaseMgr {
     }
 
     initDebugScene() {
-        this.open(SceneEnum.DebugView);
+        this.open(ViewEnum.DebugView);
     }
 
     /**打开一个调试界面 */
     showDebug() {
-        this.open(SceneEnum.DebugView);
+        this.open(ViewEnum.DebugView);
     }
 
     /**
@@ -214,7 +214,7 @@ export default class UIBaseMgr {
      * @param msg 信息
      */
     showTips(msg: string) {
-        this.open(SceneEnum.TipsView, msg);
+        this.open(ViewEnum.TipsView, msg);
     }
     /**
      * 打开一个确认取消面板
@@ -226,7 +226,7 @@ export default class UIBaseMgr {
      */
     showSureDialog(title: string, msg: string, caller: any, sureCallback: Function, cancelCallBack?: Function) {
         let data = { title: title, msg: msg, caller: caller, sureCallback: sureCallback, cancelCallBack: cancelCallBack };
-        this.open(SceneEnum.SureView, data);
+        this.open(ViewEnum.SureView, data);
     }
 
 }

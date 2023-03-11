@@ -1,0 +1,20 @@
+{
+	"_$ver": 1,
+	"_$id": "ppo80pze",
+	"_$type": "View",
+	"name": "SignInView",
+	"width": 1920,
+	"height": 1080,
+	"left": 0,
+	"right": 0,
+	"top": 0,
+	"bottom": 0,
+	"_$comp": [
+		{
+			"_$type": "658fcc51-8109-42a6-a372-0d6e36f801cc",
+			"scriptPath": ".../src/View/SignInView.ts",
+			"depth": 2,
+			"isSingleton": true
+		}
+	]
+}

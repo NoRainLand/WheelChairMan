@@ -8,5 +8,5 @@
 export default class SceneUrl {
 
     /**加载页面地址 */
-    static readonly LoadView: string = "resources/prefab/LoadView.lh"
+    static readonly LoadView: string = "resources/view/LoadView.lh"
 }

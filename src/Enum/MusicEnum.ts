@@ -10,10 +10,4 @@ export enum MusicEnum {
     bgm3 = 2503,
     bgm4 = 2504,
     bgm5 = 2505,
-    bgm6 = 2506,
-    bgm7 = 2507,
-    bgm8 = 2508,
-    bgm9 = 2509,
-    bgm10 = 2510,
-    bgm11 = 2511,
 }
