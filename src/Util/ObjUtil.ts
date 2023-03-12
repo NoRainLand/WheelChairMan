@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-16 20:31:48 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-08 15:19:19
+ * @Last Modified time: 2023-03-12 19:36:10
  */
 
 import PrefabImpl = Laya.PrefabImpl;
@@ -76,7 +76,7 @@ export default class ObjUtil {
 
 
     /**随机排序数组 */
-    public static shuffle(arr) {
+    static shuffle(arr) {
         let i = arr.length, t, j;
         while (--i) {
             j = Math.floor(Math.random() * i);
@@ -86,5 +86,9 @@ export default class ObjUtil {
         }
     }
 
+    /**生成特定范围随机数 */
+    static randomNum(minNum, maxNum) {
+        return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+    }
 
 }

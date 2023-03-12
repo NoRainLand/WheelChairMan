@@ -6,5 +6,6 @@
  */
 /**分包资源地址 */
 export default class SubPackageUrl {
-
+    /**3d资源分包 */
+    static readonly res3dUrl: string = "resources/res3d/res3d.zip";
 }

@@ -31,7 +31,10 @@
     "laya.spine": false
   },
   "splash": {
-    "fit": "center"
+    "backgroundColor": "rgba(134, 206, 203, 1)",
+    "image": "bin/splash/NoRainLand.png",
+    "fit": "center",
+    "duration": 0.1
   },
   "stat": true
 }

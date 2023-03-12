@@ -53,6 +53,8 @@ function __$decorate(assetId, codePath) {
   ProjectConfig.support = "https://github.com/NoRainLand/WheelChairMan";
   /**默认语言 */
   ProjectConfig.defaultLanguage = 1001;
+  /**使用Zip分包 */
+  ProjectConfig.useZip = true;
 
   // E:/WheelChairMan/src/Platform/PlatformMgr.ts
   var PlatformMgr = class {
@@ -1217,6 +1219,8 @@ function __$decorate(assetId, codePath) {
       this.GameEntry = this.owner;
       this.UIBase = this.GameEntry.getChildByName("UIBase");
       PlatformMgr.instance.init();
+      LayaZip === null || LayaZip === void 0 ? void 0 : LayaZip.Init();
+      console.log(LayaZip === null || LayaZip === void 0 ? void 0 : LayaZip.Version);
       UIBaseMgr.instance.init(this.UIBase);
       UIBaseMgr.instance.openLoadView();
     }
@@ -1439,9 +1443,9 @@ function __$decorate(assetId, codePath) {
     }
     /**是否能被相机看见 */
     IsVisible(pos) {
-      let outpos = new Laya.Vector4();
-      this.camera.viewport.project(pos, this.camera.projectionViewMatrix, outpos);
-      if (outpos.z < 1)
+      let outPos = new Laya.Vector4();
+      this.camera.viewport.project(pos, this.camera.projectionViewMatrix, outPos);
+      if (outPos.z < 1)
         return true;
       return false;
     }
@@ -1790,6 +1794,10 @@ function __$decorate(assetId, codePath) {
         arr[i] = arr[j];
         arr[j] = t;
       }
+    }
+    /**生成特定范围随机数 */
+    static randomNum(minNum, maxNum) {
+      return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
     }
   };
   __name(ObjUtil, "ObjUtil");
@@ -4974,6 +4982,13 @@ function __$decorate(assetId, codePath) {
   /**经验表 */
   LevelMgr.$levelDataTable = /* @__PURE__ */ new Map();
 
+  // E:/WheelChairMan/src/Url/SubPackageUrl.ts
+  var SubPackageUrl = class {
+  };
+  __name(SubPackageUrl, "SubPackageUrl");
+  /**3d资源分包 */
+  SubPackageUrl.res3dUrl = "resources/res3d/res3d.zip";
+
   // E:/WheelChairMan/src/View/LoadView.ts
   var __decorate30 = __$decorate("9797e892-adab-4c82-8f5e-800b37f590f9", "../src/View/LoadView.ts");
   var _a16;
@@ -4993,7 +5008,23 @@ function __$decorate(assetId, codePath) {
     }
     /**请求版本 */
     checkVersion() {
-      this.startPreLoad();
+      this.loadZip();
+    }
+    /**加载zip */
+    loadZip() {
+      if (ProjectConfig.useZip) {
+        let self = this;
+        LayaZip.LazyMode = true;
+        LayaZip.CacheZIPFile = false;
+        LayaZip.BasePathMode = 1;
+        Laya.loader.load([{ url: SubPackageUrl.res3dUrl, type: LayaZip.ZIP }], Handler7.create(self, () => {
+          console.log(Laya.Loader.loadedMap);
+        }), new Laya.Handler(self, (args) => {
+          self._onProgress(args);
+        }));
+      } else {
+        this.startPreLoad();
+      }
     }
     /**开始预加载全局资源 */
     startPreLoad() {

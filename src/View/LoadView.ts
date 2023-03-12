@@ -1,3 +1,4 @@
+import ProjectConfig from "../Config/ProjectConfig";
 import { ViewEnum } from "../Enum/ViewEnum";
 import MainGame from "../Game/MainGame";
 import LocalizationMgr from "../Localization/LocalizationMgr";
@@ -7,6 +8,7 @@ import SoundMgr from "../Mgr/SoundMgr";
 import Scene3dMgr from "../Scene3dBase/Scene3dMgr";
 import UIBase from "../UIBase/UIBase";
 import UIBaseMgr from "../UIBase/UIBaseMgr";
+import SubPackageUrl from "../Url/SubPackageUrl";
 import ResLoader from "../Util/ResLoader";
 import StringUtil from "../Util/StringUtil";
 import Image = Laya.Image;
@@ -16,7 +18,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-08 15:21:25
+ * @Last Modified time: 2023-03-12 17:10:24
  */
 const { regClass, property } = Laya;
 
@@ -48,8 +50,26 @@ export default class LoadView extends UIBase {
     checkVersion() {
 
 
-        this.startPreLoad();
+        this.loadZip();
     }
+
+    /**加载zip */
+    loadZip() {
+        if (ProjectConfig.useZip) {
+            let self = this;
+            LayaZip.LazyMode = true;
+            LayaZip.CacheZIPFile = false;
+            LayaZip.BasePathMode = 1;
+            Laya.loader.load([{ url: SubPackageUrl.res3dUrl, type: LayaZip.ZIP }], Handler.create(self, () => {
+                console.log(Laya.Loader.loadedMap);
+            }), new Laya.Handler(self, (args) => {
+                self._onProgress(args);
+            }))
+        } else {
+            this.startPreLoad();
+        }
+    }
+
 
 
     /**开始预加载全局资源 */

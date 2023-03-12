@@ -14,7 +14,7 @@ import Point = Laya.Point;
  * @Author: NoRain 
  * @Date: 2023-02-27 20:36:12 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-27 20:36:46
+ * @Last Modified time: 2023-03-12 19:35:18
  */
 const { regClass, property } = Laya;
 /**摇杆 */
@@ -75,7 +75,6 @@ export default class RockerBox extends Laya.Script {
         Laya.stage.on(Laya.Event.MOUSE_MOVE, this, this.rockerMove);
         Laya.stage.on(Laya.Event.MOUSE_UP, this, this.rockerUp);
     }
-
 
     rockerDown(evt: Laya.Event): void {
         if (this.touchId != -1) return;

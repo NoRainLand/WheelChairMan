@@ -41,6 +41,7 @@ export default class CameraItem extends Script3d {
         // this.camera.orthographicVerticalSize = 20;
     }
 
+
     gameStart() {
         this.camera.transform.position = new Vector3(0, 12, 5.5);
         this.camera.transform.localRotationEuler = new Vector3(-65.001, 0, 0);
@@ -70,9 +71,9 @@ export default class CameraItem extends Script3d {
 
     /**是否能被相机看见 */
     IsVisible(pos: Vector3): boolean {
-        let outpos = new Laya.Vector4();
-        this.camera.viewport.project(pos, this.camera.projectionViewMatrix, outpos);
-        if (outpos.z < 1) return true;
+        let outPos = new Laya.Vector4();
+        this.camera.viewport.project(pos, this.camera.projectionViewMatrix, outPos);
+        if (outPos.z < 1) return true;
         return false;
     }
 

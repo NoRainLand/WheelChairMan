@@ -74,7 +74,6 @@ export default class Tween {
         self.$needCopy = true;
         self.$steps = [];
         self.$cSteps = [];
-
         self.$timer = Timer.get(1, self, self.$update).frameLoop();
     }
 

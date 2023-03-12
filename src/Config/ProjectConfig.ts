@@ -2,7 +2,7 @@
  * @Author: NoRain 
  * @Date: 2023-02-06 17:07:29 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-14 15:36:06
+ * @Last Modified time: 2023-03-12 17:03:13
  */
 /**项目数据 */
 export default class ProjectConfig {
@@ -28,5 +28,8 @@ export default class ProjectConfig {
 
     /**默认语言 */
     static readonly defaultLanguage: number = 1001;
+
+    /**使用Zip分包 */
+    static readonly useZip: boolean = true;
 
 }

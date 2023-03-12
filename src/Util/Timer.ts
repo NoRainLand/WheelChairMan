@@ -9,7 +9,7 @@ import Pool = Laya.Pool;
 
 /**时间管理器 */
 export default class Timer {
-
+    
     /**对象池标志 */
     private static $sign: string = "MyTimer"
 
