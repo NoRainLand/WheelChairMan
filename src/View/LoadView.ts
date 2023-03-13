@@ -61,7 +61,7 @@ export default class LoadView extends UIBase {
             LayaZip.CacheZIPFile = false;
             LayaZip.BasePathMode = 1;
             Laya.loader.load([{ url: SubPackageUrl.res3dUrl, type: LayaZip.ZIP }], Handler.create(self, () => {
-                console.log(Laya.Loader.loadedMap);
+                this.startPreLoad();
             }), new Laya.Handler(self, (args) => {
                 self._onProgress(args);
             }))

@@ -5018,7 +5018,7 @@ function __$decorate(assetId, codePath) {
         LayaZip.CacheZIPFile = false;
         LayaZip.BasePathMode = 1;
         Laya.loader.load([{ url: SubPackageUrl.res3dUrl, type: LayaZip.ZIP }], Handler7.create(self, () => {
-          console.log(Laya.Loader.loadedMap);
+          this.startPreLoad();
         }), new Laya.Handler(self, (args) => {
           self._onProgress(args);
         }));
