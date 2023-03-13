@@ -19,7 +19,7 @@
   "modules": {
     "laya.d3": true,
     "laya.ui": true,
-    "laya.ani": true,
+    "laya.ani": false,
     "laya.device": false,
     "laya.html": false,
     "laya.tiledmap": false,

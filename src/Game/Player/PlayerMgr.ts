@@ -2,12 +2,12 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-08 19:44:04
+ * @Last Modified time: 2023-03-13 17:55:30
 */
 
 import GameData from "../../Data/GameData";
+import DataTable from "../../DataTable/DataTable";
 import { CurrencyEnum } from "../../Enum/CurrencyEnum";
-import { DataTableEnum } from "../../Enum/DataTableEnum";
 import { EventEnum } from "../../Enum/EventEnum";
 import { LocalizationEnum } from "../../Enum/LocalizationEnum";
 import { LocalStorageEnum } from "../../Enum/LocalStorageEnum";
@@ -38,7 +38,7 @@ export default class PlayerMgr {
     public static get instance(): PlayerMgr {
         return this._instance ? this._instance : this._instance = new PlayerMgr();
     }
-    private playerMap: Map<number, Object>;
+
 
     private $selectedPlayerId: number = -1;
 
@@ -54,7 +54,7 @@ export default class PlayerMgr {
     private playerPool: Map<number, PlayerItem>
 
     init() {
-        this.playerMap = ResLoader.instance.getDataTableById(DataTableEnum.Player);
+
     }
 
     startMove(angle: number, value: number) {
@@ -157,7 +157,7 @@ export default class PlayerMgr {
 
     /**获取当前选择的玩家数据 */
     getSelectedPlayerData(playerId: number) {
-        return this.playerMap.get(playerId);
+        return DataTable.PlayerDataTableMap.get(playerId);
     }
 
 

@@ -1,4 +1,4 @@
-import { DataTableEnum } from "../Enum/DataTableEnum";
+import DataTable from "../DataTable/DataTable";
 import { RankingEnum } from "../Enum/RankingEnum";
 import UIBase from "../UIBase/UIBase";
 import ResLoader from "../Util/ResLoader";
@@ -16,7 +16,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-14 10:37:38 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-24 23:34:38
+ * @Last Modified time: 2023-03-13 18:00:50
  */
 const { regClass, property } = Laya;
 /**排行榜 */
@@ -47,7 +47,6 @@ export default class RankingView extends UIBase {
         { "head": "", "name": "323", "rank": 10, "lv": "2", "UID": "12324" },
     ]
 
-    private $rankingMap: Map<number, Object>;
 
     constructor() { super() }
 
@@ -62,9 +61,6 @@ export default class RankingView extends UIBase {
             this.txtName.text = data.name.toString();
             this.txtRank.text = data.rank.toString();
         }
-        this.$rankingMap = ResLoader.instance.getDataTableById(DataTableEnum.Ranking);
-        // console.log(this.$rankingMap);
-
     }
     addEvent(): void {
         this.regClick(this.imgClose, this.close);
@@ -85,22 +81,22 @@ export default class RankingView extends UIBase {
         let imgRank = box.getChildByName("imgRank") as Image;
         switch (data.rank) {
             case 1:
-                let data1 = this.$rankingMap.get(RankingEnum.fist)
+                let data1 = DataTable.RankingDataTableMap.get(RankingEnum.fist)
                 txtRank.color = data1["color"];
                 imgRank.skin = ResLoader.instance.getUrlById(data1["imgId"]);
                 break;
             case 2:
-                let data2 = this.$rankingMap.get(RankingEnum.second)
+                let data2 = DataTable.RankingDataTableMap.get(RankingEnum.second)
                 txtRank.color = data2["color"];
                 imgRank.skin = ResLoader.instance.getUrlById(data2["imgId"]);
                 break;
             case 3:
-                let data3 = this.$rankingMap.get(RankingEnum.third)
+                let data3 = DataTable.RankingDataTableMap.get(RankingEnum.third)
                 txtRank.color = data3["color"];
                 imgRank.skin = ResLoader.instance.getUrlById(data3["imgId"]);
                 break;
             default:
-                let data4 = this.$rankingMap.get(RankingEnum.default)
+                let data4 = DataTable.RankingDataTableMap.get(RankingEnum.default)
                 txtRank.color = data4["color"];
                 imgRank.skin = ResLoader.instance.getUrlById(data4["imgId"]);
                 txtRank.visible = true;

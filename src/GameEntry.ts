@@ -1,5 +1,6 @@
 
 import ProjectConfig from "./Config/ProjectConfig";
+import DataTable from "./DataTable/DataTable";
 import PlatformMgr from "./Platform/PlatformMgr";
 import UIBaseMgr from "./UIBase/UIBaseMgr";
 import PrefabImpl = Laya.PrefabImpl;
@@ -14,7 +15,7 @@ import Sprite = Laya.Sprite;
  * @Author: NoRain 
  * @Date: 2023-02-06 16:41:32 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-12 19:33:38
+ * @Last Modified time: 2023-03-13 18:15:03
  */
 const { regClass, property } = Laya;
 
@@ -48,6 +49,7 @@ export class GameEntry extends Laya.Script {
         this.UIBase = this.GameEntry.getChildByName("UIBase") as Box;
         PlatformMgr.instance.init();
         LayaZip?.Init();
+        DataTable.Init();
         console.log(LayaZip?.Version);
         UIBaseMgr.instance.init(this.UIBase);
         UIBaseMgr.instance.openLoadView();

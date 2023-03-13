@@ -2,10 +2,10 @@
  * @Author: NoRain 
  * @Date: 2023-02-24 23:15:16 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-25 15:45:26
+ * @Last Modified time: 2023-03-13 17:59:28
  */
 
-import { DataTableEnum } from "../Enum/DataTableEnum";
+import DataTable from "../DataTable/DataTable";
 import { Scene3dEnum } from "../Enum/Scene3dEnum";
 import { SkyBoxEnum } from "../Enum/SkyBoxEnum";
 import EventMgr from "../Mgr/EventMgr";
@@ -21,14 +21,12 @@ export default class Scene3dMgr {
         return this._instance ? this._instance : this._instance = new Scene3dMgr();
     }
 
-    private $scene3dMap: Map<number, Object>;
 
     private $scene3d: Scene3D;
 
     private $scene3dPool: Map<number, Scene3d>
 
     init() {
-        this.$scene3dMap = ResLoader.instance.getDataTableById(DataTableEnum.Scene3d);
         this.$scene3dPool = new Map();
         this.initScene3D();
     }
@@ -72,7 +70,7 @@ export default class Scene3dMgr {
         if (sceneScript) {
             this.initScene(sceneScript, param);
         } else {
-            let id = this.$scene3dMap.get(sceneId)?.["path"];
+            let id = DataTable.Scene3dDataTableMap.get(sceneId)?.path;
             if (id) {
                 let scene = ResLoader.instance.getResCloneById(id);
                 scene && this.$scene3d.addChild(scene);
@@ -92,7 +90,7 @@ export default class Scene3dMgr {
     /**初始化一下 */
     private initScene(sceneScript: Scene3d, param?: any) {
         this.$scene3d.addChild(sceneScript.owner);
-        sceneScript.owner.name = this.$scene3dMap.get(sceneScript.sceneId)?.["key"];
+        sceneScript.owner.name = DataTable.Scene3dDataTableMap.get(sceneScript.sceneId)?.key;
         sceneScript.$param = param;
         sceneScript.onOpened(param);
         sceneScript.addEvent();

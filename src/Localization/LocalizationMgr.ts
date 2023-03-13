@@ -2,18 +2,18 @@
  * @Author: NoRain 
  * @Date: 2023-02-10 09:48:50 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-25 16:41:41
+ * @Last Modified time: 2023-03-13 17:30:33
  */
 
 import ProjectConfig from "../Config/ProjectConfig";
-import { DataTableEnum } from "../Enum/DataTableEnum";
+import DataTable from "../DataTable/DataTable";
 import { EventEnum } from "../Enum/EventEnum";
 import { LanguageEnum } from "../Enum/LanguageEnum";
 import { LocalizationEnum } from "../Enum/LocalizationEnum";
 import { LocalStorageEnum } from "../Enum/LocalStorageEnum";
 import EventMgr from "../Mgr/EventMgr";
 import LocalStorageMgr from "../Mgr/LocalMgr";
-import ResLoader from "../Util/ResLoader";
+import Localization from "./Localization";
 import TextResource = Laya.TextResource;
 import ProgressCallback = Laya.ProgressCallback;
 import Loader = Laya.Loader;
@@ -26,12 +26,6 @@ export default class LocalizationMgr {
     /**当前语言 */
     private static $language: number;
 
-    /**本地配资源置化表 */
-    private static $localizationResMap: Map<number, Object>;
-
-    /**本地化数据表 */
-    private static $localizationMap: Map<number, Object>;
-
     /**本地化数据表 */
     private static $localizationKeyMap: Map<string, Object>;
 
@@ -41,29 +35,20 @@ export default class LocalizationMgr {
 
     /**初始化 */
     static init() {
-
-
-        this.$localizationResMap = ResLoader.instance.getDataTableById(DataTableEnum.LocalizationRes);
-
-        this.$localizationMap = ResLoader.instance.getDataTableById(DataTableEnum.Localization);
-
+        Localization.Init();
         this.$localizationKeyMap = new Map();
-        for (let [key, value] of this.$localizationMap) {
-            this.$localizationKeyMap.set(value["key"], value);
+        for (let [key, value] of Localization.LocalizationDataTableMap) {
+            this.$localizationKeyMap.set(value.key, value);
         }
-
-
     }
 
     /**获取语言对应国旗 */
     static getFlagSkinIdById(id: LanguageEnum): number {
-        let data = this.$localizationResMap.get(id);
-        return data && data["flagId"];
+        return DataTable.LocalizationResDataTableMap.get(id)?.flagId;
     }
     /**获取语言描述 */
     static getLanguageMsgById(id: LanguageEnum): string {
-        let data = this.$localizationResMap.get(id);
-        return data && data["msg"];
+        return DataTable.LocalizationResDataTableMap.get(id)?.msg;
     }
 
 
@@ -87,11 +72,11 @@ export default class LocalizationMgr {
     /**通过枚举获取对应语言 */
     static getLocalizationByEnum(lenum: LocalizationEnum, ...lenums: LocalizationEnum[]): string {
         let language = LanguageEnum[this.Language];
-        let value = this.$localizationMap.get(lenum)?.[language];
+        let value = Localization.LocalizationDataTableMap.get(lenum)?.[language];
         if (value) {
             if (lenums && lenums.length) {
                 for (let i = 0; i < lenums.length; i++) {
-                    let item = this.$localizationMap.get(lenums[i])?.[language];
+                    let item = Localization.LocalizationDataTableMap.get(lenums[i])?.[language];
                     item = item ? item : lenums[i];
                     value = value.replace("$", item);
                 }

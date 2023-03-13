@@ -1,4 +1,4 @@
-import { DataTableEnum } from "../Enum/DataTableEnum";
+import DataTable from "../DataTable/DataTable";
 import LocalizationMgr from "../Localization/LocalizationMgr";
 import UIBase from "../UIBase/UIBase";
 import ResLoader from "../Util/ResLoader";
@@ -16,7 +16,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-13 10:40:07 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-02-24 23:34:28
+ * @Last Modified time: 2023-03-13 18:00:17
  */
 const { regClass, property } = Laya;
 /**幸运宝箱界面 */
@@ -38,13 +38,11 @@ export default class LuckyBoxView extends UIBase {
 
     constructor() { super() }
 
-    $luckyboxDataTable: Map<number, Object> = new Map();
 
 
     onOpened(param?: any): void {
         this.regClick(this.imgClose, this.close);
         this.regClick(this.imgOpen, this.openLuckBox);
-        this.$luckyboxDataTable = ResLoader.instance.getDataTableById(DataTableEnum.LuckyBox);
         this.initLuckBox();
     }
 
@@ -52,9 +50,9 @@ export default class LuckyBoxView extends UIBase {
         if (this.$param == void 0) {
             this.$param = 0;
         }
-        this.txtMsg.text = LocalizationMgr.$getLocalizationByKey(this.$luckyboxDataTable.get(this.$param)["localizationKey"]);
+        this.txtMsg.text = LocalizationMgr.$getLocalizationByKey(DataTable.LuckyBoxDataTableMap.get(this.$param).localizationKey);
 
-        this.imgBox.skin = ResLoader.instance.getUrlById(this.$luckyboxDataTable.get(this.$param)["imgPath"]);
+        this.imgBox.skin = ResLoader.instance.getUrlById(DataTable.LuckyBoxDataTableMap.get(this.$param).imgPath);
     }
 
 

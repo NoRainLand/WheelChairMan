@@ -18,7 +18,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-07 18:06:44 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-12 17:10:24
+ * @Last Modified time: 2023-03-13 21:19:30
  */
 const { regClass, property } = Laya;
 
@@ -58,9 +58,13 @@ export default class LoadView extends UIBase {
         if (ProjectConfig.useZip) {
             let self = this;
             LayaZip.LazyMode = true;
-            LayaZip.CacheZIPFile = false;
+            // LayaZip.CacheZIPFile = false;
             LayaZip.BasePathMode = 1;
+            //resources/res3d/res3d.zip
+            LayaZip.LazyFilter = ["ls","lh","lmat"];
             Laya.loader.load([{ url: SubPackageUrl.res3dUrl, type: LayaZip.ZIP }], Handler.create(self, () => {
+                console.log(Laya.Loader.loadedMap)
+                // this.onCompleted();
                 this.startPreLoad();
             }), new Laya.Handler(self, (args) => {
                 self._onProgress(args);

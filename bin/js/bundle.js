@@ -56,6 +56,188 @@ function __$decorate(assetId, codePath) {
   /**使用Zip分包 */
   ProjectConfig.useZip = true;
 
+  // E:/WheelChairMan/src/DataTable/DataTable.ts
+  var _DataTable = class {
+    /**初始化 */
+    static Init() {
+      _DataTable.AssetsPathDataTableMap.set(100, { id: 100, name: "GameEntry", msg: "\u521D\u59CB\u573A\u666F", path: "assets\\scene\\GameEntry.ls", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(1001, { id: 1001, name: "DebugView", msg: "\u8C03\u8BD5\u754C\u9762", path: "assets\\resources\\view\\DebugView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1002, { id: 1002, name: "Toggle", msg: "\u5355\u9009", path: "assets\\resources\\prefab\\Toggle.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1003, { id: 1003, name: "Slider", msg: "\u6ED1\u6761", path: "assets\\resources\\prefab\\Slider.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1004, { id: 1004, name: "TipsView", msg: "\u63D0\u793A\u754C\u9762", path: "assets\\resources\\view\\TipsView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1005, { id: 1005, name: "SureView", msg: "\u786E\u8BA4\u63D0\u793A\u6846", path: "assets\\resources\\view\\SureView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1006, { id: 1006, name: "LoadView", msg: "\u52A0\u8F7D\u754C\u9762", path: "assets\\resources\\view\\LoadView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1007, { id: 1007, name: "CompleteView", msg: "\u80DC\u5229\u754C\u9762", path: "assets\\resources\\view\\CompleteView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1008, { id: 1008, name: "GameView", msg: "\u6E38\u620F\u754C\u9762", path: "assets\\resources\\view\\GameView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1009, { id: 1009, name: "LanguageView", msg: "\u8BED\u8A00\u754C\u9762", path: "assets\\resources\\view\\LanguageView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1010, { id: 1010, name: "LevelUpView", msg: "\u5347\u7EA7\u754C\u9762", path: "assets\\resources\\view\\LevelUpView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1011, { id: 1011, name: "LoseView", msg: "\u5931\u8D25\u754C\u9762", path: "assets\\resources\\view\\LoseView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1012, { id: 1012, name: "LuckyBoxView", msg: "\u5E78\u8FD0\u5B9D\u7BB1\u754C\u9762", path: "assets\\resources\\view\\LuckyBoxView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1013, { id: 1013, name: "MainView", msg: "\u4E3B\u754C\u9762", path: "assets\\resources\\view\\MainView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1014, { id: 1014, name: "MyInfoView", msg: "\u7528\u6237\u4FE1\u606F\u754C\u9762", path: "assets\\resources\\view\\MyInfoView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1015, { id: 1015, name: "PauseView", msg: "\u6682\u505C\u754C\u9762", path: "assets\\resources\\view\\PauseView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1016, { id: 1016, name: "PrivacyAgreementView", msg: "\u9690\u79C1\u534F\u8BAE\u754C\u9762", path: "assets\\resources\\view\\PrivacyAgreementView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1017, { id: 1017, name: "RankingView", msg: "\u6392\u884C\u699C", path: "assets\\resources\\view\\RankingView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1018, { id: 1018, name: "SettingView", msg: "\u8BBE\u7F6E\u754C\u9762", path: "assets\\resources\\view\\SettingView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1019, { id: 1019, name: "ShopView", msg: "\u5546\u57CE\u754C\u9762", path: "assets\\resources\\view\\ShopView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1020, { id: 1020, name: "SignInView", msg: "\u7B7E\u5230\u754C\u9762", path: "assets\\resources\\view\\SignInView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1021, { id: 1021, name: "SelectPlayerView", msg: "\u9009\u62E9\u4EBA\u7269\u6B66\u5668\u754C\u9762", path: "assets\\resources\\view\\SelectPlayerView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(1022, { id: 1022, name: "ResurrectionView", msg: "\u590D\u6D3B\u754C\u9762", path: "assets\\resources\\view\\ResurrectionView.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2001, { id: 2001, name: "ChineseSimplifiedFlag", msg: "\u4E2D\u56FD\u56FD\u65D7", path: "assets\\resources\\img\\languageview\\language_chn.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2002, { id: 2002, name: "EnglishFlag", msg: "\u7F8E\u56FD\u56FD\u65D7", path: "assets\\resources\\img\\languageview\\language_eng.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2003, { id: 2003, name: "luckybox_bronze", msg: "\u9752\u94DC\u5B9D\u7BB1", path: "assets\\resources\\img\\luckyboxview\\luckybox_bronze.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2004, { id: 2004, name: "luckybox_silver", msg: "\u767D\u94F6\u5B9D\u7BB1", path: "assets\\resources\\img\\luckyboxview\\luckybox_silver.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2005, { id: 2005, name: "luckybox_gold", msg: "\u9EC4\u91D1\u5B9D\u7BB1", path: "assets\\resources\\img\\luckyboxview\\luckybox_gold.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2006, { id: 2006, name: "luckybox_diamond", msg: "\u94BB\u77F3\u5B9D\u7BB1", path: "assets\\resources\\img\\luckyboxview\\luckybox_diamond.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2007, { id: 2007, name: "luckybox_platinum", msg: "\u767D\u91D1\u5B9D\u7BB1", path: "assets\\resources\\img\\luckyboxview\\luckybox_platinum.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2008, { id: 2008, name: "icon_rank_gd", msg: "\u7B2C\u4E00\u540D", path: "assets\\resources\\img\\rankingview\\icon_rank_gd.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2009, { id: 2009, name: "icon_rank_sv", msg: "\u7B2C\u4E8C\u540D", path: "assets\\resources\\img\\rankingview\\icon_rank_sv.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2010, { id: 2010, name: "icon_rank_bz", msg: "\u7B2C\u4E09\u540D", path: "assets\\resources\\img\\rankingview\\icon_rank_bz.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2011, { id: 2011, name: "icon_rank_default", msg: "\u5176\u4ED6\u540D\u6B21", path: "assets\\resources\\img\\rankingview\\icon_rank_default.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2012, { id: 2012, name: "icon_reward_coin", msg: "\u91D1\u5E01\u56FE\u6807", path: "assets\\resources\\img\\common\\icon_reward_coin.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2013, { id: 2013, name: "icon_reward_gem", msg: "\u94BB\u77F3\u56FE\u6807", path: "assets\\resources\\img\\common\\icon_reward_gem.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2014, { id: 2014, name: "icon_reward_key", msg: "\u94A5\u5319\u56FE\u6807", path: "assets\\resources\\img\\common\\icon_reward_key.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2015, { id: 2015, name: "icon_reward_soulgem", msg: "\u9B42\u94BB\u56FE\u6807", path: "assets\\resources\\img\\common\\icon_reward_soulgem.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2016, { id: 2016, name: "icon_reward_dollar", msg: "\u949E\u7968\u7F8E\u5143\u56FE\u6807", path: "assets\\resources\\img\\common\\icon_reward_dollar.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2017, { id: 2017, name: "shop_img_coin_01", msg: "\u5546\u54C1\u56FE\u6807", path: "assets\\resources\\img\\shopview\\shop_img_coin_01.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2018, { id: 2018, name: "shop_img_coin_02", msg: "\u5546\u54C1\u56FE\u6807", path: "assets\\resources\\img\\shopview\\shop_img_coin_02.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2019, { id: 2019, name: "shop_img_coin_03", msg: "\u5546\u54C1\u56FE\u6807", path: "assets\\resources\\img\\shopview\\shop_img_coin_03.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2020, { id: 2020, name: "shop_img_coin_04", msg: "\u5546\u54C1\u56FE\u6807", path: "assets\\resources\\img\\shopview\\shop_img_coin_04.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2021, { id: 2021, name: "shop_img_gem_01", msg: "\u5546\u54C1\u56FE\u6807", path: "assets\\resources\\img\\shopview\\shop_img_gem_01.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2022, { id: 2022, name: "shop_img_gem_02", msg: "\u5546\u54C1\u56FE\u6807", path: "assets\\resources\\img\\shopview\\shop_img_gem_02.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2023, { id: 2023, name: "shop_img_gem_03", msg: "\u5546\u54C1\u56FE\u6807", path: "assets\\resources\\img\\shopview\\shop_img_gem_03.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2024, { id: 2024, name: "shop_img_gem_04", msg: "\u5546\u54C1\u56FE\u6807", path: "assets\\resources\\img\\shopview\\shop_img_gem_04.png", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(2501, { id: 2501, name: "bgm1", msg: "\u80CC\u666F1", path: "assets\\resources\\music\\PL_3AM_Kit_1_124bpm_Arp.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2502, { id: 2502, name: "bgm2", msg: "\u80CC\u666F2", path: "assets\\resources\\music\\PL_3AM_Kit_1_124bpm_Crash.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2503, { id: 2503, name: "bgm3", msg: "\u80CC\u666F3", path: "assets\\resources\\music\\PL_3AM_Kit_1_124bpm_Drumbeat.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2504, { id: 2504, name: "bgm4", msg: "\u80CC\u666F4", path: "assets\\resources\\music\\PL_3AM_Kit_1_124bpm_Lead.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2505, { id: 2505, name: "bgm5", msg: "\u80CC\u666F5", path: "assets\\resources\\music\\PL_3AM_Kit_1_124bpm_Pad.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2601, { id: 2601, name: "countdown", msg: "\u5012\u8BA1\u65F6", path: "assets\\resources\\sound\\countdown.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2602, { id: 2602, name: "DoubleBarrel", msg: "\u55B7\u5B50\u5C04\u51FB", path: "assets\\resources\\sound\\DoubleBarrel.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2603, { id: 2603, name: "Explosion1", msg: "\u7206\u70B81", path: "assets\\resources\\sound\\Explosion1.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2604, { id: 2604, name: "lose", msg: "\u5931\u8D25", path: "assets\\resources\\sound\\lose.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2605, { id: 2605, name: "Pistol", msg: "\u624B\u67AA", path: "assets\\resources\\sound\\Pistol.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2606, { id: 2606, name: "Revolver", msg: "\u5DE6\u8F6E", path: "assets\\resources\\sound\\Revolver.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2607, { id: 2607, name: "RPG", msg: "RPG", path: "assets\\resources\\sound\\RPG.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2608, { id: 2608, name: "SMG", msg: "SMG", path: "assets\\resources\\sound\\SMG.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2609, { id: 2609, name: "win", msg: "\u80DC\u5229", path: "assets\\resources\\sound\\win.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2610, { id: 2610, name: "WizardStaff", msg: "\u6CD5\u6756", path: "assets\\resources\\sound\\WizardStaff.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2611, { id: 2611, name: "zombie1", msg: "\u4E27\u5C381", path: "assets\\resources\\sound\\zombie1.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2612, { id: 2612, name: "zombie2", msg: "\u4E27\u5C382", path: "assets\\resources\\sound\\zombie2.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2613, { id: 2613, name: "zombie3", msg: "\u4E27\u5C383", path: "assets\\resources\\sound\\zombie3.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(2614, { id: 2614, name: "hi't", msg: "\u88AB\u54AC", path: "assets\\resources\\sound\\hit.mp3", preload: 0 });
+      _DataTable.AssetsPathDataTableMap.set(4001, { id: 4001, name: "PrivacyAgreement", msg: "\u56FD\u5185\u9690\u79C1\u534F\u8BAE", path: "assets\\resources\\text\\PrivacyAgreement.txt", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(5001, { id: 5001, name: "MainScene", msg: "\u4E3B\u573A\u666F", path: "assets\\resources\\res3d\\prefab\\scene\\MainScene.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(5002, { id: 5002, name: "SelectPlayerScene", msg: "\u9009\u62E9\u4EBA\u7269\u6B66\u5668\u573A\u666F", path: "assets\\resources\\res3d\\prefab\\scene\\SelectPlayerScene.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(5003, { id: 5003, name: "GameScene", msg: "\u6E38\u620F\u573A\u666F", path: "assets\\resources\\res3d\\prefab\\scene\\GameScene.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(5101, { id: 5101, name: "SkyBox1", msg: "\u5929\u7A7A\u76D21", path: "assets\\resources\\res3d\\skybox\\Sky_Anime_03_Day_a.lmat", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(5102, { id: 5102, name: "SkyBox2", msg: "\u5929\u7A7A\u76D22", path: "assets\\resources\\res3d\\skybox\\Sky_Anime_11_morning_a.lmat", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(5103, { id: 5103, name: "SkyBox3", msg: "\u5929\u7A7A\u76D23", path: "assets\\resources\\res3d\\skybox\\Sky_LowPoly_01_Day_a.lmat", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6001, { id: 6001, name: "Zombie", msg: "\u4E27\u5C38", path: "assets\\resources\\res3d\\prefab\\zombie\\Zombie.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6101, { id: 6101, name: "BusinessMan", msg: "\u6253\u5DE5\u4EBA", path: "assets\\resources\\res3d\\prefab\\player\\BusinessMan.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6102, { id: 6102, name: "BombDisEX", msg: "\u62C6\u5F39\u4E13\u5BB6", path: "assets\\resources\\res3d\\prefab\\player\\BombDisEX.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6103, { id: 6103, name: "GreatMagician", msg: "\u5927\u9B54\u6CD5\u5E08", path: "assets\\resources\\res3d\\prefab\\player\\GreatMagician.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6104, { id: 6104, name: "Kingsman", msg: "\u738B\u724C\u7279\u5DE5", path: "assets\\resources\\res3d\\prefab\\player\\Kingsman.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6105, { id: 6105, name: "ScoutRobot", msg: "\u65A5\u5019\u673A\u5668\u4EBA", path: "assets\\resources\\res3d\\prefab\\player\\ScoutRobot.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6106, { id: 6106, name: "RookiePirate", msg: "\u83DC\u9E1F\u6D77\u76D7", path: "assets\\resources\\res3d\\prefab\\player\\RookiePirate.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6201, { id: 6201, name: "Pistol", msg: "\u624B\u67AA", path: "assets\\resources\\res3d\\prefab\\weapon\\Pistol.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6202, { id: 6202, name: "RPG", msg: "RPG", path: "assets\\resources\\res3d\\prefab\\weapon\\RPG.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6203, { id: 6203, name: "WizardStaff", msg: "\u6CD5\u6756", path: "assets\\resources\\res3d\\prefab\\weapon\\WizardStaff.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6204, { id: 6204, name: "SMG", msg: "SMG", path: "assets\\resources\\res3d\\prefab\\weapon\\SMG.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6205, { id: 6205, name: "Revolver", msg: "\u5DE6\u8F6E", path: "assets\\resources\\res3d\\prefab\\weapon\\Revolver.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6206, { id: 6206, name: "DoubleBarrel", msg: "\u53CC\u7BA1\u55B7", path: "assets\\resources\\res3d\\prefab\\weapon\\DoubleBarrel.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6301, { id: 6301, name: "Bullet_Pistol", msg: "\u624B\u67AA\u5B50\u5F39", path: "assets\\resources\\res3d\\prefab\\bullet\\Bullet_Pistol.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6302, { id: 6302, name: "Bullet_RPG", msg: "RPG\u5B50\u5F39", path: "assets\\resources\\res3d\\prefab\\bullet\\Bullet_RPG.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6303, { id: 6303, name: "Bullet_WizardStaff", msg: "\u6CD5\u6756\u5B50\u5F39", path: "assets\\resources\\res3d\\prefab\\bullet\\Bullet_WizardStaff.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6304, { id: 6304, name: "Bullet_SMG", msg: "SMG\u5B50\u5F39", path: "assets\\resources\\res3d\\prefab\\bullet\\Bullet_SMG.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6305, { id: 6305, name: "Bullet_Revolver", msg: "\u5DE6\u8F6E\u5B50\u5F39", path: "assets\\resources\\res3d\\prefab\\bullet\\Bullet_Revolver.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6306, { id: 6306, name: "Bullet_DoubleBarrel", msg: "\u53CC\u7BA1\u55B7\u5B50\u5F39", path: "assets\\resources\\res3d\\prefab\\bullet\\Bullet_DoubleBarrel.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6701, { id: 6701, name: "GrassGround", msg: "\u8349\u5730\u677F", path: "assets\\resources\\res3d\\prefab\\ground\\GrassGround.lh", preload: 1 });
+      _DataTable.AssetsPathDataTableMap.set(6801, { id: 6801, name: "Explode1", msg: "\u7206\u70B8", path: "assets\\resources\\res3d\\prefab\\vfx\\Explode1.lh", preload: 1 });
+      _DataTable.BulletDataTableMap.set(1001, { id: 1001, msg: "\u624B\u67AA\u5B50\u5F39", path: 6301, damage: 10, speed: 0.1, expRange: 0, type: 0, soundId: 7001, flightDis: 5, maxKillNum: -1 });
+      _DataTable.BulletDataTableMap.set(1002, { id: 1002, msg: "RPG\u5B50\u5F39", path: 6302, damage: 15, speed: 0.08, expRange: 2.5, type: 1, soundId: 7001, flightDis: 4.5, maxKillNum: -1 });
+      _DataTable.BulletDataTableMap.set(1003, { id: 1003, msg: "\u6CD5\u6756\u5B50\u5F39", path: 6303, damage: 20, speed: 0.1, expRange: 0, type: 2, soundId: 7001, flightDis: 3.6, maxKillNum: 5 });
+      _DataTable.BulletDataTableMap.set(1004, { id: 1004, msg: "SMG\u5B50\u5F39", path: 6304, damage: 7, speed: 0.12, expRange: 0, type: 0, soundId: 7001, flightDis: 4, maxKillNum: -1 });
+      _DataTable.BulletDataTableMap.set(1005, { id: 1005, msg: "\u5DE6\u8F6E\u5B50\u5F39", path: 6305, damage: 25, speed: 0.2, expRange: 0, type: 3, soundId: 7001, flightDis: 7, maxKillNum: 2 });
+      _DataTable.BulletDataTableMap.set(1006, { id: 1006, msg: "\u53CC\u7BA1\u55B7\u5B50\u5F39", path: 6306, damage: 30, speed: 0.1, expRange: 2, type: 4, soundId: 7001, flightDis: 4, maxKillNum: -1 });
+      _DataTable.CurrencyDataTableMap.set(1001, { id: 1001, key: "gold", meg: "\u91D1\u5E01", worth: 1, imgId: 2012, localizationKey: "GOLD", color: "FFD800" });
+      _DataTable.CurrencyDataTableMap.set(1002, { id: 1002, key: "diamond", meg: "\u94BB\u77F3", worth: 1e3, imgId: 2013, localizationKey: "DIAMOND", color: "4288D7" });
+      _DataTable.CurrencyDataTableMap.set(1003, { id: 1003, key: "key", meg: "\u94A5\u5319", worth: 1e4, imgId: 2014, localizationKey: "KEY", color: "7C231C" });
+      _DataTable.CurrencyDataTableMap.set(1004, { id: 1004, key: "soulgem", meg: "\u9B42\u94BB", worth: 5e4, imgId: 2015, localizationKey: "SOULGEM", color: "FF0000" });
+      _DataTable.CurrencyDataTableMap.set(1005, { id: 1005, key: "dollar", meg: "\u949E\u7968", worth: 9e4, imgId: 2016, localizationKey: "DOLLAR", color: "00AD5F" });
+      _DataTable.EnemyDataTableMap.set(1001, { id: 1001, msg: "\u4E27\u5C38", path: 6001, health: 20, speed: 0.015 });
+      _DataTable.LevelDataTableMap.set(1001, { id: 1001, level: 1, minEx: 0, maxEx: 10 });
+      _DataTable.LevelDataTableMap.set(1002, { id: 1002, level: 2, minEx: 10, maxEx: 40 });
+      _DataTable.LevelDataTableMap.set(1003, { id: 1003, level: 3, minEx: 40, maxEx: 90 });
+      _DataTable.LevelDataTableMap.set(1004, { id: 1004, level: 4, minEx: 90, maxEx: 160 });
+      _DataTable.LevelDataTableMap.set(1005, { id: 1005, level: 5, minEx: 160, maxEx: 250 });
+      _DataTable.LevelDataTableMap.set(1006, { id: 1006, level: 6, minEx: 250, maxEx: 360 });
+      _DataTable.LevelDataTableMap.set(1007, { id: 1007, level: 7, minEx: 360, maxEx: 490 });
+      _DataTable.LevelDataTableMap.set(1008, { id: 1008, level: 8, minEx: 490, maxEx: 640 });
+      _DataTable.LevelDataTableMap.set(1009, { id: 1009, level: 9, minEx: 640, maxEx: 810 });
+      _DataTable.LocalizationResDataTableMap.set(1001, { id: 1001, msg: "\u7B80\u4F53\u4E2D\u6587", key: "ChineseSimplified", flagId: 2001 });
+      _DataTable.LocalizationResDataTableMap.set(1002, { id: 1002, msg: "Engish", key: "English", flagId: 2002 });
+      _DataTable.LuckyBoxDataTableMap.set(1001, { id: 1001, luckyboxType: "luckybox_bronze", luckyboxGetMin: 100, luckyboxGetMax: 500, luckyboxGetType: 0, imgPath: 2003, localizationKey: "LUCKYBOXBRONZE" });
+      _DataTable.LuckyBoxDataTableMap.set(1002, { id: 1002, luckyboxType: "luckybox_silver", luckyboxGetMin: 500, luckyboxGetMax: 1e3, luckyboxGetType: 0, imgPath: 2004, localizationKey: "LUCKYBOXSILVER" });
+      _DataTable.LuckyBoxDataTableMap.set(1003, { id: 1003, luckyboxType: "luckybox_gold", luckyboxGetMin: 1e3, luckyboxGetMax: 2e3, luckyboxGetType: 1, imgPath: 2005, localizationKey: "LUCKYBOXGOLD" });
+      _DataTable.LuckyBoxDataTableMap.set(1004, { id: 1004, luckyboxType: "luckybox_diamond", luckyboxGetMin: 10, luckyboxGetMax: 20, luckyboxGetType: 1, imgPath: 2006, localizationKey: "LUCKYBOXDIAMOND" });
+      _DataTable.LuckyBoxDataTableMap.set(1005, { id: 1005, luckyboxType: "luckybox_platinum", luckyboxGetMin: 20, luckyboxGetMax: 50, luckyboxGetType: 1, imgPath: 2007, localizationKey: "LUCKYBOXPLATINUM" });
+      _DataTable.PlayerDataTableMap.set(1001, { id: 1001, key: "BusinessMan", msg: "\u6253\u5DE5\u4EBA", localizationKey: 2001, health: 4, speed: 0.035, path: 6101, descriptionKey: 2101, weaponId: 1001, skillid: 1001, unlockPrice: 0, currency: 1001 });
+      _DataTable.PlayerDataTableMap.set(1002, { id: 1002, key: "BombDisEX", msg: "\u62C6\u5F39\u4E13\u5BB6", localizationKey: 2002, health: 8, speed: 0.03, path: 6102, descriptionKey: 2102, weaponId: 1002, skillid: 1002, unlockPrice: 5e3, currency: 1001 });
+      _DataTable.PlayerDataTableMap.set(1003, { id: 1003, key: "GreatMagician", msg: "\u9B54\u6CD5\u5E08", localizationKey: 2003, health: 3, speed: 0.04, path: 6103, descriptionKey: 2103, weaponId: 1003, skillid: 1003, unlockPrice: 2e4, currency: 1001 });
+      _DataTable.PlayerDataTableMap.set(1004, { id: 1004, key: "Kingsman", msg: "\u673A\u5668\u4EBA", localizationKey: 2004, health: 6, speed: 0.055, path: 6104, descriptionKey: 2104, weaponId: 1004, skillid: 1004, unlockPrice: 50, currency: 1002 });
+      _DataTable.PlayerDataTableMap.set(1005, { id: 1005, key: "ScoutRobot", msg: "\u7279\u5DE5", localizationKey: 2005, health: 5, speed: 0.038, path: 6105, descriptionKey: 2105, weaponId: 1005, skillid: 1005, unlockPrice: 100, currency: 1002 });
+      _DataTable.PlayerDataTableMap.set(1006, { id: 1006, key: "RookiePirate", msg: "\u6D77\u76D7", localizationKey: 2006, health: 5, speed: 0.04, path: 6106, descriptionKey: 2106, weaponId: 1006, skillid: 1006, unlockPrice: 200, currency: 1002 });
+      _DataTable.RankingDataTableMap.set(1001, { id: 1001, imgId: 2008, color: "87191B" });
+      _DataTable.RankingDataTableMap.set(1002, { id: 1002, imgId: 2009, color: "2C4861" });
+      _DataTable.RankingDataTableMap.set(1003, { id: 1003, imgId: 2010, color: "6A3829" });
+      _DataTable.RankingDataTableMap.set(1004, { id: 1004, imgId: 2011, color: "40392D" });
+      _DataTable.Scene3dDataTableMap.set(1001, { id: 1001, msg: "\u4E3B\u754C\u9762\u573A\u666F", key: "MainScene", path: 5001 });
+      _DataTable.Scene3dDataTableMap.set(1002, { id: 1002, msg: "\u9009\u62E9\u4EBA\u7269\u6B66\u5668\u573A\u666F", key: "SelectPlayerScene", path: 5002 });
+      _DataTable.Scene3dDataTableMap.set(1003, { id: 1003, msg: "\u6E38\u620F\u754C\u9762", key: "GameScene", path: 5003 });
+      _DataTable.ShopDataTableMap.set(1001, { id: 1001, imgId: 2017, shopId: 1001, number: 1e3, isHot: 0, isBest: 0, price: 10, priceId: 1002, msg: "\u5C11\u91CF\u91D1\u5E01", page: 1, localizationKey: "GOLD", bonus: 0 });
+      _DataTable.ShopDataTableMap.set(1002, { id: 1002, imgId: 2018, shopId: 1001, number: 6300, isHot: 1, isBest: 0, price: 60, priceId: 1002, msg: "\u5927\u91CF\u91D1\u5E01", page: 1, localizationKey: "GOLD", bonus: 0.05 });
+      _DataTable.ShopDataTableMap.set(1003, { id: 1003, imgId: 2019, shopId: 1001, number: 27500, isHot: 0, isBest: 1, price: 120, priceId: 1002, msg: "\u5DE8\u91CF\u91D1\u5E01", page: 1, localizationKey: "GOLD", bonus: 0.15 });
+      _DataTable.ShopDataTableMap.set(1004, { id: 1004, imgId: 2020, shopId: 1001, number: 57600, isHot: 0, isBest: 0, price: 250, priceId: 1002, msg: "\u6D77\u91CF\u91D1\u5E01", page: 1, localizationKey: "GOLD", bonus: 0.2 });
+      _DataTable.ShopDataTableMap.set(1005, { id: 1005, imgId: 2021, shopId: 1002, number: 180, isHot: 0, isBest: 0, price: 2, priceId: 1005, msg: "\u5C11\u91CF\u94BB\u77F3", page: 2, localizationKey: "DIAMOND", bonus: 0 });
+      _DataTable.ShopDataTableMap.set(1006, { id: 1006, imgId: 2022, shopId: 1002, number: 490, isHot: 1, isBest: 0, price: 5, priceId: 1005, msg: "\u5927\u91CF\u94BB\u77F3", page: 2, localizationKey: "DIAMOND", bonus: 0.05 });
+      _DataTable.ShopDataTableMap.set(1007, { id: 1007, imgId: 2023, shopId: 1002, number: 1035, isHot: 0, isBest: 1, price: 10, priceId: 1005, msg: "\u5DE8\u91CF\u94BB\u77F3", page: 2, localizationKey: "DIAMOND", bonus: 0.15 });
+      _DataTable.ShopDataTableMap.set(1008, { id: 1008, imgId: 2024, shopId: 1002, number: 3240, isHot: 0, isBest: 0, price: 30, priceId: 1005, msg: "\u6D77\u91CF\u94BB\u77F3", page: 2, localizationKey: "DIAMOND", bonus: 0.2 });
+      _DataTable.WeaponDataTableMap.set(1001, { id: 1001, msg: "\u624B\u67AA", localizationKey: 2301, descriptionKey: 2401, path: 6201, bulletPath: 1001, prep: 8, reloadTime: 1200, sound: 2605, shotInterval: 300, expSound: 2603 });
+      _DataTable.WeaponDataTableMap.set(1002, { id: 1002, msg: "RPG", localizationKey: 2401, descriptionKey: 2402, path: 6202, bulletPath: 1002, prep: 1, reloadTime: 2500, sound: 2607, shotInterval: 1200, expSound: 2603 });
+      _DataTable.WeaponDataTableMap.set(1003, { id: 1003, msg: "\u6CD5\u6756", localizationKey: 2501, descriptionKey: 2403, path: 6203, bulletPath: 1003, prep: -99, reloadTime: 20, sound: 2610, shotInterval: 2200, expSound: 2603 });
+      _DataTable.WeaponDataTableMap.set(1004, { id: 1004, msg: "SMG", localizationKey: 2601, descriptionKey: 2404, path: 6204, bulletPath: 1004, prep: 12, reloadTime: 1500, sound: 2608, shotInterval: 250, expSound: 2603 });
+      _DataTable.WeaponDataTableMap.set(1005, { id: 1005, msg: "\u5DE6\u8F6E", localizationKey: 2701, descriptionKey: 2405, path: 6205, bulletPath: 1005, prep: 5, reloadTime: 700, sound: 2606, shotInterval: 900, expSound: 2603 });
+      _DataTable.WeaponDataTableMap.set(1006, { id: 1006, msg: "\u53CC\u7BA1\u55B7", localizationKey: 2801, descriptionKey: 2406, path: 6206, bulletPath: 1006, prep: 2, reloadTime: 1200, sound: 2602, shotInterval: 400, expSound: 2603 });
+    }
+  };
+  var DataTable = _DataTable;
+  __name(DataTable, "DataTable");
+  /** AssetsPath_DataTableMap 资源配置路径表*/
+  DataTable.AssetsPathDataTableMap = /* @__PURE__ */ new Map();
+  /** Bullet_DataTableMap 子弹配置表*/
+  DataTable.BulletDataTableMap = /* @__PURE__ */ new Map();
+  /** Currency_DataTableMap 游戏货币表*/
+  DataTable.CurrencyDataTableMap = /* @__PURE__ */ new Map();
+  /** Enemy_DataTableMap 敌人配置表*/
+  DataTable.EnemyDataTableMap = /* @__PURE__ */ new Map();
+  /** Level_DataTableMap 等级表*/
+  DataTable.LevelDataTableMap = /* @__PURE__ */ new Map();
+  /** LocalizationRes_DataTableMap 本地化资源配置表*/
+  DataTable.LocalizationResDataTableMap = /* @__PURE__ */ new Map();
+  /** LuckyBox_DataTableMap 幸运宝箱配置*/
+  DataTable.LuckyBoxDataTableMap = /* @__PURE__ */ new Map();
+  /** Player_DataTableMap 角色表*/
+  DataTable.PlayerDataTableMap = /* @__PURE__ */ new Map();
+  /** Ranking_DataTableMap 排行榜*/
+  DataTable.RankingDataTableMap = /* @__PURE__ */ new Map();
+  /** Scene3d_DataTableMap 3d场景*/
+  DataTable.Scene3dDataTableMap = /* @__PURE__ */ new Map();
+  /** Shop_DataTableMap 商店表*/
+  DataTable.ShopDataTableMap = /* @__PURE__ */ new Map();
+  /** Weapon_DataTableMap 武器配置表*/
+  DataTable.WeaponDataTableMap = /* @__PURE__ */ new Map();
+
   // E:/WheelChairMan/src/Platform/PlatformMgr.ts
   var PlatformMgr = class {
     constructor() {
@@ -193,22 +375,16 @@ function __$decorate(assetId, codePath) {
   /**加载页面地址 */
   SceneUrl.LoadView = "resources/view/LoadView.lh";
 
-  // E:/WheelChairMan/src/Url/ResUrl.ts
-  var ResUrl = class {
-  };
-  __name(ResUrl, "ResUrl");
-  /**资源地址列表地址 */
-  ResUrl.AssetPath = "resources/datatables/AssetsPath.txt";
-
   // E:/WheelChairMan/src/Util/ResLoader.ts
-  var __decorate = __$decorate("ad57b7d6-130d-4c0c-aab6-85d0cb5bf6f9", "../src/Util/ResLoader.ts");
   var Handler = Laya.Handler;
   var ResLoader = class {
     constructor() {
+      /**总资源加载数量 */
       this.$total_num = 0;
+      /**当前已经完成加载数量 */
       this.$now_num = 0;
+      /**是否进行预加载了 */
       this.isLoad = false;
-      this.$dicAssetsPath = /* @__PURE__ */ new Map();
     }
     static get instance() {
       return this._instance ? this._instance : this._instance = new ResLoader();
@@ -255,10 +431,10 @@ function __$decorate(assetId, codePath) {
         let url = this.getUrlById(id);
         if (url) {
           let obj = Laya.loader.getRes(url);
-          if (obj === null || obj === void 0 ? void 0 : obj.create) {
-            return (_a29 = obj === null || obj === void 0 ? void 0 : obj.create) === null || _a29 === void 0 ? void 0 : _a29.call(obj);
-          } else if (obj === null || obj === void 0 ? void 0 : obj.clone) {
-            return (_b23 = obj === null || obj === void 0 ? void 0 : obj.clone) === null || _b23 === void 0 ? void 0 : _b23.call(obj);
+          if (obj == null ? void 0 : obj.create) {
+            return (_a29 = obj == null ? void 0 : obj.create) == null ? void 0 : _a29.call(obj);
+          } else if (obj == null ? void 0 : obj.clone) {
+            return (_b23 = obj == null ? void 0 : obj.clone) == null ? void 0 : _b23.call(obj);
           } else {
             console.log("\u65E0\u6CD5\u83B7\u53D6\u514B\u9686");
             return obj;
@@ -285,103 +461,27 @@ function __$decorate(assetId, codePath) {
         this.isLoad = true;
         this.$onCompleted = onCompleted;
         this.$onProgress = _onProgress;
-        this.load(ResUrl.AssetPath).then((path) => {
-          this.$dicAssetsPath = this.stringParser(path.data, true);
-          for (let [, value] of this.$dicAssetsPath) {
-            if (value && value["preload"] == 1) {
-              this.$total_num++;
-              this.load(value["path"], Handler.create(this, this.$load_one_onCompleted));
-            }
-          }
-        }).catch((err) => {
-          console.warn("\u65E0\u6CD5\u52A0\u8F7D\u914D\u7F6E\u6587\u4EF6");
-        });
-      }
-    }
-    /**
-     * 字符解析器
-     * 约定字符串格式如下
-     * #为备注行
-     * $为key行 第一个key必须为 "id"
-     * 然后通过id生成map
-     * 暂时先这样吧,需要可以用正则表达式重写
-     * @param shotString 数据
-     * @returns 返回一个以id作为key的map
-     */
-    stringParser(shotString, $isUrl = false) {
-      if (shotString) {
-        let arr = shotString.split("\n");
-        let shotArr, keyList, typeList, map = /* @__PURE__ */ new Map();
-        for (let i = 0; i < arr.length; i++) {
-          let str = arr[i];
-          if (str.length) {
-            if ($isUrl) {
-              shotArr = str.replace("\r", "").split("\\").join("/").replace("assets/", "").split("	");
-            } else {
-              shotArr = str.replace("\r", "").split("\\n").join("\n").split("	");
-            }
-            if (i == 2) {
-              keyList = shotArr;
-              keyList = keyList.filter((item) => {
-                return item != "$";
-              });
-            } else if (i == 3) {
-              typeList = shotArr;
-              typeList = typeList.filter((item) => {
-                return item != "#";
-              });
-            } else if (i > 3) {
-              shotArr = shotArr.filter((item) => {
-                return item != "";
-              });
-              if (shotArr[0] != "#") {
-                let data = {}, id;
-                for (let j = 0; j < keyList.length; j++) {
-                  let key = keyList[j];
-                  let type = typeList[j];
-                  let shot = shotArr[j];
-                  if (j == 0) {
-                    id = Number(shot);
-                  }
-                  switch (type) {
-                    case "number":
-                      data[key] = Number(shot);
-                      break;
-                    default:
-                    case "string":
-                      data[key] = shot;
-                      break;
-                  }
-                }
-                map.set(id, data);
-              }
-            }
+        for (let [, value] of DataTable.AssetsPathDataTableMap) {
+          value.path = value.path.replace("assets\\", "").replace(/\\/g, "/");
+          if (value && value.preload == 1) {
+            this.$total_num++;
+            this.load(value.path, Handler.create(this, this.$load_one_onCompleted));
           }
         }
-        return map;
       }
-    }
-    /**通过唯一id获取数据表 */
-    getDataTableById(assetsId) {
-      let data = this.getResById(assetsId);
-      if (data && data.data) {
-        let obj = this.stringParser(data.data);
-        return obj;
-      }
-      return null;
     }
     /**通过唯一Id获取资源 */
     getResById(assetsId) {
-      let obj = this.$dicAssetsPath.get(assetsId);
-      if (obj && obj["path"]) {
-        return this.getRes(obj["path"]);
+      let obj = DataTable.AssetsPathDataTableMap.get(assetsId);
+      if (obj && obj.path) {
+        return this.getRes(obj.path);
       }
     }
     /**通过唯一id获取url */
     getUrlById(assetsId) {
-      let obj = this.$dicAssetsPath.get(assetsId);
-      if (obj && obj["path"]) {
-        return obj["path"];
+      let obj = DataTable.AssetsPathDataTableMap.get(assetsId);
+      if (obj && obj.path) {
+        return obj.path;
       }
     }
   };
@@ -889,7 +989,7 @@ function __$decorate(assetId, codePath) {
   Timer.$cache = "$" + _Timer.$sign;
 
   // E:/WheelChairMan/src/UIBase/UIBase.ts
-  var __decorate2 = __$decorate("172331b7-4cbf-495d-96b7-70e583afa5dd", "../src/UIBase/UIBase.ts");
+  var __decorate = __$decorate("172331b7-4cbf-495d-96b7-70e583afa5dd", "../src/UIBase/UIBase.ts");
   var _a;
   var _b;
   var Sprite = Laya.Sprite;
@@ -1003,27 +1103,27 @@ function __$decorate(assetId, codePath) {
       UIBaseMgr.instance.close(this.$assetsId, this.id);
     }
   }, "UIBase");
-  __decorate2([
+  __decorate([
     property(),
     __metadata("design:type", Number)
   ], UIBase.prototype, "depth", void 0);
-  __decorate2([
+  __decorate([
     property(),
     __metadata("design:type", Boolean)
   ], UIBase.prototype, "isSingleton", void 0);
-  __decorate2([
+  __decorate([
     property(),
     __metadata("design:type", Number)
   ], UIBase.prototype, "AniType", void 0);
-  __decorate2([
+  __decorate([
     property(),
     __metadata("design:type", typeof (_a = typeof Sprite !== "undefined" && Sprite) === "function" ? _a : Object)
   ], UIBase.prototype, "Main", void 0);
-  __decorate2([
+  __decorate([
     property(),
     __metadata("design:type", typeof (_b = typeof Sprite !== "undefined" && Sprite) === "function" ? _b : Object)
   ], UIBase.prototype, "imgClose", void 0);
-  UIBase = __decorate2([
+  UIBase = __decorate([
     regClass(),
     __metadata("design:paramtypes", [])
   ], UIBase);
@@ -1200,7 +1300,7 @@ function __$decorate(assetId, codePath) {
   __name(UIBaseMgr, "UIBaseMgr");
 
   // E:/WheelChairMan/src/GameEntry.ts
-  var __decorate3 = __$decorate("5d4f5965-a166-4aeb-8715-baae3302439a", "../src/GameEntry.ts");
+  var __decorate2 = __$decorate("5d4f5965-a166-4aeb-8715-baae3302439a", "../src/GameEntry.ts");
   var { regClass: regClass2, property: property2 } = Laya;
   var GameEntry = /* @__PURE__ */ __name(class GameEntry2 extends Laya.Script {
     constructor() {
@@ -1220,18 +1320,19 @@ function __$decorate(assetId, codePath) {
       this.UIBase = this.GameEntry.getChildByName("UIBase");
       PlatformMgr.instance.init();
       LayaZip === null || LayaZip === void 0 ? void 0 : LayaZip.Init();
+      DataTable.Init();
       console.log(LayaZip === null || LayaZip === void 0 ? void 0 : LayaZip.Version);
       UIBaseMgr.instance.init(this.UIBase);
       UIBaseMgr.instance.openLoadView();
     }
   }, "GameEntry");
-  GameEntry = __decorate3([
+  GameEntry = __decorate2([
     regClass2(),
     __metadata("design:paramtypes", [])
   ], GameEntry);
 
   // E:/WheelChairMan/src/TestPhy.ts
-  var __decorate4 = __$decorate("703165f6-1bb3-483a-b1f7-918d3418e246", "../src/TestPhy.ts");
+  var __decorate3 = __$decorate("703165f6-1bb3-483a-b1f7-918d3418e246", "../src/TestPhy.ts");
   var _a2;
   var Vector3 = Laya.Vector3;
   var { regClass: regClass3, property: property3 } = Laya;
@@ -1256,11 +1357,11 @@ function __$decorate(assetId, codePath) {
       this.bullet2.transform.translate(new Vector3(0.01, 0, 0));
     }
   }, "TestPhy");
-  __decorate4([
+  __decorate3([
     property3(),
     __metadata("design:type", typeof (_a2 = typeof Laya !== "undefined" && Laya.Prefab) === "function" ? _a2 : Object)
   ], TestPhy.prototype, "bullet", void 0);
-  TestPhy = __decorate4([
+  TestPhy = __decorate3([
     regClass3(),
     __metadata("design:paramtypes", [])
   ], TestPhy);
@@ -1411,7 +1512,7 @@ function __$decorate(assetId, codePath) {
   __name(Script3d, "Script3d");
 
   // E:/WheelChairMan/src/Game/CameraItem.ts
-  var __decorate5 = __$decorate("5c31dd90-8819-4905-b33b-ed3d5c647cc8", "../src/Game/CameraItem.ts");
+  var __decorate4 = __$decorate("5c31dd90-8819-4905-b33b-ed3d5c647cc8", "../src/Game/CameraItem.ts");
   var Vector33 = Laya.Vector3;
   var { regClass: regClass4, property: property4 } = Laya;
   var CameraItem = /* @__PURE__ */ __name(class CameraItem2 extends Script3d {
@@ -1450,7 +1551,7 @@ function __$decorate(assetId, codePath) {
       return false;
     }
   }, "CameraItem");
-  CameraItem = __decorate5([
+  CameraItem = __decorate4([
     regClass4(),
     __metadata("design:paramtypes", [])
   ], CameraItem);
@@ -1604,7 +1705,7 @@ function __$decorate(assetId, codePath) {
   GameData.resurrectionTimes = 1;
 
   // E:/WheelChairMan/src/Scene3dBase/Scene3d.ts
-  var __decorate6 = __$decorate("5d2200e4-1fa0-4d47-ab3d-f4961980a2ae", "../src/Scene3dBase/Scene3d.ts");
+  var __decorate5 = __$decorate("5d2200e4-1fa0-4d47-ab3d-f4961980a2ae", "../src/Scene3dBase/Scene3d.ts");
   var { regClass: regClass5, property: property5 } = Laya;
   var Scene3d = /* @__PURE__ */ __name(class Scene3d2 extends Laya.Script {
     constructor() {
@@ -1645,7 +1746,7 @@ function __$decorate(assetId, codePath) {
       }
     }
   }, "Scene3d");
-  Scene3d = __decorate6([
+  Scene3d = __decorate5([
     regClass5(),
     __metadata("design:paramtypes", [])
   ], Scene3d);
@@ -1658,7 +1759,6 @@ function __$decorate(assetId, codePath) {
       return this._instance ? this._instance : this._instance = new Scene3dMgr();
     }
     init() {
-      this.$scene3dMap = ResLoader.instance.getDataTableById(3007 /* Scene3d */);
       this.$scene3dPool = /* @__PURE__ */ new Map();
       this.initScene3D();
     }
@@ -1691,7 +1791,7 @@ function __$decorate(assetId, codePath) {
       if (sceneScript) {
         this.initScene(sceneScript, param);
       } else {
-        let id = (_a29 = this.$scene3dMap.get(sceneId)) == null ? void 0 : _a29["path"];
+        let id = (_a29 = DataTable.Scene3dDataTableMap.get(sceneId)) == null ? void 0 : _a29.path;
         if (id) {
           let scene = ResLoader.instance.getResCloneById(id);
           scene && this.$scene3d.addChild(scene);
@@ -1710,7 +1810,7 @@ function __$decorate(assetId, codePath) {
     initScene(sceneScript, param) {
       var _a29;
       this.$scene3d.addChild(sceneScript.owner);
-      sceneScript.owner.name = (_a29 = this.$scene3dMap.get(sceneScript.sceneId)) == null ? void 0 : _a29["key"];
+      sceneScript.owner.name = (_a29 = DataTable.Scene3dDataTableMap.get(sceneScript.sceneId)) == null ? void 0 : _a29.key;
       sceneScript.$param = param;
       sceneScript.onOpened(param);
       sceneScript.addEvent();
@@ -2299,26 +2399,108 @@ function __$decorate(assetId, codePath) {
     return LanguageEnum2;
   })(LanguageEnum || {});
 
+  // E:/WheelChairMan/src/Localization/Localization.ts
+  var _Localization = class {
+    /**初始化 */
+    static Init() {
+      _Localization.LocalizationDataTableMap.set(1001, { id: 1001, key: "GAME_START", ChineseSimplified: "\u6E38\u620F\u5F00\u59CB", English: "Game Start" });
+      _Localization.LocalizationDataTableMap.set(1002, { id: 1002, key: "OK", ChineseSimplified: "\u786E\u8BA4", English: "OK" });
+      _Localization.LocalizationDataTableMap.set(1003, { id: 1003, key: "CANCEL", ChineseSimplified: "\u53D6\u6D88", English: "CANCEL" });
+      _Localization.LocalizationDataTableMap.set(1004, { id: 1004, key: "SETTING", ChineseSimplified: "\u8BBE\u7F6E", English: "Setting" });
+      _Localization.LocalizationDataTableMap.set(1005, { id: 1005, key: "BGM", ChineseSimplified: "\u97F3\u4E50", English: "Bgm" });
+      _Localization.LocalizationDataTableMap.set(1006, { id: 1006, key: "SFX", ChineseSimplified: "\u97F3\u6548", English: "Sfx" });
+      _Localization.LocalizationDataTableMap.set(1007, { id: 1007, key: "SHAKE", ChineseSimplified: "\u9707\u52A8", English: "Shake" });
+      _Localization.LocalizationDataTableMap.set(1008, { id: 1008, key: "LANGUAGE", ChineseSimplified: "\u8BED\u8A00", English: "Language" });
+      _Localization.LocalizationDataTableMap.set(1009, { id: 1009, key: "SUPPORT", ChineseSimplified: "\u652F\u6301", English: "Support" });
+      _Localization.LocalizationDataTableMap.set(1010, { id: 1010, key: "ON", ChineseSimplified: "\u5F00", English: "ON" });
+      _Localization.LocalizationDataTableMap.set(1011, { id: 1011, key: "OFF", ChineseSimplified: "\u5173", English: "OFF" });
+      _Localization.LocalizationDataTableMap.set(1012, { id: 1012, key: "CONGRATULATIONS", ChineseSimplified: "\u606D\u559C", English: "Congratulations" });
+      _Localization.LocalizationDataTableMap.set(1013, { id: 1013, key: "OPENNOW", ChineseSimplified: "\u7ACB\u523B\u6253\u5F00", English: "OpenNow" });
+      _Localization.LocalizationDataTableMap.set(1014, { id: 1014, key: "LUCKYBOXBRONZE", ChineseSimplified: "\u9752\u94DC\u5E78\u8FD0\u5B9D\u7BB1", English: "Bronze Luck Box" });
+      _Localization.LocalizationDataTableMap.set(1015, { id: 1015, key: "LUCKYBOXSILVER", ChineseSimplified: "\u767D\u94F6\u5E78\u8FD0\u5B9D\u7BB1", English: "Silver Luck Box" });
+      _Localization.LocalizationDataTableMap.set(1016, { id: 1016, key: "LUCKYBOXGOLD", ChineseSimplified: "\u9EC4\u91D1\u5E78\u8FD0\u5B9D\u7BB1", English: "Gold Luck Box" });
+      _Localization.LocalizationDataTableMap.set(1017, { id: 1017, key: "LUCKYBOXDIAMOND", ChineseSimplified: "\u94BB\u77F3\u5E78\u8FD0\u5B9D\u7BB1", English: "Diamond Luck Box" });
+      _Localization.LocalizationDataTableMap.set(1018, { id: 1018, key: "LUCKYBOXPLATINUM", ChineseSimplified: "\u767D\u91D1\u5E78\u8FD0\u5B9D\u7BB1", English: "Platinum Luck Box" });
+      _Localization.LocalizationDataTableMap.set(1019, { id: 1019, key: "PRIVACYAGREEMENT", ChineseSimplified: "\u9690\u79C1\u534F\u8BAE", English: "PrivacyAgreement" });
+      _Localization.LocalizationDataTableMap.set(1020, { id: 1020, key: "SHOP", ChineseSimplified: "\u5546\u5E97", English: "Shop" });
+      _Localization.LocalizationDataTableMap.set(1021, { id: 1021, key: "RANKING", ChineseSimplified: "\u6392\u884C\u699C", English: "Ranking" });
+      _Localization.LocalizationDataTableMap.set(1022, { id: 1022, key: "GOLD", ChineseSimplified: "\u91D1\u5E01", English: "Gold" });
+      _Localization.LocalizationDataTableMap.set(1023, { id: 1023, key: "DIAMOND", ChineseSimplified: "\u94BB\u77F3", English: "Diamond" });
+      _Localization.LocalizationDataTableMap.set(1024, { id: 1024, key: "HOT", ChineseSimplified: "\u70ED\u95E8", English: "HOT" });
+      _Localization.LocalizationDataTableMap.set(1025, { id: 1025, key: "BEST", ChineseSimplified: "\u63A8\u8350", English: "BEST" });
+      _Localization.LocalizationDataTableMap.set(1026, { id: 1026, key: "YOUDONTHAVEENOUGHDIAMONDS", ChineseSimplified: "\u60A8\u7684$\u4E0D\u8DB3", English: "You don't have enough $" });
+      _Localization.LocalizationDataTableMap.set(1027, { id: 1027, key: "NOTYETIMPLEMENTED", ChineseSimplified: "\u6682\u672A\u5B9E\u73B0", English: "Not yet implemented" });
+      _Localization.LocalizationDataTableMap.set(1028, { id: 1028, key: "CONGRATULATIONSONGETTING", ChineseSimplified: "\u606D\u559C\u4F60\u83B7\u5F97$$", English: "Congratulations on getting $ $" });
+      _Localization.LocalizationDataTableMap.set(1029, { id: 1029, key: "STARTFIGHTING", ChineseSimplified: "\u5F00\u59CB\u6218\u6597", English: "STARTFIGHTING" });
+      _Localization.LocalizationDataTableMap.set(1030, { id: 1030, key: "UNLOCK", ChineseSimplified: "\u89E3\u9501 $", English: "Unlock $" });
+      _Localization.LocalizationDataTableMap.set(1031, { id: 1031, key: "CONGRATULATIONSUNLOCK", ChineseSimplified: "\u606D\u559C\u4F60\u89E3\u9501\u4EBA\u7269\u6210\u529F", English: "Congratulations, you successfully unlocked the character" });
+      _Localization.LocalizationDataTableMap.set(1032, { id: 1032, key: "PAUSE", ChineseSimplified: "\u6682\u505C", English: "PAUSE" });
+      _Localization.LocalizationDataTableMap.set(1033, { id: 1033, key: "CONTINUE", ChineseSimplified: "\u7EE7\u7EED", English: "CONTINUE" });
+      _Localization.LocalizationDataTableMap.set(1034, { id: 1034, key: "RESTART", ChineseSimplified: "\u91CD\u5F00", English: "RESTART" });
+      _Localization.LocalizationDataTableMap.set(1035, { id: 1035, key: "QUIT", ChineseSimplified: "\u9000\u51FA", English: "QUIT" });
+      _Localization.LocalizationDataTableMap.set(1036, { id: 1036, key: "RESURRECTION", ChineseSimplified: "\u590D\u6D3B", English: "RESURRECTION" });
+      _Localization.LocalizationDataTableMap.set(1037, { id: 1037, key: "WATCH", ChineseSimplified: "\u89C2\u770B\u89C6\u9891", English: "WATCH" });
+      _Localization.LocalizationDataTableMap.set(1038, { id: 1038, key: "WATCH2REVIVE", ChineseSimplified: "\u662F\u5426\u7ACB\u5373\u89C2\u770B\u89C6\u9891\u590D\u6D3B\uFF1F", English: "Want to watch the video revive now?" });
+      _Localization.LocalizationDataTableMap.set(1039, { id: 1039, key: "DEFEAT", ChineseSimplified: "\u5931\u8D25", English: "DEFEAT" });
+      _Localization.LocalizationDataTableMap.set(1040, { id: 1040, key: "TRYAGAIN", ChineseSimplified: "\u8BF7\u7EE7\u7EED\u52AA\u529B", English: "PLEASETRYAGAIN" });
+      _Localization.LocalizationDataTableMap.set(2001, { id: 2001, key: "BUSINESSMAN", ChineseSimplified: "\u6253\u5DE5\u4EBA", English: "BusinessMan" });
+      _Localization.LocalizationDataTableMap.set(2002, { id: 2002, key: "BOMBDISEX", ChineseSimplified: "\u62C6\u5F39\u4E13\u5BB6", English: "BombDisEX" });
+      _Localization.LocalizationDataTableMap.set(2003, { id: 2003, key: "GREATMAGICIAN", ChineseSimplified: "\u5927\u9B54\u6CD5\u5E08", English: "GreatMagician" });
+      _Localization.LocalizationDataTableMap.set(2004, { id: 2004, key: "KINGSMAN", ChineseSimplified: "\u738B\u724C\u7279\u5DE5", English: "Kingsman" });
+      _Localization.LocalizationDataTableMap.set(2005, { id: 2005, key: "SCOUTROBOT", ChineseSimplified: "\u65A5\u5019\u673A\u5668\u4EBA", English: "ScoutRobot" });
+      _Localization.LocalizationDataTableMap.set(2006, { id: 2006, key: "ROOKIEPIRATE", ChineseSimplified: "\u83DC\u9E1F\u6D77\u76D7", English: "RookiePirate" });
+      _Localization.LocalizationDataTableMap.set(2101, { id: 2101, key: "BUSINESSMAN_DESCRIPTION", ChineseSimplified: "\u666E\u901A\u7684\u6253\u5DE5\u4EBA\n\u9664\u4E86\u5076\u5C14\u5065\u8EAB\n\u5E76\u65E0\u4EC0\u4E48\u7279\u70B9", English: "Ordinary migrant workers\n have no special features except for occasional exercise\n" });
+      _Localization.LocalizationDataTableMap.set(2102, { id: 2102, key: "BOMBDISEX_DESCRIPTION", ChineseSimplified: "\u5927\u7206\u70B8\u4E2D\u6D3B\u4E0B\u6765\u7684\u62C6\u5F39\u4E13\u5BB6\n\u79D8\u8BC0\u662F\u4ECE\u4E0D\u8131\u4E0B\u4ED6\u7684\u91CD\u88C5\n\u9632\u5FA1\u8D85\u9AD8", English: "Bomb disposal expert who survived the Big Bang\nThe secret is never taking off his armor\nSuper defense" });
+      _Localization.LocalizationDataTableMap.set(2103, { id: 2103, key: "GREATMAGICIAN_DESCRIPTION", ChineseSimplified: "\u795E\u79D8\u7684\u9B54\u6CD5\u5E08\n\u968F\u8EAB\u8DDF\u7740\u4E00\u672C\u6D6E\u7A7A\u9B54\u6CD5\u4E66\n\u5A01\u529B\u83AB\u6D4B", English: "The mysterious magician\nfollows a floating magic book\nunpredictable power" });
+      _Localization.LocalizationDataTableMap.set(2104, { id: 2104, key: "KINGSMAN_DESCRIPTION", ChineseSimplified: "\u4E0D\u660E\u7EC4\u7EC7\u7684\u7279\u5DE5\n\u53D7\u8FC7\u7279\u6B8A\u8BAD\u7EC3\n\u8EAB\u4F53\u7D20\u8D28\u8D85\u8D8A\u5E38\u4EBA", English: "A robot that claims to come from the future\nThe body is full of technology\nIt has a moving speed that surpasses that of humans" });
+      _Localization.LocalizationDataTableMap.set(2105, { id: 2105, key: "SCOUTROBOT_DESCRIPTION", ChineseSimplified: "\u81EA\u79F0\u6765\u81EA\u672A\u6765\u7684\u673A\u5668\u4EBA\n\u8EAB\u4F53\u5145\u6EE1\u79D1\u6280\u611F\n\u6709\u7740\u8D85\u8D8A\u4EBA\u7C7B\u7684\u79FB\u52A8\u901F\u5EA6", English: "Agents of unknown organizations\n have received special training\n physical fitness surpasses that of ordinary people" });
+      _Localization.LocalizationDataTableMap.set(2106, { id: 2106, key: "ROOKIEPIRATE_DESCRIPTION", ChineseSimplified: "\u6D77\u76D7\u4E2D\u7684\u83DC\u9E1F\n\u8239\u957F\u6B7B\u540E\u72EC\u81EA\u51FA\u6765\u5192\u9669\n\u968F\u8EAB\u5E26\u7740\u51E0\u4E2A\u6A58\u5B50", English: "A rookie among pirates\nThe captain came out alone to take risks\nAfter the death of the captain, he took a few oranges with him" });
+      _Localization.LocalizationDataTableMap.set(2201, { id: 2201, key: "BUSINESSMAN_SKILL", ChineseSimplified: "\u53D1\u51FA\u7EDD\u671B\u7684\u543C\u53EB\n\u63A8\u5F00\u8EAB\u8FB9\u6240\u6709\u654C\u4EBA\n\u5E76\u7ED9\u4E88\u4E00\u5B9A\u4F24\u5BB3", English: "Let out a desperate roar\npush away all enemies around you,\nand deal certain damage" });
+      _Localization.LocalizationDataTableMap.set(2202, { id: 2202, key: "BOMBDISEX_SKILL", ChineseSimplified: "\u653E\u4E0B\u4E00\u9897\u53CD\u6B65\u5175\u5730\u96F7\n\u89E6\u53D1\u540E\u9020\u6210\u5927\u5E45\u5EA6\u4F24\u5BB3", English: "Drops an Anti-Personnel Mine\nDeals massive damage when triggered" });
+      _Localization.LocalizationDataTableMap.set(2203, { id: 2203, key: "GREATMAGICIAN_SKILL", ChineseSimplified: "\u53EC\u5524\u6D41\u661F\u96E8\n\u968F\u673A\u653B\u51FB\u4E00\u5B9A\u8303\u56F4\u654C\u4EBA", English: "Summon meteor shower\nRandomly attack enemies within a certain range" });
+      _Localization.LocalizationDataTableMap.set(2204, { id: 2204, key: "KINGSMAN_SKILL", ChineseSimplified: "\u6FC0\u53D1\u8BAD\u7EC3\u65F6\u7684\u56DE\u5FC6\n\u77ED\u65F6\u95F4\u5185\u514D\u75AB\u6240\u6709\u4F24\u5BB3", English: "Stimulate memories of training\nImmune to all damage for a short time" });
+      _Localization.LocalizationDataTableMap.set(2205, { id: 2205, key: "SCOUTROBOT_SKILL", ChineseSimplified: "\u8C03\u7528\u8EAB\u4F53\u7279\u6B8A\u7684\u80FD\u91CF\n\u5411\u7740\u7279\u5B9A\u65B9\u5411\u95EA\u73B0\u4E00\u6BB5\u8DDD\u79BB", English: "Invoke the special energy of the body\nFlash a certain distance in a specific direction" });
+      _Localization.LocalizationDataTableMap.set(2206, { id: 2206, key: "ROOKIEPIRATE_SKILL", ChineseSimplified: "\u5403\u4E0B\u968F\u8EAB\u643A\u5E26\u7684\u6A58\u5B50\n\u53EF\u4EE5\u6062\u590D\u4E00\u6EF4\u8840\uFF08\u4E00\u5C40\u6700\u591A\u53EF\u4EE5\u7528\u4E24\u6B21\uFF09", English: "Eat the oranges you carry with you\nYou can restore a drop of blood (can be used up to twice in a round)" });
+      _Localization.LocalizationDataTableMap.set(2301, { id: 2301, key: "PISTOL", ChineseSimplified: "\u5C0F\u624B\u67AA", English: "Pistol" });
+      _Localization.LocalizationDataTableMap.set(2302, { id: 2302, key: "RPG", ChineseSimplified: "\u706B\u7BAD\u7B52", English: "RPG" });
+      _Localization.LocalizationDataTableMap.set(2303, { id: 2303, key: "WIZARDSTAFF", ChineseSimplified: "\u6CD5\u6756", English: "WizardStaff" });
+      _Localization.LocalizationDataTableMap.set(2304, { id: 2304, key: "SMG", ChineseSimplified: "\u6D88\u97F3\u51B2\u950B\u67AA", English: "SMG" });
+      _Localization.LocalizationDataTableMap.set(2305, { id: 2305, key: "REVOLVER", ChineseSimplified: "\u79D1\u6280\u5DE6\u8F6E", English: "Revolver" });
+      _Localization.LocalizationDataTableMap.set(2306, { id: 2306, key: "DOUBLEBARREL", ChineseSimplified: "\u53CC\u7BA1\u55B7", English: "DoubleBarrel" });
+      _Localization.LocalizationDataTableMap.set(2401, { id: 2401, key: "PISTOL_DESCRIPTION", ChineseSimplified: "\u5E73\u5E73\u65E0\u5947\u7684\u5C0F\u624B\u67AA\n\u548C\u5B83\u7684\u4E3B\u4EBA\u4E00\u6837\uFF0C\u6BEB\u4E0D\u8D77\u773C\n\u4F46\u5373\u4F7F\u8FD9\u6837\uFF0C\u4E5F\u8981\u52AA\u529B\u6D3B\u4E0B\u53BB\u554A", English: "An unremarkable little pistol\nLike its owner, it is inconspicuous\n But even so, we must work hard to live" });
+      _Localization.LocalizationDataTableMap.set(2402, { id: 2402, key: "RPG_DESCRIPTION", ChineseSimplified: "\u5A01\u529B\u5DE8\u5927\u7684RPG\n\u4F7F\u7528\u65F6\u5019\u6CE8\u610F\u5B89\u5168\n\u66F4\u52A0\u8981\u6CE8\u610F\u53CB\u519B\u706B\u529B\u54DF", English: "Powerful RPG\nBe careful when using it\nAlso pay attention to friendly firepower" });
+      _Localization.LocalizationDataTableMap.set(2403, { id: 2403, key: "WIZARDSTAFF_DESCRIPTION", ChineseSimplified: "\u80FD\u591F\u6301\u7EED\u65BD\u6CD5\u7684\u6CD5\u6756\n\u96BE\u9053\u6CD5\u6756\u5C31\u4E0D\u4F1A\u8FC7\u70ED\u4E48\n\u6216\u8BB8\u662F\u6CD5\u5E08\u4F7F\u7528\u4E86\u964D\u6E29\u9B54\u6CD5", English: "A wand that can continue to cast spells\nWill the wand not be overheated\nMaybe the mage used cooling magic" });
+      _Localization.LocalizationDataTableMap.set(2404, { id: 2404, key: "SMG_DESCRIPTION", ChineseSimplified: "\u7F8E\u4E3D\u800C\u53C8\u81F4\u547D\u7684\u6D88\u97F3\u51B2\u950B\u67AA\n\u5373\u4F7F\u76EE\u6807\u6B7B\u4EA1\n\u4E5F\u4E0D\u77E5\u90FD\u5B50\u5F39\u662F\u54EA\u91CC\u6253\u8FC7\u6765\u7684", English: "Beautiful and deadly silenced submachine gun\nEven if the target dies\n I don't know where the bullets came from" });
+      _Localization.LocalizationDataTableMap.set(2405, { id: 2405, key: "REVOLVER_DESCRIPTION", ChineseSimplified: "\u5E26\u6709\u672A\u6765\u79D1\u6280\u7684\u5DE6\u8F6E\u624B\u67AA\n\u53E4\u8001\u9020\u578B\u7684\u80CC\u540E\n\u662F\u5BF9\u8FC7\u53BB\u7684\u8FF7\u604B", English: "Revolver with futuristic technology\nBehind the ancient shape\n is a fascination with the past" });
+      _Localization.LocalizationDataTableMap.set(2406, { id: 2406, key: "DOUBLEBARREL_DESCRIPTION", ChineseSimplified: "\u7ECF\u5178\u8BBE\u8BA1\u7684\u53CC\u7BA1\u55B7\u5B50\n\u7B80\u5355\u8010\u7528\n\u662F\u4F60\u672B\u65E5\u751F\u5B58\u7684\u9996\u9009\u6B66\u5668", English: "The classic design of the double-pipe nozzle\nsimple and durable\nis your weapon of choice for doomsday survival" });
+      _Localization.LocalizationDataTableMap.set(2501, { id: 2501, key: "ZOMBIE", ChineseSimplified: "\u4E27\u5C38", English: "Zombie" });
+      _Localization.LocalizationDataTableMap.set(2601, { id: 2601, key: "RELOADING", ChineseSimplified: "\u6362\u5F39\u4E2D", English: "Reloading" });
+    }
+  };
+  var Localization = _Localization;
+  __name(Localization, "Localization");
+  /** Localization_DataTableMap 本地化配置表*/
+  Localization.LocalizationDataTableMap = /* @__PURE__ */ new Map();
+
   // E:/WheelChairMan/src/Localization/LocalizationMgr.ts
   var LocalizationMgr = class {
     /**初始化 */
     static init() {
-      this.$localizationResMap = ResLoader.instance.getDataTableById(3002 /* LocalizationRes */);
-      this.$localizationMap = ResLoader.instance.getDataTableById(501 /* Localization */);
+      Localization.Init();
       this.$localizationKeyMap = /* @__PURE__ */ new Map();
-      for (let [key, value] of this.$localizationMap) {
-        this.$localizationKeyMap.set(value["key"], value);
+      for (let [key, value] of Localization.LocalizationDataTableMap) {
+        this.$localizationKeyMap.set(value.key, value);
       }
     }
     /**获取语言对应国旗 */
     static getFlagSkinIdById(id) {
-      let data = this.$localizationResMap.get(id);
-      return data && data["flagId"];
+      var _a29;
+      return (_a29 = DataTable.LocalizationResDataTableMap.get(id)) == null ? void 0 : _a29.flagId;
     }
     /**获取语言描述 */
     static getLanguageMsgById(id) {
-      let data = this.$localizationResMap.get(id);
-      return data && data["msg"];
+      var _a29;
+      return (_a29 = DataTable.LocalizationResDataTableMap.get(id)) == null ? void 0 : _a29.msg;
     }
     /**通过key获取对应语言,一般来说是内部调用 */
     static $getLocalizationByKey(key, ...keys) {
@@ -2340,11 +2522,11 @@ function __$decorate(assetId, codePath) {
     static getLocalizationByEnum(lenum, ...lenums) {
       var _a29, _b23;
       let language = LanguageEnum[this.Language];
-      let value = (_a29 = this.$localizationMap.get(lenum)) == null ? void 0 : _a29[language];
+      let value = (_a29 = Localization.LocalizationDataTableMap.get(lenum)) == null ? void 0 : _a29[language];
       if (value) {
         if (lenums && lenums.length) {
           for (let i = 0; i < lenums.length; i++) {
-            let item = (_b23 = this.$localizationMap.get(lenums[i])) == null ? void 0 : _b23[language];
+            let item = (_b23 = Localization.LocalizationDataTableMap.get(lenums[i])) == null ? void 0 : _b23[language];
             item = item ? item : lenums[i];
             value = value.replace("$", item);
           }
@@ -2489,7 +2671,7 @@ function __$decorate(assetId, codePath) {
   __name(AnimatorTool, "AnimatorTool");
 
   // E:/WheelChairMan/src/Util/PlayerController.ts
-  var __decorate7 = __$decorate("f3ea911e-7d9e-4e77-b857-d99a7338285a", "../src/Util/PlayerController.ts");
+  var __decorate6 = __$decorate("f3ea911e-7d9e-4e77-b857-d99a7338285a", "../src/Util/PlayerController.ts");
   var Vector36 = Laya.Vector3;
   var CharacterController = Laya.CharacterController;
   var { regClass: regClass6, property: property6 } = Laya;
@@ -2590,30 +2772,30 @@ function __$decorate(assetId, codePath) {
     onDisable() {
     }
   }, "PlayerController");
-  __decorate7([
+  __decorate6([
     property6(),
     __metadata("design:type", Number)
   ], PlayerController.prototype, "friction", void 0);
-  __decorate7([
+  __decorate6([
     property6(),
     __metadata("design:type", Number)
   ], PlayerController.prototype, "stepHeight", void 0);
-  __decorate7([
+  __decorate6([
     property6(),
     __metadata("design:type", Number)
   ], PlayerController.prototype, "jumpAllTimes", void 0);
-  __decorate7([
+  __decorate6([
     property6(),
     __metadata("design:type", Number)
   ], PlayerController.prototype, "moveSpeed", void 0);
-  PlayerController = __decorate7([
+  PlayerController = __decorate6([
     regClass6(),
     __metadata("design:paramtypes", [])
   ], PlayerController);
   var PlayerController_default = PlayerController;
 
   // E:/WheelChairMan/src/Util/ReloadTips.ts
-  var __decorate8 = __$decorate("9e09e05b-3c95-4846-bea9-6bed64839712", "../src/Util/ReloadTips.ts");
+  var __decorate7 = __$decorate("9e09e05b-3c95-4846-bea9-6bed64839712", "../src/Util/ReloadTips.ts");
   var _a3;
   var _b2;
   var Image = Laya.Image;
@@ -2635,22 +2817,22 @@ function __$decorate(assetId, codePath) {
       }).start();
     }
   }, "ReloadTips");
-  __decorate8([
+  __decorate7([
     property7(),
     __metadata("design:type", typeof (_a3 = typeof Image !== "undefined" && Image) === "function" ? _a3 : Object)
   ], ReloadTips.prototype, "imgLoad", void 0);
-  __decorate8([
+  __decorate7([
     property7(),
     __metadata("design:type", typeof (_b2 = typeof Sprite2 !== "undefined" && Sprite2) === "function" ? _b2 : Object)
   ], ReloadTips.prototype, "Main", void 0);
-  ReloadTips = __decorate8([
+  ReloadTips = __decorate7([
     regClass7(),
     __metadata("design:paramtypes", [])
   ], ReloadTips);
   var ReloadTips_default = ReloadTips;
 
   // E:/WheelChairMan/src/Game/Weapon/WeaponItem.ts
-  var __decorate9 = __$decorate("303c1b70-94df-4fd5-afab-45556c45c044", "../src/Game/Weapon/WeaponItem.ts");
+  var __decorate8 = __$decorate("303c1b70-94df-4fd5-afab-45556c45c044", "../src/Game/Weapon/WeaponItem.ts");
   var { regClass: regClass8, property: property8 } = Laya;
   var WeaponItem = /* @__PURE__ */ __name(class WeaponItem2 extends Script3d {
     constructor() {
@@ -2726,7 +2908,7 @@ function __$decorate(assetId, codePath) {
       this.isShooting = false;
     }
   }, "WeaponItem");
-  WeaponItem = __decorate9([
+  WeaponItem = __decorate8([
     regClass8(),
     __metadata("design:paramtypes", [])
   ], WeaponItem);
@@ -2741,7 +2923,6 @@ function __$decorate(assetId, codePath) {
       return this._instance ? this._instance : this._instance = new WeaponMgr();
     }
     init() {
-      this.weaponDataMap = ResLoader.instance.getDataTableById(3009 /* Weapon */);
     }
     getSelectWeapon(weaponId, owner) {
       let obj;
@@ -2769,13 +2950,13 @@ function __$decorate(assetId, codePath) {
     }
     /**获取当前选择的武器数据 */
     getSelectedWeaponData(weaponId) {
-      return this.weaponDataMap.get(weaponId);
+      return DataTable.WeaponDataTableMap.get(weaponId);
     }
   };
   __name(WeaponMgr, "WeaponMgr");
 
   // E:/WheelChairMan/src/Game/Player/PlayerItem.ts
-  var __decorate10 = __$decorate("778295ff-e54e-4576-82ea-f69285cd3b58", "../src/Game/Player/PlayerItem.ts");
+  var __decorate9 = __$decorate("778295ff-e54e-4576-82ea-f69285cd3b58", "../src/Game/Player/PlayerItem.ts");
   var _a4;
   var _b3;
   var _c;
@@ -2993,27 +3174,27 @@ function __$decorate(assetId, codePath) {
       }).start();
     }
   }, "PlayerItem");
-  __decorate10([
+  __decorate9([
     property9(),
     __metadata("design:type", typeof (_a4 = typeof Sprite3D !== "undefined" && Sprite3D) === "function" ? _a4 : Object)
   ], PlayerItem.prototype, "weaponPoint", void 0);
-  __decorate10([
+  __decorate9([
     property9(),
     __metadata("design:type", typeof (_b3 = typeof Material !== "undefined" && Material) === "function" ? _b3 : Object)
   ], PlayerItem.prototype, "playerSkinMaterial", void 0);
-  __decorate10([
+  __decorate9([
     property9(),
     __metadata("design:type", typeof (_c = typeof Sprite3D !== "undefined" && Sprite3D) === "function" ? _c : Object)
   ], PlayerItem.prototype, "shootPos", void 0);
-  __decorate10([
+  __decorate9([
     property9(),
     __metadata("design:type", typeof (_d = typeof Sprite3D !== "undefined" && Sprite3D) === "function" ? _d : Object)
   ], PlayerItem.prototype, "UI3D", void 0);
-  __decorate10([
+  __decorate9([
     property9(),
     __metadata("design:type", typeof (_e = typeof Sprite3D !== "undefined" && Sprite3D) === "function" ? _e : Object)
   ], PlayerItem.prototype, "playerDirection", void 0);
-  PlayerItem = __decorate10([
+  PlayerItem = __decorate9([
     regClass9(),
     __metadata("design:paramtypes", [])
   ], PlayerItem);
@@ -3029,7 +3210,6 @@ function __$decorate(assetId, codePath) {
       return this._instance ? this._instance : this._instance = new PlayerMgr();
     }
     init() {
-      this.playerMap = ResLoader.instance.getDataTableById(3008 /* Player */);
     }
     startMove(angle, value) {
       this.playerItem && this.playerItem.startMove(angle, value);
@@ -3106,7 +3286,7 @@ function __$decorate(assetId, codePath) {
     }
     /**获取当前选择的玩家数据 */
     getSelectedPlayerData(playerId) {
-      return this.playerMap.get(playerId);
+      return DataTable.PlayerDataTableMap.get(playerId);
     }
     get selectedPlayerId() {
       if (this.$selectedPlayerId == -1) {
@@ -3156,7 +3336,7 @@ function __$decorate(assetId, codePath) {
   __name(PlayerMgr, "PlayerMgr");
 
   // E:/WheelChairMan/src/Game/Enemy/ZombieItem.ts
-  var __decorate11 = __$decorate("834e827d-f6c6-404f-a4a3-2ccf75708917", "../src/Game/Enemy/ZombieItem.ts");
+  var __decorate10 = __$decorate("834e827d-f6c6-404f-a4a3-2ccf75708917", "../src/Game/Enemy/ZombieItem.ts");
   var _a5;
   var _b4;
   var _c2;
@@ -3316,27 +3496,27 @@ function __$decorate(assetId, codePath) {
     clearOthers() {
     }
   }, "ZombieItem");
-  __decorate11([
+  __decorate10([
     property10(),
     __metadata("design:type", typeof (_a5 = typeof SkinnedMeshSprite3D !== "undefined" && SkinnedMeshSprite3D) === "function" ? _a5 : Object)
   ], ZombieItem.prototype, "skin1", void 0);
-  __decorate11([
+  __decorate10([
     property10(),
     __metadata("design:type", typeof (_b4 = typeof SkinnedMeshSprite3D !== "undefined" && SkinnedMeshSprite3D) === "function" ? _b4 : Object)
   ], ZombieItem.prototype, "skin2", void 0);
-  __decorate11([
+  __decorate10([
     property10(),
     __metadata("design:type", typeof (_c2 = typeof SkinnedMeshSprite3D !== "undefined" && SkinnedMeshSprite3D) === "function" ? _c2 : Object)
   ], ZombieItem.prototype, "skin3", void 0);
-  __decorate11([
+  __decorate10([
     property10(),
     __metadata("design:type", typeof (_d2 = typeof SkinnedMeshSprite3D !== "undefined" && SkinnedMeshSprite3D) === "function" ? _d2 : Object)
   ], ZombieItem.prototype, "skin4", void 0);
-  __decorate11([
+  __decorate10([
     property10(),
     __metadata("design:type", typeof (_e2 = typeof SkinnedMeshSprite3D !== "undefined" && SkinnedMeshSprite3D) === "function" ? _e2 : Object)
   ], ZombieItem.prototype, "skin5", void 0);
-  ZombieItem = __decorate11([
+  ZombieItem = __decorate10([
     regClass10(),
     __metadata("design:paramtypes", [])
   ], ZombieItem);
@@ -3353,7 +3533,6 @@ function __$decorate(assetId, codePath) {
       return this._instance ? this._instance : this._instance = new EnemyMgr();
     }
     init() {
-      this.enemyDataMap = ResLoader.instance.getDataTableById(3010 /* Enemy */);
       this.zombieList = [];
       this.addEvent();
     }
@@ -3434,7 +3613,7 @@ function __$decorate(assetId, codePath) {
       let zombie;
       zombie = Pool5.getItem("ZOMBIE" /* ZOMBIE */);
       if (!zombie) {
-        zombie = ResLoader.instance.getResCloneById((_a29 = this.enemyDataMap.get(1001 /* zombie */)) == null ? void 0 : _a29["path"]);
+        zombie = ResLoader.instance.getResCloneById((_a29 = DataTable.EnemyDataTableMap.get(1001 /* zombie */)) == null ? void 0 : _a29.path);
       }
       let point = this.getNewPos();
       let pos = PlayerMgr.instance.getPlayerPos();
@@ -3443,7 +3622,7 @@ function __$decorate(assetId, codePath) {
       this.enemyStage.addChild(zombie);
       zombieItem.objName = "ZOMBIE" /* ZOMBIE */;
       zombieItem.index++;
-      zombieItem.zombieData = this.enemyDataMap.get(1001 /* zombie */);
+      zombieItem.zombieData = DataTable.EnemyDataTableMap.get(1001 /* zombie */);
       zombieItem.init();
       this.zombieList.push(zombieItem);
     }
@@ -3497,7 +3676,7 @@ function __$decorate(assetId, codePath) {
   __name(EnemyMgr, "EnemyMgr");
 
   // E:/WheelChairMan/src/Game/Bullet/BulletItem.ts
-  var __decorate12 = __$decorate("c08609ed-ebe2-4062-8e7f-0779439120be", "../src/Game/Bullet/BulletItem.ts");
+  var __decorate11 = __$decorate("c08609ed-ebe2-4062-8e7f-0779439120be", "../src/Game/Bullet/BulletItem.ts");
   var Vector39 = Laya.Vector3;
   var PhysicsCollider = Laya.PhysicsCollider;
   var { regClass: regClass11, property: property11 } = Laya;
@@ -3609,7 +3788,7 @@ function __$decorate(assetId, codePath) {
       this.isActive = false;
     }
   }, "BulletItem");
-  BulletItem = __decorate12([
+  BulletItem = __decorate11([
     regClass11(),
     __metadata("design:paramtypes", [])
   ], BulletItem);
@@ -3622,7 +3801,6 @@ function __$decorate(assetId, codePath) {
       return this._instance ? this._instance : this._instance = new BulletMgr();
     }
     init() {
-      this.bulletData = ResLoader.instance.getDataTableById(3011 /* Bullet */);
     }
     gameStart(stage) {
       this.bulletStage = stage;
@@ -3630,7 +3808,7 @@ function __$decorate(assetId, codePath) {
     }
     createBullet(bulletId, shootPos) {
       let bullet = Pool6.getItem("BULLET" /* BUllET */ + bulletId);
-      let bulletData = this.bulletData.get(bulletId);
+      let bulletData = DataTable.BulletDataTableMap.get(bulletId);
       if (!bullet) {
         bullet = ResLoader.instance.getResCloneById(bulletData["path"]);
       }
@@ -3655,7 +3833,7 @@ function __$decorate(assetId, codePath) {
   __name(BulletMgr, "BulletMgr");
 
   // E:/WheelChairMan/src/Game/Ground/GroundItem.ts
-  var __decorate13 = __$decorate("e2100ba2-ca09-4fc2-8312-90645c381ddc", "../src/Game/Ground/GroundItem.ts");
+  var __decorate12 = __$decorate("e2100ba2-ca09-4fc2-8312-90645c381ddc", "../src/Game/Ground/GroundItem.ts");
   var Vector310 = Laya.Vector3;
   var { regClass: regClass12, property: property12 } = Laya;
   var GroundItem = /* @__PURE__ */ __name(class GroundItem2 extends Script3d {
@@ -3681,7 +3859,7 @@ function __$decorate(assetId, codePath) {
       }
     }
   }, "GroundItem");
-  GroundItem = __decorate13([
+  GroundItem = __decorate12([
     regClass12(),
     __metadata("design:paramtypes", [])
   ], GroundItem);
@@ -3733,7 +3911,7 @@ function __$decorate(assetId, codePath) {
   __name(GroundMgr, "GroundMgr");
 
   // E:/WheelChairMan/src/Game/MainGame.ts
-  var __decorate14 = __$decorate("17be9e1a-ac52-43f3-8894-fa783a42a738", "../src/Game/MainGame.ts");
+  var __decorate13 = __$decorate("17be9e1a-ac52-43f3-8894-fa783a42a738", "../src/Game/MainGame.ts");
   var MainGame_1;
   var { regClass: regClass13, property: property13 } = Laya;
   var MainGame = MainGame_1 = /* @__PURE__ */ __name(class MainGame2 {
@@ -3872,13 +4050,13 @@ function __$decorate(assetId, codePath) {
       this.reset();
     }
   }, "MainGame");
-  MainGame = MainGame_1 = __decorate14([
+  MainGame = MainGame_1 = __decorate13([
     regClass13()
   ], MainGame);
   var MainGame_default = MainGame;
 
   // E:/WheelChairMan/src/Localization/LocalizationText.ts
-  var __decorate15 = __$decorate("5a62e727-31ad-49bf-b53f-96fbff2b0a39", "../src/Localization/LocalizationText.ts");
+  var __decorate14 = __$decorate("5a62e727-31ad-49bf-b53f-96fbff2b0a39", "../src/Localization/LocalizationText.ts");
   var Text = Laya.Text;
   var Label = Laya.Label;
   var { regClass: regClass14, property: property14 } = Laya;
@@ -3913,17 +4091,17 @@ function __$decorate(assetId, codePath) {
       EventMgr.offAllCaller(this);
     }
   }, "LocalizationText");
-  __decorate15([
+  __decorate14([
     property14(),
     __metadata("design:type", String)
   ], LocalizationText.prototype, "localizationKey", void 0);
-  LocalizationText = __decorate15([
+  LocalizationText = __decorate14([
     regClass14(),
     __metadata("design:paramtypes", [])
   ], LocalizationText);
 
   // E:/WheelChairMan/src/Scene3d/GameScene.ts
-  var __decorate16 = __$decorate("0706d1ae-b0b6-47a5-9387-2a6360b2893e", "../src/Scene3d/GameScene.ts");
+  var __decorate15 = __$decorate("0706d1ae-b0b6-47a5-9387-2a6360b2893e", "../src/Scene3d/GameScene.ts");
   var _a6;
   var _b5;
   var _c3;
@@ -3945,37 +4123,37 @@ function __$decorate(assetId, codePath) {
     onClosed() {
     }
   }, "GameScene");
-  __decorate16([
+  __decorate15([
     property15(),
     __metadata("design:type", typeof (_a6 = typeof CameraItem_default !== "undefined" && CameraItem_default) === "function" ? _a6 : Object)
   ], GameScene.prototype, "cameraItem", void 0);
-  __decorate16([
+  __decorate15([
     property15(),
     __metadata("design:type", typeof (_b5 = typeof Sprite3D2 !== "undefined" && Sprite3D2) === "function" ? _b5 : Object)
   ], GameScene.prototype, "groundStage", void 0);
-  __decorate16([
+  __decorate15([
     property15(),
     __metadata("design:type", typeof (_c3 = typeof DirectionLight !== "undefined" && DirectionLight) === "function" ? _c3 : Object)
   ], GameScene.prototype, "light", void 0);
-  __decorate16([
+  __decorate15([
     property15(),
     __metadata("design:type", typeof (_d3 = typeof Sprite3D2 !== "undefined" && Sprite3D2) === "function" ? _d3 : Object)
   ], GameScene.prototype, "playerStage", void 0);
-  __decorate16([
+  __decorate15([
     property15(),
     __metadata("design:type", typeof (_e3 = typeof Sprite3D2 !== "undefined" && Sprite3D2) === "function" ? _e3 : Object)
   ], GameScene.prototype, "zombieStage", void 0);
-  __decorate16([
+  __decorate15([
     property15(),
     __metadata("design:type", typeof (_f = typeof Sprite3D2 !== "undefined" && Sprite3D2) === "function" ? _f : Object)
   ], GameScene.prototype, "bulletStage", void 0);
-  GameScene = __decorate16([
+  GameScene = __decorate15([
     regClass15(),
     __metadata("design:paramtypes", [])
   ], GameScene);
 
   // E:/WheelChairMan/src/Scene3d/MainScene.ts
-  var __decorate17 = __$decorate("71c8c727-1736-44b1-984f-02439872df63", "../src/Scene3d/MainScene.ts");
+  var __decorate16 = __$decorate("71c8c727-1736-44b1-984f-02439872df63", "../src/Scene3d/MainScene.ts");
   var { regClass: regClass16, property: property16 } = Laya;
   var MainScene = /* @__PURE__ */ __name(class MainScene2 extends Scene3d_default {
     constructor() {
@@ -3984,7 +4162,7 @@ function __$decorate(assetId, codePath) {
     onOpened(param) {
     }
   }, "MainScene");
-  MainScene = __decorate17([
+  MainScene = __decorate16([
     regClass16(),
     __metadata("design:paramtypes", [])
   ], MainScene);
@@ -4000,7 +4178,7 @@ function __$decorate(assetId, codePath) {
   })(PlayerEnum || {});
 
   // E:/WheelChairMan/src/Scene3d/SelectPlayerScene.ts
-  var __decorate18 = __$decorate("34405a80-13b4-48be-ac44-94bb920f1518", "../src/Scene3d/SelectPlayerScene.ts");
+  var __decorate17 = __$decorate("34405a80-13b4-48be-ac44-94bb920f1518", "../src/Scene3d/SelectPlayerScene.ts");
   var _a7;
   var Sprite3D3 = Laya.Sprite3D;
   var { regClass: regClass17, property: property17 } = Laya;
@@ -4034,17 +4212,17 @@ function __$decorate(assetId, codePath) {
       (_a29 = this.playerItem) === null || _a29 === void 0 ? void 0 : _a29.clear();
     }
   }, "SelectPlayerScene");
-  __decorate18([
+  __decorate17([
     property17(),
     __metadata("design:type", typeof (_a7 = typeof Sprite3D3 !== "undefined" && Sprite3D3) === "function" ? _a7 : Object)
   ], SelectPlayerScene.prototype, "playerStage", void 0);
-  SelectPlayerScene = __decorate18([
+  SelectPlayerScene = __decorate17([
     regClass17(),
     __metadata("design:paramtypes", [])
   ], SelectPlayerScene);
 
   // E:/WheelChairMan/src/Util/Base64.ts
-  var __decorate19 = __$decorate("fe62c9ad-c7c3-4baa-8f7c-216a9f051006", "../src/Util/Base64.ts");
+  var __decorate18 = __$decorate("fe62c9ad-c7c3-4baa-8f7c-216a9f051006", "../src/Util/Base64.ts");
   var Base64 = class {
     /**
      * 编码
@@ -4148,7 +4326,7 @@ function __$decorate(assetId, codePath) {
   Base64._keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
   // E:/WheelChairMan/src/Util/RockerBox.ts
-  var __decorate20 = __$decorate("7204f275-aa8d-45b5-b2eb-b4122c72d7a3", "../src/Util/RockerBox.ts");
+  var __decorate19 = __$decorate("7204f275-aa8d-45b5-b2eb-b4122c72d7a3", "../src/Util/RockerBox.ts");
   var _a8;
   var Button = Laya.Button;
   var Point2 = Laya.Point;
@@ -4249,22 +4427,22 @@ function __$decorate(assetId, codePath) {
       this.FstopMove = null;
     }
   }, "RockerBox");
-  __decorate20([
+  __decorate19([
     property18(),
     __metadata("design:type", typeof (_a8 = typeof Button !== "undefined" && Button) === "function" ? _a8 : Object)
   ], RockerBox.prototype, "freeBar", void 0);
-  __decorate20([
+  __decorate19([
     property18(),
     __metadata("design:type", Number)
   ], RockerBox.prototype, "dropLen", void 0);
-  RockerBox = __decorate20([
+  RockerBox = __decorate19([
     regClass18(),
     __metadata("design:paramtypes", [])
   ], RockerBox);
   var RockerBox_default = RockerBox;
 
   // E:/WheelChairMan/src/Util/Slider.ts
-  var __decorate21 = __$decorate("35b37bb8-b4f2-4360-8030-42b6c06ee038", "../src/Util/Slider.ts");
+  var __decorate20 = __$decorate("35b37bb8-b4f2-4360-8030-42b6c06ee038", "../src/Util/Slider.ts");
   var _a9;
   var _b6;
   var _c4;
@@ -4349,34 +4527,34 @@ function __$decorate(assetId, codePath) {
     onDisable() {
     }
   }, "Slider");
-  __decorate21([
+  __decorate20([
     property19(),
     __metadata("design:type", Boolean)
   ], Slider.prototype, "isH", void 0);
-  __decorate21([
+  __decorate20([
     property19(),
     __metadata("design:type", typeof (_a9 = typeof Image2 !== "undefined" && Image2) === "function" ? _a9 : Object)
   ], Slider.prototype, "imgLoad", void 0);
-  __decorate21([
+  __decorate20([
     property19(),
     __metadata("design:type", typeof (_b6 = typeof Image2 !== "undefined" && Image2) === "function" ? _b6 : Object)
   ], Slider.prototype, "imgBar", void 0);
-  __decorate21([
+  __decorate20([
     property19(),
     __metadata("design:type", typeof (_c4 = typeof Image2 !== "undefined" && Image2) === "function" ? _c4 : Object)
   ], Slider.prototype, "imgBg", void 0);
-  __decorate21([
+  __decorate20([
     property19(),
     __metadata("design:type", Number)
   ], Slider.prototype, "value", void 0);
-  Slider = __decorate21([
+  Slider = __decorate20([
     regClass19(),
     __metadata("design:paramtypes", [])
   ], Slider);
   var Slider_default = Slider;
 
   // E:/WheelChairMan/src/Util/StringUtil.ts
-  var __decorate22 = __$decorate("9f8ef9b7-13a5-4980-a9d8-46f8659dff82", "../src/Util/StringUtil.ts");
+  var __decorate21 = __$decorate("9f8ef9b7-13a5-4980-a9d8-46f8659dff82", "../src/Util/StringUtil.ts");
   var StringUtil = class {
     /**小数转百分比，默认保留两位小数 */
     static num2percentage(num, d = 2) {
@@ -4494,7 +4672,7 @@ function __$decorate(assetId, codePath) {
   StringUtil._colorDic = {};
 
   // E:/WheelChairMan/src/Util/Toggle.ts
-  var __decorate23 = __$decorate("0f5a24a0-2f83-4219-9165-99195082aa4a", "../src/Util/Toggle.ts");
+  var __decorate22 = __$decorate("0f5a24a0-2f83-4219-9165-99195082aa4a", "../src/Util/Toggle.ts");
   var _a10;
   var Image3 = Laya.Image;
   var { regClass: regClass20, property: property20 } = Laya;
@@ -4535,22 +4713,22 @@ function __$decorate(assetId, codePath) {
       this.$imgBg.off(Laya.Event.CLICK, this, this.changeValue);
     }
   }, "Toggle");
-  __decorate23([
+  __decorate22([
     property20(),
     __metadata("design:type", Boolean)
   ], Toggle.prototype, "isON", void 0);
-  __decorate23([
+  __decorate22([
     property20(),
     __metadata("design:type", typeof (_a10 = typeof Image3 !== "undefined" && Image3) === "function" ? _a10 : Object)
   ], Toggle.prototype, "imgItem", void 0);
-  Toggle = __decorate23([
+  Toggle = __decorate22([
     regClass20(),
     __metadata("design:paramtypes", [])
   ], Toggle);
   var Toggle_default = Toggle;
 
   // E:/WheelChairMan/src/View/CompleteView.ts
-  var __decorate24 = __$decorate("f5f376ef-5874-4c8a-9a28-8088976bd468", "../src/View/CompleteView.ts");
+  var __decorate23 = __$decorate("f5f376ef-5874-4c8a-9a28-8088976bd468", "../src/View/CompleteView.ts");
   var _a11;
   var _b7;
   var _c5;
@@ -4590,45 +4768,45 @@ function __$decorate(assetId, codePath) {
       this.close();
     }
   }, "CompleteView");
-  __decorate24([
+  __decorate23([
     property21(),
     __metadata("design:type", typeof (_a11 = typeof Label2 !== "undefined" && Label2) === "function" ? _a11 : Object)
   ], CompleteView.prototype, "labelDiamond", void 0);
-  __decorate24([
+  __decorate23([
     property21(),
     __metadata("design:type", typeof (_b7 = typeof Label2 !== "undefined" && Label2) === "function" ? _b7 : Object)
   ], CompleteView.prototype, "labelGold", void 0);
-  __decorate24([
+  __decorate23([
     property21(),
     __metadata("design:type", typeof (_c5 = typeof Image4 !== "undefined" && Image4) === "function" ? _c5 : Object)
   ], CompleteView.prototype, "imgStar1", void 0);
-  __decorate24([
+  __decorate23([
     property21(),
     __metadata("design:type", typeof (_d4 = typeof Image4 !== "undefined" && Image4) === "function" ? _d4 : Object)
   ], CompleteView.prototype, "imgStar2", void 0);
-  __decorate24([
+  __decorate23([
     property21(),
     __metadata("design:type", typeof (_e4 = typeof Image4 !== "undefined" && Image4) === "function" ? _e4 : Object)
   ], CompleteView.prototype, "imgStar3", void 0);
-  __decorate24([
+  __decorate23([
     property21(),
     __metadata("design:type", typeof (_f2 = typeof Image4 !== "undefined" && Image4) === "function" ? _f2 : Object)
   ], CompleteView.prototype, "imgNext", void 0);
-  __decorate24([
+  __decorate23([
     property21(),
     __metadata("design:type", typeof (_g = typeof Image4 !== "undefined" && Image4) === "function" ? _g : Object)
   ], CompleteView.prototype, "imgRestart", void 0);
-  __decorate24([
+  __decorate23([
     property21(),
     __metadata("design:type", typeof (_h = typeof Image4 !== "undefined" && Image4) === "function" ? _h : Object)
   ], CompleteView.prototype, "imgHome", void 0);
-  CompleteView = __decorate24([
+  CompleteView = __decorate23([
     regClass21(),
     __metadata("design:paramtypes", [])
   ], CompleteView);
 
   // E:/WheelChairMan/src/View/DebugView.ts
-  var __decorate25 = __$decorate("5ca51831-1d23-46b6-a853-a10d5da54d6c", "../src/View/DebugView.ts");
+  var __decorate24 = __$decorate("5ca51831-1d23-46b6-a853-a10d5da54d6c", "../src/View/DebugView.ts");
   var _a12;
   var _b8;
   var _c6;
@@ -4687,25 +4865,25 @@ function __$decorate(assetId, codePath) {
       this.listCommand.selectedIndex = -1;
     }
   }, "DebugView");
-  __decorate25([
+  __decorate24([
     property22(),
     __metadata("design:type", typeof (_a12 = typeof Image5 !== "undefined" && Image5) === "function" ? _a12 : Object)
   ], DebugView.prototype, "imgShow", void 0);
-  __decorate25([
+  __decorate24([
     property22(),
     __metadata("design:type", typeof (_b8 = typeof Box !== "undefined" && Box) === "function" ? _b8 : Object)
   ], DebugView.prototype, "MainPanel", void 0);
-  __decorate25([
+  __decorate24([
     property22(),
     __metadata("design:type", typeof (_c6 = typeof List !== "undefined" && List) === "function" ? _c6 : Object)
   ], DebugView.prototype, "listCommand", void 0);
-  DebugView = __decorate25([
+  DebugView = __decorate24([
     regClass22(),
     __metadata("design:paramtypes", [])
   ], DebugView);
 
   // E:/WheelChairMan/src/View/GameView.ts
-  var __decorate26 = __$decorate("ddf0e22e-43aa-4145-b2f5-8a127efb5611", "../src/View/GameView.ts");
+  var __decorate25 = __$decorate("ddf0e22e-43aa-4145-b2f5-8a127efb5611", "../src/View/GameView.ts");
   var _a13;
   var _b9;
   var _c7;
@@ -4799,37 +4977,37 @@ function __$decorate(assetId, codePath) {
       this.healthList = null;
     }
   }, "GameView");
-  __decorate26([
+  __decorate25([
     property23(),
     __metadata("design:type", typeof (_a13 = typeof List2 !== "undefined" && List2) === "function" ? _a13 : Object)
   ], GameView.prototype, "listHealth", void 0);
-  __decorate26([
+  __decorate25([
     property23(),
     __metadata("design:type", typeof (_b9 = typeof RockerBox_default !== "undefined" && RockerBox_default) === "function" ? _b9 : Object)
   ], GameView.prototype, "rocketBoxL", void 0);
-  __decorate26([
+  __decorate25([
     property23(),
     __metadata("design:type", typeof (_c7 = typeof RockerBox_default !== "undefined" && RockerBox_default) === "function" ? _c7 : Object)
   ], GameView.prototype, "rocketBoxR", void 0);
-  __decorate26([
+  __decorate25([
     property23(),
     __metadata("design:type", typeof (_d5 = typeof Label3 !== "undefined" && Label3) === "function" ? _d5 : Object)
   ], GameView.prototype, "labelTime", void 0);
-  __decorate26([
+  __decorate25([
     property23(),
     __metadata("design:type", typeof (_e5 = typeof Image6 !== "undefined" && Image6) === "function" ? _e5 : Object)
   ], GameView.prototype, "imgPause", void 0);
-  __decorate26([
+  __decorate25([
     property23(),
     __metadata("design:type", typeof (_f3 = typeof Label3 !== "undefined" && Label3) === "function" ? _f3 : Object)
   ], GameView.prototype, "labelKill", void 0);
-  GameView = __decorate26([
+  GameView = __decorate25([
     regClass23(),
     __metadata("design:paramtypes", [])
   ], GameView);
 
   // E:/WheelChairMan/src/View/GuideView.ts
-  var __decorate27 = __$decorate("a7a26e14-76d9-4f1c-9471-21fbc179af77", "../src/View/GuideView.ts");
+  var __decorate26 = __$decorate("a7a26e14-76d9-4f1c-9471-21fbc179af77", "../src/View/GuideView.ts");
   var _a14;
   var Image7 = Laya.Image;
   var { regClass: regClass24, property: property24 } = Laya;
@@ -4850,17 +5028,17 @@ function __$decorate(assetId, codePath) {
       LocalStorageMgr.setItem("FIRESTTIME" /* FIRSTTIME */, "1");
     }
   }, "GuideView");
-  __decorate27([
+  __decorate26([
     property24(),
     __metadata("design:type", typeof (_a14 = typeof Image7 !== "undefined" && Image7) === "function" ? _a14 : Object)
   ], GuideView.prototype, "imgSkip", void 0);
-  GuideView = __decorate27([
+  GuideView = __decorate26([
     regClass24(),
     __metadata("design:paramtypes", [])
   ], GuideView);
 
   // E:/WheelChairMan/src/View/LanguageView.ts
-  var __decorate28 = __$decorate("6bc1bf6a-a993-4ac9-b9f4-4785e0d68c2b", "../src/View/LanguageView.ts");
+  var __decorate27 = __$decorate("6bc1bf6a-a993-4ac9-b9f4-4785e0d68c2b", "../src/View/LanguageView.ts");
   var _a15;
   var _b10;
   var Image8 = Laya.Image;
@@ -4911,25 +5089,25 @@ function __$decorate(assetId, codePath) {
       }
     }
   }, "LanguageView");
-  __decorate28([
+  __decorate27([
     property25(),
     __metadata("design:type", typeof (_a15 = typeof List3 !== "undefined" && List3) === "function" ? _a15 : Object)
   ], LanguageView.prototype, "$listLanguage", void 0);
-  __decorate28([
+  __decorate27([
     property25(),
     __metadata("design:type", typeof (_b10 = typeof Image8 !== "undefined" && Image8) === "function" ? _b10 : Object)
   ], LanguageView.prototype, "$imgClose", void 0);
-  LanguageView = __decorate28([
+  LanguageView = __decorate27([
     regClass25(),
     __metadata("design:paramtypes", [])
   ], LanguageView);
 
   // E:/WheelChairMan/src/View/LevelUpView.ts
-  var __decorate29 = __$decorate("f7577321-9089-4d76-ba3b-af9c8a8c0afe", "../src/View/LevelUpView.ts");
+  var __decorate28 = __$decorate("f7577321-9089-4d76-ba3b-af9c8a8c0afe", "../src/View/LevelUpView.ts");
   var { regClass: regClass26, property: property26 } = Laya;
   var LevelUpView = /* @__PURE__ */ __name(class LevelUpView2 extends UIBase_default {
   }, "LevelUpView");
-  LevelUpView = __decorate29([
+  LevelUpView = __decorate28([
     regClass26()
   ], LevelUpView);
 
@@ -4937,21 +5115,20 @@ function __$decorate(assetId, codePath) {
   var CurrencyMgr = class {
     /**初始化 */
     static init() {
-      this.$currencyMap = ResLoader.instance.getDataTableById(3003 /* Currency */);
     }
     /**获取对应颜色 */
     static getColorById(id) {
-      let data = this.$currencyMap.get(id);
-      if (data && data["color"]) {
-        return "#" + data["color"];
+      let data = DataTable.CurrencyDataTableMap.get(id);
+      if (data && data.color) {
+        return "#" + data.color;
       }
       return "#fff";
     }
     /**获取对应图标 */
     static getImgUrlById(id) {
-      let data = this.$currencyMap.get(id);
-      if (data && data["imgId"]) {
-        return ResLoader.instance.getUrlById(data["imgId"]);
+      let data = DataTable.CurrencyDataTableMap.get(id);
+      if (data && data.imgId) {
+        return ResLoader.instance.getUrlById(data.imgId);
       }
       return "";
     }
@@ -4962,16 +5139,13 @@ function __$decorate(assetId, codePath) {
   var LevelMgr = class {
     /**初始化 */
     static init() {
-      this.$levelDataTable = ResLoader.instance.getDataTableById(3004 /* Level */);
     }
     /**等级 */
     static get level() {
-      for (let [, value] of this.$levelDataTable) {
-        let minEx = value["minEx"];
-        let maxEx = value["maxEx"];
-        if (!isNaN(minEx) && !isNaN(maxEx)) {
-          if (GameData.experience > minEx && GameData.experience <= maxEx) {
-            return value["level"];
+      for (let [, value] of DataTable.LevelDataTableMap) {
+        if (!isNaN(value.minEx) && !isNaN(value.maxEx)) {
+          if (GameData.experience > value.minEx && GameData.experience <= value.maxEx) {
+            return value.level;
           }
         }
       }
@@ -4979,8 +5153,6 @@ function __$decorate(assetId, codePath) {
     }
   };
   __name(LevelMgr, "LevelMgr");
-  /**经验表 */
-  LevelMgr.$levelDataTable = /* @__PURE__ */ new Map();
 
   // E:/WheelChairMan/src/Url/SubPackageUrl.ts
   var SubPackageUrl = class {
@@ -4990,7 +5162,7 @@ function __$decorate(assetId, codePath) {
   SubPackageUrl.res3dUrl = "resources/res3d/res3d.zip";
 
   // E:/WheelChairMan/src/View/LoadView.ts
-  var __decorate30 = __$decorate("9797e892-adab-4c82-8f5e-800b37f590f9", "../src/View/LoadView.ts");
+  var __decorate29 = __$decorate("9797e892-adab-4c82-8f5e-800b37f590f9", "../src/View/LoadView.ts");
   var _a16;
   var _b11;
   var _c8;
@@ -5015,9 +5187,10 @@ function __$decorate(assetId, codePath) {
       if (ProjectConfig.useZip) {
         let self = this;
         LayaZip.LazyMode = true;
-        LayaZip.CacheZIPFile = false;
         LayaZip.BasePathMode = 1;
+        LayaZip.LazyFilter = ["ls", "lh", "lmat"];
         Laya.loader.load([{ url: SubPackageUrl.res3dUrl, type: LayaZip.ZIP }], Handler7.create(self, () => {
+          console.log(Laya.Loader.loadedMap);
           this.startPreLoad();
         }), new Laya.Handler(self, (args) => {
           self._onProgress(args);
@@ -5057,25 +5230,25 @@ function __$decorate(assetId, codePath) {
       this.close();
     }
   }, "LoadView");
-  __decorate30([
+  __decorate29([
     property27(),
     __metadata("design:type", typeof (_a16 = typeof Image9 !== "undefined" && Image9) === "function" ? _a16 : Object)
   ], LoadView.prototype, "imgLoad", void 0);
-  __decorate30([
+  __decorate29([
     property27(),
     __metadata("design:type", typeof (_b11 = typeof Label4 !== "undefined" && Label4) === "function" ? _b11 : Object)
   ], LoadView.prototype, "labelLoad", void 0);
-  __decorate30([
+  __decorate29([
     property27(),
     __metadata("design:type", typeof (_c8 = typeof Label4 !== "undefined" && Label4) === "function" ? _c8 : Object)
   ], LoadView.prototype, "testLabel", void 0);
-  LoadView = __decorate30([
+  LoadView = __decorate29([
     regClass27(),
     __metadata("design:paramtypes", [])
   ], LoadView);
 
   // E:/WheelChairMan/src/View/LoseView.ts
-  var __decorate31 = __$decorate("9b8220cb-adbc-4d84-9618-c7c9f2bd85f3", "../src/View/LoseView.ts");
+  var __decorate30 = __$decorate("9b8220cb-adbc-4d84-9618-c7c9f2bd85f3", "../src/View/LoseView.ts");
   var _a17;
   var _b12;
   var _c9;
@@ -5103,25 +5276,25 @@ function __$decorate(assetId, codePath) {
       this.close();
     }
   }, "LoseView");
-  __decorate31([
+  __decorate30([
     property28(),
     __metadata("design:type", typeof (_a17 = typeof Image10 !== "undefined" && Image10) === "function" ? _a17 : Object)
   ], LoseView.prototype, "imgHome", void 0);
-  __decorate31([
+  __decorate30([
     property28(),
     __metadata("design:type", typeof (_b12 = typeof Image10 !== "undefined" && Image10) === "function" ? _b12 : Object)
   ], LoseView.prototype, "imgRestart", void 0);
-  __decorate31([
+  __decorate30([
     property28(),
     __metadata("design:type", typeof (_c9 = typeof Label5 !== "undefined" && Label5) === "function" ? _c9 : Object)
   ], LoseView.prototype, "labelGold", void 0);
-  LoseView = __decorate31([
+  LoseView = __decorate30([
     regClass28(),
     __metadata("design:paramtypes", [])
   ], LoseView);
 
   // E:/WheelChairMan/src/View/LuckyBoxView.ts
-  var __decorate32 = __$decorate("d94dafff-05f0-4479-9a1a-ab9861a24025", "../src/View/LuckyBoxView.ts");
+  var __decorate31 = __$decorate("d94dafff-05f0-4479-9a1a-ab9861a24025", "../src/View/LuckyBoxView.ts");
   var _a18;
   var _b13;
   var _c10;
@@ -5133,20 +5306,18 @@ function __$decorate(assetId, codePath) {
   var LuckyBoxView = /* @__PURE__ */ __name(class LuckyBoxView2 extends UIBase_default {
     constructor() {
       super();
-      this.$luckyboxDataTable = /* @__PURE__ */ new Map();
     }
     onOpened(param) {
       this.regClick(this.imgClose, this.close);
       this.regClick(this.imgOpen, this.openLuckBox);
-      this.$luckyboxDataTable = ResLoader.instance.getDataTableById(3001 /* LuckyBox */);
       this.initLuckBox();
     }
     initLuckBox() {
       if (this.$param == void 0) {
         this.$param = 0;
       }
-      this.txtMsg.text = LocalizationMgr.$getLocalizationByKey(this.$luckyboxDataTable.get(this.$param)["localizationKey"]);
-      this.imgBox.skin = ResLoader.instance.getUrlById(this.$luckyboxDataTable.get(this.$param)["imgPath"]);
+      this.txtMsg.text = LocalizationMgr.$getLocalizationByKey(DataTable.LuckyBoxDataTableMap.get(this.$param).localizationKey);
+      this.imgBox.skin = ResLoader.instance.getUrlById(DataTable.LuckyBoxDataTableMap.get(this.$param).imgPath);
     }
     openLuckBox() {
       switch (this.$param) {
@@ -5155,33 +5326,33 @@ function __$decorate(assetId, codePath) {
       }
     }
   }, "LuckyBoxView");
-  __decorate32([
+  __decorate31([
     property29(),
     __metadata("design:type", typeof (_a18 = typeof Image11 !== "undefined" && Image11) === "function" ? _a18 : Object)
   ], LuckyBoxView.prototype, "imgLight", void 0);
-  __decorate32([
+  __decorate31([
     property29(),
     __metadata("design:type", typeof (_b13 = typeof Image11 !== "undefined" && Image11) === "function" ? _b13 : Object)
   ], LuckyBoxView.prototype, "imgBox", void 0);
-  __decorate32([
+  __decorate31([
     property29(),
     __metadata("design:type", typeof (_c10 = typeof Image11 !== "undefined" && Image11) === "function" ? _c10 : Object)
   ], LuckyBoxView.prototype, "imgClose", void 0);
-  __decorate32([
+  __decorate31([
     property29(),
     __metadata("design:type", typeof (_d6 = typeof Image11 !== "undefined" && Image11) === "function" ? _d6 : Object)
   ], LuckyBoxView.prototype, "imgOpen", void 0);
-  __decorate32([
+  __decorate31([
     property29(),
     __metadata("design:type", typeof (_e6 = typeof Text2 !== "undefined" && Text2) === "function" ? _e6 : Object)
   ], LuckyBoxView.prototype, "txtMsg", void 0);
-  LuckyBoxView = __decorate32([
+  LuckyBoxView = __decorate31([
     regClass29(),
     __metadata("design:paramtypes", [])
   ], LuckyBoxView);
 
   // E:/WheelChairMan/src/View/MainView.ts
-  var __decorate33 = __$decorate("127f9431-d96d-491c-b782-2549a9c38d7b", "../src/View/MainView.ts");
+  var __decorate32 = __$decorate("127f9431-d96d-491c-b782-2549a9c38d7b", "../src/View/MainView.ts");
   var _a19;
   var _b14;
   var _c11;
@@ -5259,82 +5430,82 @@ function __$decorate(assetId, codePath) {
     onClosed() {
     }
   }, "MainView");
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_a19 = typeof Text3 !== "undefined" && Text3) === "function" ? _a19 : Object)
   ], MainView.prototype, "txtGold", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_b14 = typeof Image12 !== "undefined" && Image12) === "function" ? _b14 : Object)
   ], MainView.prototype, "imgPlusGold", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_c11 = typeof Text3 !== "undefined" && Text3) === "function" ? _c11 : Object)
   ], MainView.prototype, "txtDiamond", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_d7 = typeof Image12 !== "undefined" && Image12) === "function" ? _d7 : Object)
   ], MainView.prototype, "imgPlusDiamond", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_e7 = typeof Image12 !== "undefined" && Image12) === "function" ? _e7 : Object)
   ], MainView.prototype, "imgHead", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_f4 = typeof Image12 !== "undefined" && Image12) === "function" ? _f4 : Object)
   ], MainView.prototype, "imgRing", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_g2 = typeof Image12 !== "undefined" && Image12) === "function" ? _g2 : Object)
   ], MainView.prototype, "imgLevel", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_h2 = typeof Image12 !== "undefined" && Image12) === "function" ? _h2 : Object)
   ], MainView.prototype, "imgMs", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_j = typeof Text3 !== "undefined" && Text3) === "function" ? _j : Object)
   ], MainView.prototype, "txtLevel", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_k = typeof Label6 !== "undefined" && Label6) === "function" ? _k : Object)
   ], MainView.prototype, "labelName", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_l = typeof Image12 !== "undefined" && Image12) === "function" ? _l : Object)
   ], MainView.prototype, "imgShop", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_m = typeof Image12 !== "undefined" && Image12) === "function" ? _m : Object)
   ], MainView.prototype, "imgRanking", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_o = typeof Image12 !== "undefined" && Image12) === "function" ? _o : Object)
   ], MainView.prototype, "imgSettings", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_p = typeof Image12 !== "undefined" && Image12) === "function" ? _p : Object)
   ], MainView.prototype, "imgStart", void 0);
-  __decorate33([
+  __decorate32([
     property30(),
     __metadata("design:type", typeof (_q = typeof Box2 !== "undefined" && Box2) === "function" ? _q : Object)
   ], MainView.prototype, "Main", void 0);
-  MainView = __decorate33([
+  MainView = __decorate32([
     regClass30(),
     __metadata("design:paramtypes", [])
   ], MainView);
 
   // E:/WheelChairMan/src/View/MyInfoView.ts
-  var __decorate34 = __$decorate("dd16d8bf-53b3-41cc-81c1-44f39afec08e", "../src/View/MyInfoView.ts");
+  var __decorate33 = __$decorate("dd16d8bf-53b3-41cc-81c1-44f39afec08e", "../src/View/MyInfoView.ts");
   var { regClass: regClass31, property: property31 } = Laya;
   var MyInfoView = /* @__PURE__ */ __name(class MyInfoView2 extends UIBase_default {
   }, "MyInfoView");
-  MyInfoView = __decorate34([
+  MyInfoView = __decorate33([
     regClass31()
   ], MyInfoView);
 
   // E:/WheelChairMan/src/View/PauseView.ts
-  var __decorate35 = __$decorate("352c01f5-c61a-4387-bd3b-63f412ac12c7", "../src/View/PauseView.ts");
+  var __decorate34 = __$decorate("352c01f5-c61a-4387-bd3b-63f412ac12c7", "../src/View/PauseView.ts");
   var _a20;
   var _b15;
   var _c12;
@@ -5364,25 +5535,25 @@ function __$decorate(assetId, codePath) {
       this.close();
     }
   }, "PauseView");
-  __decorate35([
+  __decorate34([
     property32(),
     __metadata("design:type", typeof (_a20 = typeof Image13 !== "undefined" && Image13) === "function" ? _a20 : Object)
   ], PauseView.prototype, "imgContinue", void 0);
-  __decorate35([
+  __decorate34([
     property32(),
     __metadata("design:type", typeof (_b15 = typeof Image13 !== "undefined" && Image13) === "function" ? _b15 : Object)
   ], PauseView.prototype, "imgRestart", void 0);
-  __decorate35([
+  __decorate34([
     property32(),
     __metadata("design:type", typeof (_c12 = typeof Image13 !== "undefined" && Image13) === "function" ? _c12 : Object)
   ], PauseView.prototype, "imgQuit", void 0);
-  PauseView = __decorate35([
+  PauseView = __decorate34([
     regClass32(),
     __metadata("design:paramtypes", [])
   ], PauseView);
 
   // E:/WheelChairMan/src/View/PrivacyAgreementView.ts
-  var __decorate36 = __$decorate("df9b38f8-2d16-4280-849d-786074a729fe", "../src/View/PrivacyAgreementView.ts");
+  var __decorate35 = __$decorate("df9b38f8-2d16-4280-849d-786074a729fe", "../src/View/PrivacyAgreementView.ts");
   var _a21;
   var _b16;
   var _c13;
@@ -5409,29 +5580,29 @@ function __$decorate(assetId, codePath) {
       this.close();
     }
   }, "PrivacyAgreementView");
-  __decorate36([
+  __decorate35([
     property33(),
     __metadata("design:type", typeof (_a21 = typeof Image14 !== "undefined" && Image14) === "function" ? _a21 : Object)
   ], PrivacyAgreementView.prototype, "imgSure", void 0);
-  __decorate36([
+  __decorate35([
     property33(),
     __metadata("design:type", typeof (_b16 = typeof Image14 !== "undefined" && Image14) === "function" ? _b16 : Object)
   ], PrivacyAgreementView.prototype, "imgCancel", void 0);
-  __decorate36([
+  __decorate35([
     property33(),
     __metadata("design:type", typeof (_c13 = typeof Panel !== "undefined" && Panel) === "function" ? _c13 : Object)
   ], PrivacyAgreementView.prototype, "panel", void 0);
-  __decorate36([
+  __decorate35([
     property33(),
     __metadata("design:type", typeof (_d8 = typeof Label7 !== "undefined" && Label7) === "function" ? _d8 : Object)
   ], PrivacyAgreementView.prototype, "txtAgreement", void 0);
-  PrivacyAgreementView = __decorate36([
+  PrivacyAgreementView = __decorate35([
     regClass33(),
     __metadata("design:paramtypes", [])
   ], PrivacyAgreementView);
 
   // E:/WheelChairMan/src/View/RankingView.ts
-  var __decorate37 = __$decorate("731a1c9f-76c7-4237-ad93-f469eb850bb9", "../src/View/RankingView.ts");
+  var __decorate36 = __$decorate("731a1c9f-76c7-4237-ad93-f469eb850bb9", "../src/View/RankingView.ts");
   var _a22;
   var _b17;
   var _c14;
@@ -5468,7 +5639,6 @@ function __$decorate(assetId, codePath) {
         this.txtName.text = data.name.toString();
         this.txtRank.text = data.rank.toString();
       }
-      this.$rankingMap = ResLoader.instance.getDataTableById(3006 /* Ranking */);
     }
     addEvent() {
       this.regClick(this.imgClose, this.close);
@@ -5487,22 +5657,22 @@ function __$decorate(assetId, codePath) {
       let imgRank = box.getChildByName("imgRank");
       switch (data.rank) {
         case 1:
-          let data1 = this.$rankingMap.get(1001 /* fist */);
+          let data1 = DataTable.RankingDataTableMap.get(1001 /* fist */);
           txtRank.color = data1["color"];
           imgRank.skin = ResLoader.instance.getUrlById(data1["imgId"]);
           break;
         case 2:
-          let data2 = this.$rankingMap.get(1002 /* second */);
+          let data2 = DataTable.RankingDataTableMap.get(1002 /* second */);
           txtRank.color = data2["color"];
           imgRank.skin = ResLoader.instance.getUrlById(data2["imgId"]);
           break;
         case 3:
-          let data3 = this.$rankingMap.get(1003 /* third */);
+          let data3 = DataTable.RankingDataTableMap.get(1003 /* third */);
           txtRank.color = data3["color"];
           imgRank.skin = ResLoader.instance.getUrlById(data3["imgId"]);
           break;
         default:
-          let data4 = this.$rankingMap.get(1004 /* default */);
+          let data4 = DataTable.RankingDataTableMap.get(1004 /* default */);
           txtRank.color = data4["color"];
           imgRank.skin = ResLoader.instance.getUrlById(data4["imgId"]);
           txtRank.visible = true;
@@ -5510,37 +5680,37 @@ function __$decorate(assetId, codePath) {
       }
     }
   }, "RankingView");
-  __decorate37([
+  __decorate36([
     property34(),
     __metadata("design:type", typeof (_a22 = typeof Image15 !== "undefined" && Image15) === "function" ? _a22 : Object)
   ], RankingView.prototype, "imgClose", void 0);
-  __decorate37([
+  __decorate36([
     property34(),
     __metadata("design:type", typeof (_b17 = typeof Image15 !== "undefined" && Image15) === "function" ? _b17 : Object)
   ], RankingView.prototype, "imgHead", void 0);
-  __decorate37([
+  __decorate36([
     property34(),
     __metadata("design:type", typeof (_c14 = typeof Text4 !== "undefined" && Text4) === "function" ? _c14 : Object)
   ], RankingView.prototype, "txtName", void 0);
-  __decorate37([
+  __decorate36([
     property34(),
     __metadata("design:type", typeof (_d9 = typeof Text4 !== "undefined" && Text4) === "function" ? _d9 : Object)
   ], RankingView.prototype, "txtLV", void 0);
-  __decorate37([
+  __decorate36([
     property34(),
     __metadata("design:type", typeof (_e8 = typeof Text4 !== "undefined" && Text4) === "function" ? _e8 : Object)
   ], RankingView.prototype, "txtRank", void 0);
-  __decorate37([
+  __decorate36([
     property34(),
     __metadata("design:type", typeof (_f5 = typeof List4 !== "undefined" && List4) === "function" ? _f5 : Object)
   ], RankingView.prototype, "listRanking", void 0);
-  RankingView = __decorate37([
+  RankingView = __decorate36([
     regClass34(),
     __metadata("design:paramtypes", [])
   ], RankingView);
 
   // E:/WheelChairMan/src/View/ResurrectionView.ts
-  var __decorate38 = __$decorate("31411ed3-ec40-4e2d-ba1b-726a4a7e4de7", "../src/View/ResurrectionView.ts");
+  var __decorate37 = __$decorate("31411ed3-ec40-4e2d-ba1b-726a4a7e4de7", "../src/View/ResurrectionView.ts");
   var _a23;
   var _b18;
   var Label8 = Laya.Label;
@@ -5585,21 +5755,21 @@ function __$decorate(assetId, codePath) {
       this.close();
     }
   }, "ResurrectionView");
-  __decorate38([
+  __decorate37([
     property35(),
     __metadata("design:type", typeof (_a23 = typeof Label8 !== "undefined" && Label8) === "function" ? _a23 : Object)
   ], ResurrectionView.prototype, "labelTime", void 0);
-  __decorate38([
+  __decorate37([
     property35(),
     __metadata("design:type", typeof (_b18 = typeof Image16 !== "undefined" && Image16) === "function" ? _b18 : Object)
   ], ResurrectionView.prototype, "imgWatch", void 0);
-  ResurrectionView = __decorate38([
+  ResurrectionView = __decorate37([
     regClass35(),
     __metadata("design:paramtypes", [])
   ], ResurrectionView);
 
   // E:/WheelChairMan/src/View/SelectPlayerView.ts
-  var __decorate39 = __$decorate("cdfd211f-d5a7-4c9b-9ffb-7956585db6fc", "../src/View/SelectPlayerView.ts");
+  var __decorate38 = __$decorate("cdfd211f-d5a7-4c9b-9ffb-7956585db6fc", "../src/View/SelectPlayerView.ts");
   var _a24;
   var _b19;
   var _c15;
@@ -5706,57 +5876,57 @@ function __$decorate(assetId, codePath) {
     onClosed() {
     }
   }, "SelectPlayerView");
-  __decorate39([
+  __decorate38([
     property36(),
     __metadata("design:type", typeof (_a24 = typeof Image17 !== "undefined" && Image17) === "function" ? _a24 : Object)
   ], SelectPlayerView.prototype, "imgBack", void 0);
-  __decorate39([
+  __decorate38([
     property36(),
     __metadata("design:type", typeof (_b19 = typeof Image17 !== "undefined" && Image17) === "function" ? _b19 : Object)
   ], SelectPlayerView.prototype, "imgNext", void 0);
-  __decorate39([
+  __decorate38([
     property36(),
     __metadata("design:type", typeof (_c15 = typeof Image17 !== "undefined" && Image17) === "function" ? _c15 : Object)
   ], SelectPlayerView.prototype, "imgPrev", void 0);
-  __decorate39([
+  __decorate38([
     property36(),
     __metadata("design:type", typeof (_d10 = typeof Image17 !== "undefined" && Image17) === "function" ? _d10 : Object)
   ], SelectPlayerView.prototype, "imgLock", void 0);
-  __decorate39([
+  __decorate38([
     property36(),
     __metadata("design:type", typeof (_e9 = typeof Image17 !== "undefined" && Image17) === "function" ? _e9 : Object)
   ], SelectPlayerView.prototype, "imgSelect", void 0);
-  __decorate39([
+  __decorate38([
     property36(),
     __metadata("design:type", typeof (_f6 = typeof Label9 !== "undefined" && Label9) === "function" ? _f6 : Object)
   ], SelectPlayerView.prototype, "labelName", void 0);
-  __decorate39([
+  __decorate38([
     property36(),
     __metadata("design:type", typeof (_g3 = typeof Label9 !== "undefined" && Label9) === "function" ? _g3 : Object)
   ], SelectPlayerView.prototype, "labelDic", void 0);
-  __decorate39([
+  __decorate38([
     property36(),
     __metadata("design:type", typeof (_h3 = typeof Image17 !== "undefined" && Image17) === "function" ? _h3 : Object)
   ], SelectPlayerView.prototype, "imgUnlock", void 0);
-  __decorate39([
+  __decorate38([
     property36(),
     __metadata("design:type", typeof (_j2 = typeof Label9 !== "undefined" && Label9) === "function" ? _j2 : Object)
   ], SelectPlayerView.prototype, "labelUnlock", void 0);
-  __decorate39([
+  __decorate38([
     property36(),
     __metadata("design:type", typeof (_k2 = typeof Image17 !== "undefined" && Image17) === "function" ? _k2 : Object)
   ], SelectPlayerView.prototype, "imgCurrency", void 0);
-  __decorate39([
+  __decorate38([
     property36(),
     __metadata("design:type", typeof (_l2 = typeof Box3 !== "undefined" && Box3) === "function" ? _l2 : Object)
   ], SelectPlayerView.prototype, "boxMsg", void 0);
-  SelectPlayerView = __decorate39([
+  SelectPlayerView = __decorate38([
     regClass36(),
     __metadata("design:paramtypes", [])
   ], SelectPlayerView);
 
   // E:/WheelChairMan/src/View/SettingView.ts
-  var __decorate40 = __$decorate("9811079c-9340-49a7-8d8a-71570d70a98d", "../src/View/SettingView.ts");
+  var __decorate39 = __$decorate("9811079c-9340-49a7-8d8a-71570d70a98d", "../src/View/SettingView.ts");
   var _a25;
   var _b20;
   var _c16;
@@ -5812,45 +5982,45 @@ function __$decorate(assetId, codePath) {
     onClosed() {
     }
   }, "SettingView");
-  __decorate40([
+  __decorate39([
     property37(),
     __metadata("design:type", typeof (_a25 = typeof Image18 !== "undefined" && Image18) === "function" ? _a25 : Object)
   ], SettingView.prototype, "imgClose", void 0);
-  __decorate40([
+  __decorate39([
     property37(),
     __metadata("design:type", typeof (_b20 = typeof Slider_default !== "undefined" && Slider_default) === "function" ? _b20 : Object)
   ], SettingView.prototype, "sliderSfx", void 0);
-  __decorate40([
+  __decorate39([
     property37(),
     __metadata("design:type", typeof (_c16 = typeof Slider_default !== "undefined" && Slider_default) === "function" ? _c16 : Object)
   ], SettingView.prototype, "sliderBgm", void 0);
-  __decorate40([
+  __decorate39([
     property37(),
     __metadata("design:type", typeof (_d11 = typeof Toggle_default !== "undefined" && Toggle_default) === "function" ? _d11 : Object)
   ], SettingView.prototype, "toggleShake", void 0);
-  __decorate40([
+  __decorate39([
     property37(),
     __metadata("design:type", typeof (_e10 = typeof Image18 !== "undefined" && Image18) === "function" ? _e10 : Object)
   ], SettingView.prototype, "imgLanguage", void 0);
-  __decorate40([
+  __decorate39([
     property37(),
     __metadata("design:type", typeof (_f7 = typeof Image18 !== "undefined" && Image18) === "function" ? _f7 : Object)
   ], SettingView.prototype, "imgLan", void 0);
-  __decorate40([
+  __decorate39([
     property37(),
     __metadata("design:type", typeof (_g4 = typeof Image18 !== "undefined" && Image18) === "function" ? _g4 : Object)
   ], SettingView.prototype, "imgSupport", void 0);
-  __decorate40([
+  __decorate39([
     property37(),
     __metadata("design:type", typeof (_h4 = typeof Label10 !== "undefined" && Label10) === "function" ? _h4 : Object)
   ], SettingView.prototype, "txtAgreement", void 0);
-  SettingView = __decorate40([
+  SettingView = __decorate39([
     regClass37(),
     __metadata("design:paramtypes", [])
   ], SettingView);
 
   // E:/WheelChairMan/src/View/ShopView.ts
-  var __decorate41 = __$decorate("6101acc2-fac8-487c-9045-7d083746b9cd", "../src/View/ShopView.ts");
+  var __decorate40 = __$decorate("6101acc2-fac8-487c-9045-7d083746b9cd", "../src/View/ShopView.ts");
   var _a26;
   var _b21;
   var _c17;
@@ -5864,18 +6034,15 @@ function __$decorate(assetId, codePath) {
       this.$titleSelectedIndex = 0;
     }
     onOpened(param) {
-      if (!this.$shopDataTable) {
-        this.$shopDataTable = ResLoader.instance.getDataTableById(3005 /* Shop */);
-      }
       this.$titleSet = /* @__PURE__ */ new Set();
       this.$shopList = [];
-      if (this.$shopDataTable) {
-        for (let [key, value] of this.$shopDataTable) {
-          this.$titleSet.add(value["localizationKey"]);
-          if (value["page"] && this.$shopList[value["page"] - 1]) {
-            this.$shopList[value["page"] - 1].push(value);
+      if (DataTable.ShopDataTableMap) {
+        for (let [key, value] of DataTable.ShopDataTableMap) {
+          this.$titleSet.add(value.localizationKey);
+          if (value.page && this.$shopList[value.page - 1]) {
+            this.$shopList[value.page - 1].push(value);
           } else {
-            this.$shopList[value["page"] - 1] = [value];
+            this.$shopList[value.page - 1] = [value];
           }
         }
       }
@@ -5986,34 +6153,34 @@ function __$decorate(assetId, codePath) {
       }
     }
   }, "ShopView");
-  __decorate41([
+  __decorate40([
     property38(),
     __metadata("design:type", typeof (_a26 = typeof Image19 !== "undefined" && Image19) === "function" ? _a26 : Object)
   ], ShopView.prototype, "imgClose", void 0);
-  __decorate41([
+  __decorate40([
     property38(),
     __metadata("design:type", typeof (_b21 = typeof List5 !== "undefined" && List5) === "function" ? _b21 : Object)
   ], ShopView.prototype, "listTitle", void 0);
-  __decorate41([
+  __decorate40([
     property38(),
     __metadata("design:type", typeof (_c17 = typeof List5 !== "undefined" && List5) === "function" ? _c17 : Object)
   ], ShopView.prototype, "listShop", void 0);
-  ShopView = __decorate41([
+  ShopView = __decorate40([
     regClass38(),
     __metadata("design:paramtypes", [])
   ], ShopView);
 
   // E:/WheelChairMan/src/View/SignInView.ts
-  var __decorate42 = __$decorate("658fcc51-8109-42a6-a372-0d6e36f801cc", "../src/View/SignInView.ts");
+  var __decorate41 = __$decorate("658fcc51-8109-42a6-a372-0d6e36f801cc", "../src/View/SignInView.ts");
   var { regClass: regClass39, property: property39 } = Laya;
   var SignInView = /* @__PURE__ */ __name(class SignInView2 extends UIBase_default {
   }, "SignInView");
-  SignInView = __decorate42([
+  SignInView = __decorate41([
     regClass39()
   ], SignInView);
 
   // E:/WheelChairMan/src/View/SureView.ts
-  var __decorate43 = __$decorate("2eee226a-dcc2-4965-9ad2-4c490d20fbdf", "../src/View/SureView.ts");
+  var __decorate42 = __$decorate("2eee226a-dcc2-4965-9ad2-4c490d20fbdf", "../src/View/SureView.ts");
   var _a27;
   var _b22;
   var _c18;
@@ -6063,29 +6230,29 @@ function __$decorate(assetId, codePath) {
       this.imgSure.centerX = 180;
     }
   }, "SureView");
-  __decorate43([
+  __decorate42([
     property40(),
     __metadata("design:type", typeof (_a27 = typeof Image20 !== "undefined" && Image20) === "function" ? _a27 : Object)
   ], SureView.prototype, "imgSure", void 0);
-  __decorate43([
+  __decorate42([
     property40(),
     __metadata("design:type", typeof (_b22 = typeof Image20 !== "undefined" && Image20) === "function" ? _b22 : Object)
   ], SureView.prototype, "imgCancel", void 0);
-  __decorate43([
+  __decorate42([
     property40(),
     __metadata("design:type", typeof (_c18 = typeof Label11 !== "undefined" && Label11) === "function" ? _c18 : Object)
   ], SureView.prototype, "txtTitle", void 0);
-  __decorate43([
+  __decorate42([
     property40(),
     __metadata("design:type", typeof (_d12 = typeof Label11 !== "undefined" && Label11) === "function" ? _d12 : Object)
   ], SureView.prototype, "txtMsg", void 0);
-  SureView = __decorate43([
+  SureView = __decorate42([
     regClass40(),
     __metadata("design:paramtypes", [])
   ], SureView);
 
   // E:/WheelChairMan/src/View/TipsView.ts
-  var __decorate44 = __$decorate("a1b11e33-3318-4f7e-af1d-2bbf5fa13333", "../src/View/TipsView.ts");
+  var __decorate43 = __$decorate("a1b11e33-3318-4f7e-af1d-2bbf5fa13333", "../src/View/TipsView.ts");
   var _a28;
   var Text5 = Laya.Text;
   var { regClass: regClass41, property: property41 } = Laya;
@@ -6106,17 +6273,17 @@ function __$decorate(assetId, codePath) {
       }).start();
     }
   }, "TipsView");
-  __decorate44([
+  __decorate43([
     property41(),
     __metadata("design:type", typeof (_a28 = typeof Text5 !== "undefined" && Text5) === "function" ? _a28 : Object)
   ], TipsView.prototype, "txtMsg", void 0);
-  TipsView = __decorate44([
+  TipsView = __decorate43([
     regClass41(),
     __metadata("design:paramtypes", [])
   ], TipsView);
 
   // E:/WheelChairMan/src/Game/BaseItem/BaseItemMgr.ts
-  var __decorate45 = __$decorate("24b34e30-2f17-4824-a3b0-0ba530674c37", "../src/Game/BaseItem/BaseItemMgr.ts");
+  var __decorate44 = __$decorate("24b34e30-2f17-4824-a3b0-0ba530674c37", "../src/Game/BaseItem/BaseItemMgr.ts");
   var Vector311 = Laya.Vector3;
   var Quaternion2 = Laya.Quaternion;
   var Pool7 = Laya.Pool;

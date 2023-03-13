@@ -1,6 +1,6 @@
 import GameData from "../Data/GameData";
+import DataTable from "../DataTable/DataTable";
 import { CurrencyEnum } from "../Enum/CurrencyEnum";
-import { DataTableEnum } from "../Enum/DataTableEnum";
 import { EventEnum } from "../Enum/EventEnum";
 import { LocalizationEnum } from "../Enum/LocalizationEnum";
 import LocalizationMgr from "../Localization/LocalizationMgr";
@@ -24,7 +24,7 @@ import Handler = Laya.Handler;
  * @Author: NoRain 
  * @Date: 2023-02-14 10:37:38 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-03 21:52:06
+ * @Last Modified time: 2023-03-13 18:03:48
  */
 const { regClass, property } = Laya;
 /**商城界面 */
@@ -37,10 +37,9 @@ export default class ShopView extends UIBase {
     @property()
     listShop: List;
 
-    private $shopDataTable: Map<number, Object>;
 
 
-    private $titleSet: Set<number>;
+    private $titleSet: Set<string>;
 
 
     private $titleSelectedIndex: number = 0;
@@ -52,18 +51,15 @@ export default class ShopView extends UIBase {
     constructor() { super() }
 
     onOpened(param?: any): void {
-        if (!this.$shopDataTable) {
-            this.$shopDataTable = ResLoader.instance.getDataTableById(DataTableEnum.Shop);
-        }
         this.$titleSet = new Set();
         this.$shopList = [];
-        if (this.$shopDataTable) {
-            for (let [key, value] of this.$shopDataTable) {
-                this.$titleSet.add(value["localizationKey"]);
-                if (value["page"] && this.$shopList[value["page"] - 1]) {
-                    this.$shopList[value["page"] - 1].push(value);
+        if (DataTable.ShopDataTableMap) {
+            for (let [key, value] of DataTable.ShopDataTableMap) {
+                this.$titleSet.add(value.localizationKey);
+                if (value.page && this.$shopList[value.page - 1]) {
+                    this.$shopList[value.page - 1].push(value);
                 } else {
-                    this.$shopList[value["page"] - 1] = [value];
+                    this.$shopList[value.page - 1] = [value];
                 }
 
             }

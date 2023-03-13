@@ -1,5 +1,4 @@
-import { DataTableEnum } from "../Enum/DataTableEnum";
-import ResUrl from "../Url/ResUrl";
+import DataTable from "../DataTable/DataTable";
 import PrefabImpl = Laya.PrefabImpl;
 import Text = Laya.Text;
 import Box = Laya.Box;
@@ -15,7 +14,7 @@ import TextResource = Laya.TextResource;
  * @Author: NoRain 
  * @Date: 2023-02-12 15:09:35 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-12 17:02:45
+ * @Last Modified time: 2023-03-13 20:41:39
  */
 /**资源加载器 */
 export default class ResLoader {
@@ -93,8 +92,7 @@ export default class ResLoader {
     /**是否进行预加载了 */
     private isLoad: boolean = false;
 
-    /**游戏所有资源地址 */
-    private $dicAssetsPath: Map<number, Object> = new Map();
+
 
     /**加载完成一个 */
     private $load_one_onCompleted() {
@@ -115,106 +113,32 @@ export default class ResLoader {
             this.isLoad = true;
             this.$onCompleted = onCompleted;
             this.$onProgress = _onProgress;
-            this.load(ResUrl.AssetPath).then((path: TextResource) => {
-                this.$dicAssetsPath = this.stringParser(path.data, true);
-                for (let [, value] of this.$dicAssetsPath) {
-                    if (value && value["preload"] == 1) {
-                        this.$total_num++;
-                        this.load(value["path"], Handler.create(this, this.$load_one_onCompleted));
-                    }
-                }
-            }).catch((err) => {
-                console.warn("无法加载配置文件");
-            })
-        }
-    }
-
-
-    /**
-     * 字符解析器
-     * 约定字符串格式如下
-     * #为备注行
-     * $为key行 第一个key必须为 "id"
-     * 然后通过id生成map
-     * 暂时先这样吧,需要可以用正则表达式重写
-     * @param shotString 数据
-     * @returns 返回一个以id作为key的map
-     */
-    stringParser(shotString: string, $isUrl: boolean = false): Map<number, Object> {
-        if (shotString) {
-            let arr: string[] = shotString.split("\n");
-            let shotArr, keyList: Array<string>, typeList: Array<string>, map = new Map();
-            for (let i = 0; i < arr.length; i++) {
-                let str = arr[i];
-                if (str.length) {
-                    if ($isUrl) {
-                        shotArr = str.replace("\r", "").split("\\").join("/").replace("assets/", "").split("\t");
-                    } else {
-                        shotArr = str.replace("\r", "").split("\\n").join("\n").split("\t");
-                    }
-                    if (i == 2) {
-                        keyList = shotArr;
-                        keyList = keyList.filter((item) => { return item != "$" });
-                    } else if (i == 3) {
-                        typeList = shotArr;
-                        typeList = typeList.filter((item) => { return item != "#" });
-                    } else if (i > 3) {
-                        shotArr = shotArr.filter((item) => { return item != "" });
-                        if (shotArr[0] != "#") {
-                            let data = {}, id: number;
-                            for (let j = 0; j < keyList.length; j++) {
-                                let key = keyList[j];
-                                let type = typeList[j];
-                                let shot = shotArr[j];
-                                if (j == 0) {
-                                    id = Number(shot);
-                                }
-                                switch (type) {
-                                    case "number":
-                                        data[key] = Number(shot);
-                                        break;
-                                    default:
-                                    case "string":
-                                        data[key] = shot;
-                                        break;
-                                }
-                            }
-                            map.set(id, data);
-                        }
-                    }
+            for (let [, value] of DataTable.AssetsPathDataTableMap) {
+                value.path = value.path.replace('assets\\', '').replace(/\\/g, '/');
+                if (value && value.preload == 1) {
+                    this.$total_num++;
+                    this.load(value.path, Handler.create(this, this.$load_one_onCompleted));
                 }
             }
-            return map;
         }
     }
 
-
-
-    /**通过唯一id获取数据表 */
-    getDataTableById(assetsId: DataTableEnum): Map<number, Object> {
-        let data = this.getResById(assetsId);
-        if (data && data.data) {
-            let obj = this.stringParser(data.data);
-            return obj;
-        }
-        return null;
-    }
 
 
     /**通过唯一Id获取资源 */
     getResById(assetsId: number): any {
-        let obj = this.$dicAssetsPath.get(assetsId);
-        if (obj && obj["path"]) {
-            return this.getRes(obj['path']);
+        let obj = DataTable.AssetsPathDataTableMap.get(assetsId);
+        if (obj && obj.path) {
+            return this.getRes(obj.path);
         }
     }
 
 
     /**通过唯一id获取url */
     getUrlById(assetsId: number): string {
-        let obj = this.$dicAssetsPath.get(assetsId);
-        if (obj && obj["path"]) {
-            return obj["path"];
+        let obj = DataTable.AssetsPathDataTableMap.get(assetsId);
+        if (obj && obj.path) {
+            return obj.path;
         }
     }
 

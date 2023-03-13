@@ -4,7 +4,7 @@ declare var LayaZip: {
     ZIP: string;
     BasePathMode: number;
     LazyMode: boolean;
-    LazyFliter: Array<string>;
+    LazyFilter: Array<string>;
     Version: string;
     CacheZIPFile: boolean;
     AutoSkipZip: boolean;

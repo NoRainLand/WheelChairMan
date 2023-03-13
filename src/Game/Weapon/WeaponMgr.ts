@@ -2,10 +2,10 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-06 11:38:29
+ * @Last Modified time: 2023-03-13 17:56:01
 */
 
-import { DataTableEnum } from "../../Enum/DataTableEnum";
+import DataTable from "../../DataTable/DataTable";
 import ResLoader from "../../Util/ResLoader";
 import PlayerItem from "../Player/PlayerItem";
 import WeaponItem from "./WeaponItem";
@@ -32,15 +32,13 @@ export default class WeaponMgr {
     }
 
 
-    private weaponDataMap: Map<number, Object>;
-
     private weaponMap: Map<number, WeaponItem>;
     selectWeaponId: number = 0;
 
     weaponItem: WeaponItem;
 
     init() {
-        this.weaponDataMap = ResLoader.instance.getDataTableById(DataTableEnum.Weapon);
+
     }
 
     getSelectWeapon(weaponId: number, owner: PlayerItem): WeaponItem {
@@ -72,7 +70,7 @@ export default class WeaponMgr {
 
     /**获取当前选择的武器数据 */
     getSelectedWeaponData(weaponId: number) {
-        return this.weaponDataMap.get(weaponId);
+        return DataTable.WeaponDataTableMap.get(weaponId);
     }
 
 

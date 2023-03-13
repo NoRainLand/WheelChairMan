@@ -2,10 +2,10 @@
 * @Author: NoRain
 * @Date: 2022-05-12 10:55:17 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-08 19:56:34
+ * @Last Modified time: 2023-03-13 17:52:20
 */
 
-import { DataTableEnum } from "../../Enum/DataTableEnum";
+import DataTable from "../../DataTable/DataTable";
 import { EventEnum } from "../../Enum/EventEnum";
 import { PoolEnum } from "../../Enum/PoolEnum";
 import EventMgr from "../../Mgr/EventMgr";
@@ -36,7 +36,7 @@ export default class EnemyMgr {
     public static get instance(): EnemyMgr {
         return this._instance ? this._instance : this._instance = new EnemyMgr();
     }
-    private enemyDataMap: Map<number, Object>;
+   
 
     private zombieList: Array<ZombieItem>;
 
@@ -46,7 +46,6 @@ export default class EnemyMgr {
     private enemyStage: Sprite3D;
 
     init() {
-        this.enemyDataMap = ResLoader.instance.getDataTableById(DataTableEnum.Enemy);
         this.zombieList = [];
         this.addEvent();
     }
@@ -141,7 +140,7 @@ export default class EnemyMgr {
         let zombie: Sprite3D;
         zombie = Pool.getItem(PoolEnum.ZOMBIE);
         if (!zombie) {
-            zombie = ResLoader.instance.getResCloneById(this.enemyDataMap.get(EnemyEnum.zombie)?.["path"]);
+            zombie = ResLoader.instance.getResCloneById(DataTable.EnemyDataTableMap.get(EnemyEnum.zombie)?.path);
         }
 
         let point = this.getNewPos();
@@ -154,7 +153,7 @@ export default class EnemyMgr {
         this.enemyStage.addChild(zombie);
         zombieItem.objName = PoolEnum.ZOMBIE;
         zombieItem.index++;
-        zombieItem.zombieData = this.enemyDataMap.get(EnemyEnum.zombie);
+        zombieItem.zombieData = DataTable.EnemyDataTableMap.get(EnemyEnum.zombie);
         zombieItem.init();
         this.zombieList.push(zombieItem);
 

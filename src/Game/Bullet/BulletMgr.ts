@@ -1,4 +1,4 @@
-import { DataTableEnum } from "../../Enum/DataTableEnum";
+import DataTable from "../../DataTable/DataTable";
 import { PoolEnum } from "../../Enum/PoolEnum";
 import ResLoader from "../../Util/ResLoader";
 import BulletItem from "./BulletItem";
@@ -20,7 +20,7 @@ import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
  * @Author: NoRain 
  * @Date: 2023-03-05 17:27:06 
  * @Last Modified by: NoRain
- * @Last Modified time: 2023-03-06 14:53:48
+ * @Last Modified time: 2023-03-13 17:51:31
  */
 /**子弹管理类 */
 export default class BulletMgr {
@@ -29,14 +29,12 @@ export default class BulletMgr {
         return this._instance ? this._instance : this._instance = new BulletMgr();
     }
 
-    private bulletData: Map<number, Object>;
 
     private bulletStage: Sprite3D;
 
     private bulletList: Array<BulletItem>;
 
     init() {
-        this.bulletData = ResLoader.instance.getDataTableById(DataTableEnum.Bullet);
     }
 
     gameStart(stage: Sprite3D) {
@@ -46,7 +44,7 @@ export default class BulletMgr {
 
     createBullet(bulletId: number, shootPos: Sprite3D) {
         let bullet: Sprite3D = Pool.getItem(PoolEnum.BUllET + bulletId);
-        let bulletData = this.bulletData.get(bulletId);
+        let bulletData = DataTable.BulletDataTableMap.get(bulletId);
         if (!bullet) {
             bullet = ResLoader.instance.getResCloneById(bulletData["path"]);
         }
