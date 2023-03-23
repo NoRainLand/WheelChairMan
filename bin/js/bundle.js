@@ -54,7 +54,7 @@ function __$decorate(assetId, codePath) {
   /**默认语言 */
   ProjectConfig.defaultLanguage = 1001;
   /**使用Zip分包 */
-  ProjectConfig.useZip = true;
+  ProjectConfig.useZip = false;
 
   // E:/WheelChairMan/src/DataTable/DataTable.ts
   var _DataTable = class {
@@ -3906,6 +3906,10 @@ function __$decorate(assetId, codePath) {
     }
     gameOver() {
       Timer.clearAll(this);
+      for (let i = 0; i < this.groundList.length; i++) {
+        let groundItem = this.groundList[i];
+        groundItem.obj.removeSelf();
+      }
     }
   };
   __name(GroundMgr, "GroundMgr");
