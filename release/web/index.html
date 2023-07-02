@@ -16,7 +16,7 @@
     <meta http-equiv='Cache-Control' content='no-siteapp' />
 </head>
 
-<body style="margin: 0;background-color: #888888;color: #fff;">
+<body style="margin: 0;background-color: rgba(128, 128, 128, 1);color: #fff;">
     <!-- Splash screen start -->
     <style type="text/css">
         #splash {
@@ -26,7 +26,7 @@
             z-index: 99999999;
             transition: opacity ease-in-out 300ms;
             transform-origin: left top;
-            background-color: #888888;
+            background-color: rgba(134, 206, 203, 1);
         }
         
         .splash-image {
@@ -35,7 +35,7 @@
             width: 100%;
             background-repeat: no-repeat;
             background-position: 50% 30%;
-            background-image: url('NoRainLand.png');
+            background-image: url('splash/NoRainLand.png');
             background-size: auto;
         }
 
@@ -61,7 +61,7 @@
         (function() {
             let splash = document.getElementById('splash');
             let sm = "horizontal";
-            let du = parseInt("1000");
+            let du = parseInt("100");
             let ss = performance.now();
 
             function fit() {
@@ -95,7 +95,7 @@
 
             function hide() {
                 window.removeEventListener("resize", fit);
-                delete window.hideSplashScreen;
+                window.removeEventListener("hideSplashScreen", hide);
 
                 let t = du - (performance.now() - ss);
                 if (t < 0) t = 0;
@@ -105,12 +105,8 @@
                 }, t);
             }
 
-            function onProgress(progress) {
-            }
-
             window.addEventListener("resize", fit);
-            window.hideSplashScreen = hide;
-            window.onSplashProgress = onProgress;
+            window.addEventListener("hideSplashScreen", hide);
 
             fit();
         })();

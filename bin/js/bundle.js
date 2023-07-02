@@ -3849,6 +3849,10 @@
     }
     gameOver() {
       Timer.clearAll(this);
+      for (let i = 0; i < this.groundList.length; i++) {
+        let groundItem = this.groundList[i];
+        groundItem.obj.removeSelf();
+      }
     }
   };
   __name(GroundMgr, "GroundMgr");

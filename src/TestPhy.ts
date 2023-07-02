@@ -11,7 +11,7 @@ import MeshSprite3D = Laya.MeshSprite3D;
 import Animator = Laya.Animator;
 import PhysicsCollider = Laya.PhysicsCollider;
 import CharacterController = Laya.CharacterController;
-import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
+// import SkinnedMeshSprite3D = Laya.SkinnedMeshSprite3D;
 const { regClass, property } = Laya;
 /**测试 */
 @regClass()
