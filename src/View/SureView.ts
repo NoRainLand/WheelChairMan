@@ -18,13 +18,13 @@ const { regClass, property } = Laya;
 /**确认取消面板 */
 @regClass()
 export default class SureView extends UIBase {
-    @property()
+    @property({ type: Image})
     imgSure: Image;
-    @property()
+    @property({ type: Image})
     imgCancel: Image;
-    @property()
+    @property({ type: Label})
     txtTitle: Label;
-    @property()
+    @property({ type: Label})
     txtMsg: Label;
 
     caller: any;

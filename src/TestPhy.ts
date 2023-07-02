@@ -17,7 +17,7 @@ const { regClass, property } = Laya;
 @regClass()
 export default class TestPhy extends Laya.Script {
 
-    @property()
+    @property({ type: Laya.Prefab})
     bullet: Laya.Prefab;
 
 

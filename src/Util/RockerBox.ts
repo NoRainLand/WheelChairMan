@@ -20,9 +20,9 @@ const { regClass, property } = Laya;
 /**摇杆 */
 @regClass()
 export default class RockerBox extends Laya.Script {
-    @property()
+    @property({ type: Button})
     freeBar: Button;
-    @property()
+    @property({ type: Number})
     dropLen: number = 110;
 
     private touchId: number = -1;

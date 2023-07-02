@@ -24,21 +24,21 @@ const { regClass, property } = Laya;
 /**胜利界面 */
 @regClass()
 export default class CompleteView extends UIBase {
-    @property()
+    @property({ type: Label })
     labelDiamond: Label;
-    @property()
+    @property({ type: Label})
     labelGold: Label;
-    @property()
+    @property({ type: Image})
     imgStar1: Image;
-    @property()
+    @property({ type: Image})
     imgStar2: Image;
-    @property()
+    @property({ type: Image})
     imgStar3: Image;
-    @property()
+    @property({ type: Image})
     imgNext: Image;
-    @property()
+    @property({ type: Image})
     imgRestart: Image;
-    @property()
+    @property({ type: Image})
     imgHome: Image;
 
     constructor() { super() }

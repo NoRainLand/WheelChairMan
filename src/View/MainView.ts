@@ -27,39 +27,39 @@ const { regClass, property } = Laya;
 /**主界面 */
 @regClass()
 export default class MainView extends UIBase {
-    @property()
+    @property({ type: Text})
     txtGold: Text;
-    @property()
+    @property({ type: Image})
     imgPlusGold: Image;
-    @property()
+    @property({ type: Text})
     txtDiamond: Text;
-    @property()
+    @property({ type: Image})
     imgPlusDiamond: Image;
-    @property()
+    @property({ type: Image})
     imgHead: Image;
-    @property()
+    @property({ type: Image})
     imgRing: Image;
-    @property()
+    @property({ type: Image})
     imgLevel: Image;
     imgLevelMask: Image;
-    @property()
+    @property({ type: Image})
     imgMs: Image;
     imgMsMask: Image;
-    @property()
+    @property({ type: Text})
     txtLevel: Text;
-    @property()
+    @property({ type: Text})
     labelName: Label;
-    @property()
+    @property({ type: Image})
     imgShop: Image;
-    @property()
+    @property({ type: Image})
     imgRanking: Image;
-    @property()
+    @property({ type: Image})
     imgSettings: Image;
 
-    @property()
+    @property({ type: Image})
     imgStart: Image;
 
-    @property()
+    @property({ type: Box})
     Main: Box;
 
     constructor() { super() }

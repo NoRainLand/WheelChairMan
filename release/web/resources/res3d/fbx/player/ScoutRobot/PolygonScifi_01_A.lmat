@@ -1,0 +1,1 @@
+{"props":{"defines":[],"name":"PolygonScifi_01_A","textures":[{"constructParams":[0,0,1,true],"name":"albedoTexture","path":"","propertyParams":{"anisoLevel":4,"filterMode":1,"wrapModeU":0,"wrapModeV":0}}],"type":"Laya.PBRStandardMaterial","vectors":[{"name":"albedoColor","value":[1,1,1,1]}]},"version":"LAYAMATERIAL:02"}

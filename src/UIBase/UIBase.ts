@@ -33,12 +33,12 @@ export default class UIBase extends Laya.Script {
      * 2 主界面
      * 3 3D界面
      */
-    @property()
+    @property({ type: Number})
     depth: number = 2;
 
 
     /**是否只能同时存在一个 */
-    @property()
+    @property({ type: Boolean})
     readonly isSingleton: boolean = true;
 
     /**传入数据 */
@@ -63,16 +63,16 @@ export default class UIBase extends Laya.Script {
      * 2 左切入
      * 3 右切入
      */
-    @property()
+    @property({ type: Number})
     AniType: number = 0;
 
 
     /**动画节点，默认为Main */
-    @property()
+    @property({ type: Sprite})
     Main: Sprite;
 
     /**关闭节点 */
-    @property()
+    @property({ type: Sprite})
     imgClose: Sprite;
 
 

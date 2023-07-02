@@ -28,20 +28,20 @@ const { regClass, property } = Laya;
 /**游戏界面 */
 @regClass()
 export default class GameView extends UIBase {
-    @property()
+    @property({ type: List})
     listHealth: List;
-    @property()
+    @property({ type: RockerBox}) 
     rocketBoxL: RockerBox;
-    @property()
+    @property({ type: RockerBox})
     rocketBoxR: RockerBox;
 
-    @property()
+    @property({ type: Label})
     labelTime: Label;
 
-    @property()
+    @property({ type: Image})
     imgPause: Image;
 
-    @property()
+    @property({ type: Label})
     labelKill: Label;
 
 

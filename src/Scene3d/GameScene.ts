@@ -28,17 +28,17 @@ const { regClass, property } = Laya;
 /**游戏界面 */
 @regClass()
 export default class GameScene extends Scene3d {
-    @property()
+    @property({ type: CameraItem})
     cameraItem: CameraItem;
-    @property()
+    @property({ type: Sprite3D})
     groundStage: Sprite3D;
-    @property()
+    @property({ type: DirectionLight})
     light: DirectionLight;
-    @property()
+    @property({ type: Sprite3D})
     playerStage: Sprite3D;
-    @property()
+    @property({ type: Sprite3D})
     zombieStage: Sprite3D;
-    @property()
+    @property({ type: Sprite3D})
     bulletStage: Sprite3D;
 
 

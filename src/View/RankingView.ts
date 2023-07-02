@@ -22,17 +22,17 @@ const { regClass, property } = Laya;
 /**排行榜 */
 @regClass()
 export default class RankingView extends UIBase {
-    @property()
+    @property({ type: Image})
     imgClose: Image;
-    @property()
+    @property({ type: Image})
     imgHead: Image;
-    @property()
+    @property({ type: Text})
     txtName: Text;
-    @property()
+    @property({ type: Text})
     txtLV: Text;
-    @property()
+    @property({ type: Text})
     txtRank: Text;
-    @property()
+    @property({ type: List})
     listRanking: List;
     private rankingList = [ //临时数据
         { "head": "", "name": "张三", "rank": 1, "lv": "100", "UID": "12324" },

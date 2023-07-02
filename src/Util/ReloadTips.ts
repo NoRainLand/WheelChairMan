@@ -19,9 +19,9 @@ const { regClass, property } = Laya;
 /**换弹提示 */
 @regClass()
 export default class ReloadTips extends Laya.Script {
-    @property()
+    @property({ type: Image})
     imgLoad: Image;
-    @property()
+    @property({ type: Sprite})
     Main: Sprite;
 
 

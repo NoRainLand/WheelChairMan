@@ -45,19 +45,19 @@ const { regClass, property } = Laya;
 @regClass()
 export default class PlayerItem extends BaseItem {
 
-    @property()
+    @property({ type: Sprite3D})
     weaponPoint: Sprite3D;
 
-    @property()
+    @property({ type: Material})
     playerSkinMaterial: Material;
 
-    @property()
+    @property({ type: Sprite3D})
     shootPos: Sprite3D;
 
-    @property()
+    @property({ type: Sprite3D})
     UI3D: Sprite3D;
 
-    @property()
+    @property({ type: Sprite3D})
     playerDirection: Sprite3D;
 
 

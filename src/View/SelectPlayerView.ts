@@ -31,29 +31,29 @@ const { regClass, property } = Laya;
 /**选择玩家界面 */
 @regClass()
 export default class SelectPlayerView extends UIBase {
-    @property()
+    @property({ type: Image})
     imgBack: Image;
-    @property()
+    @property({ type: Image})
     imgNext: Image;
-    @property()
+    @property({ type: Image})
     imgPrev: Image;
-    @property()
+    @property({ type: Image})
     imgLock: Image;
-    @property()
+    @property({ type: Image})
     imgSelect: Image;
-    @property()
+    @property({ type: Image})
     labelName: Label;
-    @property()
+    @property({ type: Label})
     labelDic: Label;
 
-    @property()
+    @property({ type: Image})
     imgUnlock: Image;
-    @property()
+    @property({ type: Label})
     labelUnlock: Label;
-    @property()
+    @property({ type: Image})
     imgCurrency: Image;
 
-    @property()
+    @property({ type: Box})
     boxMsg: Box;
 
 

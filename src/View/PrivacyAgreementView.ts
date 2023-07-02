@@ -23,13 +23,13 @@ const { regClass, property } = Laya;
 @regClass()
 export default class PrivacyAgreementView extends UIBase {
 
-    @property()
+    @property({ type: Image})
     imgSure: Image;
-    @property()
+    @property({ type: Image})
     imgCancel: Image;
-    @property()
+    @property({ type: Panel})
     panel: Panel;
-    @property()
+    @property({ type: Label})
     txtAgreement: Label;
 
 

@@ -28,22 +28,22 @@ const { regClass, property } = Laya;
 /**设置界面 */
 @regClass()
 export default class SettingView extends UIBase {
-    @property()
+    @property({ type: Image})
     imgClose: Image;
-    @property()
+    @property({ type: Slider})
     sliderSfx: Slider;
-    @property()
+    @property({ type: Slider})
     sliderBgm: Slider;
-    @property()
+    @property({ type: Toggle})
     toggleShake: Toggle;
-    @property()
+    @property({ type: Image})
     imgLanguage: Image;
-    @property()
+    @property({ type: Image})
     imgLan: Image;
-    @property()
+    @property({ type: Image})
     imgSupport: Image;
 
-    @property()
+    @property({ type: Label})
     txtAgreement: Label;
 
     constructor() { super() }

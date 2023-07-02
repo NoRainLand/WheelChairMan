@@ -24,11 +24,11 @@ const { regClass, property } = Laya;
 /** */
 @regClass()
 export default class LoseView extends UIBase {
-    @property()
+    @property({ type: Image})
     imgHome: Image;
-    @property()
+    @property({ type: Image})
     imgRestart: Image;
-    @property()
+    @property({ type: Label})
     labelGold: Label;
     constructor() { super() }
 

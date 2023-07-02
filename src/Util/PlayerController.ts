@@ -33,13 +33,13 @@ export default class PlayerController extends Script3d {
     /**角色控制器 */
     characterController: CharacterController;
 
-    @property()
+    @property({ type: Number})
     friction: number = 0.5;
-    @property()
+    @property({ type: Number})
     stepHeight: number = 0.1;
-    @property()
+    @property({ type: Number})
     jumpAllTimes: number = 1;
-    @property()
+    @property({ type: Number})
     moveSpeed: number = 0.05;//标准
 
     private moveSpeedV3: Vector3;

@@ -21,11 +21,11 @@ const { regClass, property } = Laya;
 /**暂停界面 */
 @regClass()
 export default class PauseView extends UIBase {
-    @property()
+    @property({ type: Image})
     imgContinue: Image;
-    @property()
+    @property({ type: Image})
     imgRestart: Image;
-    @property()
+    @property({ type: Image})
     imgQuit: Image;
 
     constructor() { super() }

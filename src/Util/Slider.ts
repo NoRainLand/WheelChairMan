@@ -20,16 +20,16 @@ const { regClass, property } = Laya;
 export default class Slider extends Laya.Script {
 
     /**是否为水平 */
-    @property()
+    @property({ type: Boolean})
     isH: boolean = false;
-    @property()
+    @property({ type: Image})
     imgLoad: Image;
-    @property()
+    @property({ type: Image})
     imgBar: Image;
-    @property()
+    @property({ type: Image})
     imgBg: Image;
     /**默认值 */
-    @property()
+    @property({ type: Number})
     value: number = 0.7;
 
 

@@ -26,12 +26,12 @@ const { regClass, property } = Laya;
 @regClass()
 export default class LoadView extends UIBase {
 
-    @property()
+    @property({ type: Image})
     imgLoad: Image;
-    @property()
+    @property({ type: Label})
     labelLoad: Label;
 
-    @property()
+    @property({ type: Label})
     testLabel: Label;
 
     imgMask: Image;

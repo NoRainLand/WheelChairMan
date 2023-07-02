@@ -25,11 +25,11 @@ const { regClass, property } = Laya;
 @regClass()
 export class DebugView extends UIBase {
 
-    @property()
+    @property({ type: Image})
     imgShow: Image;
-    @property()
+    @property({ type: Box})
     MainPanel: Box;
-    @property()
+    @property({ type: List})
     listCommand: List;
 
     constructor() {

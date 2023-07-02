@@ -20,7 +20,7 @@ const { regClass, property } = Laya;
 /**提示类 */
 @regClass()
 export default class TipsView extends UIBase {
-    @property()
+    @property({ type: Text})
     txtMsg: Text;
     constructor() { super() }
 

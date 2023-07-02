@@ -27,9 +27,9 @@ const { regClass, property } = Laya;
 /**复活界面 */
 @regClass()
 export default class ResurrectionView extends UIBase {
-    @property()
+    @property({ type: Image })
     labelTime: Label;
-    @property()
+    @property({ type: Image })
     imgWatch: Image;
 
     countdown: number = 0;

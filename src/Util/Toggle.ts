@@ -20,9 +20,9 @@ export default class Toggle extends Laya.Script {
 
     private $imgBg: Image;
 
-    @property()
+    @property({ type: Boolean})
     isON: boolean = false;
-    @property()
+    @property({ type: Image})
     imgItem: Image;
 
     private $caller: any;

@@ -30,11 +30,11 @@ const { regClass, property } = Laya;
 /**商城界面 */
 @regClass()
 export default class ShopView extends UIBase {
-    @property()
+    @property({ type: Image})
     imgClose: Image;
-    @property()
+    @property({ type: List})
     listTitle: List;
-    @property()
+    @property({ type: List})
     listShop: List;
 
 

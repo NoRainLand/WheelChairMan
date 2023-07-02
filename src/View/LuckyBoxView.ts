@@ -23,15 +23,15 @@ const { regClass, property } = Laya;
 @regClass()
 export default class LuckyBoxView extends UIBase {
 
-    @property()
+    @property({ type: Image})
     imgLight: Image;
-    @property()
+    @property({ type: Image})
     imgBox: Image;
-    @property()
+    @property({ type: Image})
     imgClose: Image;
-    @property()
+    @property({ type: Image})
     imgOpen: Image;
-    @property()
+    @property({ type: Text})
     txtMsg: Text;
 
 

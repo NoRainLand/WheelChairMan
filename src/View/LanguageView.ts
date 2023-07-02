@@ -23,9 +23,9 @@ const { regClass, property } = Laya;
 @regClass()
 export default class LanguageView extends UIBase {
 
-    @property()
+    @property({ type: List})
     $listLanguage: List;
-    @property()
+    @property({ type: Image})
     $imgClose: Image;
 
     $selectIndex: number = 0;

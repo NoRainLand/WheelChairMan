@@ -66,15 +66,15 @@ export default class ZombieItem extends BaseItem {
     rotNode: Sprite3D;
 
 
-    @property()
+    @property({ type: SkinnedMeshSprite3D})
     skin1: SkinnedMeshSprite3D;
-    @property()
+    @property({ type: SkinnedMeshSprite3D})
     skin2: SkinnedMeshSprite3D;
-    @property()
+    @property({ type: SkinnedMeshSprite3D})
     skin3: SkinnedMeshSprite3D;
-    @property()
+    @property({ type: SkinnedMeshSprite3D})
     skin4: SkinnedMeshSprite3D;
-    @property()
+    @property({ type: SkinnedMeshSprite3D})
     skin5: SkinnedMeshSprite3D;
 
 

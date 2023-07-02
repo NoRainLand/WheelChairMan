@@ -28,7 +28,7 @@ const { regClass, property } = Laya;
 @regClass()
 export default class SelectPlayerScene extends Scene3d {
 
-    @property()
+    @property({ type: Sprite3D})
     playerStage: Sprite3D;
     constructor() { super() }
 

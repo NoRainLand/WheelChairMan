@@ -23,7 +23,7 @@ const { regClass, property } = Laya;
 /**过场界面 */
 @regClass()
 export default class GuideView extends UIBase {
-    @property()
+    @property({ type: Image})
     imgSkip: Image;
     constructor() { super() }
     onOpened(param?: any): void {

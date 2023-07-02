@@ -20,7 +20,7 @@ const { regClass, property } = Laya;
 /**本地化文本 */
 @regClass()
 export default class LocalizationText extends Laya.Script {
-    @property()
+    @property({ type: String})
     localizationKey: string;
 
     constructor() {
