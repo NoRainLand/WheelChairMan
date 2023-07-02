@@ -1,0 +1,39 @@
+{
+  "GamePanel": {
+    "muted": false,
+    "scale": 1,
+    "scale2": 1,
+    "dimension": {
+      "name": "Free Aspect",
+      "x": 0,
+      "y": 0
+    },
+    "orientation": false
+  },
+  "InspectorPanel": {
+    "previewPanelHeight": 266
+  },
+  "ProjectPanel": {
+    "expandedNodes": [
+      "f1",
+      "f5",
+      "f15",
+      "f2",
+      "f69"
+    ],
+    "twoColumn": false,
+    "firstColumnWidth": 956,
+    "iconScale": 0,
+    "selected": "63a6c640-8384-40ee-931e-b24bc717fafa"
+  },
+  "playButtonBehavior": "current",
+  "BuildSettingsPanel": {
+    "platform": "web"
+  },
+  "u": {
+    "x": 1009,
+    "y": 416,
+    "width": 402,
+    "height": 422
+  }
+}

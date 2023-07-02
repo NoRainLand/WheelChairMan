@@ -1,0 +1,22 @@
+{
+  "windows": [
+    {
+      "width": 1202,
+      "height": 801,
+      "isMaximized": true,
+      "isFullScreen": false,
+      "displayBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 2048,
+        "height": 1280
+      },
+      "files": [
+        "63a6c640-8384-40ee-931e-b24bc717fafa"
+      ],
+      "active": 0,
+      "x": 466,
+      "y": 15
+    }
+  ]
+}

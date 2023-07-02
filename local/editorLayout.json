@@ -1,0 +1,114 @@
+{
+  "default": {
+    "width": 1982,
+    "height": 1182,
+    "id": "h7wpB1Ho",
+    "layout": 1,
+    "children": [
+      {
+        "width": 289,
+        "height": 1182,
+        "id": "7qp8mq2g",
+        "layout": 2,
+        "children": [
+          {
+            "width": 289,
+            "height": 1182,
+            "id": "7q7fz5d1",
+            "selected": 0,
+            "children": [
+              "WidgetsPanel"
+            ]
+          }
+        ]
+      },
+      {
+        "width": 956,
+        "height": 1182,
+        "id": "bXVBGBox",
+        "layout": 2,
+        "children": [
+          {
+            "width": 956,
+            "height": 638,
+            "id": "Ug2tk3sB",
+            "layout": 1,
+            "children": [
+              {
+                "width": 956,
+                "height": 638,
+                "id": "7eatv6px",
+                "selected": 0,
+                "children": [
+                  "ScenePanel",
+                  "AnimatorControllerPanel",
+                  "GamePanel",
+                  "ProjectSettingsPanel"
+                ]
+              }
+            ]
+          },
+          {
+            "width": 956,
+            "height": 540,
+            "id": "cTIBtkMA",
+            "selected": 2,
+            "children": [
+              "ConsolePanel",
+              "TimelinePanel",
+              "ProjectPanel"
+            ]
+          }
+        ]
+      },
+      {
+        "width": 729,
+        "height": 1182,
+        "id": "0lqhnpck",
+        "layout": 2,
+        "children": [
+          {
+            "width": 729,
+            "height": 1182,
+            "id": "PuWx_6gW",
+            "layout": 1,
+            "children": [
+              {
+                "width": 338,
+                "height": 1182,
+                "id": "7yjnpdum",
+                "selected": 0,
+                "children": [
+                  "HierarchyPanel"
+                ]
+              },
+              {
+                "width": 387,
+                "height": 1182,
+                "id": "7i01d2q9",
+                "selected": 0,
+                "children": [
+                  "InspectorPanel"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "popups": [
+      {
+        "width": 520,
+        "height": 652,
+        "id": "vJWDJrzj",
+        "selected": 0,
+        "children": [
+          "BuildSettingsPanel"
+        ],
+        "x": 788,
+        "y": 304,
+        "show": false
+      }
+    ]
+  }
+}
